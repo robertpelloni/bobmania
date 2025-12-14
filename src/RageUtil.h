@@ -7,6 +7,7 @@
 #include <vector>
 #include <sstream>
 #include "global.h"
+#include <cstdint>
 class RageFileDriver;
 
 /** @brief Safely delete pointers. */
