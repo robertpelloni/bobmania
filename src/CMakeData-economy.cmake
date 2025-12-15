@@ -1,5 +1,7 @@
 list(APPEND SMDATA_ECONOMY_SRC
             "Economy/EconomyManager.cpp"
+            "Economy/ScreenGameplayCommercial.cpp"
+            "Economy/Governance/ScreenGovernance.cpp"
             "Tournament/ScreenTournamentLadder.cpp"
             "Tournament/ScreenBettingEntry.cpp"
             "Tournament/ScreenEvaluationBetting.cpp"
@@ -8,6 +10,8 @@ list(APPEND SMDATA_ECONOMY_SRC
             "Scoring/MsdCalculator.cpp")
 list(APPEND SMDATA_ECONOMY_HPP
             "Economy/EconomyManager.h"
+            "Economy/ScreenGameplayCommercial.h"
+            "Economy/Governance/ScreenGovernance.h"
             "Tournament/ScreenTournamentLadder.h"
             "Tournament/ScreenBettingEntry.h"
             "Tournament/ScreenEvaluationBetting.h"
