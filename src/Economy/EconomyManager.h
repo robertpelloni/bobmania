@@ -69,6 +69,8 @@ private:
 	CurrencyAmount m_iAccumulatedMiningReward;
 
 	static EconomyManager* s_pInstance;
+
+	RageMutex m_Mutex; // Thread safety
 };
 
 #endif

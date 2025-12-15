@@ -67,7 +67,7 @@ Since we cannot deploy a real blockchain or server cluster in this session, we u
 *   **Network:** `ScreenTournamentLadder` reads from a "Mock Cloud" class that generates fake rival data.
 *   **Worker:** A simple `RageThread` that sleeps and increments a "Hashrate" counter to simulate server work.
 
-## 4. League & Tournament Structure (The "Athletic" Layer)
+## 5. League & Tournament Structure (The "Athletic" Layer)
 
 To support the goal of an "Actual Athletic League", the system mimics professional sports structures (NBA, FIFA) rather than just arcade high scores.
 

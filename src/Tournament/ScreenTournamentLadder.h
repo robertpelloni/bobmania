@@ -20,7 +20,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	void UpdateLadderDisplay();
+	// void UpdateLadderDisplay(); // Unused for now
 
 	BitmapText m_textTitle;
 	BitmapText m_textDivision;
