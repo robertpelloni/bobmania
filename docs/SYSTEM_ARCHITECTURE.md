@@ -89,3 +89,27 @@ Players are placed into buckets based on their MMR (Matchmaking Rating).
 ### C. Match Formats
 *   **Ranked Duel:** 1v1, Best of 3 Songs. Winner takes LP and Betting Pot.
 *   **Daily Sprint:** Asynchronous. A setlist of 4 specific songs. Highest cumulative DP (Dance Points) determines daily leaderboard position.
+
+## 6. Decentralized File Sharing (The "Swarm" Layer)
+
+To support the goal of a "Music Industry" and "File-Sharing Network", the system implements a P2P Content Delivery Network (CDN).
+
+### A. The "Swarm" Concept
+*   **Nodes as Seeds:** Every StepMania machine acts as a seed for the Song Packs it has installed.
+*   **Discovery:** Nodes broadcast their inventory to the "Mesh" (simulated).
+*   **Incentive:** Users earn the **Unified Token** (shared with FWBer/"bob's game") by allocating bandwidth to serve files to other gyms/players.
+
+### B. Content Swarm Manager
+Managed by .
+*   **Indexing:** Scans  directory and generates content hashes (Pack IDs).
+*   **Routing:** Finds peers with the requested content.
+*   **Compensation:**
+    *   **Leech (Downloader):** Pays a small token fee to the Swarm (optional, or free for verified gyms).
+    *   **Seed (Uploader):** Earns tokens per MB transferred.
+
+### C. Unified Token Ecosystem
+The token is the currency for:
+1.  **StepMania:** Betting, Tournament Entry, Gym Access.
+2.  **FWBer:** (External App context) Service exchange.
+3.  **"bob's game":** In-game items.
+*   *Note:* The  handles the balance, serving as the bridge between these apps.

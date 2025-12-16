@@ -187,6 +187,16 @@ void EconomyManager::PaySongRoyalty(const std::string& songTitle, const std::str
 	}
 }
 
+void EconomyManager::AwardBandwidthReward(CurrencyAmount amount)
+{
+	LockMut(m_Mutex);
+	if (amount <= 0) return;
+
+	m_Ledger["WALLET_PLAYER"] += amount;
+	m_iAccumulatedMiningReward += amount; // Track as generic earning for now
+	LOG->Trace("EconomyManager: Awarded %lld tokens for bandwidth.", amount);
+}
+
 std::vector<Transaction> EconomyManager::GetRecentTransactions() const
 {
 	return m_TransactionHistory;

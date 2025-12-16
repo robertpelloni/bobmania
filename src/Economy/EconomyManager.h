@@ -50,6 +50,7 @@ public:
 
 	// Industry / Infrastructure
 	void PaySongRoyalty(const std::string& songTitle, const std::string& artistName);
+	void AwardBandwidthReward(CurrencyAmount amount);
 	CurrencyAmount GetMiningReward() const { return m_iAccumulatedMiningReward; }
 
 	// Data Access for UI
