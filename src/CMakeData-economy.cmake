@@ -1,0 +1,36 @@
+list(APPEND SMDATA_ECONOMY_SRC
+            "Economy/EconomyManager.cpp"
+            "Economy/ScreenGameplayCommercial.cpp"
+            "Economy/Governance/ScreenGovernance.cpp"
+            "Economy/ScreenServerNode.cpp"
+            "Network/ContentSwarmManager.cpp"
+            "Network/UI/ScreenContentNetwork.cpp"
+            "Tournament/ScreenTournamentLadder.cpp"
+            "Tournament/ScreenBettingEntry.cpp"
+            "Tournament/ScreenEvaluationBetting.cpp"
+            "Tournament/ScreenLoginQR.cpp"
+            "Gym/ScreenGymWelcome.cpp"
+            "Gym/GymPlaylistGenerator.cpp"
+            "Scoring/MsdCalculator.cpp"
+            "Unified/ScreenUnifiedDashboard.cpp"
+            "Unified/ActorOffsetBar.cpp"
+            "Unified/ProfileExporter.cpp")
+list(APPEND SMDATA_ECONOMY_HPP
+            "Economy/EconomyManager.h"
+            "Economy/ScreenGameplayCommercial.h"
+            "Economy/Governance/ScreenGovernance.h"
+            "Economy/ScreenServerNode.h"
+            "Network/ContentSwarmManager.h"
+            "Network/UI/ScreenContentNetwork.h"
+            "Tournament/ScreenTournamentLadder.h"
+            "Tournament/ScreenBettingEntry.h"
+            "Tournament/ScreenEvaluationBetting.h"
+            "Tournament/ScreenLoginQR.h"
+            "Gym/ScreenGymWelcome.h"
+            "Gym/GymPlaylistGenerator.h"
+            "Scoring/MsdCalculator.h"
+            "Unified/ScreenUnifiedDashboard.h"
+            "Unified/ActorOffsetBar.h"
+            "Unified/ProfileExporter.h")
+
+source_group("Economy" FILES ${SMDATA_ECONOMY_SRC} ${SMDATA_ECONOMY_HPP})
