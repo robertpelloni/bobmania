@@ -22,6 +22,10 @@ private:
 	// Job Scheduler
 	float m_fJobTimer;
 	std::string m_sCurrentJob;
+
+	// Console Input
+	std::string m_sInputBuffer;
+	void ProcessCommand(const std::string& cmd);
 };
 
 #endif
