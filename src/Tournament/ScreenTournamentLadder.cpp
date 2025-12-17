@@ -41,7 +41,11 @@ void ScreenTournamentLadder::Init()
 
 	// Add real player stats
 	int myElo = EconomyManager::Instance()->GetPlayerElo();
-	m_LadderEntries.push_back( { "?", "YOU", myElo, "GOLD" } );
+	std::string myTitle = EconomyManager::Instance()->GetEquippedAsset("Title");
+	if (myTitle.empty()) myTitle = "Novice";
+	std::string name = "YOU [" + myTitle + "]";
+
+	m_LadderEntries.push_back( { "?", name, myElo, "GOLD" } );
 
 	m_LadderEntries.push_back( { "7", "RhythmGamer", 1150, "GOLD" } );
 	m_LadderEntries.push_back( { "8", "NoobMaster69", 1000, "SILVER" } );

@@ -81,6 +81,14 @@ void ScreenMarketplace::BuyItem( int index )
 	if( EconomyManager::Instance()->Transfer("WALLET_PLAYER", "WALLET_MARKETPLACE", item.price, "Buy: " + item.name) )
 	{
 		item.owned = true;
+
+		// Add to persistent inventory
+		Asset a;
+		a.name = item.name;
+		a.type = item.category;
+		a.value = item.price;
+		EconomyManager::Instance()->AddToInventory(a);
+
 		SOUND->PlayOnce( THEME->GetPathS("Common", "coin") );
 		m_textStatus.SetText( "Purchase Successful!" );
 		m_textStatus.SetDiffuse( RageColor(0,1,0,1) );

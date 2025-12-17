@@ -218,6 +218,43 @@ void EconomyManager::UpdateElo(bool bWon, int iOpponentElo)
 		m_iPlayerElo - change, iOpponentElo, bWon ? "WIN" : "LOSS", m_iPlayerElo, change);
 }
 
+void EconomyManager::AddToInventory(const Asset& asset)
+{
+	LockMut(m_Mutex);
+	m_Inventory.push_back(asset);
+	LOG->Trace("EconomyManager: Added %s to inventory.", asset.name.c_str());
+}
+
+bool EconomyManager::HasAsset(const std::string& name)
+{
+	LockMut(m_Mutex);
+	for(const auto& a : m_Inventory) {
+		if(a.name == name) return true;
+	}
+	return false;
+}
+
+void EconomyManager::EquipAsset(const std::string& type, const std::string& name)
+{
+	LockMut(m_Mutex);
+	m_Equipped[type] = name;
+	LOG->Trace("EconomyManager: Equipped %s as %s.", name.c_str(), type.c_str());
+}
+
+std::string EconomyManager::GetEquippedAsset(const std::string& type)
+{
+	LockMut(m_Mutex);
+	if (m_Equipped.find(type) != m_Equipped.end()) return m_Equipped[type];
+	return "";
+}
+
+std::vector<Asset> EconomyManager::GetInventory() const
+{
+	// Returning copy is thread safe enough for MVP if we assume list doesn't change during copy
+	// Ideal: LockMut(m_Mutex); but const correctness + returning value is tricky without recursive mutex behavior guaranteed or copy.
+	return m_Inventory;
+}
+
 std::vector<Transaction> EconomyManager::GetRecentTransactions() const
 {
 	return m_TransactionHistory;

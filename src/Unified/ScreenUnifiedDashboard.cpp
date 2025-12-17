@@ -19,6 +19,7 @@ void ScreenUnifiedDashboard::Init()
 	m_Options.push_back( "GYM CIRCUIT" );
 	m_Options.push_back( "TOURNAMENT LADDER" );
 	m_Options.push_back( "MARKETPLACE" ); // New
+	m_Options.push_back( "CUSTOMIZE PROFILE" ); // New
 	m_Options.push_back( "WALLET HISTORY" ); // New
 	m_Options.push_back( "CONTENT SWARM" );
 	m_Options.push_back( "DAO GOVERNANCE" );
@@ -54,6 +55,12 @@ void ScreenUnifiedDashboard::Init()
 	m_textSwarmWidget.SetHorizAlign( align_left );
 	this->AddChild( &m_textSwarmWidget );
 
+	m_textPersona.LoadFromFont( THEME->GetPathF("Common", "header") );
+	m_textPersona.SetXY( 320, 420 );
+	m_textPersona.SetZoom( 0.5f );
+	m_textPersona.SetDiffuse( RageColor(1, 0.8f, 0, 1) ); // Gold
+	this->AddChild( &m_textPersona );
+
 	// Menu Options
 	float menuY = 160;
 	for( size_t i=0; i < m_Options.size(); ++i )
@@ -81,6 +88,11 @@ void ScreenUnifiedDashboard::Update( float fDeltaTime )
 	int packs = ContentSwarmManager::Instance()->GetAvailablePacks().size();
 	long long earnings = EconomyManager::Instance()->GetMiningReward();
 	m_textSwarmWidget.SetText( ssprintf("NETWORK\n%d Peers\n+%lld Earned", packs, earnings) );
+
+	// Refresh Persona
+	std::string title = EconomyManager::Instance()->GetEquippedAsset("Title");
+	if (title.empty()) title = "Novice";
+	m_textPersona.SetText( "Current Title: " + title );
 
 	// Selection Highlight
 	for( size_t i=0; i < m_pOptionTexts.size(); ++i )
@@ -121,6 +133,7 @@ void ScreenUnifiedDashboard::Input( const InputEventPlus &input )
 		else if( sChoice == "GYM CIRCUIT" ) SCREENMAN->SetNewScreen( "ScreenGymWelcome" );
 		else if( sChoice == "TOURNAMENT LADDER" ) SCREENMAN->SetNewScreen( "ScreenTournamentLadder" );
 		else if( sChoice == "MARKETPLACE" ) SCREENMAN->SetNewScreen( "ScreenMarketplace" );
+		else if( sChoice == "CUSTOMIZE PROFILE" ) SCREENMAN->SetNewScreen( "ScreenProfileCustomize" );
 		else if( sChoice == "WALLET HISTORY" ) SCREENMAN->SetNewScreen( "ScreenWalletHistory" );
 		else if( sChoice == "CONTENT SWARM" ) SCREENMAN->SetNewScreen( "ScreenContentNetwork" );
 		else if( sChoice == "DAO GOVERNANCE" ) SCREENMAN->SetNewScreen( "ScreenGovernance" );

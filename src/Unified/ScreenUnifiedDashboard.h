@@ -21,6 +21,7 @@ private:
 	BitmapText m_textWalletWidget;
 	BitmapText m_textRankWidget;
 	BitmapText m_textSwarmWidget;
+	BitmapText m_textPersona; // New
 
 	// Navigation
 	int m_iSelection;
