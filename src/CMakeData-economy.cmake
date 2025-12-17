@@ -14,7 +14,8 @@ list(APPEND SMDATA_ECONOMY_SRC
             "Scoring/MsdCalculator.cpp"
             "Unified/ScreenUnifiedDashboard.cpp"
             "Unified/ActorOffsetBar.cpp"
-            "Unified/ProfileExporter.cpp")
+            "Unified/ProfileExporter.cpp"
+            "Unified/ProfileImporter.cpp")
 list(APPEND SMDATA_ECONOMY_HPP
             "Economy/EconomyManager.h"
             "Economy/ScreenGameplayCommercial.h"
@@ -31,6 +32,7 @@ list(APPEND SMDATA_ECONOMY_HPP
             "Scoring/MsdCalculator.h"
             "Unified/ScreenUnifiedDashboard.h"
             "Unified/ActorOffsetBar.h"
-            "Unified/ProfileExporter.h")
+            "Unified/ProfileExporter.h"
+            "Unified/ProfileImporter.h")
 
 source_group("Economy" FILES ${SMDATA_ECONOMY_SRC} ${SMDATA_ECONOMY_HPP})

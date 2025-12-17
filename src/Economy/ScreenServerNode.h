@@ -18,6 +18,10 @@ private:
 
 	std::vector<std::string> m_LogLines;
 	float m_fLogTimer;
+
+	// Job Scheduler
+	float m_fJobTimer;
+	std::string m_sCurrentJob;
 };
 
 #endif
