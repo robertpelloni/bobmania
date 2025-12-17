@@ -18,6 +18,8 @@ void ScreenUnifiedDashboard::Init()
 	m_Options.push_back( "ARCADE MODE" );
 	m_Options.push_back( "GYM CIRCUIT" );
 	m_Options.push_back( "TOURNAMENT LADDER" );
+	m_Options.push_back( "MARKETPLACE" ); // New
+	m_Options.push_back( "WALLET HISTORY" ); // New
 	m_Options.push_back( "CONTENT SWARM" );
 	m_Options.push_back( "DAO GOVERNANCE" );
 	m_Options.push_back( "SERVER NODE (IDLE)" );
@@ -118,6 +120,8 @@ void ScreenUnifiedDashboard::Input( const InputEventPlus &input )
 		if( sChoice == "ARCADE MODE" ) SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 		else if( sChoice == "GYM CIRCUIT" ) SCREENMAN->SetNewScreen( "ScreenGymWelcome" );
 		else if( sChoice == "TOURNAMENT LADDER" ) SCREENMAN->SetNewScreen( "ScreenTournamentLadder" );
+		else if( sChoice == "MARKETPLACE" ) SCREENMAN->SetNewScreen( "ScreenMarketplace" );
+		else if( sChoice == "WALLET HISTORY" ) SCREENMAN->SetNewScreen( "ScreenWalletHistory" );
 		else if( sChoice == "CONTENT SWARM" ) SCREENMAN->SetNewScreen( "ScreenContentNetwork" );
 		else if( sChoice == "DAO GOVERNANCE" ) SCREENMAN->SetNewScreen( "ScreenGovernance" );
 		else if( sChoice == "SERVER NODE (IDLE)" ) SCREENMAN->SetNewScreen( "ScreenServerNode" );
