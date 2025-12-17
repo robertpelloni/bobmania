@@ -44,11 +44,13 @@ public:
 	WalletAddress RegisterUser(const std::string& username);
 
 	// Betting System
+	bool IsBetActive() const { return m_bBetActive; }
 	void StartMatchBet(CurrencyAmount amount);
 	void ResolveMatchBet(bool playerWon); // Simple single player vs House/Score for MVP
 
 	// Industry / Infrastructure
 	void PaySongRoyalty(const std::string& songTitle, const std::string& artistName);
+	void AwardBandwidthReward(CurrencyAmount amount);
 	CurrencyAmount GetMiningReward() const { return m_iAccumulatedMiningReward; }
 
 	// Data Access for UI
@@ -68,6 +70,8 @@ private:
 	CurrencyAmount m_iAccumulatedMiningReward;
 
 	static EconomyManager* s_pInstance;
+
+	RageMutex m_Mutex; // Thread safety
 };
 
 #endif

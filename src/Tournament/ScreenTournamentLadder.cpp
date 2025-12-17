@@ -63,6 +63,8 @@ void ScreenTournamentLadder::Init()
 
 void ScreenTournamentLadder::Input( const InputEventPlus &input )
 {
+	if( input.type != IET_FIRST_PRESS ) return;
+
 	if( input.MenuI == GAME_BUTTON_BACK )
 	{
 		SCREENMAN->PlayStartSound();

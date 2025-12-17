@@ -5,6 +5,7 @@
 #include "EconomyManager.h"
 #include "InputEventPlus.h"
 #include "RageUtil.h"
+#include "GymPlaylistGenerator.h"
 
 REGISTER_SCREEN_CLASS( ScreenGymWelcome );
 
@@ -45,7 +46,14 @@ void ScreenGymWelcome::Input( const InputEventPlus &input )
 
 	if( input.MenuI == GAME_BUTTON_START )
 	{
-		// In a real gym mode, this would jump to a simplified song select or course
+		// Generate a workout playlist
+		// In a real flow, we would set GAMESTATE->m_pCurCourse to this new course
+		// and then jump to ScreenGameplay directly or ScreenSelectCourse.
+
+		// Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, INTENSITY_MODERATE );
+		// GAMESTATE->m_pCurCourse.Set( pWorkout );
+
+		// For MVP, just jump to music select
 		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 	}
 	else if( input.MenuI == GAME_BUTTON_BACK )

@@ -32,6 +32,7 @@ void ScreenBettingEntry::Init()
 	this->AddChild( &m_textWagerAmount );
 
 	m_textWalletBalance.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	// Initial update
 	long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
 	m_textWalletBalance.SetText( ssprintf("Your Balance: %lld Coins", balance) );
 	m_textWalletBalance.SetXY( 320, 300 );
@@ -42,18 +43,22 @@ void ScreenBettingEntry::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS ) return;
 
+	bool bUpdateText = false;
+
 	if( input.MenuI == GAME_BUTTON_LEFT )
 	{
 		m_iWager -= 10;
 		if( m_iWager < 0 ) m_iWager = 0;
 		SOUND->PlayOnce( THEME->GetPathS("Common", "change") );
+		bUpdateText = true;
 	}
 	else if( input.MenuI == GAME_BUTTON_RIGHT )
 	{
-		m_iWager += 10;
 		long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
-		if( m_iWager > balance ) m_iWager = (int)balance;
+		m_iWager += 10;
+		if( m_iWager > balance ) m_iWager = balance;
 		SOUND->PlayOnce( THEME->GetPathS("Common", "change") );
+		bUpdateText = true;
 	}
 	else if( input.MenuI == GAME_BUTTON_START )
 	{
@@ -72,5 +77,13 @@ void ScreenBettingEntry::Input( const InputEventPlus &input )
 		return;
 	}
 
-	m_textWagerAmount.SetText( ssprintf("%d Coins", m_iWager) );
+	if (bUpdateText)
+	{
+		m_textWagerAmount.SetText( ssprintf("%lld Coins", m_iWager) );
+
+		// Update balance text to show remaining
+		long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
+		long long remaining = balance - m_iWager;
+		m_textWalletBalance.SetText( ssprintf("Remaining: %lld Coins", remaining) );
+	}
 }

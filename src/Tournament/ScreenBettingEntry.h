@@ -16,7 +16,7 @@ private:
 	BitmapText m_textWagerAmount;
 	BitmapText m_textWalletBalance;
 
-	int m_iWager;
+	long long m_iWager;
 };
 
 #endif

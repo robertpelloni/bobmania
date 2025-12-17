@@ -18,7 +18,7 @@ void EconomyManager::Destroy()
 	s_pInstance = NULL;
 }
 
-EconomyManager::EconomyManager()
+EconomyManager::EconomyManager() : m_Mutex("EconomyManager")
 {
 	m_bBetActive = false;
 	m_iCurrentBetAmount = 0;
@@ -47,6 +47,8 @@ void EconomyManager::Initialize()
 
 void EconomyManager::Update(float fDeltaTime)
 {
+	LockMut(m_Mutex);
+
 	// Simulate "Server Mode" - earning small crypto rewards for uptime
 	m_fMiningTimer += fDeltaTime;
 	if (m_fMiningTimer >= 10.0f) // Every 10 seconds
@@ -63,6 +65,7 @@ void EconomyManager::Update(float fDeltaTime)
 
 CurrencyAmount EconomyManager::GetBalance(const WalletAddress& address)
 {
+	LockMut(m_Mutex);
 	if (m_Ledger.find(address) == m_Ledger.end())
 		return 0;
 	return m_Ledger[address];
@@ -70,7 +73,17 @@ CurrencyAmount EconomyManager::GetBalance(const WalletAddress& address)
 
 bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to, CurrencyAmount amount, const std::string& reason)
 {
-	if (m_Ledger[from] < amount)
+	if (amount <= 0)
+	{
+		LOG->Warn("EconomyManager: Invalid transfer amount %lld", amount);
+		return false;
+	}
+
+	LockMut(m_Mutex);
+
+	// Check if from address exists and has funds using find() to avoid creating 0-entries
+	auto it = m_Ledger.find(from);
+	if (it == m_Ledger.end() || it->second < amount)
 	{
 		LOG->Warn("EconomyManager: Insufficient funds for transfer from %s", from.c_str());
 		return false;
@@ -95,6 +108,7 @@ bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to
 
 WalletAddress EconomyManager::RegisterUser(const std::string& username)
 {
+	LockMut(m_Mutex);
 	WalletAddress newAddr = "WALLET_" + username; // Simplified for simulation
 	if (m_Ledger.find(newAddr) == m_Ledger.end())
 	{
@@ -108,6 +122,11 @@ void EconomyManager::StartMatchBet(CurrencyAmount amount)
 {
 	if (amount <= 0) return;
 
+	LockMut(m_Mutex);
+	// Need to release mutex before calling Transfer to avoid recursion deadlock if Transfer also locks
+	// But our Transfer locks internally. Standard mutex isn't recursive usually in StepMania?
+	// RageMutex IS recursive. "Recursive mutex class."
+
 	if (Transfer("WALLET_PLAYER", "WALLET_ESCROW", amount, "Match Wager"))
 	{
 		m_bBetActive = true;
@@ -118,18 +137,29 @@ void EconomyManager::StartMatchBet(CurrencyAmount amount)
 
 void EconomyManager::ResolveMatchBet(bool playerWon)
 {
+	LockMut(m_Mutex);
 	if (!m_bBetActive) return;
 
 	if (playerWon)
 	{
 		// Return wager + winnings (1:1 payout from House for this MVP)
-		CurrencyAmount winnings = m_iCurrentBetAmount * 2;
+		// Check for overflow
+		if (m_iCurrentBetAmount > LLONG_MAX / 2)
+		{
+			LOG->Warn("EconomyManager: Bet amount too high, potential overflow.");
+			// Cap or handle error. For now just return original bet?
+			Transfer("WALLET_ESCROW", "WALLET_PLAYER", m_iCurrentBetAmount, "Bet Refund (Overflow)");
+		}
+		else
+		{
+			CurrencyAmount winnings = m_iCurrentBetAmount; // House pays this part
 
-		// House pays the winnings part
-		Transfer("WALLET_HOUSE", "WALLET_ESCROW", m_iCurrentBetAmount, "House Loss");
+			// 1. House pays matching amount to player
+			Transfer("WALLET_HOUSE", "WALLET_PLAYER", winnings, "House Payout");
 
-		// Escrow pays player
-		Transfer("WALLET_ESCROW", "WALLET_PLAYER", winnings, "Match Win Payout");
+			// 2. Escrow returns original bet to player
+			Transfer("WALLET_ESCROW", "WALLET_PLAYER", m_iCurrentBetAmount, "Bet Return");
+		}
 	}
 	else
 	{
@@ -155,6 +185,16 @@ void EconomyManager::PaySongRoyalty(const std::string& songTitle, const std::str
 	{
 		LOG->Trace("EconomyManager: Paid royalty to %s", artistName.c_str());
 	}
+}
+
+void EconomyManager::AwardBandwidthReward(CurrencyAmount amount)
+{
+	LockMut(m_Mutex);
+	if (amount <= 0) return;
+
+	m_Ledger["WALLET_PLAYER"] += amount;
+	m_iAccumulatedMiningReward += amount; // Track as generic earning for now
+	LOG->Trace("EconomyManager: Awarded %lld tokens for bandwidth.", amount);
 }
 
 std::vector<Transaction> EconomyManager::GetRecentTransactions() const
