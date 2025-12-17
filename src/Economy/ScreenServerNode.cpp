@@ -6,6 +6,14 @@
 #include "InputEventPlus.h"
 #include "RageUtil.h"
 
+// Local UUID helper
+static std::string MakeUUID()
+{
+	std::string res = "";
+	for(int i=0; i<32; ++i) res += ssprintf("%x", RandomInt(16));
+	return res;
+}
+
 REGISTER_SCREEN_CLASS( ScreenServerNode );
 
 void ScreenServerNode::Init()
@@ -55,7 +63,7 @@ void ScreenServerNode::Update( float fDeltaTime )
 	{
 		m_fLogTimer = 0;
 		// Generate fake hash
-		std::string hash = "0x" + Rage::make_uuid().substr(0, 16);
+		std::string hash = "0x" + MakeUUID().substr(0, 16);
 		m_LogLines.push_back( m_sCurrentJob + " :: " + hash );
 
 		if( m_LogLines.size() > 15 )

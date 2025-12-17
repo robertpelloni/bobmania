@@ -2,6 +2,20 @@
 #include "EconomyManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include <climits>
+
+// Fix for missing macro in standalone compilation
+#ifndef PRINTF
+#define PRINTF(a,b)
+#endif
+
+// Local UUID helper to avoid dependency issues
+static std::string MakeUUID()
+{
+	std::string res = "";
+	for(int i=0; i<32; ++i) res += ssprintf("%x", RandomInt(16));
+	return res;
+}
 
 EconomyManager* EconomyManager::s_pInstance = NULL;
 
@@ -94,7 +108,7 @@ bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to
 	m_Ledger[to] += amount;
 
 	Transaction tx;
-	tx.txID = "TX_" + Rage::make_uuid(); // Using RageUtil helper
+	tx.txID = "TX_" + MakeUUID();
 	tx.from = from;
 	tx.to = to;
 	tx.amount = amount;
