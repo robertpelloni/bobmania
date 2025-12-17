@@ -26,10 +26,12 @@ include(CMakeData-gtk.cmake)
 include(CMakeData-file-types.cmake)
 include(CMakeData-globals.cmake)
 include(CMakeData-singletons.cmake)
+include(CMakeData-economy.cmake)
 
 list(APPEND SMDATA_ALL_FILES_SRC
             ${SMDATA_GLOBAL_FILES_SRC}
             ${SMDATA_GLOBAL_SINGLETON_SRC}
+            ${SMDATA_ECONOMY_SRC}
             ${SMDATA_ALL_ACTORS_SRC}
             ${SMDATA_ALL_ARCH_SRC}
             ${SMDATA_ALL_DATA_SRC}
@@ -40,6 +42,7 @@ list(APPEND SMDATA_ALL_FILES_SRC
 list(APPEND SMDATA_ALL_FILES_HPP
             ${SMDATA_GLOBAL_FILES_HPP}
             ${SMDATA_GLOBAL_SINGLETON_HPP}
+            ${SMDATA_ECONOMY_HPP}
             ${SMDATA_ALL_ACTORS_HPP}
             ${SMDATA_ALL_ARCH_HPP}
             ${SMDATA_ALL_DATA_HPP}
