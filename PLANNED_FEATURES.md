@@ -24,7 +24,8 @@ ITGMania is a fork of StepMania 5.1, so these features are high priority and eas
     *   Disable Timing Windows (Practice mode feature).
 
 ### Bug Fixes
-*   **Mine Fix:** Logic fix for mines (Credit: DinsFire64). **(Deferred due to complexity/risk)**
+*   **[COMPLETED] Mine Fix:** Logic fix for mines (Credit: DinsFire64).
+    *   Fixed logic error preventing mines from triggering on press when `REQUIRE_STEP_ON_MINES` is false.
 *   **Held Misses:** Tracking held misses in engine for pad debugging.
 *   **Overlapping Hold Bug:** Fix for holds that overlap.
 
@@ -47,5 +48,5 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 ## 3. Implementation Plan
 1.  **[DONE] ITGMania - Song Management:** Implement `LoadNewSongs`.
 2.  **[DONE] ITGMania - Profile Management:** Implement `FastProfileSwitch`.
-3.  **[DONE] ITGMania - Gameplay Fixes:** Implement Rate Mods. Mine Fix deferred.
+3.  **[DONE] ITGMania - Gameplay Fixes:** Implement Rate Mods and Mine Fix.
 4.  **[DONE] NotITG - Modding Foundation:** Implemented Shaders and Uniforms.

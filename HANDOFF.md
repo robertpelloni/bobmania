@@ -33,8 +33,10 @@ We have successfully merged key features from the **ITGMania** fork and achieved
     *   **Lua Binding:** `ActorFrameTexture` exposes `Create`, `SetTextureName`, `EnableDepthBuffer`, etc.
     *   **Usage:** Create AFT, add children, capture to texture, use texture on Sprite.
 
-### Pending / Future Work
-*   **Mine Fix (DinsFire64):** Not implemented. Logic requires deeper investigation into `Player.cpp` interactions with hold releases and overlapping taps.
+6.  **Mine Fix (DinsFire64)**
+    *   **Implementation:** Fixed logic in `Player::Step` to correctly trigger mines on fresh presses when `REQUIRE_STEP_ON_MINES` is false.
+    *   **Details:** Changed condition from `( REQUIRE_STEP_ON_MINES == !bHeld )` to `( !REQUIRE_STEP_ON_MINES || !bHeld )`.
+    *   **Files:** `src/Player.cpp`.
 
 ## 2. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
