@@ -4,6 +4,7 @@
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "Quad.h"
+#include "TournamentBracket.h"
 
 struct LadderEntry {
 	std::string rank;
@@ -20,10 +21,14 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	// void UpdateLadderDisplay(); // Unused for now
+	void RefreshView();
 
 	BitmapText m_textTitle;
 	BitmapText m_textDivision;
+	BitmapText m_textViewMode;
+
+	bool m_bShowBracket;
+	TournamentBracket m_Bracket;
 
 	// Simple list display for MVP
 	std::vector<LadderEntry> m_LadderEntries;

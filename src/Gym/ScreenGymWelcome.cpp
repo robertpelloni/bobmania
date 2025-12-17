@@ -36,6 +36,12 @@ void ScreenGymWelcome::Init()
 	m_textServerStatus.SetXY( 320, 400 );
 	this->AddChild( &m_textServerStatus );
 
+	// Stats Graph
+	m_Graph.SetXY( 320, 350 );
+	std::vector<float> mockHistory = { 150, 200, 320, 100, 450, 300, 300 }; // Mock
+	m_Graph.LoadData( mockHistory );
+	this->AddChild( &m_Graph );
+
 	// Initial update of text
 	long long earned = EconomyManager::Instance()->GetMiningReward();
 	m_textServerStatus.SetText( ssprintf("Server Node Active... Mined: %lld Coins", earned) );
