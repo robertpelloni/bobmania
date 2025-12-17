@@ -1537,6 +1537,41 @@ uintptr_t RageDisplay_Legacy::GetShader() const
 	return (uintptr_t)id;
 }
 
+int RageDisplay_Legacy::GetUniformLocation( uintptr_t iShader, const RString &sName )
+{
+	return glGetUniformLocationARB( (GLhandleARB)iShader, sName.c_str() );
+}
+
+void RageDisplay_Legacy::SetUniform1f( int iLoc, float v0 )
+{
+	glUniform1fARB( iLoc, v0 );
+}
+
+void RageDisplay_Legacy::SetUniform2f( int iLoc, float v0, float v1 )
+{
+	glUniform2fARB( iLoc, v0, v1 );
+}
+
+void RageDisplay_Legacy::SetUniform3f( int iLoc, float v0, float v1, float v2 )
+{
+	glUniform3fARB( iLoc, v0, v1, v2 );
+}
+
+void RageDisplay_Legacy::SetUniform4f( int iLoc, float v0, float v1, float v2, float v3 )
+{
+	glUniform4fARB( iLoc, v0, v1, v2, v3 );
+}
+
+void RageDisplay_Legacy::SetUniform1i( int iLoc, int v0 )
+{
+	glUniform1iARB( iLoc, v0 );
+}
+
+void RageDisplay_Legacy::SetUniformMatrix4( int iLoc, const RageMatrix &mat )
+{
+	glUniformMatrix4fvARB( iLoc, 1, GL_FALSE, (const float*)&mat );
+}
+
 RageCompiledGeometry* RageDisplay_Legacy::CreateCompiledGeometry()
 {
 	if (GLEW_ARB_vertex_buffer_object)

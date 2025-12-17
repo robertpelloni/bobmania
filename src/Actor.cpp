@@ -677,6 +677,30 @@ void Actor::BeginDraw() // set the world matrix
 	{
 		m_iPrevShader = DISPLAY->GetShader();
 		DISPLAY->SetShader( m_iShader );
+
+		for( unsigned i=0; i<m_ShaderUniforms.size(); i++ )
+		{
+			const ShaderUniform &u = m_ShaderUniforms[i];
+			int loc = DISPLAY->GetUniformLocation( m_iShader, u.name );
+			if( loc == -1 ) continue;
+
+			switch( u.type )
+			{
+			case ShaderUniform::Float:
+				DISPLAY->SetUniform1f( loc, u.fvals[0] );
+				break;
+			case ShaderUniform::Vec2:
+				DISPLAY->SetUniform2f( loc, u.fvals[0], u.fvals[1] );
+				break;
+			case ShaderUniform::Vec3:
+				DISPLAY->SetUniform3f( loc, u.fvals[0], u.fvals[1], u.fvals[2] );
+				break;
+			case ShaderUniform::Vec4:
+				DISPLAY->SetUniform4f( loc, u.fvals[0], u.fvals[1], u.fvals[2], u.fvals[3] );
+				break;
+			default: break;
+			}
+		}
 	}
 
 	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
@@ -805,6 +829,59 @@ void Actor::ClearShader()
 	if( m_iShader )
 		DISPLAY->DeleteShader( m_iShader );
 	m_iShader = 0;
+	m_ShaderUniforms.clear();
+}
+
+void Actor::SetUniform( const RString &sName, float f )
+{
+	for( unsigned i=0; i<m_ShaderUniforms.size(); i++ ) {
+		if( m_ShaderUniforms[i].name == sName ) {
+			m_ShaderUniforms[i].type = ShaderUniform::Float;
+			m_ShaderUniforms[i].fvals[0] = f;
+			return;
+		}
+	}
+	ShaderUniform u; u.name = sName; u.type = ShaderUniform::Float; u.fvals[0] = f;
+	m_ShaderUniforms.push_back( u );
+}
+
+void Actor::SetUniform( const RString &sName, float f1, float f2 )
+{
+	for( unsigned i=0; i<m_ShaderUniforms.size(); i++ ) {
+		if( m_ShaderUniforms[i].name == sName ) {
+			m_ShaderUniforms[i].type = ShaderUniform::Vec2;
+			m_ShaderUniforms[i].fvals[0] = f1; m_ShaderUniforms[i].fvals[1] = f2;
+			return;
+		}
+	}
+	ShaderUniform u; u.name = sName; u.type = ShaderUniform::Vec2; u.fvals[0] = f1; u.fvals[1] = f2;
+	m_ShaderUniforms.push_back( u );
+}
+
+void Actor::SetUniform( const RString &sName, float f1, float f2, float f3 )
+{
+	for( unsigned i=0; i<m_ShaderUniforms.size(); i++ ) {
+		if( m_ShaderUniforms[i].name == sName ) {
+			m_ShaderUniforms[i].type = ShaderUniform::Vec3;
+			m_ShaderUniforms[i].fvals[0] = f1; m_ShaderUniforms[i].fvals[1] = f2; m_ShaderUniforms[i].fvals[2] = f3;
+			return;
+		}
+	}
+	ShaderUniform u; u.name = sName; u.type = ShaderUniform::Vec3; u.fvals[0] = f1; u.fvals[1] = f2; u.fvals[2] = f3;
+	m_ShaderUniforms.push_back( u );
+}
+
+void Actor::SetUniform( const RString &sName, float f1, float f2, float f3, float f4 )
+{
+	for( unsigned i=0; i<m_ShaderUniforms.size(); i++ ) {
+		if( m_ShaderUniforms[i].name == sName ) {
+			m_ShaderUniforms[i].type = ShaderUniform::Vec4;
+			m_ShaderUniforms[i].fvals[0] = f1; m_ShaderUniforms[i].fvals[1] = f2; m_ShaderUniforms[i].fvals[2] = f3; m_ShaderUniforms[i].fvals[3] = f4;
+			return;
+		}
+	}
+	ShaderUniform u; u.name = sName; u.type = ShaderUniform::Vec4; u.fvals[0] = f1; u.fvals[1] = f2; u.fvals[2] = f3; u.fvals[3] = f4;
+	m_ShaderUniforms.push_back( u );
 }
 
 void Actor::EndDraw()
@@ -1864,6 +1941,16 @@ public:
 	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); COMMON_RETURN_SELF; }
 	static int SetShader( T* p, lua_State *L )		{ p->SetShader(SArg(1)); COMMON_RETURN_SELF; }
 	static int ClearShader( T* p, lua_State *L )		{ p->ClearShader(); COMMON_RETURN_SELF; }
+	static int SetUniform( T* p, lua_State *L )
+	{
+		RString sName = SArg(1);
+		int n = lua_gettop(L) - 1;
+		if( n == 1 ) p->SetUniform( sName, FArg(2) );
+		else if( n == 2 ) p->SetUniform( sName, FArg(2), FArg(3) );
+		else if( n == 3 ) p->SetUniform( sName, FArg(2), FArg(3), FArg(4) );
+		else if( n == 4 ) p->SetUniform( sName, FArg(2), FArg(3), FArg(4), FArg(5) );
+		COMMON_RETURN_SELF;
+	}
 	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); COMMON_RETURN_SELF; }
 	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); COMMON_RETURN_SELF; }
 	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((BIArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); COMMON_RETURN_SELF; }
@@ -2151,6 +2238,7 @@ public:
 		ADD_METHOD( SetTextureFiltering );
 		ADD_METHOD( SetShader );
 		ADD_METHOD( ClearShader );
+		ADD_METHOD( SetUniform );
 		ADD_METHOD( blend );
 		ADD_METHOD( zbuffer );
 		ADD_METHOD( ztest );
