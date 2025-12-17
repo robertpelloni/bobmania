@@ -6,6 +6,7 @@
 #include "InputEventPlus.h"
 #include "ProfileManager.h"
 #include "EconomyManager.h"
+#include "GameSoundManager.h"
 
 REGISTER_SCREEN_CLASS( ScreenLoginQR );
 
@@ -39,40 +40,50 @@ void ScreenLoginQR::Input( const InputEventPlus &input )
 			return;
 		}
 
-		// In a real scanner implementation, we would read input.DeviceI.button character mapping
-		// For this MVP, we simulate that typing "S" triggers a simulated login for testing convenience
-		// or if we had a keyboard attached, we'd accumulate chars.
-
-		// Mock logic: If we detect a specific "Scan" signal (mapped to a key for now)
-		// Let's assume the user is typing on a keyboard for the simulation.
+		// Barcode scanners often behave like keyboards sending characters followed by a Return/Enter.
+		// We capture printable characters into a buffer and flush on Enter.
 
 		char c = input.DeviceI.ToChar();
-		if( c >= 32 && c <= 126 ) // Printable char
+		if( c >= 32 && c <= 126 ) // Printable ASCII
 		{
 			m_sBuffer += c;
-			m_textStatus.SetText( "Reading: " + std::string(m_sBuffer.length(), '*') ); // Masked
+			m_textStatus.SetText( "Reading: " + std::string(m_sBuffer.length(), '*') ); // Masked for privacy
 		}
 		else if( input.DeviceI.button == KEY_ENTER || input.DeviceI.button == KEY_KP_ENTER )
 		{
-			// Submit
+			// End of scan sequence
 			LOG->Trace("QR Login Scanned: %s", m_sBuffer.c_str());
 
-			// Validate
-			if( m_sBuffer.find("SMX:") == 0 || m_sBuffer.find("DDR:") == 0 || m_sBuffer.length() > 0 )
+			bool bValid = false;
+
+			// Check for valid prefixes (SMX, DDR) or any non-empty string for testing
+			if ( m_sBuffer.find("SMX:") == 0 || m_sBuffer.find("DDR:") == 0 )
+			{
+				bValid = true;
+			}
+			else if ( !m_sBuffer.empty() )
+			{
+				// Allow generic IDs for flexibility in this test phase
+				bValid = true;
+			}
+
+			if( bValid )
 			{
 				m_textStatus.SetText( "Authenticating..." );
 
-				// Simulate successful login
-				// PROFILEMAN->LoadProfileFromID( ... ) logic would go here
+				// 1. Load Profile (Simulated)
+				// PROFILEMAN->LoadProfileFromID( m_sBuffer );
 
-				// Register with Economy
+				// 2. Register/Login to Economy
 				EconomyManager::Instance()->RegisterUser( m_sBuffer );
 
-				SCREENMAN->SetNewScreen( "ScreenSelectProfile" ); // Or skip directly to Title
+				SOUND->PlayOnce( THEME->GetPathS("Common", "start") );
+				SCREENMAN->SetNewScreen( "ScreenUnifiedDashboard" ); // Jump to Dashboard
 			}
 			else
 			{
 				m_textStatus.SetText( "Invalid Code. Try Again." );
+				SOUND->PlayOnce( THEME->GetPathS("Common", "cancel") );
 				m_sBuffer = "";
 			}
 		}
