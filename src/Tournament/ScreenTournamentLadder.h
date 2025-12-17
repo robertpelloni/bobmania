@@ -8,7 +8,7 @@
 struct LadderEntry {
 	std::string rank;
 	std::string name;
-	std::string points;
+	int points;
 	std::string division;
 };
 

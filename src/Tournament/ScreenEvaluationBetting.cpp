@@ -35,6 +35,9 @@ void ScreenEvaluationBetting::Init()
 		// Resolve the bet
 		EconomyManager::Instance()->ResolveMatchBet( bPlayerWon );
 
+		// Update Elo (Assuming a standard "Gold" opponent of 1200 for now, or match it to a selected rival)
+		EconomyManager::Instance()->UpdateElo( bPlayerWon, 1300 ); // Beating the "House" is like beating a slightly stronger opponent
+
 		// Display Result
 		m_textBetResult.LoadFromFont( THEME->GetPathF("Common", "header") );
 		m_textBetResult.SetXY( 320, 400 );

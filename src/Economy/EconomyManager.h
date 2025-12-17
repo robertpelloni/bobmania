@@ -53,6 +53,10 @@ public:
 	void AwardBandwidthReward(CurrencyAmount amount);
 	CurrencyAmount GetMiningReward() const { return m_iAccumulatedMiningReward; }
 
+	// Competitive
+	int GetPlayerElo() const { return m_iPlayerElo; }
+	void UpdateElo(bool bWon, int iOpponentElo);
+
 	// Data Access for UI
 	std::vector<Transaction> GetRecentTransactions() const;
 
@@ -68,6 +72,9 @@ private:
 	// Server Mode Simulation
 	float m_fMiningTimer;
 	CurrencyAmount m_iAccumulatedMiningReward;
+
+	// Competitive
+	int m_iPlayerElo;
 
 	static EconomyManager* s_pInstance;
 

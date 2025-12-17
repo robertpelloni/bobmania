@@ -26,16 +26,17 @@ void ScreenUnifiedDashboard::Init()
 	// Header
 	m_textHeader.LoadFromFont( THEME->GetPathF("Common", "header") );
 	m_textHeader.SetText( "STEPMANIA NETWORK OS" );
-	m_textHeader.SetXY( 320, 30 );
-	m_textHeader.SetDiffuse( RageColor(0.8f, 0.9f, 1.0f, 1) );
+	m_textHeader.SetName("Header");
+	ActorUtil::LoadAllCommands( m_textHeader, m_sName );
 	this->AddChild( &m_textHeader );
 
 	// Widgets Area
 	float widgetY = 80;
 
 	m_textWalletWidget.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textWalletWidget.SetXY( 100, widgetY );
-	m_textWalletWidget.SetZoom( 0.6f );
+	m_textWalletWidget.SetName("WalletWidget");
+	ActorUtil::LoadAllCommands( m_textWalletWidget, m_sName );
+	m_textWalletWidget.SetXY( 100, widgetY ); // Fallback if commands fail
 	m_textWalletWidget.SetHorizAlign( align_left );
 	this->AddChild( &m_textWalletWidget );
 

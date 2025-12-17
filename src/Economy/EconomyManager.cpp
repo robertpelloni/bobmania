@@ -24,6 +24,7 @@ EconomyManager::EconomyManager() : m_Mutex("EconomyManager")
 	m_iCurrentBetAmount = 0;
 	m_fMiningTimer = 0;
 	m_iAccumulatedMiningReward = 0;
+	m_iPlayerElo = 1200; // Default Starting Elo (Gold/Silver border)
 }
 
 EconomyManager::~EconomyManager()
@@ -195,6 +196,26 @@ void EconomyManager::AwardBandwidthReward(CurrencyAmount amount)
 	m_Ledger["WALLET_PLAYER"] += amount;
 	m_iAccumulatedMiningReward += amount; // Track as generic earning for now
 	LOG->Trace("EconomyManager: Awarded %lld tokens for bandwidth.", amount);
+}
+
+void EconomyManager::UpdateElo(bool bWon, int iOpponentElo)
+{
+	LockMut(m_Mutex);
+
+	// Basic Elo Calculation
+	// K-Factor = 32 (Standard for new players)
+	const int K = 32;
+
+	// Expected Score = 1 / (1 + 10^((OpponentElo - PlayerElo) / 400))
+	double expected = 1.0 / (1.0 + pow(10.0, (double)(iOpponentElo - m_iPlayerElo) / 400.0));
+
+	double actual = bWon ? 1.0 : 0.0;
+	int change = (int)(K * (actual - expected));
+
+	m_iPlayerElo += change;
+
+	LOG->Trace("EconomyManager: Elo Update. Old: %d, Opponent: %d, Result: %s, New: %d (Change: %d)",
+		m_iPlayerElo - change, iOpponentElo, bWon ? "WIN" : "LOSS", m_iPlayerElo, change);
 }
 
 std::vector<Transaction> EconomyManager::GetRecentTransactions() const
