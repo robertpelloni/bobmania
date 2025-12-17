@@ -66,6 +66,7 @@ public:
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
 	void Reload( bool bAllowFastLoad, LoadingWindow *ld=nullptr );	// songs, courses, groups - everything.
+	void LoadNewSongs( LoadingWindow *ld=nullptr );
 	void PreloadSongImages();
 
 	bool IsGroupNeverCached(const RString& group) const;
