@@ -38,6 +38,7 @@ public:
 	void AddLocalProfileByID( Profile *pProfile, RString sProfileID ); // transfers ownership of pProfile
 	bool RenameLocalProfile( RString sProfileID, RString sNewName );
 	bool DeleteLocalProfile( RString sProfileID );
+	void NextLocalProfile( PlayerNumber pn );
 	void GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) const;
 	void GetLocalProfileDisplayNames( vector<RString> &vsProfileDisplayNamesOut ) const;
 	int GetLocalProfileIndexFromID( RString sProfileID ) const;

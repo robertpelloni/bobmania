@@ -580,6 +580,8 @@ public:
 
 	// render states
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
+	void SetShader( RString sPath );
+	void ClearShader();
 	void SetTextureTranslate( float x, float y )	{ m_texTranslate.x = x; m_texTranslate.y = y; }
 	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
@@ -659,6 +661,8 @@ protected:
 	RageColor m_internalGlow;
 
 	RageVector2	m_size;
+	uintptr_t	m_iShader;
+	uintptr_t	m_iPrevShader;
 	TweenState	m_current;
 	TweenState	m_start;
 	TweenState	m_current_with_effects;

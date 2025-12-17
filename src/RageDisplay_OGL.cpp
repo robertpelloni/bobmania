@@ -1467,6 +1467,76 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	}
 }
 
+uintptr_t RageDisplay_Legacy::LoadShaderFromFile( RString sVertexShaderFile, RString sFragmentShaderFile )
+{
+	// Load the vertex shader
+	GLhandleARB hVertexShader = 0;
+	if( !sVertexShaderFile.empty() )
+	{
+		vector<RString> asDefines;
+		hVertexShader = LoadShader( GL_VERTEX_SHADER_ARB, sVertexShaderFile, asDefines );
+		if( hVertexShader == 0 )
+			return 0;
+	}
+
+	// Load the fragment shader
+	GLhandleARB hFragmentShader = 0;
+	if( !sFragmentShaderFile.empty() )
+	{
+		vector<RString> asDefines;
+		hFragmentShader = LoadShader( GL_FRAGMENT_SHADER_ARB, sFragmentShaderFile, asDefines );
+		if( hFragmentShader == 0 )
+		{
+			if( hVertexShader )
+				glDeleteObjectARB( hVertexShader );
+			return 0;
+		}
+	}
+
+	// Link them
+	GLhandleARB hProgram = glCreateProgramObjectARB();
+	if( hVertexShader )
+		glAttachObjectARB( hProgram, hVertexShader );
+	if( hFragmentShader )
+		glAttachObjectARB( hProgram, hFragmentShader );
+
+	glLinkProgramARB( hProgram );
+
+	// Check for link errors
+	GLint bLinked = false;
+	glGetObjectParameterivARB( hProgram, GL_OBJECT_LINK_STATUS_ARB, &bLinked );
+	if( !bLinked )
+	{
+		RString sInfo = GetInfoLog( hProgram );
+		LOG->Warn( "Error linking shader program: %s", sInfo.c_str() );
+		glDeleteObjectARB( hProgram );
+		if( hVertexShader ) glDeleteObjectARB( hVertexShader );
+		if( hFragmentShader ) glDeleteObjectARB( hFragmentShader );
+		return 0;
+	}
+
+	return (uintptr_t)hProgram;
+}
+
+void RageDisplay_Legacy::DeleteShader( uintptr_t iShader )
+{
+	if( iShader == 0 )
+		return;
+	glDeleteObjectARB( (GLhandleARB)iShader );
+}
+
+void RageDisplay_Legacy::SetShader( uintptr_t iShader )
+{
+	glUseProgramObjectARB( (GLhandleARB)iShader );
+}
+
+uintptr_t RageDisplay_Legacy::GetShader() const
+{
+	GLint id = 0;
+	glGetIntegerv( GL_CURRENT_PROGRAM, &id );
+	return (uintptr_t)id;
+}
+
 RageCompiledGeometry* RageDisplay_Legacy::CreateCompiledGeometry()
 {
 	if (GLEW_ARB_vertex_buffer_object)

@@ -93,6 +93,8 @@ void Actor::InitState()
 	m_fBaseAlpha = 1;
 	m_internalDiffuse = RageColor( 1, 1, 1, 1 );
 	m_internalGlow = RageColor( 0, 0, 0, 0 );
+	m_iShader = 0;
+	m_iPrevShader = 0;
 
 	m_start.Init();
 	m_current.Init();
@@ -169,6 +171,7 @@ Actor::Actor()
 
 Actor::~Actor()
 {
+	ClearShader();
 	StopTweening();
 	UnsubscribeAll();
 	for(size_t i= 0; i < m_WrapperStates.size(); ++i)
@@ -670,6 +673,12 @@ void Actor::BeginDraw() // set the world matrix
 {
 	DISPLAY->PushMatrix();
 
+	if( m_iShader )
+	{
+		m_iPrevShader = DISPLAY->GetShader();
+		DISPLAY->SetShader( m_iShader );
+	}
+
 	if( m_pTempState->pos.x != 0 || m_pTempState->pos.y != 0 || m_pTempState->pos.z != 0 )	
 	{
 		RageMatrix m;
@@ -784,8 +793,25 @@ void Actor::SetTextureRenderStates()
 	DISPLAY->SetTextureFiltering( TextureUnit_1, m_bTextureFiltering );
 }
 
+void Actor::SetShader( RString sPath )
+{
+	if( m_iShader )
+		DISPLAY->DeleteShader( m_iShader );
+	m_iShader = DISPLAY->LoadShaderFromFile( "", sPath );
+}
+
+void Actor::ClearShader()
+{
+	if( m_iShader )
+		DISPLAY->DeleteShader( m_iShader );
+	m_iShader = 0;
+}
+
 void Actor::EndDraw()
 {
+	if( m_iShader )
+		DISPLAY->SetShader( m_iPrevShader );
+
 	DISPLAY->PopMatrix();
 
 	if( m_texTranslate.x != 0 || m_texTranslate.y != 0 )
@@ -1836,6 +1862,8 @@ public:
 	static int texturetranslate( T* p, lua_State *L )	{ p->SetTextureTranslate(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); COMMON_RETURN_SELF; }
 	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); COMMON_RETURN_SELF; }
+	static int SetShader( T* p, lua_State *L )		{ p->SetShader(SArg(1)); COMMON_RETURN_SELF; }
+	static int ClearShader( T* p, lua_State *L )		{ p->ClearShader(); COMMON_RETURN_SELF; }
 	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); COMMON_RETURN_SELF; }
 	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); COMMON_RETURN_SELF; }
 	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((BIArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); COMMON_RETURN_SELF; }
@@ -2121,6 +2149,8 @@ public:
 		ADD_METHOD( texturetranslate );
 		ADD_METHOD( texturewrapping );
 		ADD_METHOD( SetTextureFiltering );
+		ADD_METHOD( SetShader );
+		ADD_METHOD( ClearShader );
 		ADD_METHOD( blend );
 		ADD_METHOD( zbuffer );
 		ADD_METHOD( ztest );

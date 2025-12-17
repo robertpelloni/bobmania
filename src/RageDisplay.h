@@ -336,6 +336,11 @@ public:
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
 	virtual void SetCelShaded( int stage ) = 0;
 
+	virtual uintptr_t LoadShaderFromFile( RString sVertexShaderFile, RString sFragmentShaderFile ) { return 0; }
+	virtual void DeleteShader( uintptr_t iShader ) { }
+	virtual void SetShader( uintptr_t iShader ) { }
+	virtual uintptr_t GetShader() const { return 0; }
+
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;
 
