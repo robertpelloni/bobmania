@@ -92,6 +92,16 @@ void ContentSwarmManager::RegisterLocalPack(const std::string& name)
 	LOG->Trace("ContentSwarmManager: Registered local pack %s", name.c_str());
 }
 
+void ContentSwarmManager::PublishLocalPack(const std::string& path)
+{
+	// Simulate hashing the file at 'path' and broadcasting to mesh
+	std::string name = "User Course (" + path + ")";
+	RegisterLocalPack(name);
+
+	// Bonus for publishing
+	EconomyManager::Instance()->AwardBandwidthReward(50);
+}
+
 bool ContentSwarmManager::StartDownload(const std::string& packID)
 {
 	LockMut(m_Mutex);

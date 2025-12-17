@@ -6,6 +6,7 @@
 #include "InputEventPlus.h"
 #include "RageUtil.h"
 #include "GymPlaylistGenerator.h"
+#include "GymCourseWriter.h"
 
 REGISTER_SCREEN_CLASS( ScreenGymWelcome );
 
@@ -51,7 +52,10 @@ void ScreenGymWelcome::Input( const InputEventPlus &input )
 		// and then jump to ScreenGameplay directly or ScreenSelectCourse.
 
 		// Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, INTENSITY_MODERATE );
-		// GAMESTATE->m_pCurCourse.Set( pWorkout );
+		// if (pWorkout) {
+		//    GymCourseWriter::WriteCourse(pWorkout, "Songs/MyWorkout.crs");
+		//    GAMESTATE->m_pCurCourse.Set( pWorkout );
+		// }
 
 		// For MVP, just jump to music select
 		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
