@@ -824,6 +824,13 @@ void Actor::SetShader( RString sPath )
 	m_iShader = DISPLAY->LoadShaderFromFile( "", sPath );
 }
 
+void Actor::SetShader( RString sVert, RString sFrag )
+{
+	if( m_iShader )
+		DISPLAY->DeleteShader( m_iShader );
+	m_iShader = DISPLAY->LoadShaderFromFile( sVert, sFrag );
+}
+
 void Actor::ClearShader()
 {
 	if( m_iShader )
@@ -1939,7 +1946,14 @@ public:
 	static int texturetranslate( T* p, lua_State *L )	{ p->SetTextureTranslate(FArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); COMMON_RETURN_SELF; }
 	static int SetTextureFiltering( T* p, lua_State *L )	{ p->SetTextureFiltering(BArg(1)); COMMON_RETURN_SELF; }
-	static int SetShader( T* p, lua_State *L )		{ p->SetShader(SArg(1)); COMMON_RETURN_SELF; }
+	static int SetShader( T* p, lua_State *L )
+	{
+		if( lua_gettop(L) >= 2 && !lua_isnil(L, 2) )
+			p->SetShader( SArg(1), SArg(2) );
+		else
+			p->SetShader( SArg(1) );
+		COMMON_RETURN_SELF;
+	}
 	static int ClearShader( T* p, lua_State *L )		{ p->ClearShader(); COMMON_RETURN_SELF; }
 	static int SetUniform( T* p, lua_State *L )
 	{

@@ -23,15 +23,18 @@ We have successfully merged key features from the **ITGMania** fork and achieved
 
 4.  **NotITG Parity: Shader Support (Advanced)**
     *   **Shader Loading:** Implemented `LoadShaderFromFile`, `SetShader`, `GetShader`, `DeleteShader` in `RageDisplay` / `RageDisplay_OGL`.
-    *   **Per-Actor Shaders:** Added `Actor::SetShader(path)` Lua binding. Hooks `BeginDraw`/`EndDraw` to safely apply and restore shaders, supporting nested ActorFrames.
+    *   **Per-Actor Shaders:** Added `Actor::SetShader(path)` and `Actor::SetShader(vert, frag)` Lua bindings. Hooks `BeginDraw`/`EndDraw` to safely apply and restore shaders, supporting nested ActorFrames.
     *   **Uniform Passing:** Added `Actor::SetUniform(name, val...)` Lua binding. Supports floats, vec2, vec3, vec4. Automatically applies uniforms when the shader is active during draw.
+    *   **Vertex Shaders:** Explicit support via `SetShader(vert, frag)`.
     *   **Files:** `src/RageDisplay.h`, `src/RageDisplay_OGL.h`, `src/RageDisplay_OGL.cpp`, `src/Actor.h`, `src/Actor.cpp`.
+
+5.  **NotITG Parity: Render Targets**
+    *   **Status:** **Supported** via existing `ActorFrameTexture` class.
+    *   **Lua Binding:** `ActorFrameTexture` exposes `Create`, `SetTextureName`, `EnableDepthBuffer`, etc.
+    *   **Usage:** Create AFT, add children, capture to texture, use texture on Sprite.
 
 ### Pending / Future Work
 *   **Mine Fix (DinsFire64):** Not implemented. Logic requires deeper investigation into `Player.cpp` interactions with hold releases and overlapping taps.
-*   **NotITG Parity:**
-    *   Vertex Shader support (currently `SetShader` uses fixed function vertex pipeline or default; need explicit Lua API for Vert+Frag).
-    *   Render Targets (`SetRenderTarget`) - partially exists in backend but needs Lua exposure.
 
 ## 2. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.

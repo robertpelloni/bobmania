@@ -581,6 +581,7 @@ public:
 	// render states
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
 	void SetShader( RString sPath );
+	void SetShader( RString sVert, RString sFrag );
 	void ClearShader();
 	void SetUniform( const RString &sName, float f );
 	void SetUniform( const RString &sName, float f1, float f2 );
