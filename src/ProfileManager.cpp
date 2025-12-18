@@ -1036,6 +1036,13 @@ void ProfileManager::SetStatsPrefix(RString const& prefix)
 	m_pMachineProfile->HandleStatsPrefixChange(MACHINE_PROFILE_DIR, false);
 }
 
+bool ProfileManager::LoadProfileFromID( const RString& id, PlayerNumber pn )
+{
+	// Simulation for QR Login
+	LOG->Trace("ProfileManager::LoadProfileFromID(%s, P%d)", id.c_str(), pn+1);
+	return true;
+}
+
 // lua start
 #include "LuaBinding.h"
 
