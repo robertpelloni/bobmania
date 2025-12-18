@@ -37,6 +37,8 @@ public:
 	~EconomyManager();
 
 	void Initialize();
+	void LoadState();
+	void SaveState();
 	void Update(float fDeltaTime); // Called every frame for background mining
 
 	// Wallet Functions

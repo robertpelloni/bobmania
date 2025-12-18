@@ -2,6 +2,7 @@
 #include "EconomyManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "IniFile.h"
 #include <climits>
 
 // Fix for missing macro in standalone compilation
@@ -58,6 +59,80 @@ void EconomyManager::Initialize()
 	m_Ledger["WALLET_PLAYER"] = 100; // Sign-up bonus
 
 	LOG->Trace("EconomyManager: Genesis Block Loaded.");
+
+	LoadState();
+}
+
+void EconomyManager::LoadState()
+{
+	LockMut(m_Mutex);
+	IniFile ini;
+	if( !ini.ReadFile("Save/Economy.ini") ) return;
+
+	// Load Ledger
+	const XNode* pLedgerNode = ini.GetChild("Ledger");
+	if( pLedgerNode ) {
+		FOREACH_CONST_Attr(pLedgerNode, attr) {
+			m_Ledger[attr->first] = StringToInt64(attr->second->GetValue());
+		}
+	}
+
+	// Load Stats
+	ini.GetValue("Stats", "Elo", m_iPlayerElo);
+	long long mining;
+	if(ini.GetValue("Stats", "MiningRewards", mining)) m_iAccumulatedMiningReward = mining;
+
+	// Load Inventory (Simplified: Comma separated list of names)
+	std::string sInv;
+	if(ini.GetValue("Inventory", "Items", sInv)) {
+		std::vector<std::string> names;
+		split(sInv, ",", names);
+		for(const auto& name : names) {
+			if(!HasAsset(name)) {
+				// Reconstruct minimal asset
+				Asset a; a.name = name; a.type = "Item"; a.value = 0;
+				m_Inventory.push_back(a);
+			}
+		}
+	}
+
+	// Load Equipped
+	const XNode* pEquipNode = ini.GetChild("Equipped");
+	if( pEquipNode ) {
+		FOREACH_CONST_Attr(pEquipNode, attr) {
+			m_Equipped[attr->first] = attr->second->GetValue();
+		}
+	}
+
+	LOG->Trace("EconomyManager: State Loaded.");
+}
+
+void EconomyManager::SaveState()
+{
+	LockMut(m_Mutex);
+	IniFile ini;
+
+	// Save Ledger
+	for(auto const& [addr, bal] : m_Ledger) {
+		ini.SetValue("Ledger", addr, ssprintf("%lld", bal));
+	}
+
+	// Save Stats
+	ini.SetValue("Stats", "Elo", m_iPlayerElo);
+	ini.SetValue("Stats", "MiningRewards", ssprintf("%lld", m_iAccumulatedMiningReward));
+
+	// Save Inventory
+	std::string sInv;
+	for(const auto& item : m_Inventory) sInv += item.name + ",";
+	if(!sInv.empty()) sInv.pop_back();
+	ini.SetValue("Inventory", "Items", sInv);
+
+	// Save Equipped
+	for(auto const& [slot, item] : m_Equipped) {
+		ini.SetValue("Equipped", slot, item);
+	}
+
+	ini.WriteFile("Save/Economy.ini");
 }
 
 void EconomyManager::Update(float fDeltaTime)
@@ -117,6 +192,7 @@ bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to
 
 	m_TransactionHistory.push_back(tx);
 
+	SaveState(); // Auto-save on transaction
 	LOG->Trace("EconomyManager: Transfer Success! %lld coins from %s to %s (%s)", amount, from.c_str(), to.c_str(), reason.c_str());
 	return true;
 }
