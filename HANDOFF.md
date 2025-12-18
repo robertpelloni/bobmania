@@ -38,6 +38,11 @@ We have successfully merged key features from the **ITGMania** fork and achieved
     *   **Details:** Changed condition from `( REQUIRE_STEP_ON_MINES == !bHeld )` to `( !REQUIRE_STEP_ON_MINES || !bHeld )`.
     *   **Files:** `src/Player.cpp`.
 
+7.  **Gameplay Modes: BothAtOnce**
+    *   **Implementation:** Added `BothAtOnce` preference.
+    *   **Details:** Mirrors inputs from any player to all enabled players in `ScreenGameplay`. Useful for "2 player 1 controller" modfiles.
+    *   **Files:** `src/PrefsManager.h`, `src/PrefsManager.cpp`, `src/ScreenGameplay.cpp`.
+
 ## 2. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 

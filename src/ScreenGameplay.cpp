@@ -2606,7 +2606,19 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )
-						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					{
+						if( PREFSMAN->m_bBothAtOnce )
+						{
+							FOREACH_EnabledPlayerInfo( m_vPlayerInfo, other_pi )
+							{
+								other_pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+							}
+						}
+						else
+						{
+							pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+						}
+					}
 					return true;
 				}
 			}

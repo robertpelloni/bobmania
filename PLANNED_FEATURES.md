@@ -41,9 +41,10 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
     *   GLSL shader support controllable via Lua.
     *   Support for Vertex and Fragment shaders.
 *   **Window Manipulation:**
-    *   Allow the game window to be moved/resized via Lua (classic NotITG effect).
-*   **Gameplay Modes:**
+    *   Allow the game window to be moved/resized via Lua (classic NotITG effect). **(Deferred)**
+*   **[COMPLETED] Gameplay Modes:**
     *   `BothAtOnce` mode (Mirror inputs to both sides).
+    *   Implemented via `BothAtOnce` preference.
 
 ## 3. Implementation Plan
 1.  **[DONE] ITGMania - Song Management:** Implement `LoadNewSongs`.
