@@ -12,6 +12,9 @@ public:
 
 	// Helper to get a string representation for the UI
 	static std::string GetMsdString( const Steps* pSteps );
+
+	// Returns tags like "Stream", "Jumpstream", "Jack" based on note data
+	static std::vector<std::string> GetTags( const Steps* pSteps );
 };
 
 #endif

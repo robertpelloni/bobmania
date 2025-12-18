@@ -4,6 +4,14 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+// Local UUID helper
+static std::string MakeUUID()
+{
+	std::string res = "";
+	for(int i=0; i<32; ++i) res += ssprintf("%x", RandomInt(16));
+	return res;
+}
+
 ContentSwarmManager* ContentSwarmManager::s_pInstance = NULL;
 
 ContentSwarmManager* ContentSwarmManager::Instance()
@@ -87,9 +95,19 @@ std::vector<SwarmPack> ContentSwarmManager::GetAvailablePacks() const
 void ContentSwarmManager::RegisterLocalPack(const std::string& name)
 {
 	LockMut(m_Mutex);
-	std::string id = "LOC_" + Rage::make_uuid().substr(0,8);
+	std::string id = "LOC_" + MakeUUID().substr(0,8);
 	m_SwarmInventory.push_back({ id, name, 100000, 1, true });
 	LOG->Trace("ContentSwarmManager: Registered local pack %s", name.c_str());
+}
+
+void ContentSwarmManager::PublishLocalPack(const std::string& path)
+{
+	// Simulate hashing the file at 'path' and broadcasting to mesh
+	std::string name = "User Course (" + path + ")";
+	RegisterLocalPack(name);
+
+	// Bonus for publishing
+	EconomyManager::Instance()->AwardBandwidthReward(50);
 }
 
 bool ContentSwarmManager::StartDownload(const std::string& packID)

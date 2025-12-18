@@ -29,6 +29,7 @@ public:
 	// Discovery
 	std::vector<SwarmPack> GetAvailablePacks() const;
 	void RegisterLocalPack(const std::string& name);
+	void PublishLocalPack(const std::string& path);
 
 	// Transfer
 	bool StartDownload(const std::string& packID);

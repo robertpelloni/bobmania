@@ -22,6 +22,7 @@ struct Transaction {
 struct Asset {
 	std::string assetID;
 	std::string name;
+	std::string type; // "Title", "Avatar", "License"
 	WalletAddress owner;
 	CurrencyAmount value;
 };
@@ -36,6 +37,8 @@ public:
 	~EconomyManager();
 
 	void Initialize();
+	void LoadState();
+	void SaveState();
 	void Update(float fDeltaTime); // Called every frame for background mining
 
 	// Wallet Functions
@@ -53,6 +56,17 @@ public:
 	void AwardBandwidthReward(CurrencyAmount amount);
 	CurrencyAmount GetMiningReward() const { return m_iAccumulatedMiningReward; }
 
+	// Competitive
+	int GetPlayerElo() const { return m_iPlayerElo; }
+	void UpdateElo(bool bWon, int iOpponentElo);
+
+	// Inventory
+	void AddToInventory(const Asset& asset);
+	bool HasAsset(const std::string& name);
+	void EquipAsset(const std::string& type, const std::string& name);
+	std::string GetEquippedAsset(const std::string& type);
+	std::vector<Asset> GetInventory() const;
+
 	// Data Access for UI
 	std::vector<Transaction> GetRecentTransactions() const;
 
@@ -68,6 +82,13 @@ private:
 	// Server Mode Simulation
 	float m_fMiningTimer;
 	CurrencyAmount m_iAccumulatedMiningReward;
+
+	// Competitive
+	int m_iPlayerElo;
+
+	// Inventory
+	std::vector<Asset> m_Inventory;
+	std::map<std::string, std::string> m_Equipped; // Type -> Name
 
 	static EconomyManager* s_pInstance;
 

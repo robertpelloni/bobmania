@@ -33,3 +33,22 @@ std::string MsdCalculator::GetMsdString( const Steps* pSteps )
 	float fMsd = CalculateMSD( pSteps );
 	return ssprintf( "MSD: %.2f", fMsd );
 }
+
+std::vector<std::string> MsdCalculator::GetTags( const Steps* pSteps )
+{
+	std::vector<std::string> tags;
+	if( !pSteps ) return tags;
+
+	NoteData nd;
+	pSteps->GetNoteData( nd );
+
+	int jumps = nd.GetNumJumpNotes();
+	int taps = nd.GetNumTapNotes();
+
+	if( jumps > taps / 4 ) tags.push_back("Jumpstream");
+	else if( taps > 1000 ) tags.push_back("Stream");
+
+	if( pSteps->GetMeter() > 12 ) tags.push_back("Boss");
+
+	return tags;
+}

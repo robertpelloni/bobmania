@@ -3,6 +3,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
+#include "ActorCalorieGraph.h"
 
 class ScreenGymWelcome : public ScreenWithMenuElements
 {
@@ -15,6 +16,8 @@ private:
 	BitmapText m_textInstruction;
 	BitmapText m_textCalories;
 	BitmapText m_textServerStatus;
+
+	ActorCalorieGraph m_Graph;
 };
 
 #endif

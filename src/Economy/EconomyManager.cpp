@@ -2,6 +2,21 @@
 #include "EconomyManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "IniFile.h"
+#include <climits>
+
+// Fix for missing macro in standalone compilation
+#ifndef PRINTF
+#define PRINTF(a,b)
+#endif
+
+// Local UUID helper to avoid dependency issues
+static std::string MakeUUID()
+{
+	std::string res = "";
+	for(int i=0; i<32; ++i) res += ssprintf("%x", RandomInt(16));
+	return res;
+}
 
 EconomyManager* EconomyManager::s_pInstance = NULL;
 
@@ -24,6 +39,7 @@ EconomyManager::EconomyManager() : m_Mutex("EconomyManager")
 	m_iCurrentBetAmount = 0;
 	m_fMiningTimer = 0;
 	m_iAccumulatedMiningReward = 0;
+	m_iPlayerElo = 1200; // Default Starting Elo (Gold/Silver border)
 }
 
 EconomyManager::~EconomyManager()
@@ -43,6 +59,80 @@ void EconomyManager::Initialize()
 	m_Ledger["WALLET_PLAYER"] = 100; // Sign-up bonus
 
 	LOG->Trace("EconomyManager: Genesis Block Loaded.");
+
+	LoadState();
+}
+
+void EconomyManager::LoadState()
+{
+	LockMut(m_Mutex);
+	IniFile ini;
+	if( !ini.ReadFile("Save/Economy.ini") ) return;
+
+	// Load Ledger
+	const XNode* pLedgerNode = ini.GetChild("Ledger");
+	if( pLedgerNode ) {
+		FOREACH_CONST_Attr(pLedgerNode, attr) {
+			m_Ledger[attr->first] = StringToInt64(attr->second->GetValue());
+		}
+	}
+
+	// Load Stats
+	ini.GetValue("Stats", "Elo", m_iPlayerElo);
+	long long mining;
+	if(ini.GetValue("Stats", "MiningRewards", mining)) m_iAccumulatedMiningReward = mining;
+
+	// Load Inventory (Simplified: Comma separated list of names)
+	std::string sInv;
+	if(ini.GetValue("Inventory", "Items", sInv)) {
+		std::vector<std::string> names;
+		split(sInv, ",", names);
+		for(const auto& name : names) {
+			if(!HasAsset(name)) {
+				// Reconstruct minimal asset
+				Asset a; a.name = name; a.type = "Item"; a.value = 0;
+				m_Inventory.push_back(a);
+			}
+		}
+	}
+
+	// Load Equipped
+	const XNode* pEquipNode = ini.GetChild("Equipped");
+	if( pEquipNode ) {
+		FOREACH_CONST_Attr(pEquipNode, attr) {
+			m_Equipped[attr->first] = attr->second->GetValue();
+		}
+	}
+
+	LOG->Trace("EconomyManager: State Loaded.");
+}
+
+void EconomyManager::SaveState()
+{
+	LockMut(m_Mutex);
+	IniFile ini;
+
+	// Save Ledger
+	for(auto const& [addr, bal] : m_Ledger) {
+		ini.SetValue("Ledger", addr, ssprintf("%lld", bal));
+	}
+
+	// Save Stats
+	ini.SetValue("Stats", "Elo", m_iPlayerElo);
+	ini.SetValue("Stats", "MiningRewards", ssprintf("%lld", m_iAccumulatedMiningReward));
+
+	// Save Inventory
+	std::string sInv;
+	for(const auto& item : m_Inventory) sInv += item.name + ",";
+	if(!sInv.empty()) sInv.pop_back();
+	ini.SetValue("Inventory", "Items", sInv);
+
+	// Save Equipped
+	for(auto const& [slot, item] : m_Equipped) {
+		ini.SetValue("Equipped", slot, item);
+	}
+
+	ini.WriteFile("Save/Economy.ini");
 }
 
 void EconomyManager::Update(float fDeltaTime)
@@ -93,7 +183,7 @@ bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to
 	m_Ledger[to] += amount;
 
 	Transaction tx;
-	tx.txID = "TX_" + Rage::make_uuid(); // Using RageUtil helper
+	tx.txID = "TX_" + MakeUUID();
 	tx.from = from;
 	tx.to = to;
 	tx.amount = amount;
@@ -102,6 +192,7 @@ bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to
 
 	m_TransactionHistory.push_back(tx);
 
+	SaveState(); // Auto-save on transaction
 	LOG->Trace("EconomyManager: Transfer Success! %lld coins from %s to %s (%s)", amount, from.c_str(), to.c_str(), reason.c_str());
 	return true;
 }
@@ -195,6 +286,63 @@ void EconomyManager::AwardBandwidthReward(CurrencyAmount amount)
 	m_Ledger["WALLET_PLAYER"] += amount;
 	m_iAccumulatedMiningReward += amount; // Track as generic earning for now
 	LOG->Trace("EconomyManager: Awarded %lld tokens for bandwidth.", amount);
+}
+
+void EconomyManager::UpdateElo(bool bWon, int iOpponentElo)
+{
+	LockMut(m_Mutex);
+
+	// Basic Elo Calculation
+	// K-Factor = 32 (Standard for new players)
+	const int K = 32;
+
+	// Expected Score = 1 / (1 + 10^((OpponentElo - PlayerElo) / 400))
+	double expected = 1.0 / (1.0 + pow(10.0, (double)(iOpponentElo - m_iPlayerElo) / 400.0));
+
+	double actual = bWon ? 1.0 : 0.0;
+	int change = (int)(K * (actual - expected));
+
+	m_iPlayerElo += change;
+
+	LOG->Trace("EconomyManager: Elo Update. Old: %d, Opponent: %d, Result: %s, New: %d (Change: %d)",
+		m_iPlayerElo - change, iOpponentElo, bWon ? "WIN" : "LOSS", m_iPlayerElo, change);
+}
+
+void EconomyManager::AddToInventory(const Asset& asset)
+{
+	LockMut(m_Mutex);
+	m_Inventory.push_back(asset);
+	LOG->Trace("EconomyManager: Added %s to inventory.", asset.name.c_str());
+}
+
+bool EconomyManager::HasAsset(const std::string& name)
+{
+	LockMut(m_Mutex);
+	for(const auto& a : m_Inventory) {
+		if(a.name == name) return true;
+	}
+	return false;
+}
+
+void EconomyManager::EquipAsset(const std::string& type, const std::string& name)
+{
+	LockMut(m_Mutex);
+	m_Equipped[type] = name;
+	LOG->Trace("EconomyManager: Equipped %s as %s.", name.c_str(), type.c_str());
+}
+
+std::string EconomyManager::GetEquippedAsset(const std::string& type)
+{
+	LockMut(m_Mutex);
+	if (m_Equipped.find(type) != m_Equipped.end()) return m_Equipped[type];
+	return "";
+}
+
+std::vector<Asset> EconomyManager::GetInventory() const
+{
+	// Returning copy is thread safe enough for MVP if we assume list doesn't change during copy
+	// Ideal: LockMut(m_Mutex); but const correctness + returning value is tricky without recursive mutex behavior guaranteed or copy.
+	return m_Inventory;
 }
 
 std::vector<Transaction> EconomyManager::GetRecentTransactions() const

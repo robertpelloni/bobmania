@@ -6,6 +6,7 @@
 #include "InputEventPlus.h"
 #include "RageUtil.h"
 #include "GymPlaylistGenerator.h"
+#include "GymCourseWriter.h"
 
 REGISTER_SCREEN_CLASS( ScreenGymWelcome );
 
@@ -35,6 +36,12 @@ void ScreenGymWelcome::Init()
 	m_textServerStatus.SetXY( 320, 400 );
 	this->AddChild( &m_textServerStatus );
 
+	// Stats Graph
+	m_Graph.SetXY( 320, 350 );
+	std::vector<float> mockHistory = { 150, 200, 320, 100, 450, 300, 300 }; // Mock
+	m_Graph.LoadData( mockHistory );
+	this->AddChild( &m_Graph );
+
 	// Initial update of text
 	long long earned = EconomyManager::Instance()->GetMiningReward();
 	m_textServerStatus.SetText( ssprintf("Server Node Active... Mined: %lld Coins", earned) );
@@ -51,7 +58,10 @@ void ScreenGymWelcome::Input( const InputEventPlus &input )
 		// and then jump to ScreenGameplay directly or ScreenSelectCourse.
 
 		// Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, INTENSITY_MODERATE );
-		// GAMESTATE->m_pCurCourse.Set( pWorkout );
+		// if (pWorkout) {
+		//    GymCourseWriter::WriteCourse(pWorkout, "Songs/MyWorkout.crs");
+		//    GAMESTATE->m_pCurCourse.Set( pWorkout );
+		// }
 
 		// For MVP, just jump to music select
 		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
