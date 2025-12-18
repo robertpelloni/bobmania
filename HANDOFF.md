@@ -1,7 +1,7 @@
 # Handoff Document: StepMania 5.2 (5.1-new) Merge Project & Token Research
 
 ## 1. StepMania 5.2 Merge Status
-We have successfully merged key features from the **ITGMania** fork into the **StepMania 5.1-new** branch.
+We have successfully merged key features from the **ITGMania** fork and achieved significant **NotITG** parity in the **StepMania 5.1-new** branch.
 
 ### Completed Features
 1.  **Load New Songs (`SSMReloadSongs`)**
@@ -21,9 +21,22 @@ We have successfully merged key features from the **ITGMania** fork into the **S
         *   Enabled (True): Pitch Dependent (Vinyl/Chipmunk). Sets `RageSound` Pitch property equal to Speed property.
     *   **Files:** `src/PrefsManager.h`, `src/PrefsManager.cpp`, `src/ScreenGameplay.cpp`.
 
-### Pending / Future Work
-*   **Mine Fix (DinsFire64):** Not implemented. Logic requires deeper investigation into `Player.cpp` interactions with hold releases and overlapping taps.
-*   **NotITG Parity:** Lua modding API (Actors, Shaders) is a large task remaining.
+4.  **NotITG Parity: Shader Support (Advanced)**
+    *   **Shader Loading:** Implemented `LoadShaderFromFile`, `SetShader`, `GetShader`, `DeleteShader` in `RageDisplay` / `RageDisplay_OGL`.
+    *   **Per-Actor Shaders:** Added `Actor::SetShader(path)` and `Actor::SetShader(vert, frag)` Lua bindings. Hooks `BeginDraw`/`EndDraw` to safely apply and restore shaders, supporting nested ActorFrames.
+    *   **Uniform Passing:** Added `Actor::SetUniform(name, val...)` Lua binding. Supports floats, vec2, vec3, vec4. Automatically applies uniforms when the shader is active during draw.
+    *   **Vertex Shaders:** Explicit support via `SetShader(vert, frag)`.
+    *   **Files:** `src/RageDisplay.h`, `src/RageDisplay_OGL.h`, `src/RageDisplay_OGL.cpp`, `src/Actor.h`, `src/Actor.cpp`.
+
+5.  **NotITG Parity: Render Targets**
+    *   **Status:** **Supported** via existing `ActorFrameTexture` class.
+    *   **Lua Binding:** `ActorFrameTexture` exposes `Create`, `SetTextureName`, `EnableDepthBuffer`, etc.
+    *   **Usage:** Create AFT, add children, capture to texture, use texture on Sprite.
+
+6.  **Mine Fix (DinsFire64)**
+    *   **Implementation:** Fixed logic in `Player::Step` to correctly trigger mines on fresh presses when `REQUIRE_STEP_ON_MINES` is false.
+    *   **Details:** Changed condition from `( REQUIRE_STEP_ON_MINES == !bHeld )` to `( !REQUIRE_STEP_ON_MINES || !bHeld )`.
+    *   **Files:** `src/Player.cpp`.
 
 ## 2. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
