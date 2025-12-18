@@ -1467,6 +1467,111 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	}
 }
 
+uintptr_t RageDisplay_Legacy::LoadShaderFromFile( RString sVertexShaderFile, RString sFragmentShaderFile )
+{
+	// Load the vertex shader
+	GLhandleARB hVertexShader = 0;
+	if( !sVertexShaderFile.empty() )
+	{
+		vector<RString> asDefines;
+		hVertexShader = LoadShader( GL_VERTEX_SHADER_ARB, sVertexShaderFile, asDefines );
+		if( hVertexShader == 0 )
+			return 0;
+	}
+
+	// Load the fragment shader
+	GLhandleARB hFragmentShader = 0;
+	if( !sFragmentShaderFile.empty() )
+	{
+		vector<RString> asDefines;
+		hFragmentShader = LoadShader( GL_FRAGMENT_SHADER_ARB, sFragmentShaderFile, asDefines );
+		if( hFragmentShader == 0 )
+		{
+			if( hVertexShader )
+				glDeleteObjectARB( hVertexShader );
+			return 0;
+		}
+	}
+
+	// Link them
+	GLhandleARB hProgram = glCreateProgramObjectARB();
+	if( hVertexShader )
+		glAttachObjectARB( hProgram, hVertexShader );
+	if( hFragmentShader )
+		glAttachObjectARB( hProgram, hFragmentShader );
+
+	glLinkProgramARB( hProgram );
+
+	// Check for link errors
+	GLint bLinked = false;
+	glGetObjectParameterivARB( hProgram, GL_OBJECT_LINK_STATUS_ARB, &bLinked );
+	if( !bLinked )
+	{
+		RString sInfo = GetInfoLog( hProgram );
+		LOG->Warn( "Error linking shader program: %s", sInfo.c_str() );
+		glDeleteObjectARB( hProgram );
+		if( hVertexShader ) glDeleteObjectARB( hVertexShader );
+		if( hFragmentShader ) glDeleteObjectARB( hFragmentShader );
+		return 0;
+	}
+
+	return (uintptr_t)hProgram;
+}
+
+void RageDisplay_Legacy::DeleteShader( uintptr_t iShader )
+{
+	if( iShader == 0 )
+		return;
+	glDeleteObjectARB( (GLhandleARB)iShader );
+}
+
+void RageDisplay_Legacy::SetShader( uintptr_t iShader )
+{
+	glUseProgramObjectARB( (GLhandleARB)iShader );
+}
+
+uintptr_t RageDisplay_Legacy::GetShader() const
+{
+	GLint id = 0;
+	glGetIntegerv( GL_CURRENT_PROGRAM, &id );
+	return (uintptr_t)id;
+}
+
+int RageDisplay_Legacy::GetUniformLocation( uintptr_t iShader, const RString &sName )
+{
+	return glGetUniformLocationARB( (GLhandleARB)iShader, sName.c_str() );
+}
+
+void RageDisplay_Legacy::SetUniform1f( int iLoc, float v0 )
+{
+	glUniform1fARB( iLoc, v0 );
+}
+
+void RageDisplay_Legacy::SetUniform2f( int iLoc, float v0, float v1 )
+{
+	glUniform2fARB( iLoc, v0, v1 );
+}
+
+void RageDisplay_Legacy::SetUniform3f( int iLoc, float v0, float v1, float v2 )
+{
+	glUniform3fARB( iLoc, v0, v1, v2 );
+}
+
+void RageDisplay_Legacy::SetUniform4f( int iLoc, float v0, float v1, float v2, float v3 )
+{
+	glUniform4fARB( iLoc, v0, v1, v2, v3 );
+}
+
+void RageDisplay_Legacy::SetUniform1i( int iLoc, int v0 )
+{
+	glUniform1iARB( iLoc, v0 );
+}
+
+void RageDisplay_Legacy::SetUniformMatrix4( int iLoc, const RageMatrix &mat )
+{
+	glUniformMatrix4fvARB( iLoc, 1, GL_FALSE, (const float*)&mat );
+}
+
 RageCompiledGeometry* RageDisplay_Legacy::CreateCompiledGeometry()
 {
 	if (GLEW_ARB_vertex_buffer_object)

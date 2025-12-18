@@ -336,6 +336,18 @@ public:
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
 	virtual void SetCelShaded( int stage ) = 0;
 
+	virtual uintptr_t LoadShaderFromFile( RString sVertexShaderFile, RString sFragmentShaderFile ) { return 0; }
+	virtual void DeleteShader( uintptr_t iShader ) { }
+	virtual void SetShader( uintptr_t iShader ) { }
+	virtual uintptr_t GetShader() const { return 0; }
+	virtual int GetUniformLocation( uintptr_t iShader, const RString &sName ) { return -1; }
+	virtual void SetUniform1f( int iLoc, float v0 ) { }
+	virtual void SetUniform2f( int iLoc, float v0, float v1 ) { }
+	virtual void SetUniform3f( int iLoc, float v0, float v1, float v2 ) { }
+	virtual void SetUniform4f( int iLoc, float v0, float v1, float v2, float v3 ) { }
+	virtual void SetUniform1i( int iLoc, int v0 ) { }
+	virtual void SetUniformMatrix4( int iLoc, const RageMatrix &mat ) { }
+
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;
 

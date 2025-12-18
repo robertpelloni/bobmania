@@ -1485,6 +1485,10 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 
 	RageSoundParams p;
 	p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+	if( PREFSMAN->m_bPitchDependentRate )
+	{
+		p.m_fPitch = p.m_fSpeed;
+	}
 	p.StopMode = RageSoundParams::M_CONTINUE;
 
 	{
@@ -1768,6 +1772,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( fabsf(p.m_fSpeed - fSpeed) > 0.01f && fSpeed >= 0.0f)
 		{
 			p.m_fSpeed = fSpeed;
+			if( PREFSMAN->m_bPitchDependentRate )
+			{
+				p.m_fPitch = fSpeed;
+			}
 			m_pSoundMusic->SetParams( p );
 		}
 	}

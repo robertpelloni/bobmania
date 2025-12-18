@@ -2186,7 +2186,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			{
 			case TapNoteType_Mine:
 				// Stepped too close to mine?
-				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) && 
+				if( !bRelease && ( !REQUIRE_STEP_ON_MINES || !bHeld ) &&
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
 				   m_Timing->IsJudgableAtRow(iSongRow))
 					score = TNS_HitMine;   

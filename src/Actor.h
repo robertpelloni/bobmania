@@ -580,6 +580,13 @@ public:
 
 	// render states
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
+	void SetShader( RString sPath );
+	void SetShader( RString sVert, RString sFrag );
+	void ClearShader();
+	void SetUniform( const RString &sName, float f );
+	void SetUniform( const RString &sName, float f1, float f2 );
+	void SetUniform( const RString &sName, float f1, float f2, float f3 );
+	void SetUniform( const RString &sName, float f1, float f2, float f3, float f4 );
 	void SetTextureTranslate( float x, float y )	{ m_texTranslate.x = x; m_texTranslate.y = y; }
 	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
@@ -659,6 +666,17 @@ protected:
 	RageColor m_internalGlow;
 
 	RageVector2	m_size;
+	uintptr_t	m_iShader;
+	uintptr_t	m_iPrevShader;
+
+	struct ShaderUniform
+	{
+		RString name;
+		enum Type { Float, Vec2, Vec3, Vec4, Int, Mat4 } type;
+		float fvals[4];
+	};
+	vector<ShaderUniform> m_ShaderUniforms;
+
 	TweenState	m_current;
 	TweenState	m_start;
 	TweenState	m_current_with_effects;
