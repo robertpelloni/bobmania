@@ -43,6 +43,12 @@ We have successfully merged key features from the **ITGMania** fork and achieved
     *   **Details:** Mirrors inputs from any player to all enabled players in `ScreenGameplay`. Useful for "2 player 1 controller" modfiles.
     *   **Files:** `src/PrefsManager.h`, `src/PrefsManager.cpp`, `src/ScreenGameplay.cpp`.
 
+8.  **NotITG Parity: NotePath Actor**
+    *   **Implementation:** Added new `NotePath` actor class.
+    *   **Details:** Allows visualizing the future path of arrows for a specific column. Supports configurable resolution and draw range (beats).
+    *   **Lua Bindings:** `SetPlayer(pn)`, `SetColumn(col)`, `SetDrawRange(start, end)`, `SetResolution(steps)`.
+    *   **Files:** `src/NotePath.h`, `src/NotePath.cpp`.
+
 ## 2. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 

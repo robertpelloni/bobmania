@@ -35,7 +35,7 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 ### Core Features
 *   **[PARTIAL] Modding Lua API:**
     *   **[COMPLETED]** Expose more Actor properties to Lua (`SetShader`, `SetUniform`).
-    *   Allow arbitrary pathing for notes (NotePath).
+    *   **[COMPLETED]** Allow arbitrary pathing for notes (NotePath).
     *   Support for "Modfiles" (charts that heavily script the engine).
 *   **[COMPLETED] Shaders:**
     *   GLSL shader support controllable via Lua.
@@ -51,3 +51,4 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 2.  **[DONE] ITGMania - Profile Management:** Implement `FastProfileSwitch`.
 3.  **[DONE] ITGMania - Gameplay Fixes:** Implement Rate Mods and Mine Fix.
 4.  **[DONE] NotITG - Modding Foundation:** Implemented Shaders and Uniforms.
+5.  **[DONE] NotITG - Visuals:** Implemented NotePath actor.
