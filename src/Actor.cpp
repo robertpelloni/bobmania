@@ -260,6 +260,9 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_PolygonMode );
 	CPY( m_fLineWidth );
 
+	CPY( m_LuaDrawFunction );
+	CPY( m_LuaUpdateFunction );
+
 	CPY( m_mapNameToCommands );
 #undef CPY
 }
@@ -333,6 +336,9 @@ Actor &Actor::operator=(Actor other)
 	SWAP( m_CullMode );
 	SWAP( m_PolygonMode );
 	SWAP( m_fLineWidth );
+
+	SWAP( m_LuaDrawFunction );
+	SWAP( m_LuaUpdateFunction );
 
 	SWAP( m_mapNameToCommands );
 #undef SWAP
@@ -469,7 +475,19 @@ void Actor::Draw()
 		if(PartiallyOpaque())
 		{
 			this->BeginDraw();
-			this->DrawPrimitives();
+			if( m_LuaDrawFunction.IsSet() && !m_LuaDrawFunction.IsNil() )
+			{
+				Lua *L = LUA->Get();
+				m_LuaDrawFunction.PushSelf(L);
+				this->PushSelf(L);
+				RString err = "Error running DrawFunction: ";
+				LuaHelpers::RunScriptOnStack(L, err, 1, 0, true);
+				LUA->Release(L);
+			}
+			else
+			{
+				this->DrawPrimitives();
+			}
 			this->EndDraw();
 		}
 		this->PostDraw();
@@ -1082,6 +1100,17 @@ void Actor::UpdateInternal(float delta_time)
 			wrap( m_current.rotation.z, 360 );
 			break;
 		default: break;
+	}
+
+	if( m_LuaUpdateFunction.IsSet() && !m_LuaUpdateFunction.IsNil() )
+	{
+		Lua *L = LUA->Get();
+		m_LuaUpdateFunction.PushSelf(L);
+		this->PushSelf(L);
+		lua_pushnumber(L, delta_time);
+		RString err = "Error running UpdateFunction: ";
+		LuaHelpers::RunScriptOnStack(L, err, 2, 0, true);
+		LUA->Release(L);
 	}
 
 	if(m_tween_uses_effect_delta)
@@ -2038,6 +2067,24 @@ public:
 		COMMON_RETURN_SELF;
 	}
 
+	static int SetDrawFunction( T* p, lua_State *L )
+	{
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+		p->SetDrawFunction( ref );
+		COMMON_RETURN_SELF;
+	}
+
+	static int SetUpdateFunction( T* p, lua_State *L )
+	{
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+		p->SetUpdateFunction( ref );
+		COMMON_RETURN_SELF;
+	}
+
 	static int GetX( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetX() ); return 1; }
 	static int GetY( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetY() ); return 1; }
 	static int GetZ( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetZ() ); return 1; }
@@ -2283,6 +2330,8 @@ public:
 		ADD_METHOD( addcommand );
 		ADD_METHOD( GetCommand );
 		ADD_METHOD( RunCommandsRecursively );
+		ADD_METHOD( SetDrawFunction );
+		ADD_METHOD( SetUpdateFunction );
 
 		ADD_METHOD( GetX );
 		ADD_METHOD( GetY );

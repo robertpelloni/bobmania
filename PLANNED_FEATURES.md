@@ -33,8 +33,9 @@ ITGMania is a fork of StepMania 5.1, so these features are high priority and eas
 NotITG is based on StepMania 3.95. Parity here involves reimplementing features in the SM5 engine.
 
 ### Core Features
-*   **[PARTIAL] Modding Lua API:**
+*   **[COMPLETED] Modding Lua API:**
     *   **[COMPLETED]** Expose more Actor properties to Lua (`SetShader`, `SetUniform`).
+    *   **[COMPLETED]** `SetDrawFunction`, `SetUpdateFunction`.
     *   **[COMPLETED]** Allow arbitrary pathing for notes (NotePath).
     *   Support for "Modfiles" (charts that heavily script the engine).
 *   **[COMPLETED] Shaders:**

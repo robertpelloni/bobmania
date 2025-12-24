@@ -84,6 +84,11 @@ We have implemented the foundation for **GrooveStats** integration (ITGMania par
     *   **Details:** Allows rendering actors as wireframes (lines) instead of filled polygons.
     *   **Files:** `src/Actor.h`, `src/Actor.cpp`.
 
+11. **NotITG Parity: Lua Draw/Update Hooks**
+    *   **Implementation:** Added `Actor::SetDrawFunction` and `Actor::SetUpdateFunction`.
+    *   **Details:** Allows overriding actor drawing and updating directly from Lua, essential for complex scripted modfiles.
+    *   **Files:** `src/Actor.h`, `src/Actor.cpp`.
+
 ## 4. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 

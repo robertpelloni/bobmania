@@ -599,6 +599,9 @@ public:
 	void SetPolygonMode( PolygonMode pm )		{ m_PolygonMode = pm; }
 	void SetLineWidth( float fWidth )			{ m_fLineWidth = fWidth; }
 
+	void SetDrawFunction( const LuaReference &ref ) { m_LuaDrawFunction = ref; }
+	void SetUpdateFunction( const LuaReference &ref ) { m_LuaUpdateFunction = ref; }
+
 	// Lua
 	virtual void PushSelf( lua_State *L );
 	virtual void PushContext( lua_State *L );
@@ -774,6 +777,9 @@ protected:
 private:
 	// commands
 	map<RString, apActorCommands> m_mapNameToCommands;
+
+	LuaReference m_LuaDrawFunction;
+	LuaReference m_LuaUpdateFunction;
 };
 
 #endif
