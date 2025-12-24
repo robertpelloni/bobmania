@@ -33,6 +33,9 @@ public:
 	void BeginConcurrentRendering();
 	void EndConcurrentRendering();
 
+	void SetWindowPosition( int x, int y );
+	void SetWindowSize( int w, int h );
+
 private:
 	void RestoreOutputConfig();
 

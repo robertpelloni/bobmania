@@ -1079,6 +1079,18 @@ public:
 		return 1;
 	}
 
+	static int SetWindowPosition( T* p, lua_State *L )
+	{
+		p->SetWindowPosition( IArg(1), IArg(2) );
+		return 0;
+	}
+
+	static int SetWindowSize( T* p, lua_State *L )
+	{
+		p->SetWindowSize( IArg(1), IArg(2) );
+		return 0;
+	}
+
 	LunaRageDisplay() 
 	{
 		ADD_METHOD( GetDisplayWidth );
@@ -1089,6 +1101,8 @@ public:
 		ADD_METHOD( GetDisplaySpecs );
 		ADD_METHOD( SupportsRenderToTexture );
 		ADD_METHOD( SupportsFullscreenBorderlessWindow );
+		ADD_METHOD( SetWindowPosition );
+		ADD_METHOD( SetWindowSize );
 	}
 };
 

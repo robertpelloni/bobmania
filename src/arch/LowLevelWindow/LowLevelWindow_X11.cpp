@@ -973,6 +973,18 @@ void LowLevelWindow_X11::EndConcurrentRendering()
 	ASSERT(b);
 }
 
+void LowLevelWindow_X11::SetWindowPosition( int x, int y )
+{
+	if( Dpy && Win )
+		XMoveWindow( Dpy, Win, x, y );
+}
+
+void LowLevelWindow_X11::SetWindowSize( int w, int h )
+{
+	if( Dpy && Win )
+		XResizeWindow( Dpy, Win, w, h );
+}
+
 /*
  * (c) 2005 Ben Anderson
  * All rights reserved.

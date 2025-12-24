@@ -43,6 +43,9 @@ public:
 	virtual void EndConcurrentRenderingMainThread() { }
 	virtual void BeginConcurrentRendering() { }
 	virtual void EndConcurrentRendering() { }
+
+	virtual void SetWindowPosition( int x, int y ) { }
+	virtual void SetWindowSize( int w, int h ) { }
 };
 
 #endif

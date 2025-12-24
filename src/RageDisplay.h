@@ -288,6 +288,9 @@ public:
 	virtual bool SupportsRenderToTexture() const { return false; }
 	virtual bool SupportsFullscreenBorderlessWindow() const { return false; }
 
+	virtual void SetWindowPosition( int x, int y ) { }
+	virtual void SetWindowSize( int w, int h ) { }
+
 	/* Create a render target, returning a texture handle. In addition to normal
 	 * texture functions, this can be passed to SetRenderTarget. Delete with
 	 * DeleteTexture. (UpdateTexture is not permitted.) Returns 0 if render-to-

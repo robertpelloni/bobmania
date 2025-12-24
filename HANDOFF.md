@@ -1,6 +1,14 @@
 # Handoff Document: StepMania 5.2 (5.1-new) Merge Project & Token Research
 
-## 1. StepMania 5.2 Merge Status
+## 1. Project Analysis: History & Fragmentation
+The StepMania 5.2 (5.1-new) branch stalled due to significant fragmentation in the community:
+*   **NotITG:** Forked from SM 3.95/OpenITG to focus on intense visual modding, breaking compatibility with SM5 architectures (`.ssc`, `ActorFrame`).
+*   **ITGMania:** Forked from SM 5.1 to focus on competitive stamina play, Quality of Life (QoL), and GrooveStats integration.
+*   **Etterna:** Forked for keyboard-specific mechanics and difficulty calculation.
+
+This "Merge" project aims to bring the unique features of NotITG (Lua modding) and ITGMania (Competitive QoL) back into a unified open-source codebase to resolve this stall.
+
+## 2. StepMania 5.2 Merge Status
 We have successfully merged key features from the **ITGMania** fork and achieved significant **NotITG** parity in the **StepMania 5.1-new** branch.
 
 ### Completed Features
@@ -54,7 +62,7 @@ We have successfully merged key features from the **ITGMania** fork and achieved
     *   **Held Misses:** Added `ScoreMissedHoldsAndRolls` player option. Forces missed holds to count as "LetGo" (Held Miss) judgments even if the theme metric is disabled.
     *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/PlayerState.h`, `src/PlayerState.cpp`, `src/Player.cpp`.
 
-## 2. Economy & Token Foundation
+## 3. Economy & Token Foundation
 We have laid the groundwork for a "Tip Economy" by implementing the **EconomyManager**.
 
 ### EconomyManager
@@ -67,7 +75,7 @@ We have laid the groundwork for a "Tip Economy" by implementing the **EconomyMan
     *   `EconomyManager:IsConnected()`: Checks status.
 *   **Files:** `src/Economy/EconomyManager.h`, `src/Economy/EconomyManager.cpp`, `src/CMakeData-singletons.cmake`, `src/StepMania.cpp`.
 
-## 3. GrooveStats Parity
+## 4. GrooveStats Parity
 We have implemented the foundation for **GrooveStats** integration (ITGMania parity).
 
 ### GrooveStatsManager
@@ -94,7 +102,12 @@ We have implemented the foundation for **GrooveStats** integration (ITGMania par
     *   **Details:** Allows per-player control of the Field of View and vertical vanish point, essential for 3D mod effects.
     *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/Player.cpp`, `src/Player.h`.
 
-## 4. Token Foundation Research: Tempo vs. Others
+13. **NotITG Parity: Window Manipulation**
+    *   **Implementation:** Added `DISPLAY:SetWindowPosition` and `SetWindowSize`.
+    *   **Details:** Implemented for X11 backend. Stubbed for others (interface exists in `LowLevelWindow`).
+    *   **Files:** `src/arch/LowLevelWindow/LowLevelWindow.h`, `LowLevelWindow_X11.cpp`, `src/RageDisplay.h`, `src/RageDisplay.cpp`.
+
+## 5. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 
 ### Tempo Analysis

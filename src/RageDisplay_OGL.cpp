@@ -2683,6 +2683,16 @@ bool RageDisplay_Legacy::SupportsFullscreenBorderlessWindow() const
 	return g_pWind->SupportsFullscreenBorderlessWindow() && SupportsRenderToTexture();
 }
 
+void RageDisplay_Legacy::SetWindowPosition( int x, int y )
+{
+	g_pWind->SetWindowPosition( x, y );
+}
+
+void RageDisplay_Legacy::SetWindowSize( int w, int h )
+{
+	g_pWind->SetWindowSize( w, h );
+}
+
 /*
  * Render-to-texture can be implemented in several ways: the generic GL_ARB_pixel_buffer_object,
  * or platform-specifically.  PBO is not available on all hardware that supports RTT,
