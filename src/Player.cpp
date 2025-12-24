@@ -1447,7 +1447,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 				//LOG->Trace("initiated note and let go :(");
 			}
 		}
-		else if( SCORE_MISSED_HOLDS_AND_ROLLS )
+		else if( SCORE_MISSED_HOLDS_AND_ROLLS || m_pPlayerState->m_PlayerOptions.GetCurrent().m_bScoreMissedHoldsAndRolls )
 		{
 			hns = HNS_LetGo;
 		}

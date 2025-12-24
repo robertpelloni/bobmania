@@ -19,14 +19,14 @@ ITGMania is a fork of StepMania 5.1, so these features are high priority and eas
 *   **Built-in Networking (GrooveStats):**
     *   Native support for GrooveStats without an external launcher.
     *   Submit scores, view leaderboards in-game.
-*   **Player-Specific Options:**
+*   **[COMPLETED] Player-Specific Options:**
     *   Visual Delay (Audio/Video sync per player).
     *   Disable Timing Windows (Practice mode feature).
 
 ### Bug Fixes
 *   **[COMPLETED] Mine Fix:** Logic fix for mines (Credit: DinsFire64).
     *   Fixed logic error preventing mines from triggering on press when `REQUIRE_STEP_ON_MINES` is false.
-*   **Held Misses:** Tracking held misses in engine for pad debugging.
+*   **[COMPLETED] Held Misses:** Tracking held misses in engine for pad debugging.
 *   **Overlapping Hold Bug:** Fix for holds that overlap.
 
 ## 2. NotITG Parity

@@ -86,6 +86,7 @@ void PlayerOptions::Init()
 	m_fModTimerOffset = 0;		m_SpeedfModTimerOffset = 1.0f;
 	m_fDrawSize = 0;		m_SpeedfDrawSize = 1.0f;
 	m_fDrawSizeBack = 0;		m_SpeedfDrawSizeBack = 1.0f;
+	m_fVisualDelaySeconds = 0;	m_SpeedfVisualDelaySeconds = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
@@ -94,6 +95,7 @@ void PlayerOptions::Init()
 	m_bDizzyHolds = false;
 	m_bZBuffer = false;
 	m_bCosecant = false;
+	m_bScoreMissedHoldsAndRolls = false;
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -126,6 +128,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fModTimerOffset );
 	APPROACH( fDrawSize );
 	APPROACH( fDrawSizeBack );
+	APPROACH( fVisualDelaySeconds );
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
@@ -182,6 +185,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bDizzyHolds );
 	DO_COPY( m_bZBuffer );
 	DO_COPY( m_bCosecant );
+	DO_COPY( m_bScoreMissedHoldsAndRolls );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -466,6 +470,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fModTimerOffset,	"ModTimerOffset" );
 	AddPart( AddTo, m_fDrawSize,		"DrawSize" );
 	AddPart( AddTo, m_fDrawSizeBack,	"DrawSizeBack" );
+	AddPart( AddTo, m_fVisualDelaySeconds, "VisualDelaySeconds" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
 
@@ -512,6 +517,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 	if( m_bMuteOnError )			AddTo.push_back( "MuteOnError" );
+	if( m_bScoreMissedHoldsAndRolls ) AddTo.push_back( "ScoreMissedHoldsAndRolls" );
 
 	switch( m_FailType )
 	{
@@ -696,6 +702,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "drawsize" )				SET_FLOAT( fDrawSize )
 	    else if( sBit == "drawsizeback" )			SET_FLOAT( fDrawSizeBack )
 	}
+	else if( sBit == "visualdelayseconds" )			SET_FLOAT( fVisualDelaySeconds )
 	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
 	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
 	else if( sBit == "lifetime" ) { m_LifeType= LifeType_Time; }
@@ -1083,6 +1090,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_FailType = po.m_FailType;
 	}
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
+	else if( sBit == "scoremissedholdsandrolls" ) m_bScoreMissedHoldsAndRolls = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
 
 	else if( sBit.find("move") != sBit.npos)
@@ -1348,6 +1356,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fModTimerOffset);
 	COMPARE(m_fDrawSize);
 	COMPARE(m_fDrawSizeBack);
+	COMPARE(m_fVisualDelaySeconds);
 	COMPARE(m_BatteryLives);
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
@@ -1362,6 +1371,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bDizzyHolds);
 	COMPARE(m_bZBuffer);
 	COMPARE(m_bCosecant);
+	COMPARE(m_bScoreMissedHoldsAndRolls);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1429,6 +1439,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fModTimerOffset);
 	CPY_SPEED(fDrawSize);
 	CPY_SPEED(fDrawSizeBack);
+	CPY_SPEED(fVisualDelaySeconds);
 	CPY(m_BatteryLives);
 	CPY_SPEED(fTimeSpacing);
 	CPY_SPEED(fScrollSpeed);
@@ -1443,6 +1454,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
+	CPY(m_bScoreMissedHoldsAndRolls);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1702,11 +1714,13 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_fModTimerOffset);
 	CPY(m_fDrawSize);
 	CPY(m_fDrawSizeBack);
+	CPY(m_fVisualDelaySeconds);
 	CPY(m_bStealthType);
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
+	CPY(m_bScoreMissedHoldsAndRolls);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1759,6 +1773,7 @@ public:
 	FLOAT_INTERFACE(ModTimerOffset, ModTimerOffset, true);
 	FLOAT_INTERFACE(DrawSize, DrawSize, true);
 	FLOAT_INTERFACE(DrawSizeBack, DrawSizeBack, true);
+	FLOAT_INTERFACE(VisualDelaySeconds, VisualDelaySeconds, true);
 	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
 	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
 	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
@@ -1966,6 +1981,7 @@ public:
 	BOOL_INTERFACE(NoQuads, Transforms[PlayerOptions::TRANSFORM_NOQUADS]);
 	BOOL_INTERFACE(NoStretch, Transforms[PlayerOptions::TRANSFORM_NOSTRETCH]);
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
+	BOOL_INTERFACE(ScoreMissedHoldsAndRolls, ScoreMissedHoldsAndRolls);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
 

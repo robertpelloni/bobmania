@@ -80,10 +80,12 @@ public:
 		m_fModTimerOffset(0), m_SpeedfModTimerOffset(1.0f),
 		m_fDrawSize(0), m_SpeedfDrawSize(1.0f),
 		m_fDrawSizeBack(0), m_SpeedfDrawSizeBack(1.0f),
+		m_fVisualDelaySeconds(0), m_SpeedfVisualDelaySeconds(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_bStealthType(false), m_bStealthPastReceptors(false),
 		m_bDizzyHolds(false), m_bZBuffer(false),
 		m_bCosecant(false),
+		m_bScoreMissedHoldsAndRolls(false),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
@@ -363,6 +365,7 @@ public:
 	float	m_fModTimerOffset,		m_SpeedfModTimerOffset;
 	float	m_fDrawSize,			m_SpeedfDrawSize;
 	float	m_fDrawSizeBack,		m_SpeedfDrawSizeBack;
+	float	m_fVisualDelaySeconds,	m_SpeedfVisualDelaySeconds;
 	/* The maximum column number is 16.*/
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];
@@ -384,6 +387,7 @@ public:
 	bool		m_bDizzyHolds;
 	bool		m_bZBuffer;
 	bool		m_bCosecant;
+	bool		m_bScoreMissedHoldsAndRolls;
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;

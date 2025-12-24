@@ -49,6 +49,11 @@ We have successfully merged key features from the **ITGMania** fork and achieved
     *   **Lua Bindings:** `SetPlayer(pn)`, `SetColumn(col)`, `SetDrawRange(start, end)`, `SetResolution(steps)`.
     *   **Files:** `src/NotePath.h`, `src/NotePath.cpp`.
 
+9.  **ITGMania Parity: Visual Delay & Held Misses**
+    *   **Visual Delay:** Added `VisualDelaySeconds` player option. Adjusts the visual beat/time of arrows relative to the music without affecting scoring offset.
+    *   **Held Misses:** Added `ScoreMissedHoldsAndRolls` player option. Forces missed holds to count as "LetGo" (Held Miss) judgments even if the theme metric is disabled.
+    *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/PlayerState.h`, `src/PlayerState.cpp`, `src/Player.cpp`.
+
 ## 2. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 
