@@ -596,6 +596,8 @@ public:
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
 	void SetZBias( float f )					{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; } 
+	void SetPolygonMode( PolygonMode pm )		{ m_PolygonMode = pm; }
+	void SetLineWidth( float fWidth )			{ m_fLineWidth = fWidth; }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
@@ -750,6 +752,8 @@ protected:
 	BlendMode	m_BlendMode;
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
+	PolygonMode	m_PolygonMode;
+	float		m_fLineWidth;
 	RageVector2	m_texTranslate;
 	bool		m_bTextureWrapping;
 	bool		m_bTextureFiltering;

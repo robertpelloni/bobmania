@@ -134,6 +134,8 @@ void Actor::InitState()
 	m_ZTestMode = ZTEST_OFF;
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
+	m_PolygonMode = POLYGON_FILL;
+	m_fLineWidth = 1.0f;
 }
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
@@ -255,6 +257,8 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_bZWrite );
 	CPY( m_fZBias );
 	CPY( m_CullMode );
+	CPY( m_PolygonMode );
+	CPY( m_fLineWidth );
 
 	CPY( m_mapNameToCommands );
 #undef CPY
@@ -327,6 +331,8 @@ Actor &Actor::operator=(Actor other)
 	SWAP( m_bZWrite );
 	SWAP( m_fZBias );
 	SWAP( m_CullMode );
+	SWAP( m_PolygonMode );
+	SWAP( m_fLineWidth );
 
 	SWAP( m_mapNameToCommands );
 #undef SWAP
@@ -809,6 +815,8 @@ void Actor::SetGlobalRenderStates()
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();
 	DISPLAY->SetCullMode( m_CullMode );
+	DISPLAY->SetPolygonMode( m_PolygonMode );
+	DISPLAY->SetLineWidth( m_fLineWidth );
 }
 
 void Actor::SetTextureRenderStates()
@@ -1974,6 +1982,8 @@ public:
 	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(BIArg(1)); COMMON_RETURN_SELF; }
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((BIArg(1)) ? CULL_BACK : CULL_NONE); COMMON_RETURN_SELF; }
 	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); COMMON_RETURN_SELF; }
+	static int polygonmode( T* p, lua_State *L )		{ p->SetPolygonMode( Enum::Check<PolygonMode>(L, 1)); COMMON_RETURN_SELF; }
+	static int linewidth( T* p, lua_State *L )		{ p->SetLineWidth(FArg(1)); COMMON_RETURN_SELF; }
 	static int visible( T* p, lua_State *L )		{ p->SetVisible(BIArg(1)); COMMON_RETURN_SELF; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); COMMON_RETURN_SELF; }
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); COMMON_RETURN_SELF; }
@@ -2262,6 +2272,8 @@ public:
 		ADD_METHOD( clearzbuffer );
 		ADD_METHOD( backfacecull );
 		ADD_METHOD( cullmode );
+		ADD_METHOD( polygonmode );
+		ADD_METHOD( linewidth );
 		ADD_METHOD( visible );
 		ADD_METHOD( hibernate );
 		ADD_METHOD( draworder );

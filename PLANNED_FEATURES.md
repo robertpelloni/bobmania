@@ -40,6 +40,8 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 *   **[COMPLETED] Shaders:**
     *   GLSL shader support controllable via Lua.
     *   Support for Vertex and Fragment shaders.
+*   **[COMPLETED] Wireframe:**
+    *   Actor support for `polygonmode` and `linewidth`.
 *   **Window Manipulation:**
     *   Allow the game window to be moved/resized via Lua (classic NotITG effect). **(Deferred)**
 *   **[COMPLETED] Gameplay Modes:**

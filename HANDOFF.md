@@ -79,6 +79,11 @@ We have implemented the foundation for **GrooveStats** integration (ITGMania par
     *   `GrooveStatsManager:IsConnected()`: Returns true (mock).
 *   **Files:** `src/GrooveStats/GrooveStatsManager.h`, `src/GrooveStats/GrooveStatsManager.cpp`.
 
+10. **NotITG Parity: Wireframe Support**
+    *   **Implementation:** Added `Actor::SetPolygonMode` and `Actor::SetLineWidth` with Lua bindings.
+    *   **Details:** Allows rendering actors as wireframes (lines) instead of filled polygons.
+    *   **Files:** `src/Actor.h`, `src/Actor.cpp`.
+
 ## 4. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 
