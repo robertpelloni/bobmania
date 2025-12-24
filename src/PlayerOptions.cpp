@@ -96,6 +96,8 @@ void PlayerOptions::Init()
 	m_bZBuffer = false;
 	m_bCosecant = false;
 	m_bScoreMissedHoldsAndRolls = false;
+	m_bPracticeMode = false;
+	m_bGhostTapping = false; // Default to SM5 behavior (Penalty ON), let theme enable it.
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -186,6 +188,8 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bZBuffer );
 	DO_COPY( m_bCosecant );
 	DO_COPY( m_bScoreMissedHoldsAndRolls );
+	DO_COPY( m_bPracticeMode );
+	DO_COPY( m_bGhostTapping );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -518,6 +522,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 	if( m_bMuteOnError )			AddTo.push_back( "MuteOnError" );
 	if( m_bScoreMissedHoldsAndRolls ) AddTo.push_back( "ScoreMissedHoldsAndRolls" );
+	if( m_bPracticeMode ) AddTo.push_back( "PracticeMode" );
+	if( m_bGhostTapping ) AddTo.push_back( "GhostTapping" );
 
 	switch( m_FailType )
 	{
@@ -1091,6 +1097,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 	else if( sBit == "scoremissedholdsandrolls" ) m_bScoreMissedHoldsAndRolls = on;
+	else if( sBit == "practicemode" )			m_bPracticeMode = on;
+	else if( sBit == "ghosttapping" )			m_bGhostTapping = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
 
 	else if( sBit.find("move") != sBit.npos)
@@ -1372,6 +1380,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bZBuffer);
 	COMPARE(m_bCosecant);
 	COMPARE(m_bScoreMissedHoldsAndRolls);
+	COMPARE(m_bPracticeMode);
+	COMPARE(m_bGhostTapping);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1455,6 +1465,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
 	CPY(m_bScoreMissedHoldsAndRolls);
+	CPY(m_bPracticeMode);
+	CPY(m_bGhostTapping);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1721,6 +1733,8 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
 	CPY(m_bScoreMissedHoldsAndRolls);
+	CPY(m_bPracticeMode);
+	CPY(m_bGhostTapping);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
@@ -1982,6 +1996,8 @@ public:
 	BOOL_INTERFACE(NoStretch, Transforms[PlayerOptions::TRANSFORM_NOSTRETCH]);
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
 	BOOL_INTERFACE(ScoreMissedHoldsAndRolls, ScoreMissedHoldsAndRolls);
+	BOOL_INTERFACE(PracticeMode, PracticeMode);
+	BOOL_INTERFACE(GhostTapping, GhostTapping);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
 

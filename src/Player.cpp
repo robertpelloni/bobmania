@@ -1915,7 +1915,7 @@ void Player::DoTapScoreNone()
 	if( m_pCombinedLifeMeter )
 		m_pCombinedLifeMeter->HandleTapScoreNone( pn );
 
-	if( PENALIZE_TAP_SCORE_NONE )
+	if( PENALIZE_TAP_SCORE_NONE && !m_pPlayerState->m_PlayerOptions.GetCurrent().m_bGhostTapping )
 	{
 		SetJudgment( BeatToNoteRow( m_pPlayerState->m_Position.m_fSongBeat ), -1, TAP_EMPTY, TNS_Miss, 0 );
 		// the ScoreKeeper will subtract points later.
@@ -2378,6 +2378,9 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		if( score == TNS_W1 && !GAMESTATE->ShowW1() )
 			score = TNS_W2;
 
+		// Practice Mode: Force W1 if hit
+		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_bPracticeMode && score > TNS_Miss && score != TNS_None )
+			score = TNS_W1;
 
 		if( score != TNS_None )
 		{

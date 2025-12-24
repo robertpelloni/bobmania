@@ -388,6 +388,8 @@ public:
 	bool		m_bZBuffer;
 	bool		m_bCosecant;
 	bool		m_bScoreMissedHoldsAndRolls;
+	bool		m_bPracticeMode; // Disable Timing Windows logic
+	bool		m_bGhostTapping; // Override PENALIZE_TAP_SCORE_NONE
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;
