@@ -58,6 +58,7 @@
 #include "UnlockManager.h"
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
+#include "Economy/EconomyManager.h"
 #include "LightsManager.h"
 #include "ModelManager.h"
 #include "CryptManager.h"
@@ -321,6 +322,7 @@ void ShutdownGame()
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( BOOKKEEPER );
+	SAFE_DELETE( ECONOMYMAN );
 	SAFE_DELETE( LIGHTSMAN );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
@@ -1151,6 +1153,8 @@ int sm_main(int argc, char* argv[])
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
 	BOOKKEEPER	= new Bookkeeper;
+	ECONOMYMAN	= new EconomyManager;
+	ECONOMYMAN->Init();
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;

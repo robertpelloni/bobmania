@@ -54,7 +54,20 @@ We have successfully merged key features from the **ITGMania** fork and achieved
     *   **Held Misses:** Added `ScoreMissedHoldsAndRolls` player option. Forces missed holds to count as "LetGo" (Held Miss) judgments even if the theme metric is disabled.
     *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/PlayerState.h`, `src/PlayerState.cpp`, `src/Player.cpp`.
 
-## 2. Token Foundation Research: Tempo vs. Others
+## 2. Economy & Token Foundation
+We have laid the groundwork for a "Tip Economy" by implementing the **EconomyManager**.
+
+### EconomyManager
+*   **Implementation:** Singleton `ECONOMYMAN` initialized in `StepMania.cpp`.
+*   **Functionality:** Simulates a wallet balance and tipping functionality.
+*   **Lua Bindings:**
+    *   `EconomyManager:GetBalance()`: Returns current mock balance.
+    *   `EconomyManager:GetWalletAddress()`: Returns mock address.
+    *   `EconomyManager:SendTip(address, amount)`: Deducts balance and logs the transaction.
+    *   `EconomyManager:IsConnected()`: Checks status.
+*   **Files:** `src/Economy/EconomyManager.h`, `src/Economy/EconomyManager.cpp`, `src/CMakeData-singletons.cmake`, `src/StepMania.cpp`.
+
+## 3. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 
 ### Tempo Analysis

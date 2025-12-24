@@ -46,9 +46,15 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
     *   `BothAtOnce` mode (Mirror inputs to both sides).
     *   Implemented via `BothAtOnce` preference.
 
-## 3. Implementation Plan
+## 3. Economy System
+*   **[COMPLETED] Economy Foundation:**
+    *   `EconomyManager` singleton implemented.
+    *   Simulated wallet and tipping Lua API.
+
+## 4. Implementation Plan
 1.  **[DONE] ITGMania - Song Management:** Implement `LoadNewSongs`.
 2.  **[DONE] ITGMania - Profile Management:** Implement `FastProfileSwitch`.
 3.  **[DONE] ITGMania - Gameplay Fixes:** Implement Rate Mods and Mine Fix.
 4.  **[DONE] NotITG - Modding Foundation:** Implemented Shaders and Uniforms.
 5.  **[DONE] NotITG - Visuals:** Implemented NotePath actor.
+6.  **[DONE] Economy:** Implemented EconomyManager.
