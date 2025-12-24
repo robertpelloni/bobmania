@@ -29,6 +29,7 @@
 #include "CommonMetrics.h"
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
+#include "Economy/EconomyManager.h" // Added for betting logic
 
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
@@ -479,6 +480,34 @@ void ScreenEvaluation::Init()
 			SET_XY( m_sprWin[p] );
 			this->AddChild( &m_sprWin[p] );
 		}
+	}
+
+	// Betting Resolution Logic
+	if ( EconomyManager::Instance()->IsBetActive() )
+	{
+		// Simple Rule: Grade Tier03 (A) or better wins against the house
+		bool bWin = false;
+		if ( grade[PLAYER_1] <= Grade_Tier03 ) bWin = true;
+
+		EconomyManager::Instance()->ResolveMatchBet( bWin );
+
+		// Display Result
+		BitmapText* pBetText = new BitmapText;
+		pBetText->LoadFromFont( THEME->GetPathF("Common", "header") );
+		if (bWin)
+		{
+			pBetText->SetText( "WAGER WON!" );
+			pBetText->SetDiffuse( RageColor(0,1,0,1) );
+			SOUND->PlayOnce( THEME->GetPathS("Common", "coin") );
+		}
+		else
+		{
+			pBetText->SetText( "WAGER LOST..." );
+			pBetText->SetDiffuse( RageColor(1,0,0,1) );
+		}
+		pBetText->SetXY( 320, 240 ); // Center screen
+		pBetText->SetZoom( 1.5f );
+		this->AddChild( pBetText );
 	}
 
 	// init judgment area

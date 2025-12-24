@@ -13,9 +13,11 @@ REGISTER_SCREEN_CLASS( ScreenUnifiedDashboard );
 void ScreenUnifiedDashboard::Init()
 {
 	ScreenWithMenuElements::Init();
+	EconomyManager::Instance()->Initialize(); // Ensure economy is running
 
 	// Setup Options
 	m_Options.push_back( "ARCADE MODE" );
+	m_Options.push_back( "WAGER BATTLE" ); // New
 	m_Options.push_back( "GYM CIRCUIT" );
 	m_Options.push_back( "TOURNAMENT LADDER" );
 	m_Options.push_back( "MARKETPLACE" ); // New
@@ -130,6 +132,7 @@ void ScreenUnifiedDashboard::Input( const InputEventPlus &input )
 
 		std::string sChoice = m_Options[m_iSelection];
 		if( sChoice == "ARCADE MODE" ) SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		else if( sChoice == "WAGER BATTLE" ) SCREENMAN->SetNewScreen( "ScreenBettingEntry" );
 		else if( sChoice == "GYM CIRCUIT" ) SCREENMAN->SetNewScreen( "ScreenGymWelcome" );
 		else if( sChoice == "TOURNAMENT LADDER" ) SCREENMAN->SetNewScreen( "ScreenTournamentLadder" );
 		else if( sChoice == "MARKETPLACE" ) SCREENMAN->SetNewScreen( "ScreenMarketplace" );

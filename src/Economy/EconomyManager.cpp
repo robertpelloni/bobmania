@@ -50,6 +50,10 @@ EconomyManager::~EconomyManager()
 
 void EconomyManager::Initialize()
 {
+	static bool bInitialized = false;
+	if( bInitialized ) return;
+	bInitialized = true;
+
 	// Simulate loading a ledger from a blockchain
 	LOG->Trace("EconomyManager: Initializing Blockchain Link...");
 

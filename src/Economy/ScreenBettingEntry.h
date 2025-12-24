@@ -11,12 +11,17 @@ public:
 	virtual void Input( const InputEventPlus &input );
 
 private:
-	BitmapText m_textTitle;
-	BitmapText m_textInstructions;
-	BitmapText m_textWagerAmount;
-	BitmapText m_textWalletBalance;
+	void RefreshView();
+	void PlaceBet( long long amount );
 
-	long long m_iWager;
+	BitmapText m_textTitle;
+	BitmapText m_textBalance;
+	BitmapText m_textInstructions;
+
+	std::vector<long long> m_WagerOptions;
+	int m_iSelection;
+
+	std::vector<BitmapText*> m_pOptionTexts;
 };
 
 #endif
