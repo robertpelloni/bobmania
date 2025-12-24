@@ -1536,6 +1536,8 @@ void Player::DrawPrimitives()
 	float skew= curr_options.m_fSkew;
 	float mini= curr_options.m_fEffects[PlayerOptions::EFFECT_MINI];
 	float center_y= GetY() + (GRAY_ARROWS_Y_STANDARD + GRAY_ARROWS_Y_REVERSE) / 2;
+	float fov = curr_options.m_fFOV;
+	float vanish_y = curr_options.m_fVanishY;
 	bool reverse= curr_options.GetReversePercentForColumn(0) > .5;
 
 	if(m_drawing_notefield_board)
@@ -1545,7 +1547,7 @@ void Player::DrawPrimitives()
 		// -Kyz
 		if(draw_notefield)
 		{
-			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
+			PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse, fov, vanish_y);
 			m_pNoteField->DrawBoardPrimitive();
 		}
 		return;
@@ -1569,7 +1571,7 @@ void Player::DrawPrimitives()
 
 	if(draw_notefield)
 	{
-		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse);
+		PlayerNoteFieldPositioner poser(this, GetX(), tilt, skew, mini, center_y, reverse, fov, vanish_y);
 		m_pNoteField->Draw();
 	}
 
@@ -1585,12 +1587,12 @@ void Player::DrawPrimitives()
 		DrawHoldJudgments();
 }
 
-void Player::PushPlayerMatrix(float x, float skew, float center_y)
+void Player::PushPlayerMatrix(float x, float skew, float center_y, float fov, float vanish_y)
 {
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->PushMatrix();
-	DISPLAY->LoadMenuPerspective(45, SCREEN_WIDTH, SCREEN_HEIGHT,
-		SCALE(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y);
+	DISPLAY->LoadMenuPerspective(fov, SCREEN_WIDTH, SCREEN_HEIGHT,
+		SCALE(skew, 0.1f, 1.0f, x, SCREEN_CENTER_X), center_y + vanish_y);
 }
 
 void Player::PopPlayerMatrix()
@@ -1607,10 +1609,10 @@ void Player::DrawNoteFieldBoard()
 }
 
 Player::PlayerNoteFieldPositioner::PlayerNoteFieldPositioner(
-	Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse)
+	Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse, float fov, float vanish_y)
 	:player(p)
 {
-	player->PushPlayerMatrix(x, skew, center_y);
+	player->PushPlayerMatrix(x, skew, center_y, fov, vanish_y);
 	float reverse_mult= (reverse ? -1 : 1);
 	original_y= player->m_pNoteField->GetY();
 	float tilt_degrees= SCALE(tilt, -1.f, +1.f, +30, -30) * reverse_mult;

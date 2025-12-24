@@ -59,7 +59,7 @@ We have laid the groundwork for a "Tip Economy" by implementing the **EconomyMan
 
 ### EconomyManager
 *   **Implementation:** Singleton `ECONOMYMAN` initialized in `StepMania.cpp`.
-*   **Functionality:** Simulates a wallet balance and tipping functionality.
+*   **Functionality:** Simulates a wallet balance and tipping functionality. Persists state to `Save/Economy.xml`.
 *   **Lua Bindings:**
     *   `EconomyManager:GetBalance()`: Returns current mock balance.
     *   `EconomyManager:GetWalletAddress()`: Returns mock address.
@@ -88,6 +88,11 @@ We have implemented the foundation for **GrooveStats** integration (ITGMania par
     *   **Implementation:** Added `Actor::SetDrawFunction` and `Actor::SetUpdateFunction`.
     *   **Details:** Allows overriding actor drawing and updating directly from Lua, essential for complex scripted modfiles.
     *   **Files:** `src/Actor.h`, `src/Actor.cpp`.
+
+12. **NotITG Parity: Perspective Control**
+    *   **Implementation:** Added `FOV` and `VanishY` player options.
+    *   **Details:** Allows per-player control of the Field of View and vertical vanish point, essential for 3D mod effects.
+    *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/Player.cpp`, `src/Player.h`.
 
 ## 4. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.

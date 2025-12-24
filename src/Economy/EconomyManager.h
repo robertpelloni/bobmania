@@ -4,6 +4,7 @@
 #include "RageTypes.h"
 
 struct lua_State;
+class XNode;
 
 class EconomyManager
 {
@@ -22,6 +23,12 @@ public:
 	// Mocking Tempo connection
 	void ConnectToTempo();
 	bool IsConnected() const;
+
+	// Persistence
+	void LoadFromNode( const XNode *pNode );
+	XNode *CreateNode() const;
+	void ReadFromDisk();
+	void WriteToDisk();
 
 	// Lua
 	void PushSelf( lua_State *L );

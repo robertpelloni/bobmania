@@ -36,7 +36,9 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 *   **[COMPLETED] Modding Lua API:**
     *   **[COMPLETED]** Expose more Actor properties to Lua (`SetShader`, `SetUniform`).
     *   **[COMPLETED]** `SetDrawFunction`, `SetUpdateFunction`.
+    *   **[COMPLETED]** `Screen:AddInputCallback` (Already present).
     *   **[COMPLETED]** Allow arbitrary pathing for notes (NotePath).
+    *   **[COMPLETED]** Perspective Control (`FOV`, `VanishY`).
     *   Support for "Modfiles" (charts that heavily script the engine).
 *   **[COMPLETED] Shaders:**
     *   GLSL shader support controllable via Lua.

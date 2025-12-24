@@ -80,6 +80,8 @@ void PlayerOptions::Init()
 	m_fPlayerAutoPlay = 0;		m_SpeedfPlayerAutoPlay = 1.0f;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;			m_SpeedfSkew = 1.0f;
+	m_fFOV = 45;			m_SpeedfFOV = 1.0f;
+	m_fVanishY = 0;			m_SpeedfVanishY = 1.0f;
 	m_fPassmark = 0;		m_SpeedfPassmark = 1.0f;
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
 	m_fModTimerMult = 0;		m_SpeedfModTimerMult = 1.0f;
@@ -151,6 +153,8 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fPlayerAutoPlay );
 	APPROACH( fPerspectiveTilt );
 	APPROACH( fSkew );
+	APPROACH( fFOV );
+	APPROACH( fVanishY );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
 	for( int i=0; i<16; i++)
@@ -477,6 +481,9 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fVisualDelaySeconds, "VisualDelaySeconds" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
+
+	AddPart( AddTo, m_fVanishY, "VanishY" );
+	if( m_fFOV != 45 ) AddTo.push_back( ssprintf("%ld%% FOV", lrintf(m_fFOV*100) ) );
 
 	AddPart( AddTo, m_fBlind,	"Blind" );
 	AddPart( AddTo, m_fCover,	"Cover" );
@@ -1078,6 +1085,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "skew" ) SET_FLOAT( fSkew )
 	else if( sBit == "tilt" ) SET_FLOAT( fPerspectiveTilt )
+	else if( sBit == "fov" ) SET_FLOAT( fFOV )
+	else if( sBit == "vanishy" ) SET_FLOAT( fVanishY )
 	else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 	{
 		m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
@@ -1390,6 +1399,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fPlayerAutoPlay);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
+	COMPARE(m_fFOV);
+	COMPARE(m_fVanishY);
 	// The noteskin name needs to be compared case-insensitively because the
 	// manager forces lowercase, but some obscure part of PlayerOptions
 	// uppercases the first letter.  The previous code that used != probably
@@ -1475,6 +1486,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fPlayerAutoPlay);
 	CPY_SPEED(fPerspectiveTilt);
 	CPY_SPEED(fSkew);
+	CPY_SPEED(fFOV);
+	CPY_SPEED(fVanishY);
 	if(!other.m_sNoteSkin.empty() &&
 		NOTESKIN->DoesNoteSkinExist(other.m_sNoteSkin))
 	{
@@ -1738,6 +1751,8 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
+	CPY( m_fFOV );
+	CPY( m_fVanishY );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
 	CPY( m_bTransforms[TRANSFORM_NOROLLS] );
 	CPY( m_bTransforms[TRANSFORM_NOMINES] );
@@ -1943,6 +1958,8 @@ public:
 	FLOAT_INTERFACE(PlayerAutoPlay, PlayerAutoPlay, true);
 	FLOAT_INTERFACE(Skew, Skew, true);
 	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
+	FLOAT_INTERFACE(FOV, FOV, true);
+	FLOAT_INTERFACE(VanishY, VanishY, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
 
@@ -2472,6 +2489,8 @@ public:
 		ADD_METHOD(PlayerAutoPlay);
 		ADD_METHOD(Tilt);
 		ADD_METHOD(Skew);
+		ADD_METHOD(FOV);
+		ADD_METHOD(VanishY);
 		ADD_METHOD(Passmark);
 		ADD_METHOD(RandomSpeed);
 		ADD_METHOD(TurnNone);
