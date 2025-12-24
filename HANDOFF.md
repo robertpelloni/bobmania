@@ -67,7 +67,19 @@ We have laid the groundwork for a "Tip Economy" by implementing the **EconomyMan
     *   `EconomyManager:IsConnected()`: Checks status.
 *   **Files:** `src/Economy/EconomyManager.h`, `src/Economy/EconomyManager.cpp`, `src/CMakeData-singletons.cmake`, `src/StepMania.cpp`.
 
-## 3. Token Foundation Research: Tempo vs. Others
+## 3. GrooveStats Parity
+We have implemented the foundation for **GrooveStats** integration (ITGMania parity).
+
+### GrooveStatsManager
+*   **Implementation:** Singleton `GROOVESTATSMAN` initialized in `StepMania.cpp`.
+*   **Functionality:** Simulates score submission and leaderboard retrieval.
+*   **Lua Bindings:**
+    *   `GrooveStatsManager:SubmitScore(chartKey, score)`: Mock submission.
+    *   `GrooveStatsManager:RequestLeaderboard(chartKey)`: Mock request.
+    *   `GrooveStatsManager:IsConnected()`: Returns true (mock).
+*   **Files:** `src/GrooveStats/GrooveStatsManager.h`, `src/GrooveStats/GrooveStatsManager.cpp`.
+
+## 4. Token Foundation Research: Tempo vs. Others
 We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
 
 ### Tempo Analysis

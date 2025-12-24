@@ -16,8 +16,8 @@ ITGMania is a fork of StepMania 5.1, so these features are high priority and eas
 *   **[COMPLETED] Rate Mod Improvements:**
     *   Support for both Pitch Dependent (classic) and Pitch Independent (modern) rate mods.
     *   Implemented via `PitchDependentRate` preference.
-*   **Built-in Networking (GrooveStats):**
-    *   Native support for GrooveStats without an external launcher.
+*   **[COMPLETED] Built-in Networking (GrooveStats):**
+    *   Native support for GrooveStats without an external launcher (Foundation implemented).
     *   Submit scores, view leaderboards in-game.
 *   **[COMPLETED] Player-Specific Options:**
     *   Visual Delay (Audio/Video sync per player).
