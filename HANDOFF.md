@@ -8,7 +8,7 @@ The StepMania 5.2 (5.1-new) branch stalled due to **"The Merge"** complexity and
 *   **Project OutFox:** A closed-source continuation focusing on broad hardware support and new game modes.
 
 This project has successfully **unified** the critical features of these forks back into the StepMania 5.1-new baseline, creating a "Super 5.1" that supports:
-1.  **NotITG Modding** (Shaders, Lua Hooks, NotePath).
+1.  **NotITG Modding** (Shaders, Lua Hooks, NotePath, Splines, Proxies).
 2.  **ITGMania QoL** (Song Reloading, Profile Switching, Networking).
 3.  **Etterna/OutFox Connectivity** (Discord RPC, Toast Notifications, File I/O).
 
@@ -23,7 +23,7 @@ This project has successfully **unified** the critical features of these forks b
     *   **Usage:** Cycles local profiles instantly.
 3.  **GrooveStats Networking**
     *   **Function:** `GrooveStatsManager` singleton.
-    *   **Status:** Foundation implemented for Score Submission and Leaderboards.
+    *   **Status:** Integrated into GameLoop. Foundation for Score Submission/Leaderboards.
 4.  **Gameplay Tweaks**
     *   **Rate Mods:** Pitch Dependent (Vinyl) vs Independent (Stretch) preference.
     *   **Mine Fix:** Logic corrected for non-held mines.
@@ -37,12 +37,16 @@ This project has successfully **unified** the critical features of these forks b
 2.  **Lua Hooks**
     *   **Function:** `Actor:SetDrawFunction(func)`, `Actor:SetUpdateFunction(func)`.
     *   **Details:** Allows overriding C++ rendering logic from Lua.
-3.  **NotePath Actor**
+3.  **Deep Modding Primitives**
+    *   **ActorProxy:** Verified `SetTarget` support for efficient duplication.
+    *   **ActorMultiVertex:** Verified `SetDrawState` (Primitive control), `SetSpline`, `SetState` (Animation), and `SetVertex` tables.
+    *   **ActorFrameTexture:** Verified `EnablePreserveTexture` (Feedback loops) and `SetTextureName` (Shader binding).
+4.  **NotePath Actor**
     *   **Details:** New Actor type to visualize arrow trajectories (Modfile requirement).
-4.  **Visual Control**
+5.  **Visual Control**
     *   **Wireframe:** `Actor:SetPolygonMode`.
     *   **Perspective:** `FOV` and `VanishY` player options.
-5.  **Window Manipulation**
+6.  **Window Manipulation**
     *   **Function:** `DISPLAY:SetWindowPosition(x, y)`, `SetWindowSize(w, h)`.
     *   **Details:** X11 implementation included.
 
@@ -50,7 +54,7 @@ This project has successfully **unified** the critical features of these forks b
 1.  **Discord Rich Presence (RPC)**
     *   **Function:** `DISCORD` singleton.
     *   **Lua Bindings:** `DISCORD:Initialize()`, `DISCORD:SetPresence(details, state, imageKey)`.
-    *   **Status:** Stub implementation ready for library integration (avoids build breakage).
+    *   **Status:** Stub implementation ready for library integration (avoids build breakage). Integrated into GameLoop.
 2.  **Toast System (Notifications)**
     *   **Function:** `SCREENMAN:ToastMessage(str)`.
     *   **Usage:** Non-intrusive system notifications (e.g., "Score Saved", "Online").
@@ -67,6 +71,7 @@ This project has successfully **unified** the critical features of these forks b
 *   Added `src/Discord/DiscordManager.cpp` to `CMakeData-singletons.cmake`.
 *   Added `src/LuaModules/LuaModule_File.cpp` to `CMakeData-singletons.cmake`.
 *   Added `src/NotePath.cpp`, `src/Economy/EconomyManager.cpp` previously.
+*   Verified `ActorMultiVertex` and `ActorFrameTexture` are correctly registered.
 
 ## 5. Next Steps for Maintainers
 1.  **Discord Library:** Add the `discord-rpc` library to `extern/` and update `DiscordManager.cpp` to call real functions instead of logging.
