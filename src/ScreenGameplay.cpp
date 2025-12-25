@@ -382,6 +382,15 @@ void ScreenGameplay::Init()
 
 	ScreenWithMenuElements::Init();
 
+	// Economy Integration: Initialize UI
+	m_textEconomy.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	m_textEconomy.SetName("EconomyDisplay");
+	m_textEconomy.SetXY( 10, 10 ); // Top left corner
+	m_textEconomy.SetHorizAlign( align_left );
+	m_textEconomy.SetZoom( 0.6f );
+	m_textEconomy.SetShadowLength( 1 );
+	this->AddChild( &m_textEconomy );
+
 	this->FillPlayerInfo( m_vPlayerInfo );
 
 	{
@@ -1705,6 +1714,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 {
 	// Economy Integration: Update mining/background tasks
 	EconomyManager::Instance()->Update(fDeltaTime);
+	
+	// Economy Integration: Update UI
+	if (EconomyManager::Instance())
+	{
+		long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
+		m_textEconomy.SetText( ssprintf("Coins: %lld", balance) );
+	}
 
 	if( GAMESTATE->m_pCurSong == nullptr  )
 	{

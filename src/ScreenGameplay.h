@@ -283,6 +283,7 @@ protected:
 	bool			m_bShowScoreboard;
 
 	BitmapText		m_textDebug;
+	BitmapText		m_textEconomy; // Added for Economy Integration
 
 	RageTimer		m_GiveUpTimer;
 	bool m_gave_up;
