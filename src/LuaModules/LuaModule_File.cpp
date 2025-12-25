@@ -2,6 +2,7 @@
 #include "LuaManager.h"
 #include "RageFile.h"
 #include "RageLog.h"
+#include "LuaBinding.h"
 
 namespace
 {

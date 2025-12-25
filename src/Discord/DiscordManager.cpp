@@ -2,6 +2,7 @@
 #include "DiscordManager.h"
 #include "RageLog.h"
 #include "LuaManager.h"
+#include "LuaBinding.h"
 
 DiscordManager *DISCORD = nullptr;
 

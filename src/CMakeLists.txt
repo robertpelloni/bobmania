@@ -51,8 +51,6 @@ list(APPEND SMDATA_ALL_FILES_HPP
 if(NOT APPLE)
   list(APPEND SMDATA_ALL_FILES_SRC "Main.cpp")
   source_group("" FILES "Main.cpp")
-  list(APPEND SMDATA_ALL_FILES_SRC "LuaModules/LuaModule_File.cpp")
-  list(APPEND SMDATA_ALL_FILES_SRC "Discord/DiscordManager.cpp")
 endif()
 
 if(MSVC OR APPLE)

@@ -22,6 +22,7 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 #include "Discord/DiscordManager.h"
+#include "GrooveStats/GrooveStatsManager.h"
 
 static RageTimer g_GameplayTimer;
 
