@@ -30,6 +30,7 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 #include "Economy/EconomyManager.h" // Added for betting logic
+#include "Scoring/ActorMsdGraph.h" // Added for MSD Graph
 
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
@@ -483,6 +484,16 @@ void ScreenEvaluation::Init()
 	}
 
 	// Betting Resolution Logic
+	// MSD Graph Integration (Etterna Style)
+	FOREACH_EnabledPlayer( p )
+	{
+		ActorMsdGraph* pGraph = new ActorMsdGraph;
+		pGraph->SetName( ssprintf("MsdGraphP%d", p+1) );
+		pGraph->LoadFromStats( m_pStageStats->m_player[p] );
+		pGraph->SetXY( (p==PLAYER_1 ? SCREEN_LEFT+100 : SCREEN_RIGHT-100), SCREEN_CENTER_Y + 100 );
+		this->AddChild( pGraph );
+	}
+
 	if ( EconomyManager::Instance()->IsBetActive() )
 	{
 		// Simple Rule: Grade Tier03 (A) or better wins against the house
