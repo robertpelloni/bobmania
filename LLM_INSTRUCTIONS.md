@@ -24,9 +24,11 @@ This file contains universal instructions for all AI models working on this proj
     *   Update `ROADMAP.md` or `PLANNED_FEATURES.md` with progress.
     *   Update `CHANGELOG.md` with every version bump.
 4.  **Versioning:**
-    *   Maintain a single source of truth for versioning if possible (`VERSION.md`).
+    *   **CRITICAL:** Every build/session must have a new version number.
+    *   Maintain a single source of truth for versioning (`VERSION.md`).
     *   Increment version numbers on significant changes.
-    *   Ensure `src/ProductInfo.h` or similar reflects the version.
+    *   Ensure `src/ProductInfo.h` reflects the version.
+    *   When updating version, commit with message "Bump version to X.Y.Z".
 
 ## Handoff
 *   Always update `HANDOFF.md` before finishing a session.
