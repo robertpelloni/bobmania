@@ -62,6 +62,7 @@
 #include "Profile.h" // for replay data stuff
 #include "RageDisplay.h"
 #include "Gym/ActorCalorieGraph.h" // Added for Gym Integration
+#include "Economy/EconomyManager.h" // Added for Economy Integration
 
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
@@ -1488,6 +1489,15 @@ void ScreenGameplay::LoadLights()
 
 void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )
 {
+	// Economy Integration: Pay Royalty
+	if (GAMESTATE->m_pCurSong)
+	{
+		EconomyManager::Instance()->PaySongRoyalty(
+			GAMESTATE->m_pCurSong->GetTranslitMainTitle(),
+			GAMESTATE->m_pCurSong->GetTranslitArtist()
+		);
+	}
+
 	ASSERT( fMinTimeToNotes >= 0 );
 	ASSERT( fMinTimeToMusic >= 0 );
 
@@ -1693,6 +1703,9 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+	// Economy Integration: Update mining/background tasks
+	EconomyManager::Instance()->Update(fDeltaTime);
+
 	if( GAMESTATE->m_pCurSong == nullptr  )
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
@@ -2702,6 +2715,13 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	if( STATSMAN->m_CurStageStats.AllFailed() )
 	{
 		FOREACH_HumanPlayer( p )
+	// Economy Integration: Resolve Bets
+	if (EconomyManager::Instance()->IsBetActive())
+	{
+		bool bAnyPlayerPassed = !STATSMAN->m_CurStageStats.AllFailed();
+		EconomyManager::Instance()->ResolveMatchBet(bAnyPlayerPassed);
+	}
+
 			GAMESTATE->m_iPlayerStageTokens[p] = 0;
 	}
 
