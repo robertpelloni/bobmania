@@ -76,3 +76,5 @@ We analyzed **Tempo (tempoxyz/tempo)** as a candidate for a high-volume, low-fee
 *   **LLM Instructions:** Updated CLAUDE.md, GEMINI.md, GPT.md, copilot-instructions.md, AGENTS.md.
 *   **Version Bump:** Updated version to 5.1.0.
 *   **Fixes:** Integrated EconomyManager into ScreenGameplay.cpp (Update loop, StageFinished betting resolution, StartPlayingSong royalty payment).
+*   **UI Updates:** Added Economy Wallet Display to ScreenGameplay. Added "Dashboard" option to ScreenTitleMenu (Themes/default/metrics.ini).
+*   **NotITG Status:** "Render Targets" and "Shaders" are implemented. "NotePath" and "Modfiles" are currently **Not Implemented** (marked for future).
