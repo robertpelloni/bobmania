@@ -290,6 +290,7 @@ public:
 
 	virtual void SetWindowPosition( int x, int y ) { }
 	virtual void SetWindowSize( int w, int h ) { }
+	virtual void SetWindowTitle( const RString &sTitle ) { }
 
 	/* Create a render target, returning a texture handle. In addition to normal
 	 * texture functions, this can be passed to SetRenderTarget. Delete with

@@ -1091,6 +1091,12 @@ public:
 		return 0;
 	}
 
+	static int SetWindowTitle( T* p, lua_State *L )
+	{
+		p->SetWindowTitle( SArg(1) );
+		return 0;
+	}
+
 	LunaRageDisplay() 
 	{
 		ADD_METHOD( GetDisplayWidth );
@@ -1103,6 +1109,7 @@ public:
 		ADD_METHOD( SupportsFullscreenBorderlessWindow );
 		ADD_METHOD( SetWindowPosition );
 		ADD_METHOD( SetWindowSize );
+		ADD_METHOD( SetWindowTitle );
 	}
 };
 

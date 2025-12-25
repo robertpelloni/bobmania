@@ -46,6 +46,7 @@ public:
 
 	virtual void SetWindowPosition( int x, int y ) { }
 	virtual void SetWindowSize( int w, int h ) { }
+	virtual void SetWindowTitle( const RString &sTitle ) { }
 };
 
 #endif

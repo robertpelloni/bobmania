@@ -122,6 +122,7 @@ public:
 
 	/** @brief Fetch the contents of the system clipboard. */
 	virtual RString GetClipboard();
+	virtual void SetClipboard( const RString &sText ) { }
 
 	// Lua
 	void PushSelf( lua_State *L );

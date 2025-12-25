@@ -2693,6 +2693,11 @@ void RageDisplay_Legacy::SetWindowSize( int w, int h )
 	g_pWind->SetWindowSize( w, h );
 }
 
+void RageDisplay_Legacy::SetWindowTitle( const RString &sTitle )
+{
+	g_pWind->SetWindowTitle( sTitle );
+}
+
 /*
  * Render-to-texture can be implemented in several ways: the generic GL_ARB_pixel_buffer_object,
  * or platform-specifically.  PBO is not available on all hardware that supports RTT,

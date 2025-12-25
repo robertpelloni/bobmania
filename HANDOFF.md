@@ -38,17 +38,22 @@ This project has successfully **unified** the critical features of these forks b
     *   **Function:** `Actor:SetDrawFunction(func)`, `Actor:SetUpdateFunction(func)`.
     *   **Details:** Allows overriding C++ rendering logic from Lua.
 3.  **Deep Modding Primitives**
-    *   **ActorProxy:** Verified `SetTarget` support for efficient duplication.
-    *   **ActorMultiVertex:** Verified `SetDrawState` (Primitive control), `SetSpline`, `SetState` (Animation), and `SetVertex` tables.
-    *   **ActorFrameTexture:** Verified `EnablePreserveTexture` (Feedback loops) and `SetTextureName` (Shader binding).
+    *   **ActorProxy:** Verified `SetTarget` support.
+    *   **ActorMultiVertex:** Verified `SetDrawState`, `SetSpline`, `SetState`, `SetVertex` tables.
+    *   **ActorFrameTexture:** Verified `EnablePreserveTexture` (Feedback loops) and `SetTextureName`.
 4.  **NotePath Actor**
-    *   **Details:** New Actor type to visualize arrow trajectories (Modfile requirement).
-5.  **Visual Control**
+    *   **Details:** New Actor type to visualize arrow trajectories.
+5.  **Interactive Modding**
+    *   **Input:** `Screen:AddInputCallback` exposed to Lua.
+    *   **Sound:** `RageSound` exposes `pitch` and `speed` setters.
+6.  **Visual Control**
     *   **Wireframe:** `Actor:SetPolygonMode`.
     *   **Perspective:** `FOV` and `VanishY` player options.
-6.  **Window Manipulation**
-    *   **Function:** `DISPLAY:SetWindowPosition(x, y)`, `SetWindowSize(w, h)`.
-    *   **Details:** X11 implementation included.
+7.  **Platform Integration**
+    *   **Window:** `DISPLAY:SetWindowTitle`, `SetWindowPosition`, `SetWindowSize`.
+    *   **Clipboard:** `HOOKS:SetClipboard`, `GetClipboard`.
+8.  **Legacy Compatibility**
+    *   **Aliases:** `GAMESTATE:GetSongTime()` and `GetSongBeat()` added for OpenITG parity.
 
 ### C. Etterna / OutFox Parity (Universal QoL)
 1.  **Discord Rich Presence (RPC)**
@@ -60,7 +65,7 @@ This project has successfully **unified** the critical features of these forks b
     *   **Usage:** Non-intrusive system notifications (e.g., "Score Saved", "Online").
 3.  **Sandboxed File I/O**
     *   **Namespace:** `File`.
-    *   **Functions:** `File.Read(path)`, `File.Write(path, content)`, `File.Append(path, content)`.
+    *   **Functions:** `File.Read(path)`, `File.Write(path, content)`, `File.Append(path, content)`, `File.ReadDir(path)`.
     *   **Security:** Writing/Appending is strictly limited to the `Save/` directory.
 
 ## 3. Economy & Token Foundation

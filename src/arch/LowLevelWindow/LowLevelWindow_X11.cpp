@@ -985,6 +985,12 @@ void LowLevelWindow_X11::SetWindowSize( int w, int h )
 		XResizeWindow( Dpy, Win, w, h );
 }
 
+void LowLevelWindow_X11::SetWindowTitle( const RString &sTitle )
+{
+	if( Dpy && Win )
+		XStoreName( Dpy, Win, sTitle.c_str() );
+}
+
 /*
  * (c) 2005 Ben Anderson
  * All rights reserved.

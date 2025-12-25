@@ -35,6 +35,7 @@ public:
 
 	void SetWindowPosition( int x, int y );
 	void SetWindowSize( int w, int h );
+	void SetWindowTitle( const RString &sTitle );
 
 private:
 	void RestoreOutputConfig();

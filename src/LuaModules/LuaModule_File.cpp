@@ -1,6 +1,7 @@
 #include "global.h"
 #include "LuaManager.h"
 #include "RageFile.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "LuaBinding.h"
 
@@ -99,11 +100,25 @@ namespace
         return 1;
     }
 
+	static int ReadDir( lua_State *L )
+	{
+		RString sPath = SArg(1);
+		// Allow reading any directory, but usually filtered by FILEMAN mounts.
+		// Standard SM5 'GetDirListing' allows any path in VFS.
+
+		vector<RString> vs;
+		FILEMAN->GetDirListing( sPath, vs, false, false );
+
+		LuaHelpers::CreateTableFromArray( vs, L );
+		return 1;
+	}
+
 	const luaL_Reg FileHelpersTable[] =
 	{
 		LIST_METHOD( Write ),
 		LIST_METHOD( Read ),
         LIST_METHOD( Append ),
+		LIST_METHOD( ReadDir ),
 		{ nullptr, nullptr }
 	};
 }
