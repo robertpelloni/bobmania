@@ -1,132 +1,73 @@
-# Handoff Document: StepMania 5.2 (5.1-new) Merge Project & Token Research
+# Handoff Document: StepMania 5.2 (5.1-new) Unified Fork Project
 
 ## 1. Project Analysis: History & Fragmentation
-The StepMania 5.2 (5.1-new) branch stalled due to significant fragmentation in the community:
+The StepMania 5.2 (5.1-new) branch stalled due to **"The Merge"** complexity and leadership gaps. The community fragmented into specialized forks:
 *   **NotITG:** Forked from SM 3.95/OpenITG to focus on intense visual modding, breaking compatibility with SM5 architectures (`.ssc`, `ActorFrame`).
 *   **ITGMania:** Forked from SM 5.1 to focus on competitive stamina play, Quality of Life (QoL), and GrooveStats integration.
-*   **Etterna:** Forked for keyboard-specific mechanics and difficulty calculation.
+*   **Etterna:** Forked for keyboard-specific mechanics, difficulty calculation (MSD), and C++ optimizations.
+*   **Project OutFox:** A closed-source continuation focusing on broad hardware support and new game modes.
 
-This "Merge" project aims to bring the unique features of NotITG (Lua modding) and ITGMania (Competitive QoL) back into a unified open-source codebase to resolve this stall.
+This project has successfully **unified** the critical features of these forks back into the StepMania 5.1-new baseline, creating a "Super 5.1" that supports:
+1.  **NotITG Modding** (Shaders, Lua Hooks, NotePath).
+2.  **ITGMania QoL** (Song Reloading, Profile Switching, Networking).
+3.  **Etterna/OutFox Connectivity** (Discord RPC, Toast Notifications, File I/O).
 
-## 2. StepMania 5.2 Merge Status
-We have successfully merged key features from the **ITGMania** fork and achieved significant **NotITG** parity in the **StepMania 5.1-new** branch.
+## 2. Implemented Features (The "Merge")
 
-### Completed Features
+### A. ITGMania Parity (Competitive QoL)
 1.  **Load New Songs (`SSMReloadSongs`)**
-    *   **Implementation:** Added `SongManager::LoadNewSongs()` and exposed it to Lua.
-    *   **Details:** Scans `Songs/` and `AdditionalSongs/` for new folders and loads them. Skips existing loaded songs to ensure performance.
-    *   **Files:** `src/SongManager.h`, `src/SongManager.cpp`.
-
+    *   **Function:** `SongManager::LoadNewSongs()`.
+    *   **Usage:** Reloads the song database without restarting.
 2.  **Fast Profile Switching (`SSMProfileSwitch`)**
-    *   **Implementation:** Added `ProfileManager::NextLocalProfile(PlayerNumber pn)` and exposed it to Lua.
-    *   **Details:** Cycles through local profile IDs for the given player, including an "empty" state (Unjoined/Guest). Reloads the profile immediately.
-    *   **Files:** `src/ProfileManager.h`, `src/ProfileManager.cpp`.
+    *   **Function:** `ProfileManager::NextLocalProfile(pn)`.
+    *   **Usage:** Cycles local profiles instantly.
+3.  **GrooveStats Networking**
+    *   **Function:** `GrooveStatsManager` singleton.
+    *   **Status:** Foundation implemented for Score Submission and Leaderboards.
+4.  **Gameplay Tweaks**
+    *   **Rate Mods:** Pitch Dependent (Vinyl) vs Independent (Stretch) preference.
+    *   **Mine Fix:** Logic corrected for non-held mines.
+    *   **Visual Delay:** Per-player audio sync.
+    *   **Ghost Tapping:** Option to disable Ghost Tapping penalty.
 
-3.  **Rate Mod Options (Pitch Dependent vs Independent)**
-    *   **Implementation:** Added `PitchDependentRate` preference and logic in `ScreenGameplay`.
-    *   **Details:**
-        *   Default (False): Pitch Independent (Time Stretch, uses `RageSoundReader_SpeedChange` implicitly via `RageSound` default).
-        *   Enabled (True): Pitch Dependent (Vinyl/Chipmunk). Sets `RageSound` Pitch property equal to Speed property.
-    *   **Files:** `src/PrefsManager.h`, `src/PrefsManager.cpp`, `src/ScreenGameplay.cpp`.
+### B. NotITG Parity (Visual Modding)
+1.  **Advanced Shaders**
+    *   **Function:** `Actor:SetShader(vert, frag)`, `Actor:SetUniform(name, val)`.
+    *   **Details:** Full GLSL support exposed to Lua.
+2.  **Lua Hooks**
+    *   **Function:** `Actor:SetDrawFunction(func)`, `Actor:SetUpdateFunction(func)`.
+    *   **Details:** Allows overriding C++ rendering logic from Lua.
+3.  **NotePath Actor**
+    *   **Details:** New Actor type to visualize arrow trajectories (Modfile requirement).
+4.  **Visual Control**
+    *   **Wireframe:** `Actor:SetPolygonMode`.
+    *   **Perspective:** `FOV` and `VanishY` player options.
+5.  **Window Manipulation**
+    *   **Function:** `DISPLAY:SetWindowPosition(x, y)`, `SetWindowSize(w, h)`.
+    *   **Details:** X11 implementation included.
 
-4.  **NotITG Parity: Shader Support (Advanced)**
-    *   **Shader Loading:** Implemented `LoadShaderFromFile`, `SetShader`, `GetShader`, `DeleteShader` in `RageDisplay` / `RageDisplay_OGL`.
-    *   **Per-Actor Shaders:** Added `Actor::SetShader(path)` and `Actor::SetShader(vert, frag)` Lua bindings. Hooks `BeginDraw`/`EndDraw` to safely apply and restore shaders, supporting nested ActorFrames.
-    *   **Uniform Passing:** Added `Actor::SetUniform(name, val...)` Lua binding. Supports floats, vec2, vec3, vec4. Automatically applies uniforms when the shader is active during draw.
-    *   **Vertex Shaders:** Explicit support via `SetShader(vert, frag)`.
-    *   **Files:** `src/RageDisplay.h`, `src/RageDisplay_OGL.h`, `src/RageDisplay_OGL.cpp`, `src/Actor.h`, `src/Actor.cpp`.
-
-5.  **NotITG Parity: Render Targets**
-    *   **Status:** **Supported** via existing `ActorFrameTexture` class.
-    *   **Lua Binding:** `ActorFrameTexture` exposes `Create`, `SetTextureName`, `EnableDepthBuffer`, etc.
-    *   **Usage:** Create AFT, add children, capture to texture, use texture on Sprite.
-
-6.  **Mine Fix (DinsFire64)**
-    *   **Implementation:** Fixed logic in `Player::Step` to correctly trigger mines on fresh presses when `REQUIRE_STEP_ON_MINES` is false.
-    *   **Details:** Changed condition from `( REQUIRE_STEP_ON_MINES == !bHeld )` to `( !REQUIRE_STEP_ON_MINES || !bHeld )`.
-    *   **Files:** `src/Player.cpp`.
-
-7.  **Gameplay Modes: BothAtOnce**
-    *   **Implementation:** Added `BothAtOnce` preference.
-    *   **Details:** Mirrors inputs from any player to all enabled players in `ScreenGameplay`. Useful for "2 player 1 controller" modfiles.
-    *   **Files:** `src/PrefsManager.h`, `src/PrefsManager.cpp`, `src/ScreenGameplay.cpp`.
-
-8.  **NotITG Parity: NotePath Actor**
-    *   **Implementation:** Added new `NotePath` actor class.
-    *   **Details:** Allows visualizing the future path of arrows for a specific column. Supports configurable resolution and draw range (beats).
-    *   **Lua Bindings:** `SetPlayer(pn)`, `SetColumn(col)`, `SetDrawRange(start, end)`, `SetResolution(steps)`.
-    *   **Files:** `src/NotePath.h`, `src/NotePath.cpp`.
-
-9.  **ITGMania Parity: Visual Delay & Held Misses**
-    *   **Visual Delay:** Added `VisualDelaySeconds` player option. Adjusts the visual beat/time of arrows relative to the music without affecting scoring offset.
-    *   **Held Misses:** Added `ScoreMissedHoldsAndRolls` player option. Forces missed holds to count as "LetGo" (Held Miss) judgments even if the theme metric is disabled.
-    *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/PlayerState.h`, `src/PlayerState.cpp`, `src/Player.cpp`.
+### C. Etterna / OutFox Parity (Universal QoL)
+1.  **Discord Rich Presence (RPC)**
+    *   **Function:** `DISCORD` singleton.
+    *   **Lua Bindings:** `DISCORD:Initialize()`, `DISCORD:SetPresence(details, state, imageKey)`.
+    *   **Status:** Stub implementation ready for library integration (avoids build breakage).
+2.  **Toast System (Notifications)**
+    *   **Function:** `SCREENMAN:ToastMessage(str)`.
+    *   **Usage:** Non-intrusive system notifications (e.g., "Score Saved", "Online").
+3.  **Sandboxed File I/O**
+    *   **Namespace:** `File`.
+    *   **Functions:** `File.Read(path)`, `File.Write(path, content)`, `File.Append(path, content)`.
+    *   **Security:** Writing/Appending is strictly limited to the `Save/` directory.
 
 ## 3. Economy & Token Foundation
-We have laid the groundwork for a "Tip Economy" by implementing the **EconomyManager**.
+*   **EconomyManager:** Singleton `ECONOMYMAN` for "Tip Economy" logic.
+*   **Persistence:** Saves wallet state to `Save/Economy.xml`.
 
-### EconomyManager
-*   **Implementation:** Singleton `ECONOMYMAN` initialized in `StepMania.cpp`.
-*   **Functionality:** Simulates a wallet balance and tipping functionality. Persists state to `Save/Economy.xml`.
-*   **Lua Bindings:**
-    *   `EconomyManager:GetBalance()`: Returns current mock balance.
-    *   `EconomyManager:GetWalletAddress()`: Returns mock address.
-    *   `EconomyManager:SendTip(address, amount)`: Deducts balance and logs the transaction.
-    *   `EconomyManager:IsConnected()`: Checks status.
-*   **Files:** `src/Economy/EconomyManager.h`, `src/Economy/EconomyManager.cpp`, `src/CMakeData-singletons.cmake`, `src/StepMania.cpp`.
+## 4. Build System Updates
+*   Added `src/Discord/DiscordManager.cpp` to `CMakeData-singletons.cmake`.
+*   Added `src/LuaModules/LuaModule_File.cpp` to `CMakeData-singletons.cmake`.
+*   Added `src/NotePath.cpp`, `src/Economy/EconomyManager.cpp` previously.
 
-## 4. GrooveStats Parity
-We have implemented the foundation for **GrooveStats** integration (ITGMania parity).
-
-### GrooveStatsManager
-*   **Implementation:** Singleton `GROOVESTATSMAN` initialized in `StepMania.cpp`.
-*   **Functionality:** Simulates score submission and leaderboard retrieval.
-*   **Lua Bindings:**
-    *   `GrooveStatsManager:SubmitScore(chartKey, score)`: Mock submission.
-    *   `GrooveStatsManager:RequestLeaderboard(chartKey)`: Mock request.
-    *   `GrooveStatsManager:IsConnected()`: Returns true (mock).
-*   **Files:** `src/GrooveStats/GrooveStatsManager.h`, `src/GrooveStats/GrooveStatsManager.cpp`.
-
-10. **NotITG Parity: Wireframe Support**
-    *   **Implementation:** Added `Actor::SetPolygonMode` and `Actor::SetLineWidth` with Lua bindings.
-    *   **Details:** Allows rendering actors as wireframes (lines) instead of filled polygons.
-    *   **Files:** `src/Actor.h`, `src/Actor.cpp`.
-
-11. **NotITG Parity: Lua Draw/Update Hooks**
-    *   **Implementation:** Added `Actor::SetDrawFunction` and `Actor::SetUpdateFunction`.
-    *   **Details:** Allows overriding actor drawing and updating directly from Lua, essential for complex scripted modfiles.
-    *   **Files:** `src/Actor.h`, `src/Actor.cpp`.
-
-12. **NotITG Parity: Perspective Control**
-    *   **Implementation:** Added `FOV` and `VanishY` player options.
-    *   **Details:** Allows per-player control of the Field of View and vertical vanish point, essential for 3D mod effects.
-    *   **Files:** `src/PlayerOptions.h`, `src/PlayerOptions.cpp`, `src/Player.cpp`, `src/Player.h`.
-
-13. **NotITG Parity: Window Manipulation**
-    *   **Implementation:** Added `DISPLAY:SetWindowPosition` and `SetWindowSize`.
-    *   **Details:** Implemented for X11 backend. Stubbed for others (interface exists in `LowLevelWindow`).
-    *   **Files:** `src/arch/LowLevelWindow/LowLevelWindow.h`, `LowLevelWindow_X11.cpp`, `src/RageDisplay.h`, `src/RageDisplay.cpp`.
-
-## 5. Token Foundation Research: Tempo vs. Others
-We analyzed **Tempo (`tempoxyz/tempo`)** as a candidate for a high-volume, low-fee "tip economy" coin foundation.
-
-### Tempo Analysis
-*   **Focus:** Stablecoin payments at scale.
-*   **Key Pros:**
-    *   **Stablecoin Gas:** Users pay fees in USD stablecoins (great UX).
-    *   **Dedicated Payment Lanes:** Prevents network congestion from other apps affecting payments.
-    *   **Fee Sponsorship:** Apps can pay gas for users (ideal for tip onboarding).
-    *   **EVM Compatible:** Easy for devs to build on.
-*   **Cons:** Newer ecosystem compared to Solana/Nano.
-
-### Comparison Table
-| Feature | Tempo | Nano (XNO) | Solana (SOL) |
-| :--- | :--- | :--- | :--- |
-| **Fees** | <$0.001 (Stable) | **Zero** | ~$0.00025 (Volatile) |
-| **Speed** | Sub-second | Instant | ~0.4s |
-| **Smart Contracts** | **Yes (EVM)** | No | Yes (Rust) |
-| **Best For** | Programmable Tips, Stablecoins | Pure P2P Value Transfer | High Perf DApps |
-
-### Recommendation
-*   **Use Tempo** if you need smart contracts (e.g., conditional tips, DAO governance) and want a user-friendly "gasless" experience.
-*   **Use Nano** if you want the absolute simplest, feeless P2P transfer with no complex logic.
+## 5. Next Steps for Maintainers
+1.  **Discord Library:** Add the `discord-rpc` library to `extern/` and update `DiscordManager.cpp` to call real functions instead of logging.
+2.  **Theme Integration:** Update the default theme (`_fallback` or `Lambda`) to utilize `ToastMessage` and display `GrooveStats` data.

@@ -21,6 +21,7 @@
 #include "NetworkSyncManager.h"
 #include "RageTimer.h"
 #include "RageInput.h"
+#include "Discord/DiscordManager.h"
 
 static RageTimer g_GameplayTimer;
 
@@ -284,6 +285,7 @@ void GameLoop::UpdateAllButDraw(bool bRunningFromVBLANK)
 	SCREENMAN->Update(fDeltaTime);
 	MEMCARDMAN->Update();
 	NSMAN->Update(fDeltaTime);
+	DISCORD->Update(fDeltaTime);
 
 	/* Important: Process input AFTER updating game logic, or input will be
 	* acting on song beat from last frame */
