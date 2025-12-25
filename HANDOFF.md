@@ -75,3 +75,4 @@ We analyzed **Tempo (tempoxyz/tempo)** as a candidate for a high-volume, low-fee
 *   **Documentation:** Created docs/DASHBOARD.md, LLM_INSTRUCTIONS.md, VERSION.md, CHANGELOG.md.
 *   **LLM Instructions:** Updated CLAUDE.md, GEMINI.md, GPT.md, copilot-instructions.md, AGENTS.md.
 *   **Version Bump:** Updated version to 5.1.0.
+*   **Fixes:** Integrated EconomyManager into ScreenGameplay.cpp (Update loop, StageFinished betting resolution, StartPlayingSong royalty payment).
