@@ -81,3 +81,8 @@ This project has successfully **unified** the critical features of these forks b
 ## 5. Next Steps for Maintainers
 1.  **Discord Library:** Add the `discord-rpc` library to `extern/` and update `DiscordManager.cpp` to call real functions instead of logging.
 2.  **Theme Integration:** Update the default theme (`_fallback` or `Lambda`) to utilize `ToastMessage` and display `GrooveStats` data.
+
+## 6. Excluded Features (Analysis)
+The following features from forks were analyzed but explicitly **excluded** from this merge:
+*   **Direct Memory Access (`memory` namespace):** Present in NotITG for advanced hacks. Excluded due to extreme security risks and non-portability (Windows-specific memory layout dependence).
+*   **Unsafe Lua:** Lua 5.1 sandbox is maintained. Upgrading to Lua 5.3+ (Project OutFox) was rejected to maintain backwards compatibility with existing StepMania 5.x content.
