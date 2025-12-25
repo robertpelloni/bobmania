@@ -2,6 +2,12 @@
 
 This document outlines the features to be merged from various forks (ITGMania, NotITG) into the 5.1-new branch to unify development.
 
+## 0. Recently Merged Features (v5.1.0)
+*   **Economy System:** In-game economy, currency, and transactions.
+*   **Tournament Mode:** QR login, tournament brackets, and scoring.
+*   **Unified Dashboard:** Centralized hub for player stats and economy.
+*   **Gym Mode:** Training and practice features.
+
 ## 1. ITGMania Parity
 ITGMania is a fork of StepMania 5.1, so these features are high priority and easier to merge.
 
@@ -50,3 +56,4 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 2.  **[DONE] ITGMania - Profile Management:** Implement `FastProfileSwitch`.
 3.  **[DONE] ITGMania - Gameplay Fixes:** Implement Rate Mods and Mine Fix.
 4.  **[DONE] NotITG - Modding Foundation:** Implemented Shaders and Uniforms.
+5.  **[DONE] Economy & Tournament:** Merged feature branches.
