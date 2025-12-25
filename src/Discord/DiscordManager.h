@@ -13,7 +13,7 @@ public:
 
 	void Init();
 	void Shutdown();
-	void Update();
+	void Update( float fDeltaTime );
 
 	// Lua bindings
 	void SetPresence( const RString &sDetails, const RString &sState, const RString &sLargeImageKey, const RString &sLargeImageText );

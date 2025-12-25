@@ -286,6 +286,7 @@ void GameLoop::UpdateAllButDraw(bool bRunningFromVBLANK)
 	MEMCARDMAN->Update();
 	NSMAN->Update(fDeltaTime);
 	DISCORD->Update(fDeltaTime);
+	GROOVESTATSMAN->Update(fDeltaTime);
 
 	/* Important: Process input AFTER updating game logic, or input will be
 	* acting on song beat from last frame */

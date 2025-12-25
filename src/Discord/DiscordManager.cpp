@@ -34,7 +34,7 @@ void DiscordManager::Shutdown()
 	m_bInitialized = false;
 }
 
-void DiscordManager::Update()
+void DiscordManager::Update( float fDeltaTime )
 {
 	// Stub: Discord_RunCallbacks()
 }
