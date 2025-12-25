@@ -61,6 +61,7 @@
 #include "XmlFileUtil.h"
 #include "Profile.h" // for replay data stuff
 #include "RageDisplay.h"
+#include "Gym/ActorCalorieGraph.h" // Added for Gym Integration
 
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
@@ -503,6 +504,15 @@ void ScreenGameplay::Init()
 		m_pSongForeground->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
 		ActorUtil::LoadAllCommands( *m_pSongForeground, m_sName );
 		this->AddChild( m_pSongForeground );
+
+	// Gym Mode Integration
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP ) // Approximation for Gym Mode if set
+	{
+		ActorCalorieGraph* pCalorieGraph = new ActorCalorieGraph;
+		pCalorieGraph->SetName( "CalorieGraph" );
+		pCalorieGraph->SetXY( SCREEN_CENTER_X, SCREEN_BOTTOM - 50 );
+		this->AddChild( pCalorieGraph );
+	}
 	}
 
 	if( PREFSMAN->m_bShowBeginnerHelper )
@@ -1070,7 +1080,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		pi->GetPlayerState()->m_fLastDrawnBeat = -100;
 
 		Steps *pSteps = pi->m_vpStepsQueue[iSongIndex];
- 		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
+		GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ].Set( pSteps );
 
 		/* Load new NoteData into Player. Do this before
 		 * RebuildPlayerOptionsFromActiveAttacks or else transform mods will get
