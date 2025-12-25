@@ -57,11 +57,13 @@ void ScreenGymWelcome::Input( const InputEventPlus &input )
 		// In a real flow, we would set GAMESTATE->m_pCurCourse to this new course
 		// and then jump to ScreenGameplay directly or ScreenSelectCourse.
 
-		// Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, INTENSITY_MODERATE );
-		// if (pWorkout) {
-		//    GymCourseWriter::WriteCourse(pWorkout, "Songs/MyWorkout.crs");
-		//    GAMESTATE->m_pCurCourse.Set( pWorkout );
-		// }
+		Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, INTENSITY_MODERATE );
+		if (pWorkout) {
+		   // Use a user-writable path (e.g., Save/ directory) if possible, but standard is Songs/
+		   // For simulation, we assume write permissions.
+		   GymCourseWriter::WriteCourse(pWorkout, "Save/LocalProfiles/MyWorkout.crs");
+		   GAMESTATE->m_pCurCourse.Set( pWorkout );
+		}
 
 		// For MVP, just jump to music select
 		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );

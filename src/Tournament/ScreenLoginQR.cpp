@@ -10,14 +10,6 @@
 
 REGISTER_SCREEN_CLASS( ScreenLoginQR );
 
-// Helper to simulate Profile Loading since we cannot easily modify ProfileManager.cpp in this environment
-static bool MockLoadProfile(const std::string& id)
-{
-	// In a real implementation, this would call PROFILEMAN->LoadProfileFromID(id, PLAYER_1);
-	LOG->Trace("ScreenLoginQR: Loading Profile for ID %s", id.c_str());
-	return true;
-}
-
 void ScreenLoginQR::Init()
 {
 	ScreenWithMenuElements::Init();
@@ -76,8 +68,8 @@ void ScreenLoginQR::Input( const InputEventPlus &input )
 			{
 				m_textStatus.SetText( "Authenticating..." );
 
-				// 1. Load Profile (Simulated via local helper)
-				MockLoadProfile( m_sBuffer );
+				// 1. Load Profile
+				PROFILEMAN->LoadProfileFromID( m_sBuffer, PLAYER_1 );
 
 				// 2. Register/Login to Economy
 				EconomyManager::Instance()->RegisterUser( m_sBuffer );

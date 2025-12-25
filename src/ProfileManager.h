@@ -49,6 +49,7 @@ public:
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadEdits = true );	// memory card or local profile
 	bool LoadLocalProfileFromMachine( PlayerNumber pn );
+	bool LoadProfileFromID( const RString& id, PlayerNumber pn ); // Simulation for QR Login
 	bool LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadEdits = true );
 	bool FastLoadProfileNameFromMemoryCard( RString sRootDir, RString &sName ) const;
 	bool SaveProfile( PlayerNumber pn ) const;

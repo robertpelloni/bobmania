@@ -61,8 +61,13 @@ void ScreenGovernance::Vote( bool bYes )
 {
 	if( m_Proposals.empty() ) return;
 
-	if( bYes ) m_Proposals[m_iCurrentPropIndex].yesVotes++;
-	else       m_Proposals[m_iCurrentPropIndex].noVotes++;
+	// Vote weight is determined by share ownership
+	// Minimum 1 vote for citizenship
+	int shares = EconomyManager::Instance()->GetShareCount();
+	int weight = (shares > 0) ? shares : 1;
+
+	if( bYes ) m_Proposals[m_iCurrentPropIndex].yesVotes += weight;
+	else       m_Proposals[m_iCurrentPropIndex].noVotes += weight;
 
 	SOUND->PlayOnce( THEME->GetPathS("Common", "start") );
 	UpdateUI();

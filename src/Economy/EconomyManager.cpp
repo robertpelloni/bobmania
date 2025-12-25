@@ -38,8 +38,10 @@ EconomyManager::EconomyManager() : m_Mutex("EconomyManager")
 	m_bBetActive = false;
 	m_iCurrentBetAmount = 0;
 	m_fMiningTimer = 0;
+	m_fDividendTimer = 0;
 	m_iAccumulatedMiningReward = 0;
 	m_iPlayerElo = 1200; // Default Starting Elo (Gold/Silver border)
+	m_iHighestEloAchieved = 1200;
 }
 
 EconomyManager::~EconomyManager()
@@ -48,6 +50,10 @@ EconomyManager::~EconomyManager()
 
 void EconomyManager::Initialize()
 {
+	static bool bInitialized = false;
+	if( bInitialized ) return;
+	bInitialized = true;
+
 	// Simulate loading a ledger from a blockchain
 	LOG->Trace("EconomyManager: Initializing Blockchain Link...");
 
@@ -79,6 +85,7 @@ void EconomyManager::LoadState()
 
 	// Load Stats
 	ini.GetValue("Stats", "Elo", m_iPlayerElo);
+	ini.GetValue("Stats", "HighElo", m_iHighestEloAchieved);
 	long long mining;
 	if(ini.GetValue("Stats", "MiningRewards", mining)) m_iAccumulatedMiningReward = mining;
 
@@ -119,6 +126,7 @@ void EconomyManager::SaveState()
 
 	// Save Stats
 	ini.SetValue("Stats", "Elo", m_iPlayerElo);
+	ini.SetValue("Stats", "HighElo", m_iHighestEloAchieved);
 	ini.SetValue("Stats", "MiningRewards", ssprintf("%lld", m_iAccumulatedMiningReward));
 
 	// Save Inventory
@@ -151,6 +159,60 @@ void EconomyManager::Update(float fDeltaTime)
 		// Log occasionally
 		// LOG->Trace( ssprintf("EconomyManager: Server Node Reward Mined! Balance: %lld", m_Ledger["WALLET_PLAYER"]) );
 	}
+
+	// Shareholder Dividends Logic
+	m_fDividendTimer += fDeltaTime;
+	if (m_fDividendTimer >= 60.0f) // Every minute (simulating a "period")
+	{
+		m_fDividendTimer = 0;
+		CurrencyAmount div = CalculateDividend();
+		if (div > 0)
+		{
+			// Pay out
+			m_Ledger["WALLET_DAO"] -= div;
+			m_Ledger["WALLET_PLAYER"] += div;
+
+			Transaction tx;
+			tx.txID = "DIV_" + MakeUUID();
+			tx.from = "WALLET_DAO";
+			tx.to = "WALLET_PLAYER";
+			tx.amount = div;
+			tx.reason = "Shareholder Dividend";
+			tx.timestamp = time(NULL);
+			m_TransactionHistory.push_back(tx);
+
+			LOG->Trace("EconomyManager: Paid Dividend of %lld", div);
+		}
+	}
+}
+
+int EconomyManager::GetShareCount()
+{
+	LockMut(m_Mutex);
+	int count = 0;
+	for(const auto& item : m_Inventory) {
+		if(item.name == "Company Share") count++;
+	}
+	return count;
+}
+
+CurrencyAmount EconomyManager::CalculateDividend()
+{
+	// Simple model: 1% of DAO Treasury distributed per Share
+	// In reality this would be complex.
+	// We only calculate what the PLAYER gets.
+
+	int myShares = GetShareCount();
+	if (myShares == 0) return 0;
+
+	CurrencyAmount treasury = m_Ledger["WALLET_DAO"];
+	if (treasury <= 1000) return 0; // Minimum threshold
+
+	// Each share gets 0.01% of treasury
+	double percentage = 0.0001 * myShares;
+	CurrencyAmount payout = (CurrencyAmount)(treasury * percentage);
+
+	return payout;
 }
 
 CurrencyAmount EconomyManager::GetBalance(const WalletAddress& address)
@@ -303,6 +365,27 @@ void EconomyManager::UpdateElo(bool bWon, int iOpponentElo)
 	int change = (int)(K * (actual - expected));
 
 	m_iPlayerElo += change;
+
+	if (m_iPlayerElo > m_iHighestEloAchieved)
+	{
+		int oldHigh = m_iHighestEloAchieved;
+		m_iHighestEloAchieved = m_iPlayerElo;
+
+		// Check for Threshold Crossing (e.g. every 500 points)
+		// 1500 (Silver), 2000 (Gold), 2500 (Pro)
+		if (oldHigh < 1500 && m_iPlayerElo >= 1500)
+		{
+			Transfer("WALLET_HOUSE", "WALLET_PLAYER", 500, "Rank Up Reward: SILVER");
+		}
+		if (oldHigh < 2000 && m_iPlayerElo >= 2000)
+		{
+			Transfer("WALLET_HOUSE", "WALLET_PLAYER", 1000, "Rank Up Reward: GOLD");
+		}
+		if (oldHigh < 2500 && m_iPlayerElo >= 2500)
+		{
+			Transfer("WALLET_HOUSE", "WALLET_PLAYER", 5000, "Rank Up Reward: PRO");
+		}
+	}
 
 	LOG->Trace("EconomyManager: Elo Update. Old: %d, Opponent: %d, Result: %s, New: %d (Change: %d)",
 		m_iPlayerElo - change, iOpponentElo, bWon ? "WIN" : "LOSS", m_iPlayerElo, change);

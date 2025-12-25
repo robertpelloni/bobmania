@@ -59,6 +59,11 @@ public:
 	// Competitive
 	int GetPlayerElo() const { return m_iPlayerElo; }
 	void UpdateElo(bool bWon, int iOpponentElo);
+	int GetHighestElo() const { return m_iHighestEloAchieved; }
+
+	// Shareholders
+	int GetShareCount();
+	CurrencyAmount CalculateDividend();
 
 	// Inventory
 	void AddToInventory(const Asset& asset);
@@ -81,10 +86,12 @@ private:
 
 	// Server Mode Simulation
 	float m_fMiningTimer;
+	float m_fDividendTimer;
 	CurrencyAmount m_iAccumulatedMiningReward;
 
 	// Competitive
 	int m_iPlayerElo;
+	int m_iHighestEloAchieved;
 
 	// Inventory
 	std::vector<Asset> m_Inventory;
