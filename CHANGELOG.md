@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.1.1] - 2025-12-25
+
+### Added
+- **Economy UI:** Added wallet balance display to `ScreenGameplay`.
+- **Dashboard Access:** Added "Dashboard" option to `ScreenTitleMenu`.
+- **Documentation:** Added `docs/DASHBOARD.md` with project structure and submodule status.
+- **LLM Instructions:** Consolidated all model instructions into `LLM_INSTRUCTIONS.md`.
+
+### Changed
+- **Versioning:** Enforced strict versioning rules in `LLM_INSTRUCTIONS.md`.
+- **Dashboard:** Updated `ScreenUnifiedDashboard` to link to `ScreenWalletHistory`.
+
 ## [5.1.0] - 2025-12-25
 
 ### Added
