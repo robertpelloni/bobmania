@@ -1,0 +1,25 @@
+# Changelog
+
+## [5.3.0-Network-MVP] - 2024-05-22
+
+### Added
+- **Economy Manager:** A simulated blockchain ledger handling wallets (Player, House, DAO), transactions, and mining rewards.
+- **Tournament Ladder:** Elo ranking system with visual brackets and Divisions (Pro/Gold/Silver).
+- **Gym Mode:** Fitness-focused features including `ScreenGymWelcome`, `GymPlaylistGenerator` (intensity-based courses), and `ActorCalorieGraph` (visual calorie burn during gameplay).
+- **Betting System:** `ScreenBettingEntry` allows players to wager simulated currency on their match performance. `ScreenEvaluation` resolves bets.
+- **Governance (DAO):** `ScreenGovernance` enables weighted voting on proposals based on "Company Share" ownership.
+- **Network Simulation:** `ContentSwarmManager` mimics P2P content distribution. `ScreenServerNode` provides an idle game mode for "mining" currency.
+- **Unified Dashboard:** `ScreenUnifiedDashboard` serves as the central operating system for all new network features.
+- **Cross-Game Integration:** Profile import/export bridging to external apps (JSON format).
+- **MSD Scoring:** Ported Etterna-style Density (MSD) scoring logic and visualization (`ActorMsdGraph`) in Evaluation.
+- **QR Login:** Simulated QR code login flow in `ScreenLoginQR`.
+
+### Changed
+- **Version:** Bumped from 5.1 to 5.3.0-Network-MVP.
+- **Evaluation Screen:** Added MSD Graph and Betting Resolution logic.
+- **Gameplay Screen:** Added Calorie Graph overlay for Gym modes.
+- **Profile Manager:** Added `LoadProfileFromID` stub to support QR login simulation.
+
+### Fixed
+- Initialization bug in `EconomyManager` where the ledger was not properly seeded on first run (fixed in Dashboard init).
+- Compilation error in `ProfileManager.h` due to duplicate function declaration.
