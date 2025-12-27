@@ -50,6 +50,8 @@ void PlayerStageStats::InternalInit()
 	m_iScore = 0;
 	m_iMaxScore = 0;
 	m_iCurMaxScore = 0;
+	m_fWifeScore = 0.0f;
+	m_fCurMaxWifeScore = 0.0f;
 	m_iSongsPassed = 0;
 	m_iSongsPlayed = 0;
 	m_fLifeRemainingSeconds = 0;
@@ -109,6 +111,8 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_iScore += other.m_iScore;
 	m_iMaxScore += other.m_iMaxScore;
 	m_iCurMaxScore += other.m_iCurMaxScore;
+	m_fWifeScore += other.m_fWifeScore;
+	m_fCurMaxWifeScore += other.m_fCurMaxWifeScore;
 	m_radarPossible += other.m_radarPossible;
 	m_radarActual += other.m_radarActual;
 	m_iSongsPassed += other.m_iSongsPassed;
@@ -737,6 +741,8 @@ public:
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,					m_iScore )
 	DEFINE_METHOD( GetCurMaxScore,				m_iCurMaxScore )
+	DEFINE_METHOD( GetWifeScore,				m_fWifeScore )
+	DEFINE_METHOD( GetCurMaxWifeScore,			m_fCurMaxWifeScore )
 	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
 	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,					FullCombo() )
@@ -898,6 +904,8 @@ public:
 		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( GetScore );
 		ADD_METHOD( GetCurMaxScore );
+		ADD_METHOD( GetWifeScore );
+		ADD_METHOD( GetCurMaxWifeScore );
 		ADD_METHOD( GetTapNoteScores );
 		ADD_METHOD( GetHoldNoteScores );
 		ADD_METHOD( FullCombo );

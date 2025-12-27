@@ -51,9 +51,34 @@ NotITG is based on StepMania 3.95. Parity here involves reimplementing features 
 *   **Gameplay Modes:**
     *   `BothAtOnce` mode (Mirror inputs to both sides).
 
-## 3. Implementation Plan
+## 3. Etterna Parity
+Etterna is a keyboard-focused fork known for its advanced scoring and difficulty calculation.
+
+### Features
+*   **[COMPLETED] MSD (Mine Sweeper Density) Calculation:**
+    *   Implemented strain-based difficulty calculation.
+    *   Pattern detection (Stream, Jumpstream, Handstream, Jack).
+*   **[COMPLETED] Wife Scoring:**
+    *   Millisecond-based scoring system (Wife3-like).
+    *   Implemented in `ScoreKeeperNormal` and `PlayerStageStats`.
+*   **Replay System:**
+    *   Save and load full replay data.
+
+## 4. Outfox Parity
+Project Outfox focuses on modernizing the codebase and supporting many game modes.
+
+### Features
+*   **Modern Audio Backend:**
+    *   Update audio drivers.
+*   **New Game Modes:**
+    *   Support for additional rhythm game types.
+
+## 5. Implementation Plan
 1.  **[DONE] ITGMania - Song Management:** Implement `LoadNewSongs`.
 2.  **[DONE] ITGMania - Profile Management:** Implement `FastProfileSwitch`.
 3.  **[DONE] ITGMania - Gameplay Fixes:** Implement Rate Mods and Mine Fix.
 4.  **[DONE] NotITG - Modding Foundation:** Implemented Shaders and Uniforms.
 5.  **[DONE] Economy & Tournament:** Merged feature branches.
+6.  **[DONE] Etterna - MSD:** Implemented difficulty calculation.
+7.  **[DONE] Etterna - Wife Scoring:** Implemented millisecond scoring.
+8.  **[NEXT] Outfox - Audio:** Investigate audio backend updates.

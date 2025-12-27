@@ -32,6 +32,7 @@ struct HighScoreImpl
 	RadarValues radarValues;
 	float fLifeRemainingSeconds;
 	bool bDisqualified;
+	float fWifeScore; // Etterna Parity
 
 	HighScoreImpl();
 	XNode *CreateNode() const;
@@ -64,6 +65,7 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( radarValues );
 	COMPARE( fLifeRemainingSeconds );
 	COMPARE( bDisqualified );
+	COMPARE( fWifeScore );
 #undef COMPARE
 
 	return true;
@@ -88,6 +90,7 @@ HighScoreImpl::HighScoreImpl()
 	ZERO( iHoldNoteScores );
 	radarValues.MakeUnknown();
 	fLifeRemainingSeconds = 0;
+	fWifeScore = 0.0f;
 }
 
 XNode *HighScoreImpl::CreateNode() const
@@ -101,6 +104,7 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
+	pNode->AppendChild( "WifeScore",		fWifeScore );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "MaxCombo",			iMaxCombo );
 	pNode->AppendChild( "StageAward",		StageAwardToString(stageAward) );
@@ -136,6 +140,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	grade = StringToGrade( s );
 	pNode->GetChildValue( "Score",			iScore );
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
+	pNode->GetChildValue( "WifeScore",		fWifeScore );
 	pNode->GetChildValue( "SurviveSeconds",		fSurviveSeconds );
 	pNode->GetChildValue( "MaxCombo",		iMaxCombo );
 	pNode->GetChildValue( "StageAward",		s ); stageAward = StringToStageAward(s);
@@ -195,6 +200,7 @@ unsigned int HighScore::GetMaxCombo() const { return m_Impl->iMaxCombo; }
 StageAward HighScore::GetStageAward() const { return m_Impl->stageAward; }
 PeakComboAward HighScore::GetPeakComboAward() const { return m_Impl->peakComboAward; }
 float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
+float HighScore::GetWifeScore() const { return m_Impl->fWifeScore; }
 float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
 float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + GetLifeRemainingSeconds(); }
 RString HighScore::GetModifiers() const { return m_Impl->sModifiers; }
@@ -215,6 +221,7 @@ void HighScore::SetMaxCombo( unsigned int i ) { m_Impl->iMaxCombo = i; }
 void HighScore::SetStageAward( StageAward a ) { m_Impl->stageAward = a; }
 void HighScore::SetPeakComboAward( PeakComboAward a ) { m_Impl->peakComboAward = a; }
 void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
+void HighScore::SetWifeScore( float f ) { m_Impl->fWifeScore = f; }
 void HighScore::SetAliveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
 void HighScore::SetModifiers( RString s ) { m_Impl->sModifiers = s; }
 void HighScore::SetDateTime( DateTime d ) { m_Impl->dateTime = d; }
@@ -478,6 +485,7 @@ public:
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
 	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
 	static int GetPercentDP( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPercentDP() ); return 1; }
+	static int GetWifeScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetWifeScore() ); return 1; }
 	static int GetDate( T* p, lua_State *L )			{ lua_pushstring(L, p->GetDateTime().GetString() ); return 1; }
 	static int GetSurvivalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSurvivalSeconds() ); return 1; }
 	static int IsFillInMarker( T* p, lua_State *L )
@@ -507,6 +515,7 @@ public:
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetScore );
 		ADD_METHOD( GetPercentDP );
+		ADD_METHOD( GetWifeScore );
 		ADD_METHOD( GetDate );
 		ADD_METHOD( GetSurvivalSeconds );
 		ADD_METHOD( IsFillInMarker );
