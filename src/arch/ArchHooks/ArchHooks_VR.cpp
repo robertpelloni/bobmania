@@ -38,3 +38,37 @@ void ArchHooks_VR::ExitVRMode()
 {
 	LOG->Trace("Exiting VR Mode (Stub)");
 }
+
+void ArchHooks_VR::BeginFrame()
+{
+	if( !IsVRModeEnabled() ) return;
+	// Wait for HMD pose, predict, acquire texture swapchain
+}
+
+void ArchHooks_VR::EndFrame()
+{
+	if( !IsVRModeEnabled() ) return;
+	// Submit layers to compositor, flush
+}
+
+void ArchHooks_VR::GetViewMatrix( int eye, float* outMatrix )
+{
+	// Identity stub
+	for(int i=0; i<16; ++i) outMatrix[i] = (i%5 == 0) ? 1.0f : 0.0f;
+
+	// Mock stereo offset
+	if( eye == 0 ) outMatrix[12] = -0.03f; // Left eye left
+	else outMatrix[12] = 0.03f; // Right eye right
+}
+
+void ArchHooks_VR::GetProjectionMatrix( int eye, float* outMatrix )
+{
+	// Identity stub (would be perspective projection)
+	for(int i=0; i<16; ++i) outMatrix[i] = (i%5 == 0) ? 1.0f : 0.0f;
+}
+
+void ArchHooks_VR::UpdateHMD()
+{
+	if( !IsVRModeEnabled() ) return;
+	// Poll OpenVR/OpenXR events
+}

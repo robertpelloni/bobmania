@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.3.2-VR-Beta] - 2025-12-27
+### Added
+- **VR Support:** Enhanced `ArchHooks_VR` with Render Loop stubs (`BeginFrame`, `EndFrame`, `GetMatrices`).
+- **Network:** `GameClient` class for managing real-time server connections (WebSocket/TCP stub).
+- **Build:** Added `GameClient` to build configuration.
+
 ## [5.3.1-VR-Alpha] - 2025-12-27
 
 ### Added

@@ -16,6 +16,17 @@ public:
 	bool IsVRModeEnabled() const;
 	void EnterVRMode();
 	void ExitVRMode();
+
+	// Render Loop
+	void BeginFrame();
+	void EndFrame();
+
+	// Matrices (Mock Matrix4x4 for now, usually RageMatrix)
+	void GetViewMatrix( int eye, float* outMatrix );
+	void GetProjectionMatrix( int eye, float* outMatrix );
+
+	// Input
+	void UpdateHMD();
 };
 
 #endif

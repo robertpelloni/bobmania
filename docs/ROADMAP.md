@@ -66,12 +66,14 @@ This document tracks the implementation status of the "StepMania Network" featur
 *   **Live Spectating:** Real-time streaming of tournament matches.
 *   **Cross-Game Inventory:** API to sync assets with external games (e.g., "bob's game") for real.
 
-### 3. In Progress / Alpha (v5.3.1)
+### 3. In Progress / Beta (v5.3.2)
 *   **VR Support:**
-    *   **Status:** Alpha (Stubs Implemented)
-    *   `ArchHooks_VR`: Architecture hooks for HMD initialization.
+    *   **Status:** Beta (Render Loop Ready)
+    *   `ArchHooks_VR`: Architecture hooks for HMD initialization, Render Loop (`BeginFrame`/`EndFrame`), and Matrices.
     *   `m_bVRMode`: Preference toggle added to `PrefsManager`.
-    *   Build system updated (`CMakeData-arch.cmake`).
+*   **Network Client:**
+    *   **Status:** In Development
+    *   `GameClient`: Stubbed class for future Node.js server connection.
 
 ## Documentation
 *   `docs/SYSTEM_ARCHITECTURE.md`: Technical design.
