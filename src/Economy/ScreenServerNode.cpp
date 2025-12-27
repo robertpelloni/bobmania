@@ -2,7 +2,7 @@
 #include "ScreenServerNode.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "EconomyManager.h"
+#include "Economy/EconomyManager.h"
 #include "InputEventPlus.h"
 #include "RageUtil.h"
 

@@ -3,8 +3,8 @@
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "InputEventPlus.h"
-#include "EconomyManager.h"
-#include "ContentSwarmManager.h"
+#include "Economy/EconomyManager.h"
+#include "Network/ContentSwarmManager.h"
 #include "RageUtil.h"
 #include "GameSoundManager.h"
 
