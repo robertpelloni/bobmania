@@ -28,7 +28,7 @@ private:
 	BitmapText m_textViewMode;
 
 	bool m_bShowBracket;
-	TournamentBracket m_Bracket;
+	// TournamentBracket m_Bracket; // Moved to EconomyManager
 
 	// Simple list display for MVP
 	std::vector<LadderEntry> m_LadderEntries;

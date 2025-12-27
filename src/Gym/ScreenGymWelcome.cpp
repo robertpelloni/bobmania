@@ -62,11 +62,14 @@ void ScreenGymWelcome::Input( const InputEventPlus &input )
 		   // Use a user-writable path (e.g., Save/ directory) if possible, but standard is Songs/
 		   // For simulation, we assume write permissions.
 		   GymCourseWriter::WriteCourse(pWorkout, "Save/LocalProfiles/MyWorkout.crs");
+		   
+		   // Set GameState for Course Play
+		   GAMESTATE->m_PlayMode.Set( PLAY_MODE_NONSTOP );
 		   GAMESTATE->m_pCurCourse.Set( pWorkout );
 		}
 
-		// For MVP, just jump to music select
-		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		// Jump to Stage Information to start the course
+		SCREENMAN->SetNewScreen( "ScreenStageInformation" );
 	}
 	else if( input.MenuI == GAME_BUTTON_BACK )
 	{

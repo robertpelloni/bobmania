@@ -63,8 +63,12 @@ void ScreenTournamentLadder::Init()
 		names.push_back(m_LadderEntries[i].name);
 	}
 
-	// Generate Bracket
-	m_Bracket.Generate(names);
+	// Generate Bracket if empty
+	TournamentBracket* pBracket = EconomyManager::Instance()->GetTournamentBracket();
+	if( pBracket->GetMatches().empty() )
+	{
+		pBracket->Generate(names);
+	}
 
 	// Create reusable rows (max 10)
 	for( int i=0; i < 10; ++i )
@@ -87,7 +91,7 @@ void ScreenTournamentLadder::RefreshView()
 	if( m_bShowBracket )
 	{
 		m_textViewMode.SetText( "Press SELECT to view Ladder" );
-		const auto& matches = m_Bracket.GetMatches();
+		const auto& matches = EconomyManager::Instance()->GetTournamentBracket()->GetMatches();
 
 		for( size_t i=0; i < matches.size() && i < m_pRowTexts.size(); ++i )
 		{
@@ -96,6 +100,10 @@ void ScreenTournamentLadder::RefreshView()
 				m.id, m.p1.c_str(), m.p2.c_str(),
 				m.winner.empty() ? "?" : m.winner.c_str() );
 			m_pRowTexts[i]->SetText( sMatch );
+			
+			// Highlight if selected
+			if( (int)i == m_iSelection ) m_pRowTexts[i]->SetDiffuse( RageColor(1,1,0,1) );
+			else m_pRowTexts[i]->SetDiffuse( RageColor(1,1,1,1) );
 		}
 	}
 	else
@@ -109,7 +117,7 @@ void ScreenTournamentLadder::RefreshView()
 				m_LadderEntries[i].points
 			);
 			m_pRowTexts[i]->SetText( sEntry );
-			if( m_LadderEntries[i].name == "YOU" )
+			if( m_LadderEntries[i].name == "YOU" ) // Simple check, ideally use ID
 				m_pRowTexts[i]->SetDiffuse( RageColor(0,1,0,1) );
 			else
 				m_pRowTexts[i]->SetDiffuse( RageColor(1,1,1,1) );
@@ -124,6 +132,7 @@ void ScreenTournamentLadder::Input( const InputEventPlus &input )
 	if( input.MenuI == GAME_BUTTON_SELECT )
 	{
 		m_bShowBracket = !m_bShowBracket;
+		m_iSelection = 0; // Reset selection on view change
 		RefreshView();
 		SOUND->PlayOnce( THEME->GetPathS("Common", "change") );
 	}
@@ -132,6 +141,45 @@ void ScreenTournamentLadder::Input( const InputEventPlus &input )
 		SCREENMAN->PlayStartSound();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		return;
+	}
+	else if( input.MenuI == GAME_BUTTON_UP )
+	{
+		if( m_iSelection > 0 ) m_iSelection--;
+		RefreshView();
+		SOUND->PlayOnce( THEME->GetPathS("Common", "change") );
+	}
+	else if( input.MenuI == GAME_BUTTON_DOWN )
+	{
+		int max = m_bShowBracket ? EconomyManager::Instance()->GetTournamentBracket()->GetMatches().size() : m_LadderEntries.size();
+		if( m_iSelection < max - 1 ) m_iSelection++;
+		RefreshView();
+		SOUND->PlayOnce( THEME->GetPathS("Common", "change") );
+	}
+	else if( input.MenuI == GAME_BUTTON_START )
+	{
+		if( m_bShowBracket )
+		{
+			const auto& matches = EconomyManager::Instance()->GetTournamentBracket()->GetMatches();
+			if( m_iSelection < (int)matches.size() )
+			{
+				const auto& m = matches[m_iSelection];
+				// Check if player is in this match and it's not decided
+				bool bIsP1 = m.p1.find("YOU") == 0;
+				bool bIsP2 = m.p2.find("YOU") == 0;
+				
+				if( (bIsP1 || bIsP2) && m.winner.empty() )
+				{
+					// Start Match!
+					EconomyManager::Instance()->SetTournamentMatchId( m.id );
+					SOUND->PlayOnce( THEME->GetPathS("Common", "start") );
+					SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+				}
+				else
+				{
+					SOUND->PlayOnce( THEME->GetPathS("Common", "invalid") );
+				}
+			}
+		}
 	}
 
 	ScreenWithMenuElements::Input( input );

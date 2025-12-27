@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include "RageThreads.h"
+#include "../Tournament/TournamentBracket.h"
 
 // Basic types for our simulated economy
 typedef std::string WalletAddress;
@@ -25,6 +26,14 @@ struct Asset {
 	std::string type; // "Title", "Avatar", "License"
 	WalletAddress owner;
 	CurrencyAmount value;
+};
+
+struct Proposal {
+	int id;
+	std::string title;
+	std::string desc;
+	int yesVotes;
+	int noVotes;
 };
 
 class EconomyManager
@@ -67,6 +76,7 @@ public:
 
 	// Inventory
 	void AddToInventory(const Asset& asset);
+	void RemoveFromInventory(const std::string& name);
 	bool HasAsset(const std::string& name);
 	void EquipAsset(const std::string& type, const std::string& name);
 	std::string GetEquippedAsset(const std::string& type);
@@ -74,6 +84,15 @@ public:
 
 	// Data Access for UI
 	std::vector<Transaction> GetRecentTransactions() const;
+
+	// Governance
+	const std::vector<Proposal>& GetProposals() const { return m_Proposals; }
+	void VoteOnProposal(int proposalId, bool bYes);
+
+	// Tournament
+	TournamentBracket* GetTournamentBracket() { return &m_TournamentBracket; }
+	void SetTournamentMatchId(int id) { m_iCurrentTournamentMatchId = id; }
+	int GetTournamentMatchId() const { return m_iCurrentTournamentMatchId; }
 
 private:
 	// Simulated Ledger
@@ -96,6 +115,13 @@ private:
 	// Inventory
 	std::vector<Asset> m_Inventory;
 	std::map<std::string, std::string> m_Equipped; // Type -> Name
+
+	// Governance
+	std::vector<Proposal> m_Proposals;
+
+	// Tournament
+	TournamentBracket m_TournamentBracket;
+	int m_iCurrentTournamentMatchId;
 
 	static EconomyManager* s_pInstance;
 

@@ -510,6 +510,47 @@ void ScreenEvaluation::Init()
 		this->AddChild( pBetText );
 	}
 
+	// Tournament Resolution Logic
+	int matchId = EconomyManager::Instance()->GetTournamentMatchId();
+	if ( matchId != -1 )
+	{
+		// Determine Win Condition (Simple: Grade A or better)
+		bool bWin = false;
+		if ( grade[PLAYER_1] <= Grade_Tier03 ) bWin = true;
+
+		// Update Bracket
+		TournamentBracket* pBracket = EconomyManager::Instance()->GetTournamentBracket();
+		
+		// Find rival name
+		const auto& matches = pBracket->GetMatches();
+		std::string rivalName = "Rival";
+		if( matchId < (int)matches.size() ) {
+			if( matches[matchId].p1.find("YOU") == 0 ) rivalName = matches[matchId].p2;
+			else rivalName = matches[matchId].p1;
+		}
+		
+		pBracket->SetWinner(matchId, bWin ? "YOU" : rivalName);
+		EconomyManager::Instance()->SetTournamentMatchId(-1); // Clear match ID
+
+		// Display Result
+		BitmapText* pTournText = new BitmapText;
+		pTournText->LoadFromFont( THEME->GetPathF("Common", "header") );
+		if (bWin)
+		{
+			pTournText->SetText( "MATCH WON! Advancing..." );
+			pTournText->SetDiffuse( RageColor(0,1,0,1) );
+			SOUND->PlayOnce( THEME->GetPathS("Common", "coin") );
+		}
+		else
+		{
+			pTournText->SetText( "MATCH LOST." );
+			pTournText->SetDiffuse( RageColor(1,0,0,1) );
+		}
+		pTournText->SetXY( 320, 280 ); // Below betting text if any
+		pTournText->SetZoom( 1.5f );
+		this->AddChild( pTournText );
+	}
+
 	// init judgment area
 	ROLLING_NUMBERS_CLASS.Load( m_sName, "RollingNumbersClass" );
 	ROLLING_NUMBERS_MAX_COMBO_CLASS.Load( m_sName, "RollingNumbersMaxComboClass" );

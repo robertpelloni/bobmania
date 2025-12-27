@@ -42,6 +42,7 @@ EconomyManager::EconomyManager() : m_Mutex("EconomyManager")
 	m_iAccumulatedMiningReward = 0;
 	m_iPlayerElo = 1200; // Default Starting Elo (Gold/Silver border)
 	m_iHighestEloAchieved = 1200;
+	m_iCurrentTournamentMatchId = -1;
 }
 
 EconomyManager::~EconomyManager()
@@ -63,6 +64,11 @@ void EconomyManager::Initialize()
 
 	// Create a default Player wallet with signup bonus
 	m_Ledger["WALLET_PLAYER"] = 100; // Sign-up bonus
+
+	// Initialize Proposals
+	m_Proposals.push_back( { 1, "Add Song: Butterfly", "License fee: 5000 Coins", 120, 10 } );
+	m_Proposals.push_back( { 2, "Increase Tournament Fee", "Change from 5% to 7%", 45, 90 } );
+	m_Proposals.push_back( { 3, "New Gym Feature", "Fund dev of Calorie Course", 300, 5 } );
 
 	LOG->Trace("EconomyManager: Genesis Block Loaded.");
 
@@ -398,6 +404,18 @@ void EconomyManager::AddToInventory(const Asset& asset)
 	LOG->Trace("EconomyManager: Added %s to inventory.", asset.name.c_str());
 }
 
+void EconomyManager::RemoveFromInventory(const std::string& name)
+{
+	LockMut(m_Mutex);
+	for(auto it = m_Inventory.begin(); it != m_Inventory.end(); ++it) {
+		if(it->name == name) {
+			m_Inventory.erase(it);
+			LOG->Trace("EconomyManager: Removed %s from inventory.", name.c_str());
+			return;
+		}
+	}
+}
+
 bool EconomyManager::HasAsset(const std::string& name)
 {
 	LockMut(m_Mutex);
@@ -431,4 +449,23 @@ std::vector<Asset> EconomyManager::GetInventory() const
 std::vector<Transaction> EconomyManager::GetRecentTransactions() const
 {
 	return m_TransactionHistory;
+}
+
+void EconomyManager::VoteOnProposal(int proposalId, bool bYes)
+{
+	LockMut(m_Mutex);
+	for(auto& p : m_Proposals) {
+		if(p.id == proposalId) {
+			// Vote weight is determined by share ownership
+			// Minimum 1 vote for citizenship
+			int shares = GetShareCount();
+			int weight = (shares > 0) ? shares : 1;
+
+			if( bYes ) p.yesVotes += weight;
+			else       p.noVotes += weight;
+			
+			LOG->Trace("EconomyManager: Voted %s on Prop %d (Weight: %d)", bYes ? "YES" : "NO", proposalId, weight);
+			return;
+		}
+	}
 }

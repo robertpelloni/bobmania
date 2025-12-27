@@ -3,6 +3,8 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "Song.h"
+#include "Course.h"
+#include "GameConstantsAndTypes.h"
 
 bool GymCourseWriter::WriteCourse( const Course* pCourse, const std::string& sPath )
 {
@@ -17,18 +19,23 @@ bool GymCourseWriter::WriteCourse( const Course* pCourse, const std::string& sPa
 
 	f.PutLine( "#COURSE:" + pCourse->m_sMainTitle + ";" );
 	f.PutLine( "#SCRIPTER:" + pCourse->m_sScripter + ";" );
-	f.PutLine( "#METER:Simple;" ); // Default
+	f.PutLine( "#METER:Simple;" ); 
 
 	for( const auto& entry : pCourse->m_vEntries )
 	{
-		if( entry.pSong )
+		Song* pSong = entry.songID.ToSong();
+		if( pSong )
 		{
 			// Format: #SONG:Group/Title:Difficulty:Modstring;
-			// For MVP we just assume song group/title is available.
-			// Ideally we use pSong->GetSongDir() relative path logic.
+			std::string songPath = pSong->m_sGroupName + "/" + pSong->m_sMainTitle;
+			
+			// Get Difficulty
+			Difficulty diff = entry.stepsCriteria.m_difficulty;
+			std::string sDiff = DifficultyToString( diff );
+			
+			if( diff == Difficulty_Invalid ) sDiff = "";
 
-			std::string songPath = entry.pSong->m_sMainTitle; // Placeholder for real path logic
-			f.PutLine( "#SONG:" + songPath + ":Medium:;" );
+			f.PutLine( "#SONG:" + songPath + ":" + sDiff + ":;" );
 		}
 	}
 
