@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.1-VR-Alpha] - 2025-12-27
+
+### Added
+- **VR Support:** `ArchHooks_VR` stubs and `m_bVRMode` preference.
+- **Build:** Updated CMake configuration for VR modules.
+- **Documentation:** Updated roadmap for VR Alpha status.
+
 ## [5.3.0-Network-MVP] - 2024-05-22
 
 ### Added

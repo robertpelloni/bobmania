@@ -48,3 +48,17 @@ This project does not use Git Submodules. All dependencies are vendored directly
 *   [System Architecture](SYSTEM_ARCHITECTURE.md)
 *   [User Guide](USER_GUIDE.md)
 *   [Roadmap & Status](ROADMAP.md)
+
+## Updated Project Directory Structure (v5.3.1)
+
+| Directory | Description |
+| :--- | :--- |
+| `src/` | **Core Engine Source Code.** Contains `ScreenGameplay`, `Actor`, etc. |
+| `src/Economy/` | **Network MVP.** Ledger, Banking, Governance, Server Node. |
+| `src/Tournament/` | **Network MVP.** Ladders, Brackets. |
+| `src/Gym/` | **Network MVP.** Fitness modes, Playlist generation. |
+| `src/Unified/` | **Network MVP.** Dashboard and Profile Management. |
+| `src/arch/` | Hardware Abstraction Layer (Input, Sound, VR). |
+| `extern/` | **Dependencies.** Vendored libraries (ffmpeg, jsoncpp, lua-5.1). |
+| `docs/` | Project documentation and LLM instructions. |
+| `Save/` | **Runtime Data.** Economy ledger (`Economy.ini`), Profiles, etc. |

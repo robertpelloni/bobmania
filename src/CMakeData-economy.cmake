@@ -1,5 +1,6 @@
 list(APPEND SMDATA_ECONOMY_SRC
             "Economy/EconomyManager.cpp"
+            "Economy/Bridge/EthereumBridge.cpp"
             "Economy/ScreenGameplayCommercial.cpp"
             "Economy/Governance/ScreenGovernance.cpp"
             "Economy/ScreenServerNode.cpp"
@@ -26,6 +27,7 @@ list(APPEND SMDATA_ECONOMY_SRC
             "Unified/ProfileImporter.cpp")
 list(APPEND SMDATA_ECONOMY_HPP
             "Economy/EconomyManager.h"
+            "Economy/Bridge/BlockchainBridge.h"
             "Economy/ScreenGameplayCommercial.h"
             "Economy/Governance/ScreenGovernance.h"
             "Economy/ScreenServerNode.h"
