@@ -97,6 +97,8 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
 	{ "kickbox-quadarm", 4, true, StepsTypeCategory_Single },
 	{ "kickbox-insect", 6, true, StepsTypeCategory_Single },
 	{ "kickbox-arachnid", 8, true, StepsTypeCategory_Single },
+	// taiko
+	{ "taiko", 4, true, StepsTypeCategory_Single },
 };
 
 
@@ -3211,6 +3213,89 @@ static const Game g_Game_Kickbox =
 	TNS_W5,	// m_mapW5To
 };
 
+/** Taiko ********************************************************************/
+static const AutoMappings g_AutoKeyMappings_Taiko = AutoMappings (
+	"", "", "",
+	AutoMappingEntry(0, KEY_Cz, TAIKO_BUTTON_LEFT_KA, false),
+	AutoMappingEntry(0, KEY_Cx, TAIKO_BUTTON_LEFT_DON, false),
+	AutoMappingEntry(0, KEY_Cc, TAIKO_BUTTON_RIGHT_DON, false),
+	AutoMappingEntry(0, KEY_Cv, TAIKO_BUTTON_RIGHT_KA, false)
+);
+
+static const int TAIKO_COL_SPACING = 64;
+
+static const Style g_Style_Taiko_Single =
+{
+	true, // m_bUsedForGameplay
+	true, // m_bUsedForEdit
+	true, // m_bUsedForDemonstration
+	true, // m_bUsedForHowToPlay
+	"taiko", // m_szName
+	StepsType_taiko, // m_StepsType
+	StyleType_OnePlayerOneSide, // m_StyleType
+	4, // m_iColsPerPlayer
+	{ // m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+		{	// PLAYER_1
+			{ TRACK_1,	-TAIKO_COL_SPACING*1.5f, nullptr },
+			{ TRACK_2,	-TAIKO_COL_SPACING*0.5f, nullptr },
+			{ TRACK_3,	+TAIKO_COL_SPACING*0.5f, nullptr },
+			{ TRACK_4,	+TAIKO_COL_SPACING*1.5f, nullptr },
+		},
+		{	// PLAYER_2
+			{ TRACK_1,	-TAIKO_COL_SPACING*1.5f, nullptr },
+			{ TRACK_2,	-TAIKO_COL_SPACING*0.5f, nullptr },
+			{ TRACK_3,	+TAIKO_COL_SPACING*0.5f, nullptr },
+			{ TRACK_4,	+TAIKO_COL_SPACING*1.5f, nullptr },
+		},
+	},
+	{	// m_iInputColumn[NUM_GameController][NUM_GameButton]
+		{ 0, 1, 2, 3, Style::END_MAPPING },
+		{ 0, 1, 2, 3, Style::END_MAPPING }
+	},
+	{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+		0, 1, 2, 3
+	},
+	false, // m_bCanUseBeginnerHelper
+	false, // m_bLockDifficulties
+};
+
+static const Style* g_apGame_Taiko_Styles[] =
+{
+	&g_Style_Taiko_Single,
+	nullptr
+};
+
+static const Game g_Game_Taiko =
+{
+	"taiko", // m_szName
+	g_apGame_Taiko_Styles, // m_apStyles
+	true, // m_bCountNotesSeparately
+	false, // m_bTickHolds
+	false, // m_PlayersHaveSeparateStyles
+	{ // m_InputScheme
+		"taiko", // m_szName
+		NUM_TAIKO_BUTTONS, // m_iButtonsPerController
+		{ // m_szButtonNames
+			{ "LeftKa", GAME_BUTTON_LEFT },
+			{ "LeftDon", GAME_BUTTON_DOWN },
+			{ "RightDon", GAME_BUTTON_UP },
+			{ "RightKa", GAME_BUTTON_RIGHT },
+		},
+		&g_AutoKeyMappings_Taiko
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+	},
+	TNS_W1,	// m_mapW1To
+	TNS_W2,	// m_mapW2To
+	TNS_W3,	// m_mapW3To
+	TNS_W4,	// m_mapW4To
+	TNS_W5,	// m_mapW5To
+};
+
 static const Game *g_Games[] = 
 {
 	&g_Game_Dance,
@@ -3225,6 +3310,7 @@ static const Game *g_Games[] =
 	&g_Game_Popn,
 	&g_Game_Lights,
 	&g_Game_Kickbox,
+	&g_Game_Taiko,
 };
 
 GameManager::GameManager()
