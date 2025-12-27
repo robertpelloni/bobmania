@@ -321,6 +321,9 @@ public:
 	Preference<bool>	m_bPseudoLocalize;
 	Preference<bool>	m_show_theme_errors;
 
+	// VR Support
+	Preference<bool> m_bVRMode;
+
 #if !defined(WITHOUT_NETWORKING)
 	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
 

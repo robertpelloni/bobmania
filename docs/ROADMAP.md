@@ -65,7 +65,13 @@ This document tracks the implementation status of the "StepMania Network" featur
 ### 2. Advanced Features
 *   **Live Spectating:** Real-time streaming of tournament matches.
 *   **Cross-Game Inventory:** API to sync assets with external games (e.g., "bob's game") for real.
-*   **VR Support:** "Gym Mode" specifically optimized for VR headsets.
+
+### 3. In Progress / Alpha (v5.3.1)
+*   **VR Support:**
+    *   **Status:** Alpha (Stubs Implemented)
+    *   `ArchHooks_VR`: Architecture hooks for HMD initialization.
+    *   `m_bVRMode`: Preference toggle added to `PrefsManager`.
+    *   Build system updated (`CMakeData-arch.cmake`).
 
 ## Documentation
 *   `docs/SYSTEM_ARCHITECTURE.md`: Technical design.
