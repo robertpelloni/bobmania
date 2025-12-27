@@ -23,6 +23,7 @@ list(APPEND SMDATA_ECONOMY_SRC
             "Scoring/ActorMsdGraph.cpp"
             "Unified/ScreenUnifiedDashboard.cpp"
             "Unified/ScreenProfileCustomize.cpp"
+            "Unified/AssetSyncManager.cpp"
             "Unified/ActorOffsetBar.cpp"
             "Unified/ProfileExporter.cpp"
             "Unified/ProfileImporter.cpp")
@@ -51,6 +52,7 @@ list(APPEND SMDATA_ECONOMY_HPP
             "Scoring/ActorMsdGraph.h"
             "Unified/ScreenUnifiedDashboard.h"
             "Unified/ScreenProfileCustomize.h"
+            "Unified/AssetSyncManager.h"
             "Unified/ActorOffsetBar.h"
             "Unified/ProfileExporter.h"
             "Unified/ProfileImporter.h")

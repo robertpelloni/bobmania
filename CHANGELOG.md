@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.3.3-Inventory-Sync] - 2025-12-27
+### Added
+- **Cross-Game Inventory:** `AssetSyncManager` singleton to fetch items from external APIs (Mock: Bob's Game).
+- **Dashboard:** "SYNC EXT. ASSETS" button added to `ScreenUnifiedDashboard`.
+
 ## [5.3.2-VR-Beta] - 2025-12-27
 ### Added
 - **VR Support:** Enhanced `ArchHooks_VR` with Render Loop stubs (`BeginFrame`, `EndFrame`, `GetMatrices`).
