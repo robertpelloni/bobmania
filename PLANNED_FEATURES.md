@@ -68,8 +68,9 @@ Etterna is a keyboard-focused fork known for its advanced scoring and difficulty
 Project Outfox focuses on modernizing the codebase and supporting many game modes.
 
 ### Features
-*   **Modern Audio Backend:**
+*   **[COMPLETED] Modern Audio Backend:**
     *   Update audio drivers.
+    *   Implemented `miniaudio` backend (`RageSoundDriver_MiniAudio`).
 *   **New Game Modes:**
     *   Support for additional rhythm game types.
 
@@ -81,4 +82,4 @@ Project Outfox focuses on modernizing the codebase and supporting many game mode
 5.  **[DONE] Economy & Tournament:** Merged feature branches.
 6.  **[DONE] Etterna - MSD:** Implemented difficulty calculation.
 7.  **[DONE] Etterna - Wife Scoring:** Implemented millisecond scoring.
-8.  **[NEXT] Outfox - Audio:** Investigate audio backend updates.
+8.  **[DONE] Outfox - Audio:** Implemented `miniaudio` backend.

@@ -516,7 +516,11 @@ if(WIN32)
   list(APPEND SMDATA_LINK_LIB
               "dbghelp.lib"
               "setupapi.lib"
-              "hid.lib")
+              "hid.lib"
+              "ole32.lib"
+              "user32.lib"
+              "advapi32.lib"
+              "avrt.lib")
 
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}"

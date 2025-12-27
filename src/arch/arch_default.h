@@ -9,7 +9,7 @@
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "WaveOut,DirectSound-sw,WDMKS,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "MiniAudio,WaveOut,DirectSound-sw,WDMKS,Null"
 
 
 #elif defined(MACOSX)
@@ -19,7 +19,7 @@
 #include "MemoryCard/MemoryCardDriverThreaded_MacOSX.h"
 #define DEFAULT_INPUT_DRIVER_LIST "HID"
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "MiniAudio,AudioUnit,Null"
 
 
 #elif defined(UNIX)
@@ -46,7 +46,7 @@
 // JACK gives us an explicit option to NOT start a daemon, so try it third,
 // as PulseAudio will successfully Init() but not actually work if the
 // PulseAudio daemon has been suspended by/for jackd.
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,JACK,Pulse,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "MiniAudio,ALSA-sw,OSS,JACK,Pulse,Null"
 #else
 #error Which arch?
 #endif
