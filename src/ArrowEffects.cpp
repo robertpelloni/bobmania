@@ -12,6 +12,7 @@
 #include "GameState.h"
 #include "Style.h"
 #include "ThemeMetric.h"
+#include "LuaManager.h"
 #include <float.h>
 
 static char const dimension_names[4]= "XYZ";
@@ -1424,6 +1425,49 @@ ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsP
 ThemeMetric<float> DRAW_DISTANCE_BEFORE_TARGET_PIXELS( "Player", "DrawDistanceBeforeTargetsPixels" );
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD( "Player", "ReceptorArrowsYStandard" );
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE( "Player", "ReceptorArrowsYReverse" );
+
+static bool GetNotePathValues( const PlayerState* pPlayerState, float fBeat, int iCol, float& fX, float& fY, float& fZ )
+{
+	if( !pPlayerState->m_NotePathFunction.IsSet() )
+		return false;
+
+	Lua *L = LUA->Get();
+	pPlayerState->m_NotePathFunction.PushSelf( L );
+	lua_pushnumber( L, fBeat );
+	lua_pushnumber( L, iCol + 1 ); // Lua is 1-indexed
+
+	RString sError;
+	if( !LuaHelpers::RunScriptOnStack(L, sError, 2, 3, true) ) // 2 args, 3 returns
+	{
+		LOG->Warn( "Error running NotePath function: %s", sError.c_str() );
+		LUA->Release( L );
+		return false;
+	}
+
+	fX = FArg(-3);
+	fY = FArg(-2);
+	fZ = FArg(-1);
+
+	lua_pop( L, 3 );
+	LUA->Release( L );
+	return true;
+}
+
+void ArrowEffects::GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse, float fNoteBeat)
+{
+	float fX, fY, fZ;
+	if( GetNotePathValues(player_state, fNoteBeat, col, fX, fY, fZ) )
+	{
+		ret.x = fX;
+		ret.y = fY;
+		ret.z = fZ;
+		return;
+	}
+
+	ret.x= GetMoveX(col) + GetXPos(player_state, col, y_offset);
+	ret.y= GetMoveY(col) + GetYPos(player_state, col, y_offset, y_reverse_offset, with_reverse);
+	ret.z= GetMoveZ(col) + GetZPos(player_state, col, y_offset);
+}
     
 // lua start
 #include "LuaBinding.h"

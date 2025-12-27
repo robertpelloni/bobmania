@@ -159,8 +159,9 @@ void EconomyManager::Update(float fDeltaTime)
 	{
 		m_fMiningTimer = 0;
 		// Micro-reward for "Proof of Uptime"
-		m_iAccumulatedMiningReward += 1;
-		m_Ledger["WALLET_PLAYER"] += 1;
+		// Balanced: 5 coins per 10s = 30 coins/min
+		m_iAccumulatedMiningReward += 5;
+		m_Ledger["WALLET_PLAYER"] += 5;
 
 		// Log occasionally
 		// LOG->Trace( ssprintf("EconomyManager: Server Node Reward Mined! Balance: %lld", m_Ledger["WALLET_PLAYER"]) );
@@ -204,7 +205,7 @@ int EconomyManager::GetShareCount()
 
 CurrencyAmount EconomyManager::CalculateDividend()
 {
-	// Simple model: 1% of DAO Treasury distributed per Share
+	// Simple model: 0.0005% of DAO Treasury distributed per Share
 	// In reality this would be complex.
 	// We only calculate what the PLAYER gets.
 
@@ -214,8 +215,8 @@ CurrencyAmount EconomyManager::CalculateDividend()
 	CurrencyAmount treasury = m_Ledger["WALLET_DAO"];
 	if (treasury <= 1000) return 0; // Minimum threshold
 
-	// Each share gets 0.01% of treasury
-	double percentage = 0.0001 * myShares;
+	// Each share gets 0.0005% of treasury (Balanced for ~40 min ROI at 5M treasury)
+	double percentage = 0.000005 * myShares;
 	CurrencyAmount payout = (CurrencyAmount)(treasury * percentage);
 
 	return payout;

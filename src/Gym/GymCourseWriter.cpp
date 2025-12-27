@@ -5,6 +5,7 @@
 #include "Song.h"
 #include "Course.h"
 #include "GameConstantsAndTypes.h"
+#include "LuaManager.h"
 
 bool GymCourseWriter::WriteCourse( const Course* pCourse, const std::string& sPath )
 {
@@ -42,3 +43,27 @@ bool GymCourseWriter::WriteCourse( const Course* pCourse, const std::string& sPa
 	f.Close();
 	return true;
 }
+
+// Lua bindings for GymCourseWriter
+
+class LunaGymCourseWriter: public Luna<GymCourseWriter>
+{
+public:
+	static int WriteCourse( T* p, lua_State *L )
+	{
+		Course* pCourse = Luna<Course>::check(L, 1);
+		std::string sPath = SArg(2);
+		
+		bool bSuccess = GymCourseWriter::WriteCourse( pCourse, sPath );
+		lua_pushboolean(L, bSuccess);
+		return 1;
+	}
+
+	LunaGymCourseWriter()
+	{
+		ADD_METHOD( WriteCourse );
+	}
+};
+
+LUA_REGISTER_CLASS( GymCourseWriter )
+

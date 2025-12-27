@@ -268,6 +268,21 @@ public:
 	DEFINE_METHOD( GetHealthState, m_HealthState );
 	DEFINE_METHOD( GetSuperMeterLevel, m_fSuperMeter );
 
+	static int SetNotePath( T* p, lua_State *L )
+	{
+		if( lua_isnoneornil(L, 1) )
+		{
+			p->m_NotePathFunction.Unset();
+		}
+		else
+		{
+			luaL_checktype( L, 1, LUA_TFUNCTION );
+			lua_pushvalue( L, 1 );
+			p->m_NotePathFunction.SetFromStack( L );
+		}
+		return 0;
+	}
+
 	LunaPlayerState()
 	{
 		ADD_METHOD( ApplyPreferredOptionsToOtherLevels );
@@ -282,6 +297,7 @@ public:
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 		ADD_METHOD( GetSuperMeterLevel );
+		ADD_METHOD( SetNotePath );
 	}
 };
 

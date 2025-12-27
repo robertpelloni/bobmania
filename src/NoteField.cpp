@@ -707,6 +707,11 @@ bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargets
 	// IMPORTANT:  Do not modify this function without also modifying the
 	// version that is in NoteDisplay.cpp or coming up with a good way to
 	// merge them. -Kyz
+	
+	// If NotePath is active, disable culling to ensure notes are visible.
+	if( m_pPlayerState->m_NotePathFunction.IsSet() )
+		return true;
+
 	// TRICKY: If boomerang is on, then ones in the range 
 	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.

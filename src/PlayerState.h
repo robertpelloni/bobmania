@@ -10,6 +10,7 @@
 #include "PlayerOptions.h"
 #include "RageTimer.h"
 #include "SampleHistory.h"
+#include "LuaReference.h"
 struct lua_State;
 
 struct CacheDisplayedBeat {
@@ -132,6 +133,8 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+
+	LuaReference m_NotePathFunction;
 };
 
 #endif

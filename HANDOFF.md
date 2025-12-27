@@ -69,12 +69,24 @@ We analyzed **Tempo (tempoxyz/tempo)** as a candidate for a high-volume, low-fee
 *   **Use Tempo** if you need smart contracts (e.g., conditional tips, DAO governance) and want a user-friendly gasless experience.
 *   **Use Nano** if you want the absolute simplest, feeless P2P transfer with no complex logic.
 
-## 3. Session History (Dec 25, 2025)
-*   **Merged Feature Branches:** economy-tournament-mvp and itgmania-features into 5_1-new.
-*   **Resolved Conflicts:** Fixed conflicts in ProfileManager.cpp, ScreenGameplay.cpp, and others.
-*   **Documentation:** Created docs/DASHBOARD.md, LLM_INSTRUCTIONS.md, VERSION.md, CHANGELOG.md.
-*   **LLM Instructions:** Updated CLAUDE.md, GEMINI.md, GPT.md, copilot-instructions.md, AGENTS.md.
-*   **Version Bump:** Updated version to 5.1.0.
-*   **Fixes:** Integrated EconomyManager into ScreenGameplay.cpp (Update loop, StageFinished betting resolution, StartPlayingSong royalty payment).
-*   **UI Updates:** Added Economy Wallet Display to ScreenGameplay. Added "Dashboard" option to ScreenTitleMenu (Themes/default/metrics.ini).
-*   **NotITG Status:** "Render Targets" and "Shaders" are implemented. "NotePath" and "Modfiles" are currently **Not Implemented** (marked for future).
+## 3. Session History (Dec 27, 2025)
+*   **Completed Economy & Gym Features:**
+    *   **Gym Mode:** Fully implemented `GymPlaylistGenerator` (smart course generation based on intensity/meter), `GymCourseWriter` (CRS file generation), and `ScreenGymWelcome` (UI flow).
+    *   **Economy Loop:** Hooked `EconomyManager::Update` into `GameLoop.cpp` to enable background mining rewards and shareholder dividends.
+    *   **Governance:** Refactored `ScreenGovernance` to use persistent `EconomyManager` state instead of local dummy data.
+    *   **Betting:** Implemented `ScreenBettingEntry` (Economy) and `ScreenEvaluationBetting` (Tournament) for wagering on gameplay performance.
+    *   **Server Node:** Implemented `ScreenServerNode` for simulated distributed computing tasks.
+    *   **Cleanup:** Removed duplicate/dead code in `src/Tournament/ScreenBettingEntry.cpp`.
+    *   **Build System:** Updated `src/CMakeData-economy.cmake` to include all new files.
+*   **NotITG Parity:**
+    *   **NotePath:** Implemented `PlayerState::SetNotePath` (Lua) to allow arbitrary Lua functions to control note positions (X, Y, Z).
+    *   **Engine Integration:** Modified `ArrowEffects` to use the Lua function if set, bypassing standard modifiers.
+    *   **Culling:** Updated `NoteDisplay` and `NoteField` to disable visibility culling when NotePath is active.
+    *   **Modfiles:** Implemented automatic loading of `mods.lua` from song directories in `ScreenGameplay`.
+*   **Version Bump:** Updated version to 5.1.2.
+*   **Status:** All planned features for the "Economy & Gym" milestone are now **Complete**.
+
+## 4. Next Steps
+*   **Assets:** Replace placeholder text in `ScreenGymWelcome` and `ScreenUnifiedDashboard` with proper graphics when available.
+*   **Token Integration:** Connect the simulated `EconomyManager` to a real blockchain testnet (e.g., Tempo or Nano) for live transactions.
+*   **Content Expansion:** Create real assets for the Marketplace and Gym Mode.

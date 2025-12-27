@@ -271,6 +271,7 @@ protected:
 
 	Background		*m_pSongBackground;
 	Foreground		*m_pSongForeground;
+	Actor			*m_pModfile;
 
 	/** @brief Used between songs in a course to show the next song. */
 	Transition		m_NextSong;

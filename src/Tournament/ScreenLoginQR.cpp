@@ -20,7 +20,7 @@ void ScreenLoginQR::Init()
 	this->AddChild( &m_textPrompt );
 
 	m_textStatus.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textStatus.SetText( "Waiting for input..." );
+	m_textStatus.SetText( "Waiting for input... (Simulated)" );
 	m_textStatus.SetXY( 320, 300 );
 	m_textStatus.SetDiffuse( RageColor(0.5f, 0.5f, 0.5f, 1) );
 	this->AddChild( &m_textStatus );

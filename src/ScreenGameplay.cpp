@@ -326,6 +326,7 @@ ScreenGameplay::ScreenGameplay()
 {
 	m_pSongBackground = nullptr;
 	m_pSongForeground = nullptr;
+	m_pModfile = nullptr;
 	m_bForceNoNetwork = false;
 	m_delaying_ready_announce= false;
 	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= false;
@@ -1055,6 +1056,7 @@ ScreenGameplay::~ScreenGameplay()
 
 	SAFE_DELETE( m_pSongBackground );
 	SAFE_DELETE( m_pSongForeground );
+	SAFE_DELETE( m_pModfile );
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->UnPauseMountingThread();
@@ -1342,6 +1344,12 @@ void ScreenGameplay::LoadNextSong()
 	if( m_pSongForeground )
 		m_pSongForeground->Unload();
 
+	if( m_pModfile )
+	{
+		this->RemoveChild( m_pModfile );
+		SAFE_DELETE( m_pModfile );
+	}
+
 	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Init(2) )
 	{
 		m_BeginnerHelper.SetVisible( false );
@@ -1388,6 +1396,23 @@ void ScreenGameplay::LoadNextSong()
 
 	if( m_pSongForeground )
 		m_pSongForeground->LoadFromSong( GAMESTATE->m_pCurSong );
+
+	if( GAMESTATE->m_pCurSong )
+	{
+		RString sDir = GAMESTATE->m_pCurSong->GetSongDir();
+		if( DoesFileExist( sDir + "mods.lua" ) )
+		{
+			m_pModfile = ActorUtil::MakeActor( sDir + "mods.lua" );
+			if( m_pModfile )
+			{
+				m_pModfile->SetName( "Modfile" );
+				m_pModfile->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
+				ActorUtil::LoadAllCommands( *m_pModfile, m_sName );
+				this->AddChild( m_pModfile );
+				m_pModfile->PlayCommand( "On" );
+			}
+		}
+	}
 
 	m_fTimeSinceLastDancingComment = 0;
 

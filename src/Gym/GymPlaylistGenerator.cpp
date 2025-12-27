@@ -8,6 +8,8 @@
 #include "Steps.h"
 #include "Style.h"
 #include "Song.h"
+#include "LuaManager.h"
+#include "EnumHelper.h"
 
 Course* GymPlaylistGenerator::GenerateCircuit( float targetDurationSeconds, WorkoutIntensity intensity )
 {
@@ -95,3 +97,50 @@ float GymPlaylistGenerator::EstimateCalories( Song* pSong, float fRate )
 	// Rough approximation: Length * Rate * Factor
 	return pSong->m_fMusicLengthSeconds * fRate * 0.20f; 
 }
+
+// Lua bindings for GymPlaylistGenerator
+
+static const char *WorkoutIntensityNames[] = {
+	"Light",
+	"Moderate",
+	"Vigorous",
+	"ProAthlete",
+};
+XBOX360_NAMED_ENUM( WorkoutIntensity, WorkoutIntensityNames );
+
+class LunaGymPlaylistGenerator: public Luna<GymPlaylistGenerator>
+{
+public:
+	static int GenerateCircuit( T* p, lua_State *L )
+	{
+		float duration = FArg(1);
+		WorkoutIntensity intensity = Enum::Check<WorkoutIntensity>(L, 2);
+		
+		Course* pCourse = GymPlaylistGenerator::GenerateCircuit( duration, intensity );
+		if( pCourse )
+			pCourse->PushSelf(L);
+		else
+			lua_pushnil(L);
+		
+		return 1;
+	}
+
+	static int EstimateCalories( T* p, lua_State *L )
+	{
+		Song* pSong = Luna<Song>::check(L, 1);
+		float rate = FArg(2);
+		
+		float calories = GymPlaylistGenerator::EstimateCalories( pSong, rate );
+		lua_pushnumber(L, calories);
+		return 1;
+	}
+
+	LunaGymPlaylistGenerator()
+	{
+		ADD_METHOD( GenerateCircuit );
+		ADD_METHOD( EstimateCalories );
+	}
+};
+
+LUA_REGISTER_CLASS( GymPlaylistGenerator )
+
