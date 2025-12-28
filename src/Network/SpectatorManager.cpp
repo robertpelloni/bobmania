@@ -1,6 +1,7 @@
 #include "global.h"
 #include "SpectatorManager.h"
 #include "Network/GameClient.h" // Send data via GameClient
+#include "Network/StreamManager.h"
 #include "RageLog.h"
 
 SpectatorManager* SpectatorManager::s_pInstance = NULL;
@@ -32,13 +33,18 @@ void SpectatorManager::StartBroadcasting()
 {
 	m_bIsBroadcasting = true;
 	LOG->Info("SpectatorManager: Started Broadcasting Match Data.");
-	// In real impl, we would send a handshake to the server
+
+	// Start Video Stream (RTMP)
+	// Resolution and FPS hardcoded for MVP
+	StreamManager::Instance()->StartStream("rtmp://localhost/live/my_stream", 1280, 720, 60);
 }
 
 void SpectatorManager::StopBroadcasting()
 {
 	m_bIsBroadcasting = false;
 	LOG->Info("SpectatorManager: Stopped Broadcasting.");
+
+	StreamManager::Instance()->StopStream();
 }
 
 void SpectatorManager::BroadcastUpdate( float fDeltaTime, float fLife, long long iScore )

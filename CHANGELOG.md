@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.4.1-Streaming] - 2025-12-27
+### Added
+- **Streaming:** Implemented `StreamManager` using FFmpeg (stubbed) for live match broadcasting (RTMP).
+- **Spectator:** Connected `SpectatorManager` to `StreamManager`.
+
 ## [5.3.6-Network-Beta] - 2025-12-27
 ### Added
 - **Network Client:** `GameClient` now supports state management (Lobby/Connecting) and callbacks.
