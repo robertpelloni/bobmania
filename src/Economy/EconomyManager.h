@@ -6,6 +6,8 @@
 #include <vector>
 #include "RageThreads.h"
 
+struct lua_State;
+
 // Basic types for our simulated economy
 typedef std::string WalletAddress;
 typedef long long CurrencyAmount;
@@ -74,6 +76,9 @@ public:
 
 	// Data Access for UI
 	std::vector<Transaction> GetRecentTransactions() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	// Simulated Ledger

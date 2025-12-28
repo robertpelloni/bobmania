@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.5.2-Lua-API] - 2025-12-27
+### Added
+- **Scripting:** Exposed `EconomyManager` to Lua as `ECONOMYMAN`.
+- **Themes:** Added helper script `Themes/default/Scripts/02 Network.lua`.
+
 ## [5.5.1-Stable] - 2025-12-27
 ### Changed
 - **Release:** Final stability release for the StepMania Network overhaul.

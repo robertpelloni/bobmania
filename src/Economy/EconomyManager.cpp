@@ -3,6 +3,8 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "IniFile.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
 #include <climits>
 
 // Fix for missing macro in standalone compilation
@@ -23,7 +25,16 @@ EconomyManager* EconomyManager::s_pInstance = NULL;
 EconomyManager* EconomyManager::Instance()
 {
 	if (s_pInstance == NULL)
+	{
 		s_pInstance = new EconomyManager;
+
+		// Register with Lua
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "ECONOMYMAN" );
+		s_pInstance->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 	return s_pInstance;
 }
 
@@ -90,9 +101,9 @@ void EconomyManager::LoadState()
 	if(ini.GetValue("Stats", "MiningRewards", mining)) m_iAccumulatedMiningReward = mining;
 
 	// Load Inventory (Simplified: Comma separated list of names)
-	std::string sInv;
+	RString sInv;
 	if(ini.GetValue("Inventory", "Items", sInv)) {
-		std::vector<std::string> names;
+		std::vector<RString> names;
 		split(sInv, ",", names);
 		for(const auto& name : names) {
 			if(!HasAsset(name)) {
@@ -130,9 +141,9 @@ void EconomyManager::SaveState()
 	ini.SetValue("Stats", "MiningRewards", ssprintf("%lld", m_iAccumulatedMiningReward));
 
 	// Save Inventory
-	std::string sInv;
+	RString sInv;
 	for(const auto& item : m_Inventory) sInv += item.name + ",";
-	if(!sInv.empty()) sInv.pop_back();
+	if(!sInv.empty()) sInv.erase(sInv.size()-1);
 	ini.SetValue("Inventory", "Items", sInv);
 
 	// Save Equipped
@@ -432,3 +443,48 @@ std::vector<Transaction> EconomyManager::GetRecentTransactions() const
 {
 	return m_TransactionHistory;
 }
+
+// Lua Bindings
+class LunaEconomyManager: public Luna<EconomyManager>
+{
+public:
+	static int GetBalance( T* p, lua_State *L )
+	{
+		RString sAddr = SArg(1);
+		lua_pushnumber( L, (double)p->GetBalance(sAddr) );
+		return 1;
+	}
+
+	static int Transfer( T* p, lua_State *L )
+	{
+		RString from = SArg(1);
+		RString to = SArg(2);
+		long long amount = (long long)IArg(3);
+		RString reason = SArg(4);
+		lua_pushboolean( L, p->Transfer(from, to, amount, reason) );
+		return 1;
+	}
+
+	static int GetPlayerElo( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, p->GetPlayerElo() );
+		return 1;
+	}
+
+	static int HasAsset( T* p, lua_State *L )
+	{
+		RString name = SArg(1);
+		lua_pushboolean( L, p->HasAsset(name) );
+		return 1;
+	}
+
+	LunaEconomyManager()
+	{
+		ADD_METHOD( GetBalance );
+		ADD_METHOD( Transfer );
+		ADD_METHOD( GetPlayerElo );
+		ADD_METHOD( HasAsset );
+	}
+};
+
+LUA_REGISTER_CLASS( EconomyManager )
