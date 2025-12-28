@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.5.4-Tested] - 2025-12-27
+### Added
+- **Testing:** Added unit test suite `src/tests/test_economy.cpp` for Economy verification.
+- **Scripts:** Added `src/tests/run_tests.sh`.
+
 ## [5.5.3-Complete-API] - 2025-12-27
 ### Added
 - **Scripting:** Exposed `SpectatorManager` (`SPECTATORMAN`) and `AssetSyncManager` (`ASSETSYNCMAN`) to Lua.

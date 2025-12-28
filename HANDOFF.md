@@ -17,6 +17,7 @@ This project has successfully transformed the legacy StepMania 5 engine into "St
 ## Repository State
 *   **Versioning:** Unified version `5.4.2` is tracked in `VERSION`, `src/ProductInfo.inc`, and `CMake/SMDefs.cmake`.
 *   **Dependencies:** All dependencies are vendored in `extern/` (Lua 5.1.5, JsonCpp 1.9.5, etc.). No git submodules are used.
+*   **Testing:** Unit tests available in `src/tests/test_economy.cpp`. Run via `src/tests/run_tests.sh` (simulated).
 *   **Documentation:**
     *   `docs/DASHBOARD.md`: Technical overview and status.
     *   `docs/ROADMAP.md`: Project history and future goals.
