@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+struct lua_State;
+
 class AssetSyncManager
 {
 public:
@@ -19,6 +21,9 @@ public:
 
 	// Returns a list of supported external games
 	std::vector<std::string> GetSupportedGames() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	static AssetSyncManager* s_pInstance;

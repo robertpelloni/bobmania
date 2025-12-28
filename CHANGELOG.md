@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.5.3-Complete-API] - 2025-12-27
+### Added
+- **Scripting:** Exposed `SpectatorManager` (`SPECTATORMAN`) and `AssetSyncManager` (`ASSETSYNCMAN`) to Lua.
+- **Themes:** Added `WatchMatch` and `SyncAssets` helpers.
+
 ## [5.5.2-Lua-API] - 2025-12-27
 ### Added
 - **Scripting:** Exposed `EconomyManager` to Lua as `ECONOMYMAN`.

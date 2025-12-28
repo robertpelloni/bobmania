@@ -5,6 +5,8 @@
 #include <vector>
 #include "RageUtil.h"
 
+struct lua_State;
+
 struct SpectatorPacket {
 	float timestamp;
 	int column;
@@ -35,6 +37,9 @@ public:
 
 	// Mock Data for UI
 	std::vector<std::string> GetLiveMatches() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	static SpectatorManager* s_pInstance;

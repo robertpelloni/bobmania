@@ -3,13 +3,24 @@
 #include "Network/GameClient.h" // Send data via GameClient
 #include "Network/StreamManager.h"
 #include "RageLog.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
 
 SpectatorManager* SpectatorManager::s_pInstance = NULL;
 
 SpectatorManager* SpectatorManager::Instance()
 {
 	if( !s_pInstance )
+	{
 		s_pInstance = new SpectatorManager;
+
+		// Register with Lua
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "SPECTATORMAN" );
+		s_pInstance->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 	return s_pInstance;
 }
 
@@ -89,3 +100,36 @@ std::vector<std::string> SpectatorManager::GetLiveMatches() const
 	matches.push_back("Casual: Alice playing Butterfly");
 	return matches;
 }
+
+// Lua Bindings
+class LunaSpectatorManager: public Luna<SpectatorManager>
+{
+public:
+	static int ConnectToMatch( T* p, lua_State *L )
+	{
+		RString matchID = SArg(1);
+		p->ConnectToMatch(matchID);
+		return 0;
+	}
+
+	static int StartBroadcasting( T* p, lua_State *L )
+	{
+		p->StartBroadcasting();
+		return 0;
+	}
+
+	static int StopBroadcasting( T* p, lua_State *L )
+	{
+		p->StopBroadcasting();
+		return 0;
+	}
+
+	LunaSpectatorManager()
+	{
+		ADD_METHOD( ConnectToMatch );
+		ADD_METHOD( StartBroadcasting );
+		ADD_METHOD( StopBroadcasting );
+	}
+};
+
+LUA_REGISTER_CLASS( SpectatorManager )

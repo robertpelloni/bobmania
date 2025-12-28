@@ -3,13 +3,24 @@
 #include "Economy/EconomyManager.h" // Relative include from src/
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
 
 AssetSyncManager* AssetSyncManager::s_pInstance = NULL;
 
 AssetSyncManager* AssetSyncManager::Instance()
 {
 	if( !s_pInstance )
+	{
 		s_pInstance = new AssetSyncManager;
+
+		// Register with Lua
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "ASSETSYNCMAN" );
+		s_pInstance->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 	return s_pInstance;
 }
 
@@ -66,3 +77,22 @@ int AssetSyncManager::SyncWithGame( const std::string& gameName )
 	LOG->Info("Synced %d new assets.", count);
 	return count;
 }
+
+// Lua Bindings
+class LunaAssetSyncManager: public Luna<AssetSyncManager>
+{
+public:
+	static int SyncWithGame( T* p, lua_State *L )
+	{
+		RString gameName = SArg(1);
+		lua_pushnumber( L, p->SyncWithGame(gameName) );
+		return 1;
+	}
+
+	LunaAssetSyncManager()
+	{
+		ADD_METHOD( SyncWithGame );
+	}
+};
+
+LUA_REGISTER_CLASS( AssetSyncManager )

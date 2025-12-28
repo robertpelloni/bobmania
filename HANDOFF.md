@@ -1,11 +1,11 @@
 # StepMania Network: Master Handoff
 
 **Date:** 2025-12-27
-**Build:** 5.4.2-Maintenance
-**Status:** Stable Release
+**Build:** 5.5.3-Complete-API
+**Status:** Integrated Release
 
 ## Executive Summary
-This project has successfully transformed the legacy StepMania 5 engine into "StepMania Network," a modern platform integrating Economy, Competition, Fitness, and Connectivity features. All major milestones from the initial roadmap have been implemented as functional MVPs or Beta simulations.
+This project has successfully transformed the legacy StepMania 5 engine into "StepMania Network," a modern platform integrating Economy, Competition, Fitness, and Connectivity features. The codebase now includes a comprehensive Lua API for all new subsystems, allowing themes to interact with the economy and network layers.
 
 ## Implemented Systems
 1.  **Economy:** A complete internal economy system with wallets, transactions, mining rewards, and a marketplace. Data persists to `Save/Economy.ini`.
@@ -21,6 +21,12 @@ This project has successfully transformed the legacy StepMania 5 engine into "St
     *   `docs/DASHBOARD.md`: Technical overview and status.
     *   `docs/ROADMAP.md`: Project history and future goals.
     *   `docs/LLM_UNIVERSAL.md`: Guide for future AI agents.
+
+## Lua API Reference
+*   `ECONOMYMAN`: `GetBalance(addr)`, `Transfer(...)`, `GetPlayerElo()`.
+*   `SPECTATORMAN`: `ConnectToMatch(id)`, `StartBroadcasting()`.
+*   `ASSETSYNCMAN`: `SyncWithGame(name)`.
+*   **Helpers:** See `Themes/default/Scripts/02 Network.lua`.
 
 ## Next Steps for Development
 1.  **Backend:** Develop the Node.js game server to replace the `GameClient` simulation.

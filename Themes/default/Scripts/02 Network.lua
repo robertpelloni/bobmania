@@ -22,4 +22,17 @@
 +    end
 +    return false
 +end
+
+function WatchMatch(matchID)
+    if SPECTATORMAN then
+        SPECTATORMAN:ConnectToMatch(matchID)
+    end
+end
+
+function SyncAssets(gameName)
+    if ASSETSYNCMAN then
+        return ASSETSYNCMAN:SyncWithGame(gameName)
+    end
+    return 0
+end
 +
