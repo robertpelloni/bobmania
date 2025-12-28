@@ -8,7 +8,7 @@
 ; when they install StepMania 5. (not recommended)
 !define PRODUCT_ID "StepMania 5.3"
 ; TODO: This needs to be updated with the git rev hash
-!define PRODUCT_VER "5.4.2-Maintenance"
+!define PRODUCT_VER "5.5.0-Server-Beta"
 !define PRODUCT_DISPLAY "${PRODUCT_FAMILY} ${PRODUCT_VER}"
 !define PRODUCT_BITMAP "sm5"
 

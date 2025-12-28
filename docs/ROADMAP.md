@@ -22,13 +22,13 @@ Transform StepMania 5 into a connected platform combining rhythm gaming, cryptoc
     *   Unified Dashboard (`ScreenUnifiedDashboard`).
     *   Network Chat & Client (`GameClient`, `ScreenNetworkChat`).
     *   P2P Swarm Simulation (`ContentSwarmManager`).
+    *   **Backend Server:** Real Node.js server (`server/index.js`) for Matchmaking and Chat.
 *   **VR Support:**
     *   Architecture Hooks (`ArchHooks_VR`).
     *   Render Loop & Matrix Stubs.
 
 ### Pending / Future Work (Post-v5.4.2)
 *   **Real Blockchain Integration:** Replace `EthereumBridge` stubs with actual Web3 calls (e.g., via generic HTTP requests or a C++ ETH library).
-*   **Backend Server:** Replace the simulated `GameClient` logic with a real WebSocket connection to a Node.js/Go backend.
 *   **VR Implementation:** Connect `ArchHooks_VR` to OpenXR or SteamVR SDKs.
 *   **Live Streaming:** Implement real video encoding logic in `StreamManager::PushFrame` (currently stubbed).
 

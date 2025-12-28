@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.5.0-Server-Beta] - 2025-12-27
+### Added
+- **Backend:** Official Node.js Game Server implementation (`server/index.js`) supporting WebSocket Chat and Matchmaking queues.
+- **Documentation:** Added `docs/SERVER_SETUP.md`.
+
 ## [5.4.2-Maintenance] - 2025-12-27
 ### Changed
 - **Documentation:** Updated Dashboard with precise dependency versions and detailed project structure.
