@@ -9,6 +9,11 @@
 
 REGISTER_SCREEN_CLASS( ScreenNetworkChat );
 
+ScreenNetworkChat::~ScreenNetworkChat()
+{
+	GameClient::Instance()->SetMessageCallback(nullptr);
+}
+
 void ScreenNetworkChat::Init()
 {
 	ScreenWithMenuElements::Init();

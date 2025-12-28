@@ -7,6 +7,7 @@
 class ScreenNetworkChat : public ScreenWithMenuElements
 {
 public:
+	virtual ~ScreenNetworkChat();
 	virtual void Init();
 	virtual void Update( float fDeltaTime );
 	virtual bool Input( const InputEventPlus &input );
@@ -17,8 +18,6 @@ private:
 
 	std::vector<std::string> m_Messages;
 	std::string m_sInputBuffer;
-
-	float m_fAutoChatTimer;
 };
 
 #endif
