@@ -9,6 +9,8 @@ This session significantly advanced the "StepMania Network" project.
 1.  **Network MVP (5.3.0):** Economy, Tournament, Gym, and Dashboard implemented.
 2.  **VR Support (5.3.1/5.3.2):** Advanced from Alpha (Stubs) to Beta (Render Loop Hooks).
 3.  **Inventory Sync (5.3.3):** Implemented `AssetSyncManager` for cross-game asset portability.
+4.  **Spectating (5.3.4):** Implemented `SpectatorManager` stub.
+5.  **Marketplace (5.3.5):** Completed `ScreenMarketplace` with purchase logic and inventory persistence.
 
 ## Key Changes
 1.  **Economy System (`src/Economy/`):**

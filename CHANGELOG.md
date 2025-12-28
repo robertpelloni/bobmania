@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.3.5-Marketplace] - 2025-12-27
+### Added
+- **Marketplace:** Fully functional `ScreenMarketplace` with persistent inventory tracking and wallet deduction.
+- **Economy:** Integrated `HasAsset` checks to prevent duplicate purchases.
+
 ## [5.3.4-Spectator] - 2025-12-27
 ### Added
 - **Live Spectating:** `SpectatorManager` singleton to broadcast/receive match data.
