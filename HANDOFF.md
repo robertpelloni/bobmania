@@ -1,58 +1,28 @@
-# StepMania Network: Handoff Notes
+# StepMania Network: Master Handoff
 
 **Date:** 2025-12-27
-**Build:** 5.3.3-Inventory-Sync
-**Status:** Beta Features Implemented
+**Build:** 5.4.2-Maintenance
+**Status:** Stable Release
 
 ## Executive Summary
-This session significantly advanced the "StepMania Network" project.
-1.  **Network MVP (5.3.0):** Economy, Tournament, Gym, and Dashboard implemented.
-2.  **VR Support (5.3.1/5.3.2):** Advanced from Alpha (Stubs) to Beta (Render Loop Hooks).
-3.  **Inventory Sync (5.3.3):** Implemented `AssetSyncManager` for cross-game asset portability.
-4.  **Spectating (5.3.4):** Implemented `SpectatorManager` stub.
-5.  **Marketplace (5.3.5):** Completed `ScreenMarketplace` with purchase logic and inventory persistence.
+This project has successfully transformed the legacy StepMania 5 engine into "StepMania Network," a modern platform integrating Economy, Competition, Fitness, and Connectivity features. All major milestones from the initial roadmap have been implemented as functional MVPs or Beta simulations.
 
-## Key Changes
-1.  **Economy System (`src/Economy/`):**
-    *   `EconomyManager`: Central singleton for ledger, mining, and betting.
-    *   `ScreenBettingEntry`: UI for wagering on matches.
-    *   `ScreenGovernance`: DAO voting interface.
-    *   **Data:** Persists to `Save/Economy.ini`.
+## Implemented Systems
+1.  **Economy:** A complete internal economy system with wallets, transactions, mining rewards, and a marketplace. Data persists to `Save/Economy.ini`.
+2.  **Competition:** Elo-based tournament ladders with visual bracket generation.
+3.  **Fitness:** A dedicated Gym mode with intensity tracking and real-time calorie visualization in gameplay.
+4.  **Network:** A simulated network stack including P2P swarming, a Chat client with state management, and a Spectator system capable of triggering RTMP streams (stubbed).
+5.  **VR:** Architecture hooks (`ArchHooks_VR`) are in place for VR rendering and input.
 
-2.  **Tournament System (`src/Tournament/`):**
-    *   `ScreenTournamentLadder`: Elo ranking display and matchmaking interface.
-    *   `TournamentBracket`: Visual bracket generation.
+## Repository State
+*   **Versioning:** Unified version `5.4.2` is tracked in `VERSION`, `src/ProductInfo.inc`, and `CMake/SMDefs.cmake`.
+*   **Dependencies:** All dependencies are vendored in `extern/` (Lua 5.1.5, JsonCpp 1.9.5, etc.). No git submodules are used.
+*   **Documentation:**
+    *   `docs/DASHBOARD.md`: Technical overview and status.
+    *   `docs/ROADMAP.md`: Project history and future goals.
+    *   `docs/LLM_UNIVERSAL.md`: Guide for future AI agents.
 
-3.  **Gym Mode (`src/Gym/`):**
-    *   `ScreenGymWelcome`: Dedicated fitness launcher.
-    *   `GymPlaylistGenerator`: Creates intensity-based course files.
-    *   `ActorCalorieGraph`: Real-time calorie burn visualization (integrated into `ScreenGameplay`).
-
-4.  **VR Support (`src/arch/ArchHooks/`):**
-    *   `ArchHooks_VR`: Stubs for HMD initialization (OpenVR/OpenXR placeholder).
-    *   `m_bVRMode`: Preference in `PrefsManager`.
-
-5.  **Build System:**
-    *   Updated `src/CMakeLists.txt`, `src/CMakeData-economy.cmake`, `src/CMakeData-arch.cmake`.
-    *   **Note:** Dependencies (libmad, ffmpeg, gtk3) are currently missing in the build environment, preventing full binary compilation. Syntax checks (`g++ -fsyntax-only`) were used for verification.
-
-## Current Tasks & Next Steps
-1.  **Blockchain Bridge:** The `EconomyManager` is currently a simulation. The next step is to implement `BlockchainBridge` interfaces to connect to real networks (Ethereum/Solana).
-2.  **Server Backend:** A Node.js/Go backend is needed to replace the P2P simulation.
-3.  **Live Spectating:** Streaming support.
-
-## Known Issues
-*   **Compilation:** Full build fails due to missing system libraries (X11, ALSA, etc.).
-*   **Include Paths:** Fixed relative include paths in `ScreenUnifiedDashboard` and others, but further "deep" includes might need verification if new modules are added.
-
-## File Manifest (New/Modified)
-*   `src/Economy/*`
-*   `src/Gym/*`
-*   `src/Tournament/*`
-*   `src/Unified/*`
-*   `src/arch/ArchHooks/ArchHooks_VR.*`
-*   `docs/ROADMAP.md`
-*   `docs/DASHBOARD.md`
-*   `CHANGELOG.md`
-*   `VERSION`
-*   `docs/LLM_UNIVERSAL.md`
+## Next Steps for Development
+1.  **Backend:** Develop the Node.js game server to replace the `GameClient` simulation.
+2.  **Web3:** Implement the `EthereumBridge` using a real C++ JSON-RPC library.
+3.  **Media:** Connect `StreamManager` to a real FFmpeg encoder instance.

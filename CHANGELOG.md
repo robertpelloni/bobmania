@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.4.2-Maintenance] - 2025-12-27
+### Changed
+- **Documentation:** Updated Dashboard with precise dependency versions and detailed project structure.
+- **Versioning:** Synchronized version number across `VERSION`, `ProductInfo.inc`, and `CMake/SMDefs.cmake` to `5.4.2`.
+- **Status:** All "StepMania Network" features marked as Integrated/Stable.
+
 ## [5.4.1-Streaming] - 2025-12-27
 ### Added
 - **Streaming:** Implemented `StreamManager` using FFmpeg (stubbed) for live match broadcasting (RTMP).

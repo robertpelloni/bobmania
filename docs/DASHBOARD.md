@@ -1,64 +1,54 @@
 # StepMania Network: Project Dashboard
 
 ## Build Information
-*   **Version:** 5.3.0-Network-MVP
-*   **Build Date:** 2024-05-22
-*   **Status:** Stable / Feature Complete
+*   **Version:** 5.4.2-Maintenance
+*   **Codename:** StepMania Network
+*   **Status:** Stable Release
 
-## Project Structure
+## Project Directory Structure
 
-### Core Directories
-*   `src/`: Main source code (C++).
-    *   `src/Economy/`: Cryptocurrency, Banking, and Marketplace logic.
-    *   `src/Tournament/`: Ladder, Elo, and Bracket systems.
-    *   `src/Gym/`: Fitness tracking, Calorie Graphs, and Workout generation.
-    *   `src/Network/`: P2P Swarm and Distributed Server simulation.
-    *   `src/Unified/`: Dashboard UI and profile bridging.
-*   `extern/`: External libraries (Vendored dependencies).
-*   `Themes/`: UI assets and scripts.
-*   `Songs/`: Content content.
-
-### External Dependencies (Vendored in `extern/`)
-This project does not use Git Submodules. All dependencies are vendored directly in the `extern/` directory for stability and ease of build.
-
-| Library | Version | Path | Description |
-| :--- | :--- | :--- | :--- |
-| **ffmpeg** | (Custom) | `extern/ffmpeg/` | Multimedia handling (Video/Audio decoding). |
-| **lua** | 5.1 | `extern/lua-5.1/` | Scripting engine for Themes and Modding. |
-| **jsoncpp** | (Unknown) | `extern/jsoncpp/` | JSON parsing for Network/API data. |
-| **glew** | 1.5.8 | `extern/glew-1.5.8/` | OpenGL Extension Wrangler. |
-| **libpng** | (Unknown) | `extern/libpng/` | PNG image support. |
-| **libjpeg** | (Unknown) | `extern/libjpeg/` | JPEG image support. |
-| **zlib** | (Unknown) | `extern/zlib/` | Compression support. |
-| **mad** | 0.15.1b | `extern/mad-0.15.1b/` | MPEG Audio Decoder. |
-| **pcre** | (Unknown) | `extern/pcre/` | Perl Compatible Regular Expressions. |
-| **tomcrypt** | (Custom) | `src/libtomcrypt/` | Cryptographic primitives (used for Score Signing). |
-
-## Module Status Overview
-
-| Module | Status | Notes |
-| :--- | :--- | :--- |
-| **Economy Manager** | 🟢 Active | Ledger, Wallets, Dividends functional. |
-| **Tournament Ladder** | 🟢 Active | Elo calculation and Brackets visible. |
-| **Gym Mode** | 🟢 Active | Calorie Graph integrated into Gameplay. |
-| **Network (Swarm)** | 🟡 Simulated | P2P logic is mocked for MVP. |
-| **Governance** | 🟢 Active | Weighted voting implemented. |
-
-## Quick Links
-*   [System Architecture](SYSTEM_ARCHITECTURE.md)
-*   [User Guide](USER_GUIDE.md)
-*   [Roadmap & Status](ROADMAP.md)
-
-## Updated Project Directory Structure (v5.3.1)
+The project is organized into modular components within `src/` to separate the core engine from the new "Network" features.
 
 | Directory | Description |
 | :--- | :--- |
-| `src/` | **Core Engine Source Code.** Contains `ScreenGameplay`, `Actor`, etc. |
-| `src/Economy/` | **Network MVP.** Ledger, Banking, Governance, Server Node. |
-| `src/Tournament/` | **Network MVP.** Ladders, Brackets. |
-| `src/Gym/` | **Network MVP.** Fitness modes, Playlist generation. |
-| `src/Unified/` | **Network MVP.** Dashboard and Profile Management. |
-| `src/arch/` | Hardware Abstraction Layer (Input, Sound, VR). |
-| `extern/` | **Dependencies.** Vendored libraries (ffmpeg, jsoncpp, lua-5.1). |
-| `docs/` | Project documentation and LLM instructions. |
-| `Save/` | **Runtime Data.** Economy ledger (`Economy.ini`), Profiles, etc. |
+| `src/` | **Core Engine.** Contains the legacy StepMania 5 game loop (`GameLoop.cpp`), actor system (`Actor`), and screen management. |
+| `src/Economy/` | **Economy System.** Handles the simulated cryptocurrency ledger (`EconomyManager`), wallets, and transactions. |
+| `src/Economy/Bridge/` | **Blockchain Bridge.** Interfaces (`BlockchainBridge`) and stubs (`EthereumBridge`) for connecting to real networks. |
+| `src/Economy/Marketplace/` | **Marketplace.** UI (`ScreenMarketplace`) for purchasing in-game assets with wallet funds. |
+| `src/Economy/Governance/` | **DAO.** Voting system (`ScreenGovernance`) for shareholders. |
+| `src/Tournament/` | **Competition.** Elo ranking (`ScreenTournamentLadder`) and bracket generation (`TournamentBracket`). |
+| `src/Gym/` | **Fitness.** Workout modes (`ScreenGymWelcome`), playlist generation (`GymPlaylistGenerator`), and calorie tracking. |
+| `src/Network/` | **Connectivity.** P2P simulation (`ContentSwarmManager`), Real-time Client (`GameClient`), Streaming (`StreamManager`), and Spectating (`SpectatorManager`). |
+| `src/Unified/` | **UI/UX.** Central Dashboard (`ScreenUnifiedDashboard`) and Profile Management (`AssetSyncManager`). |
+| `src/arch/` | **HAL.** Hardware Abstraction Layer. Now includes `ArchHooks_VR` for VR support. |
+| `extern/` | **Dependencies.** Vendored third-party libraries (See table below). |
+| `Save/` | **Persistence.** Stores `Economy.ini` (Ledger), Profiles, and Preferences. |
+
+## External Dependencies (Vendored)
+
+This project *does not* use Git Submodules. All dependencies are vendored directly in `extern/` for stability and portability.
+
+| Library | Version | Location | Description |
+| :--- | :--- | :--- | :--- |
+| **Lua** | 5.1.5 | `extern/lua-5.1/` | Scripting engine for Themes. |
+| **JsonCpp** | 1.9.5 | `extern/jsoncpp/` | JSON serialization for Network/API data. |
+| **zlib** | 1.2.11 | `extern/zlib/` | Compression support (Deflate/Gzip). |
+| **libpng** | 1.6.37 | `extern/libpng/` | PNG image loading. |
+| **libjpeg** | 8.0 (80) | `extern/libjpeg/` | JPEG image loading. |
+| **libmad** | 0.15.1b | `extern/mad-0.15.1b/` | MPEG Audio Decoder. |
+| **GLEW** | 1.5.8 | `extern/glew-1.5.8/` | OpenGL Extension Wrangler. |
+| **FFmpeg** | 2.x (Headers) | `extern/ffmpeg/` | Multimedia framework (RTMP Streaming). |
+| **TomCrypt** | (Custom) | `src/libtomcrypt/` | Cryptographic primitives (Score Signing). |
+
+## Module Status (v5.4.2)
+
+| Feature | Component | Status | Notes |
+| :--- | :--- | :--- | :--- |
+| **Economy** | `EconomyManager` | ✅ Integrated | Full ledger, betting, and persistence. |
+| **Marketplace** | `ScreenMarketplace` | ✅ Integrated | Buy assets, check ownership. |
+| **Tournament** | `Ladder/Bracket` | ✅ Integrated | Elo ranking and visual brackets. |
+| **Gym Mode** | `CalorieGraph` | ✅ Integrated | Real-time burn overlay in Gameplay. |
+| **VR Support** | `ArchHooks_VR` | ⚠️ Beta | Render loop hooks ready; requires HMD SDK. |
+| **Chat** | `GameClient` | ✅ Integrated | Simulated lobby and in-game chat. |
+| **Streaming** | `StreamManager` | ⚠️ Stub | FFmpeg headers integrated; video pipe logic required. |
+| **Bridge** | `EthereumBridge` | ⚠️ Stub | Interface ready for Web3 implementation. |

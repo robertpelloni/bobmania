@@ -1,81 +1,36 @@
-# StepMania Network: Project Roadmap & Status
+# StepMania Network: Project Roadmap
 
-## Overview
-This document tracks the implementation status of the "StepMania Network" features, integrating concepts from various forks (Etterna, OutFox, StepManiaX) into a unified economy and tournament platform.
+## 1. Project Goal
+Transform StepMania 5 into a connected platform combining rhythm gaming, cryptocurrency economics, competitive tournaments, and fitness tracking.
 
-## Accomplished Features
+## 2. Release Status: v5.4.2-Maintenance
 
-### 1. Economy & Cryptocurrency (Simulated)
-*   **Status:** Complete
-*   **Key Components:**
-    *   `EconomyManager`: Singleton managing a simulated blockchain ledger ("Save/Economy.ini").
-    *   **Wallets:** Support for `WALLET_PLAYER`, `WALLET_HOUSE`, `WALLET_DAO`, and `ARTIST_` wallets.
-    *   **Transactions:** `Transfer()` logic with logging and persistence.
-    *   **Betting:** `ScreenBettingEntry` for placing wagers; `ScreenEvaluation` resolution logic.
-    *   **Mining:** Passive income simulation for "Server Node" uptime.
-    *   **Dividends:** Shareholders (DAO) receive periodic rewards based on Treasury balance.
-
-### 2. Tournament System
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ScreenTournamentLadder`: Displays Elo rankings and Divisions (Pro/Gold/Silver).
-    *   **Ranking:** Elo calculation logic in `EconomyManager`.
-    *   **Brackets:** `TournamentBracket` class for visualizing match trees.
-    *   **Rewards:** One-time bonuses for reaching Elo thresholds (Silver/Gold/Pro).
-
-### 3. Governance (DAO)
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ScreenGovernance`: Interface for voting on proposals.
-    *   **Weighted Voting:** Vote power determined by "Company Share" asset ownership.
-    *   **Treasury:** Visualizes DAO funds accumulated from fees/sales.
-
-### 4. Gym & Fitness
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ScreenGymWelcome`: Simplified fitness-focused launcher.
-    *   `GymPlaylistGenerator`: Creates courses based on intensity/METs.
-    *   `GymCourseWriter`: Saves custom workouts to `.crs` files.
-    *   `ActorCalorieGraph`: Visualizes calorie burn over time (integrated into Gameplay).
-
-### 5. Network Infrastructure (Simulated)
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ContentSwarmManager`: Simulates P2P package downloading/seeding.
-    *   `ScreenContentNetwork`: UI for browsing and downloading content packs.
-    *   `ScreenServerNode`: Idle screen simulating distributed computing jobs (AI/Rendering).
-    *   `ScreenNetworkChat`: Simple chat interface accessible from Content Network.
-
-### 6. Integration & Forks
-*   **Status:** Complete
-*   **Key Components:**
-    *   `MsdCalculator`: Ported Etterna-style density scoring logic.
-    *   `ActorMsdGraph`: Visualizes MSD density in Evaluation.
-    *   `ScreenLoginQR`: StepManiaX-style QR code login simulation.
-    *   `ScreenUnifiedDashboard`: "OS-like" launcher connecting all modules.
-    *   **Anti-Cheat:** `ScoreSigner` using mock HMAC for score validation.
-
-## Pending / Future Work
-
-### 1. Real-World Integration (Post-MVP)
-*   **Blockchain Bridge:** Replace `EconomyManager` simulated ledger with actual RPC calls to Ethereum/Solana/Cosmos.
-*   **P2P Networking:** Replace `ContentSwarmManager` simulation with libtorrent or IPFS integration.
-*   **Server Backend:** Implement a real NodeJS/Go backend for matchmaking and global chat.
-
-### 2. Advanced Features
-*   **Live Spectating:** Real-time streaming of tournament matches.
-*   **Cross-Game Inventory:** API to sync assets with external games (e.g., "bob's game") for real.
-
-### 3. In Progress / Beta (v5.3.2)
+### Completed Features (Integrated)
+*   **Economy & Marketplace:**
+    *   Simulated Ledger & Wallets (`EconomyManager`).
+    *   Asset Marketplace (`ScreenMarketplace`).
+    *   DAO Governance (`ScreenGovernance`).
+    *   Cross-Game Inventory Sync (`AssetSyncManager`).
+*   **Competition:**
+    *   Elo Ladders & Divisions (`ScreenTournamentLadder`).
+    *   Betting System (`ScreenBettingEntry`).
+    *   Live Spectating / Broadcasting (`SpectatorManager`, `StreamManager`).
+*   **Fitness:**
+    *   Gym Mode & Playlist Generator (`ScreenGymWelcome`).
+    *   Calorie Burn Visualization (`ActorCalorieGraph`).
+*   **Connectivity:**
+    *   Unified Dashboard (`ScreenUnifiedDashboard`).
+    *   Network Chat & Client (`GameClient`, `ScreenNetworkChat`).
+    *   P2P Swarm Simulation (`ContentSwarmManager`).
 *   **VR Support:**
-    *   **Status:** Beta (Render Loop Ready)
-    *   `ArchHooks_VR`: Architecture hooks for HMD initialization, Render Loop (`BeginFrame`/`EndFrame`), and Matrices.
-    *   `m_bVRMode`: Preference toggle added to `PrefsManager`.
-*   **Network Client:**
-    *   **Status:** Beta (Chat Functional)
-    *   `GameClient`: Supports login states, callbacks, and simulated lobby chat.
+    *   Architecture Hooks (`ArchHooks_VR`).
+    *   Render Loop & Matrix Stubs.
 
-## Documentation
-*   `docs/SYSTEM_ARCHITECTURE.md`: Technical design.
-*   `docs/USER_GUIDE.md`: Player instructions.
-*   `src/CMakeData-economy.cmake`: Build configuration.
+### Pending / Future Work (Post-v5.4.2)
+*   **Real Blockchain Integration:** Replace `EthereumBridge` stubs with actual Web3 calls (e.g., via generic HTTP requests or a C++ ETH library).
+*   **Backend Server:** Replace the simulated `GameClient` logic with a real WebSocket connection to a Node.js/Go backend.
+*   **VR Implementation:** Connect `ArchHooks_VR` to OpenXR or SteamVR SDKs.
+*   **Live Streaming:** Implement real video encoding logic in `StreamManager::PushFrame` (currently stubbed).
+
+## 3. Architecture
+See `docs/DASHBOARD.md` for dependency versions and directory layout.
