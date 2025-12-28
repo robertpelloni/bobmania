@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.5.1-Stable] - 2025-12-27
+### Changed
+- **Release:** Final stability release for the StepMania Network overhaul.
+- **Tools:** Added `deploy.sh` script for automated build/restart simulation.
+- **Docs:** Finalized Dashboard and Roadmap for post-release tracking.
+
 ## [5.5.0-Server-Beta] - 2025-12-27
 ### Added
 - **Backend:** Official Node.js Game Server implementation (`server/index.js`) supporting WebSocket Chat and Matchmaking queues.

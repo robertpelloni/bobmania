@@ -1,9 +1,9 @@
 # StepMania Network: Project Dashboard
 
 ## Build Information
-*   **Version:** 5.4.2-Maintenance
+*   **Version:** 5.5.0-Server-Beta
 *   **Codename:** StepMania Network
-*   **Status:** Stable Release
+*   **Status:** Beta Release
 
 ## Project Directory Structure
 
@@ -22,6 +22,7 @@ The project is organized into modular components within `src/` to separate the c
 | `src/Unified/` | **UI/UX.** Central Dashboard (`ScreenUnifiedDashboard`) and Profile Management (`AssetSyncManager`). |
 | `src/arch/` | **HAL.** Hardware Abstraction Layer. Now includes `ArchHooks_VR` for VR support. |
 | `extern/` | **Dependencies.** Vendored third-party libraries (See table below). |
+| `server/` | **Backend.** Node.js WebSocket server for Matchmaking and Chat. |
 | `Save/` | **Persistence.** Stores `Economy.ini` (Ledger), Profiles, and Preferences. |
 
 ## External Dependencies (Vendored)
@@ -40,7 +41,7 @@ This project *does not* use Git Submodules. All dependencies are vendored direct
 | **FFmpeg** | 2.x (Headers) | `extern/ffmpeg/` | Multimedia framework (RTMP Streaming). |
 | **TomCrypt** | (Custom) | `src/libtomcrypt/` | Cryptographic primitives (Score Signing). |
 
-## Module Status (v5.4.2)
+## Module Status (v5.5.0)
 
 | Feature | Component | Status | Notes |
 | :--- | :--- | :--- | :--- |
@@ -51,4 +52,5 @@ This project *does not* use Git Submodules. All dependencies are vendored direct
 | **VR Support** | `ArchHooks_VR` | ⚠️ Beta | Render loop hooks ready; requires HMD SDK. |
 | **Chat** | `GameClient` | ✅ Integrated | Simulated lobby and in-game chat. |
 | **Streaming** | `StreamManager` | ⚠️ Stub | FFmpeg headers integrated; video pipe logic required. |
+| **Backend** | `Node.js Server` | ✅ Beta | WebSocket Server implemented (`server/`). |
 | **Bridge** | `EthereumBridge` | ⚠️ Stub | Interface ready for Web3 implementation. |
