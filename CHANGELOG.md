@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.3.4-Spectator] - 2025-12-27
+### Added
+- **Live Spectating:** `SpectatorManager` singleton to broadcast/receive match data.
+- **Dashboard:** "SPECTATE TV" button added to `ScreenUnifiedDashboard`.
+
 ## [5.3.3-Inventory-Sync] - 2025-12-27
 ### Added
 - **Cross-Game Inventory:** `AssetSyncManager` singleton to fetch items from external APIs (Mock: Bob's Game).
