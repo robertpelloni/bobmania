@@ -9,7 +9,7 @@ class ScreenNetworkChat : public ScreenWithMenuElements
 public:
 	virtual void Init();
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 private:
 	BitmapText m_textChatBox;

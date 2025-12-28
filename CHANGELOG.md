@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.3.6-Network-Beta] - 2025-12-27
+### Added
+- **Network Client:** `GameClient` now supports state management (Lobby/Connecting) and callbacks.
+- **Chat:** `ScreenNetworkChat` fully integrated with `GameClient` for simulated multiplayer chat.
+
 ## [5.3.5-Marketplace] - 2025-12-27
 ### Added
 - **Marketplace:** Fully functional `ScreenMarketplace` with persistent inventory tracking and wallet deduction.

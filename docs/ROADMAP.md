@@ -72,8 +72,8 @@ This document tracks the implementation status of the "StepMania Network" featur
     *   `ArchHooks_VR`: Architecture hooks for HMD initialization, Render Loop (`BeginFrame`/`EndFrame`), and Matrices.
     *   `m_bVRMode`: Preference toggle added to `PrefsManager`.
 *   **Network Client:**
-    *   **Status:** In Development
-    *   `GameClient`: Stubbed class for future Node.js server connection.
+    *   **Status:** Beta (Chat Functional)
+    *   `GameClient`: Supports login states, callbacks, and simulated lobby chat.
 
 ## Documentation
 *   `docs/SYSTEM_ARCHITECTURE.md`: Technical design.
