@@ -1,6 +1,6 @@
 list(APPEND SMDATA_ECONOMY_SRC
             "Economy/EconomyManager.cpp"
-            "Economy/Bridge/EthereumBridge.cpp"
+            "Economy/Bridge/BobcoinBridge.cpp"
             "Economy/ScreenGameplayCommercial.cpp"
             "Economy/Governance/ScreenGovernance.cpp"
             "Economy/ScreenServerNode.cpp"

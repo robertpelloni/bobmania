@@ -40,8 +40,9 @@ This project *does not* use Git Submodules. All dependencies are vendored direct
 | **GLEW** | 1.5.8 | `extern/glew-1.5.8/` | OpenGL Extension Wrangler. |
 | **FFmpeg** | 2.x (Headers) | `extern/ffmpeg/` | Multimedia framework (RTMP Streaming). |
 | **TomCrypt** | (Custom) | `src/libtomcrypt/` | Cryptographic primitives (Score Signing). |
+| **Bobcoin** | (Pending) | `extern/bobcoin` | Privacy-focused Blockchain Token (Solana/Monero hybrid). |
 
-## Module Status (v5.5.0)
+## Module Status (v5.6.0)
 
 | Feature | Component | Status | Notes |
 | :--- | :--- | :--- | :--- |
@@ -53,4 +54,4 @@ This project *does not* use Git Submodules. All dependencies are vendored direct
 | **Chat** | `GameClient` | ✅ Integrated | Simulated lobby and in-game chat. |
 | **Streaming** | `StreamManager` | ⚠️ Stub | FFmpeg headers integrated; video pipe logic required. |
 | **Backend** | `Node.js Server` | ✅ Beta | WebSocket Server implemented (`server/`). |
-| **Bridge** | `EthereumBridge` | ⚠️ Stub | Interface ready for Web3 implementation. |
+| **Bridge** | `BobcoinBridge` | ⚠️ Stub | Integrated with Bobcoin logic (Dancing = Mining). |

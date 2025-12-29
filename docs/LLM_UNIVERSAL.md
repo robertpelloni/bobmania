@@ -31,5 +31,14 @@
 *   **Local Test:** `g++ -fsyntax-only -I src path/to/file.cpp`
 *   **Full Build:** `cmake -G "Unix Makefiles" .. && make` (Requires dependencies: X11, ALSA, libmad, etc.)
 
-## 6. Agent-Specific Notes
+## 6. Submodule Management
+*   **Monorepo Strategy:** Treat submodules (e.g., `extern/bobcoin`) as active development zones.
+*   **Workflow:**
+    1.  Edit submodule code directly.
+    2.  Commit and push to the submodule's remote.
+    3.  Bump the version number in the submodule.
+    4.  Update the parent repo's pointer.
+*   **Bobcoin:** This is the primary economy token. Ensure it is fast, anonymous, and integrated.
+
+## 7. Agent-Specific Notes
 See `AGENTS.md` for specific overrides.

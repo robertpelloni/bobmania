@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.6.0-Bobcoin-Alpha] - 2025-12-27
+### Changed
+- **Economy:** Transitioned from Ethereum Stub to `BobcoinBridge`.
+- **Roadmap:** Updated to reflect privacy-focused token integration.
+- **Dependencies:** Added `extern/bobcoin` (Pending).
+
 ## [5.5.4-Tested] - 2025-12-27
 ### Added
 - **Testing:** Added unit test suite `src/tests/test_economy.cpp` for Economy verification.
