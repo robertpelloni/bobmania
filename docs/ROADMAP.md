@@ -27,8 +27,8 @@ Transform StepMania 5 into a connected platform combining rhythm gaming, cryptoc
     *   Architecture Hooks (`ArchHooks_VR`).
     *   Render Loop & Matrix Stubs.
 
-### Pending / Future Work (Post-v5.6.0)
-*   **Bobcoin Integration:** Fully implement `BobcoinBridge` to communicate with the `bobcoin` submodule.
+### Pending / Future Work (Post-v5.6.1)
+*   **Bobcoin Implementation:** Wire `BobcoinBridge` to the actual `extern/bobcoin` library headers once fetched.
 *   **VR Implementation:** Connect `ArchHooks_VR` to OpenXR or SteamVR SDKs.
 *   **Live Streaming:** Implement real video encoding logic in `StreamManager::PushFrame` (currently stubbed).
 

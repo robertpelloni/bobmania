@@ -1,5 +1,10 @@
 # Changelog
 
+## [5.6.1-Maintenance] - 2025-12-27
+### Changed
+- **Documentation:** Finalized Dashboard and Roadmap for Bobcoin integration.
+- **Versioning:** Synchronized to 5.6.1-Maintenance.
+
 ## [5.6.0-Bobcoin-Alpha] - 2025-12-27
 ### Changed
 - **Economy:** Transitioned from Ethereum Stub to `BobcoinBridge`.
