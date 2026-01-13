@@ -1539,6 +1539,10 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 
 	RageSoundParams p;
 	p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+	if( PREFSMAN->m_bPitchDependentRate )
+	{
+		p.m_fPitch = p.m_fSpeed;
+	}
 	p.StopMode = RageSoundParams::M_CONTINUE;
 
 	{
@@ -1832,6 +1836,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( fabsf(p.m_fSpeed - fSpeed) > 0.01f && fSpeed >= 0.0f)
 		{
 			p.m_fSpeed = fSpeed;
+			if( PREFSMAN->m_bPitchDependentRate )
+			{
+				p.m_fPitch = fSpeed;
+			}
 			m_pSoundMusic->SetParams( p );
 		}
 	}
@@ -2662,7 +2670,19 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )
-						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					{
+						if( PREFSMAN->m_bBothAtOnce )
+						{
+							FOREACH_EnabledPlayerInfo( m_vPlayerInfo, other_pi )
+							{
+								other_pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+							}
+						}
+						else
+						{
+							pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+						}
+					}
 					return true;
 				}
 			}

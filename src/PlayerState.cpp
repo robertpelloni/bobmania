@@ -89,6 +89,17 @@ void PlayerState::Update( float fDelta )
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+
+	// Update Displayed Position
+	const SongPosition &basePos = (GAMESTATE->m_bIsUsingStepTiming) ? m_Position : GAMESTATE->m_Position;
+	m_DisplayedPosition = basePos;
+
+	float fVisualDelay = m_PlayerOptions.GetCurrent().m_fVisualDelaySeconds;
+	if( fVisualDelay != 0.0f )
+	{
+		float fSeconds = m_DisplayedPosition.m_fMusicSeconds - fVisualDelay;
+		m_DisplayedPosition.UpdateSongPosition( fSeconds, GetDisplayedTiming() );
+	}
 }
 
 void PlayerState::SetPlayerNumber(PlayerNumber pn)
@@ -196,9 +207,7 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 
 const SongPosition &PlayerState::GetDisplayedPosition() const
 {
-	if( GAMESTATE->m_bIsUsingStepTiming )
-		return m_Position;
-	return GAMESTATE->m_Position;
+	return m_DisplayedPosition;
 }
 
 const TimingData &PlayerState::GetDisplayedTiming() const

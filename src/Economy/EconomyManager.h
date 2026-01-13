@@ -1,131 +1,44 @@
 #ifndef ECONOMY_MANAGER_H
 #define ECONOMY_MANAGER_H
 
-#include <string>
-#include <map>
-#include <vector>
-#include "RageThreads.h"
-#include "../Tournament/TournamentBracket.h"
+#include "RageTypes.h"
 
-// Basic types for our simulated economy
-typedef std::string WalletAddress;
-typedef long long CurrencyAmount;
-
-struct Transaction {
-	std::string txID;
-	WalletAddress from;
-	WalletAddress to;
-	CurrencyAmount amount;
-	std::string reason;
-	long long timestamp;
-};
-
-struct Asset {
-	std::string assetID;
-	std::string name;
-	std::string type; // "Title", "Avatar", "License"
-	WalletAddress owner;
-	CurrencyAmount value;
-};
-
-struct Proposal {
-	int id;
-	std::string title;
-	std::string desc;
-	int yesVotes;
-	int noVotes;
-};
+struct lua_State;
+class XNode;
 
 class EconomyManager
 {
 public:
-	static EconomyManager* Instance();
-	static void Destroy();
-
 	EconomyManager();
 	~EconomyManager();
 
-	void Initialize();
-	void LoadState();
-	void SaveState();
-	void Update(float fDeltaTime); // Called every frame for background mining
+	void Init();
+	void Update( float fDeltaTime );
 
-	// Wallet Functions
-	CurrencyAmount GetBalance(const WalletAddress& address);
-	bool Transfer(const WalletAddress& from, const WalletAddress& to, CurrencyAmount amount, const std::string& reason);
-	WalletAddress RegisterUser(const std::string& username);
+	// Basic Ledger
+	RString GetWalletAddress() const;
+	long long GetBalance() const;
+	bool SendTip( const RString& sAddress, long long iAmount );
 
-	// Betting System
-	bool IsBetActive() const { return m_bBetActive; }
-	void StartMatchBet(CurrencyAmount amount);
-	void ResolveMatchBet(bool playerWon); // Simple single player vs House/Score for MVP
+	// Mocking Tempo connection
+	void ConnectToTempo();
+	bool IsConnected() const;
 
-	// Industry / Infrastructure
-	void PaySongRoyalty(const std::string& songTitle, const std::string& artistName);
-	void AwardBandwidthReward(CurrencyAmount amount);
-	CurrencyAmount GetMiningReward() const { return m_iAccumulatedMiningReward; }
+	// Persistence
+	void LoadFromNode( const XNode *pNode );
+	XNode *CreateNode() const;
+	void ReadFromDisk();
+	void WriteToDisk();
 
-	// Competitive
-	int GetPlayerElo() const { return m_iPlayerElo; }
-	void UpdateElo(bool bWon, int iOpponentElo);
-	int GetHighestElo() const { return m_iHighestEloAchieved; }
-
-	// Shareholders
-	int GetShareCount();
-	CurrencyAmount CalculateDividend();
-
-	// Inventory
-	void AddToInventory(const Asset& asset);
-	void RemoveFromInventory(const std::string& name);
-	bool HasAsset(const std::string& name);
-	void EquipAsset(const std::string& type, const std::string& name);
-	std::string GetEquippedAsset(const std::string& type);
-	std::vector<Asset> GetInventory() const;
-
-	// Data Access for UI
-	std::vector<Transaction> GetRecentTransactions() const;
-
-	// Governance
-	const std::vector<Proposal>& GetProposals() const { return m_Proposals; }
-	void VoteOnProposal(int proposalId, bool bYes);
-
-	// Tournament
-	TournamentBracket* GetTournamentBracket() { return &m_TournamentBracket; }
-	void SetTournamentMatchId(int id) { m_iCurrentTournamentMatchId = id; }
-	int GetTournamentMatchId() const { return m_iCurrentTournamentMatchId; }
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
-	// Simulated Ledger
-	std::map<WalletAddress, CurrencyAmount> m_Ledger;
-	std::vector<Transaction> m_TransactionHistory;
-
-	// Active Bet State
-	bool m_bBetActive;
-	CurrencyAmount m_iCurrentBetAmount;
-
-	// Server Mode Simulation
-	float m_fMiningTimer;
-	float m_fDividendTimer;
-	CurrencyAmount m_iAccumulatedMiningReward;
-
-	// Competitive
-	int m_iPlayerElo;
-	int m_iHighestEloAchieved;
-
-	// Inventory
-	std::vector<Asset> m_Inventory;
-	std::map<std::string, std::string> m_Equipped; // Type -> Name
-
-	// Governance
-	std::vector<Proposal> m_Proposals;
-
-	// Tournament
-	TournamentBracket m_TournamentBracket;
-	int m_iCurrentTournamentMatchId;
-
-	static EconomyManager* s_pInstance;
-
-	RageMutex m_Mutex; // Thread safety
+	RString m_sWalletAddress;
+	long long m_iBalance; // In micro-units
+	bool m_bConnected;
 };
+
+extern EconomyManager*	ECONOMYMAN;	// global and accessible from anywhere in our program
 
 #endif

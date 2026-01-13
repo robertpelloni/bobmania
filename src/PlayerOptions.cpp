@@ -80,12 +80,15 @@ void PlayerOptions::Init()
 	m_fPlayerAutoPlay = 0;		m_SpeedfPlayerAutoPlay = 1.0f;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;			m_SpeedfSkew = 1.0f;
+	m_fFOV = 45;			m_SpeedfFOV = 1.0f;
+	m_fVanishY = 0;			m_SpeedfVanishY = 1.0f;
 	m_fPassmark = 0;		m_SpeedfPassmark = 1.0f;
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
 	m_fModTimerMult = 0;		m_SpeedfModTimerMult = 1.0f;
 	m_fModTimerOffset = 0;		m_SpeedfModTimerOffset = 1.0f;
 	m_fDrawSize = 0;		m_SpeedfDrawSize = 1.0f;
 	m_fDrawSizeBack = 0;		m_SpeedfDrawSizeBack = 1.0f;
+	m_fVisualDelaySeconds = 0;	m_SpeedfVisualDelaySeconds = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bMuteOnError = false;
@@ -94,6 +97,9 @@ void PlayerOptions::Init()
 	m_bDizzyHolds = false;
 	m_bZBuffer = false;
 	m_bCosecant = false;
+	m_bScoreMissedHoldsAndRolls = false;
+	m_bPracticeMode = false;
+	m_bGhostTapping = false; // Default to SM5 behavior (Penalty ON), let theme enable it.
 	m_sNoteSkin = "";
 	ZERO( m_fMovesX );		ONE( m_SpeedfMovesX );
 	ZERO( m_fMovesY );		ONE( m_SpeedfMovesY );
@@ -126,6 +132,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fModTimerOffset );
 	APPROACH( fDrawSize );
 	APPROACH( fDrawSizeBack );
+	APPROACH( fVisualDelaySeconds );
 	APPROACH( fTimeSpacing );
 	APPROACH( fScrollSpeed );
 	APPROACH( fMaxScrollBPM );
@@ -146,6 +153,8 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APPROACH( fPlayerAutoPlay );
 	APPROACH( fPerspectiveTilt );
 	APPROACH( fSkew );
+	APPROACH( fFOV );
+	APPROACH( fVanishY );
 	APPROACH( fPassmark );
 	APPROACH( fRandomSpeed );
 	for( int i=0; i<16; i++)
@@ -182,6 +191,9 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	DO_COPY( m_bDizzyHolds );
 	DO_COPY( m_bZBuffer );
 	DO_COPY( m_bCosecant );
+	DO_COPY( m_bScoreMissedHoldsAndRolls );
+	DO_COPY( m_bPracticeMode );
+	DO_COPY( m_bGhostTapping );
 	DO_COPY( m_FailType );
 	DO_COPY( m_MinTNSToHideNotes );
 	DO_COPY( m_sNoteSkin );
@@ -466,8 +478,12 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	AddPart( AddTo, m_fModTimerOffset,	"ModTimerOffset" );
 	AddPart( AddTo, m_fDrawSize,		"DrawSize" );
 	AddPart( AddTo, m_fDrawSizeBack,	"DrawSizeBack" );
+	AddPart( AddTo, m_fVisualDelaySeconds, "VisualDelaySeconds" );
 
 	AddPart( AddTo, m_fDark,	"Dark" );
+
+	AddPart( AddTo, m_fVanishY, "VanishY" );
+	if( m_fFOV != 45 ) AddTo.push_back( ssprintf("%ld%% FOV", lrintf(m_fFOV*100) ) );
 
 	AddPart( AddTo, m_fBlind,	"Blind" );
 	AddPart( AddTo, m_fCover,	"Cover" );
@@ -512,6 +528,9 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 	if( m_bMuteOnError )			AddTo.push_back( "MuteOnError" );
+	if( m_bScoreMissedHoldsAndRolls ) AddTo.push_back( "ScoreMissedHoldsAndRolls" );
+	if( m_bPracticeMode ) AddTo.push_back( "PracticeMode" );
+	if( m_bGhostTapping ) AddTo.push_back( "GhostTapping" );
 
 	switch( m_FailType )
 	{
@@ -696,6 +715,7 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	    if( sBit == "drawsize" )				SET_FLOAT( fDrawSize )
 	    else if( sBit == "drawsizeback" )			SET_FLOAT( fDrawSizeBack )
 	}
+	else if( sBit == "visualdelayseconds" )			SET_FLOAT( fVisualDelaySeconds )
 	else if( sBit == "bar" ) { m_LifeType= LifeType_Bar; }
 	else if( sBit == "battery" ) { m_LifeType= LifeType_Battery; }
 	else if( sBit == "lifetime" ) { m_LifeType= LifeType_Time; }
@@ -1065,6 +1085,8 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 	}
 	else if( sBit == "skew" ) SET_FLOAT( fSkew )
 	else if( sBit == "tilt" ) SET_FLOAT( fPerspectiveTilt )
+	else if( sBit == "fov" ) SET_FLOAT( fFOV )
+	else if( sBit == "vanishy" ) SET_FLOAT( fVanishY )
 	else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 	{
 		m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
@@ -1083,6 +1105,9 @@ bool PlayerOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut
 		m_FailType = po.m_FailType;
 	}
 	else if( sBit == "muteonerror" )			m_bMuteOnError = on;
+	else if( sBit == "scoremissedholdsandrolls" ) m_bScoreMissedHoldsAndRolls = on;
+	else if( sBit == "practicemode" )			m_bPracticeMode = on;
+	else if( sBit == "ghosttapping" )			m_bGhostTapping = on;
 	else if( sBit == "random" )				ChooseRandomModifiers();
 
 	else if( sBit.find("move") != sBit.npos)
@@ -1348,6 +1373,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fModTimerOffset);
 	COMPARE(m_fDrawSize);
 	COMPARE(m_fDrawSizeBack);
+	COMPARE(m_fVisualDelaySeconds);
 	COMPARE(m_BatteryLives);
 	COMPARE(m_fTimeSpacing);
 	COMPARE(m_fScrollSpeed);
@@ -1362,6 +1388,9 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bDizzyHolds);
 	COMPARE(m_bZBuffer);
 	COMPARE(m_bCosecant);
+	COMPARE(m_bScoreMissedHoldsAndRolls);
+	COMPARE(m_bPracticeMode);
+	COMPARE(m_bGhostTapping);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -1370,6 +1399,8 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fPlayerAutoPlay);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
+	COMPARE(m_fFOV);
+	COMPARE(m_fVanishY);
 	// The noteskin name needs to be compared case-insensitively because the
 	// manager forces lowercase, but some obscure part of PlayerOptions
 	// uppercases the first letter.  The previous code that used != probably
@@ -1429,6 +1460,7 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fModTimerOffset);
 	CPY_SPEED(fDrawSize);
 	CPY_SPEED(fDrawSizeBack);
+	CPY_SPEED(fVisualDelaySeconds);
 	CPY(m_BatteryLives);
 	CPY_SPEED(fTimeSpacing);
 	CPY_SPEED(fScrollSpeed);
@@ -1443,6 +1475,9 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
+	CPY(m_bScoreMissedHoldsAndRolls);
+	CPY(m_bPracticeMode);
+	CPY(m_bGhostTapping);
 	CPY_SPEED(fDark);
 	CPY_SPEED(fBlind);
 	CPY_SPEED(fCover);
@@ -1451,6 +1486,8 @@ PlayerOptions& PlayerOptions::operator=(PlayerOptions const& other)
 	CPY_SPEED(fPlayerAutoPlay);
 	CPY_SPEED(fPerspectiveTilt);
 	CPY_SPEED(fSkew);
+	CPY_SPEED(fFOV);
+	CPY_SPEED(fVanishY);
 	if(!other.m_sNoteSkin.empty() &&
 		NOTESKIN->DoesNoteSkinExist(other.m_sNoteSkin))
 	{
@@ -1702,14 +1739,20 @@ void PlayerOptions::ResetPrefs( ResetPrefsType type )
 	CPY(m_fModTimerOffset);
 	CPY(m_fDrawSize);
 	CPY(m_fDrawSizeBack);
+	CPY(m_fVisualDelaySeconds);
 	CPY(m_bStealthType);
 	CPY(m_bStealthPastReceptors);
 	CPY(m_bDizzyHolds);
 	CPY(m_bZBuffer);
 	CPY(m_bCosecant);
+	CPY(m_bScoreMissedHoldsAndRolls);
+	CPY(m_bPracticeMode);
+	CPY(m_bGhostTapping);
 	CPY(m_MinTNSToHideNotes);
 
 	CPY( m_fPerspectiveTilt );
+	CPY( m_fFOV );
+	CPY( m_fVanishY );
 	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
 	CPY( m_bTransforms[TRANSFORM_NOROLLS] );
 	CPY( m_bTransforms[TRANSFORM_NOMINES] );
@@ -1759,6 +1802,7 @@ public:
 	FLOAT_INTERFACE(ModTimerOffset, ModTimerOffset, true);
 	FLOAT_INTERFACE(DrawSize, DrawSize, true);
 	FLOAT_INTERFACE(DrawSizeBack, DrawSizeBack, true);
+	FLOAT_INTERFACE(VisualDelaySeconds, VisualDelaySeconds, true);
 	FLOAT_INTERFACE(TimeSpacing, TimeSpacing, true);
 	FLOAT_INTERFACE(MaxScrollBPM, MaxScrollBPM, true);
 	FLOAT_INTERFACE(ScrollSpeed, ScrollSpeed, true);
@@ -1914,6 +1958,8 @@ public:
 	FLOAT_INTERFACE(PlayerAutoPlay, PlayerAutoPlay, true);
 	FLOAT_INTERFACE(Skew, Skew, true);
 	FLOAT_INTERFACE(Tilt, PerspectiveTilt, true);
+	FLOAT_INTERFACE(FOV, FOV, true);
+	FLOAT_INTERFACE(VanishY, VanishY, true);
 	FLOAT_INTERFACE(Passmark, Passmark, true); // Passmark is not sanity checked to the [0, 1] range because LifeMeterBar::IsFailing is the only thing that uses it, and it's used in a <= test.  Any theme passing a value outside the [0, 1] range probably expects the result they get. -Kyz
 	FLOAT_INTERFACE(RandomSpeed, RandomSpeed, true);
 
@@ -1966,6 +2012,9 @@ public:
 	BOOL_INTERFACE(NoQuads, Transforms[PlayerOptions::TRANSFORM_NOQUADS]);
 	BOOL_INTERFACE(NoStretch, Transforms[PlayerOptions::TRANSFORM_NOSTRETCH]);
 	BOOL_INTERFACE(MuteOnError, MuteOnError);
+	BOOL_INTERFACE(ScoreMissedHoldsAndRolls, ScoreMissedHoldsAndRolls);
+	BOOL_INTERFACE(PracticeMode, PracticeMode);
+	BOOL_INTERFACE(GhostTapping, GhostTapping);
 	ENUM_INTERFACE(FailSetting, FailType, FailType);
 	ENUM_INTERFACE(MinTNSToHideNotes, MinTNSToHideNotes, TapNoteScore);
 
@@ -2440,6 +2489,8 @@ public:
 		ADD_METHOD(PlayerAutoPlay);
 		ADD_METHOD(Tilt);
 		ADD_METHOD(Skew);
+		ADD_METHOD(FOV);
+		ADD_METHOD(VanishY);
 		ADD_METHOD(Passmark);
 		ADD_METHOD(RandomSpeed);
 		ADD_METHOD(TurnNone);

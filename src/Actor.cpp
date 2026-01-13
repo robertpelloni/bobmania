@@ -134,6 +134,8 @@ void Actor::InitState()
 	m_ZTestMode = ZTEST_OFF;
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
+	m_PolygonMode = POLYGON_FILL;
+	m_fLineWidth = 1.0f;
 }
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
@@ -255,6 +257,11 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_bZWrite );
 	CPY( m_fZBias );
 	CPY( m_CullMode );
+	CPY( m_PolygonMode );
+	CPY( m_fLineWidth );
+
+	CPY( m_LuaDrawFunction );
+	CPY( m_LuaUpdateFunction );
 
 	CPY( m_mapNameToCommands );
 #undef CPY
@@ -327,6 +334,11 @@ Actor &Actor::operator=(Actor other)
 	SWAP( m_bZWrite );
 	SWAP( m_fZBias );
 	SWAP( m_CullMode );
+	SWAP( m_PolygonMode );
+	SWAP( m_fLineWidth );
+
+	SWAP( m_LuaDrawFunction );
+	SWAP( m_LuaUpdateFunction );
 
 	SWAP( m_mapNameToCommands );
 #undef SWAP
@@ -463,7 +475,19 @@ void Actor::Draw()
 		if(PartiallyOpaque())
 		{
 			this->BeginDraw();
-			this->DrawPrimitives();
+			if( m_LuaDrawFunction.IsSet() && !m_LuaDrawFunction.IsNil() )
+			{
+				Lua *L = LUA->Get();
+				m_LuaDrawFunction.PushSelf(L);
+				this->PushSelf(L);
+				RString err = "Error running DrawFunction: ";
+				LuaHelpers::RunScriptOnStack(L, err, 1, 0, true);
+				LUA->Release(L);
+			}
+			else
+			{
+				this->DrawPrimitives();
+			}
 			this->EndDraw();
 		}
 		this->PostDraw();
@@ -809,6 +833,8 @@ void Actor::SetGlobalRenderStates()
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();
 	DISPLAY->SetCullMode( m_CullMode );
+	DISPLAY->SetPolygonMode( m_PolygonMode );
+	DISPLAY->SetLineWidth( m_fLineWidth );
 }
 
 void Actor::SetTextureRenderStates()
@@ -1074,6 +1100,17 @@ void Actor::UpdateInternal(float delta_time)
 			wrap( m_current.rotation.z, 360 );
 			break;
 		default: break;
+	}
+
+	if( m_LuaUpdateFunction.IsSet() && !m_LuaUpdateFunction.IsNil() )
+	{
+		Lua *L = LUA->Get();
+		m_LuaUpdateFunction.PushSelf(L);
+		this->PushSelf(L);
+		lua_pushnumber(L, delta_time);
+		RString err = "Error running UpdateFunction: ";
+		LuaHelpers::RunScriptOnStack(L, err, 2, 0, true);
+		LUA->Release(L);
 	}
 
 	if(m_tween_uses_effect_delta)
@@ -1974,6 +2011,8 @@ public:
 	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(BIArg(1)); COMMON_RETURN_SELF; }
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((BIArg(1)) ? CULL_BACK : CULL_NONE); COMMON_RETURN_SELF; }
 	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); COMMON_RETURN_SELF; }
+	static int polygonmode( T* p, lua_State *L )		{ p->SetPolygonMode( Enum::Check<PolygonMode>(L, 1)); COMMON_RETURN_SELF; }
+	static int linewidth( T* p, lua_State *L )		{ p->SetLineWidth(FArg(1)); COMMON_RETURN_SELF; }
 	static int visible( T* p, lua_State *L )		{ p->SetVisible(BIArg(1)); COMMON_RETURN_SELF; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); COMMON_RETURN_SELF; }
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); COMMON_RETURN_SELF; }
@@ -2025,6 +2064,24 @@ public:
 		ParamTable.SetFromStack( L );
 
 		p->RunCommandsRecursively( ref, &ParamTable );
+		COMMON_RETURN_SELF;
+	}
+
+	static int SetDrawFunction( T* p, lua_State *L )
+	{
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+		p->SetDrawFunction( ref );
+		COMMON_RETURN_SELF;
+	}
+
+	static int SetUpdateFunction( T* p, lua_State *L )
+	{
+		LuaReference ref;
+		lua_pushvalue( L, 1 );
+		ref.SetFromStack( L );
+		p->SetUpdateFunction( ref );
 		COMMON_RETURN_SELF;
 	}
 
@@ -2262,6 +2319,8 @@ public:
 		ADD_METHOD( clearzbuffer );
 		ADD_METHOD( backfacecull );
 		ADD_METHOD( cullmode );
+		ADD_METHOD( polygonmode );
+		ADD_METHOD( linewidth );
 		ADD_METHOD( visible );
 		ADD_METHOD( hibernate );
 		ADD_METHOD( draworder );
@@ -2271,6 +2330,8 @@ public:
 		ADD_METHOD( addcommand );
 		ADD_METHOD( GetCommand );
 		ADD_METHOD( RunCommandsRecursively );
+		ADD_METHOD( SetDrawFunction );
+		ADD_METHOD( SetUpdateFunction );
 
 		ADD_METHOD( GetX );
 		ADD_METHOD( GetY );

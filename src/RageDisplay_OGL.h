@@ -78,6 +78,11 @@ public:
 	bool IsEffectModeSupported( EffectMode effect );
 	bool SupportsRenderToTexture() const;
 	bool SupportsFullscreenBorderlessWindow() const;
+
+	void SetWindowPosition( int x, int y );
+	void SetWindowSize( int w, int h );
+	void SetWindowTitle( const RString &sTitle );
+
 	uintptr_t CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
 	uintptr_t GetRenderTarget();
 	void SetRenderTarget( uintptr_t iHandle, bool bPreserveTexture );

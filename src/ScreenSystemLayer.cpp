@@ -13,6 +13,7 @@
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 #include "PlayerState.h"
+#include "MessageManager.h"
 
 namespace
 {
@@ -163,6 +164,27 @@ void ScreenSystemLayer::Init()
 	this->AddChild( m_sprOverlay );
 	m_errLayer.Load( THEME->GetPathB(m_sName, "error") );
 	this->AddChild( m_errLayer );
+
+	// Listen for Toast messages
+	this->SubscribeToMessage( "ToastMessage" );
+}
+
+// Override HandleMessage to catch "ToastMessage"
+void ScreenSystemLayer::HandleMessage( const Message &msg )
+{
+	if( msg.GetName() == "ToastMessage" )
+	{
+		RString sMessage;
+		if( msg.GetParam("Message", sMessage) )
+		{
+			// Broadcast to theme so it can display the toast
+			// The theme should have an Actor handling "ShowToast"
+			Message toast("ShowToast");
+			toast.SetParam("Message", sMessage);
+			MESSAGEMAN->Broadcast( toast );
+		}
+	}
+	Screen::HandleMessage( msg );
 }
 
 /*

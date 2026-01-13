@@ -10,6 +10,7 @@ class ScreenSystemLayer : public Screen
 {
 public:
 	virtual void Init();
+	virtual void HandleMessage( const Message &msg );
 
 private:
 	AutoActor m_sprOverlay;
