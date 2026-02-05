@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# binaries
+binaries/
+
+# CMake
+cmake/
+build/
+
+# vcpkg
+vcpkg_installed/
