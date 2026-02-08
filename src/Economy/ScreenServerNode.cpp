@@ -2,9 +2,10 @@
 #include "ScreenServerNode.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "EconomyManager.h"
+#include "Economy/EconomyManager.h"
 #include "InputEventPlus.h"
 #include "RageUtil.h"
+#include "RageInput.h"
 
 // Local UUID helper
 static std::string MakeUUID()
@@ -85,10 +86,10 @@ void ScreenServerNode::Input( const InputEventPlus &input )
 {
 	if( input.type == IET_FIRST_PRESS )
 	{
-		char c = input.DeviceI.ToChar();
+		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 		if( c >= 32 && c <= 126 )
 		{
-			m_sInputBuffer += c;
+			m_sInputBuffer += (char)c;
 			// Update last log line to show typing if we wanted, but for now just buffer
 		}
 		else if( input.DeviceI.button == KEY_ENTER || input.DeviceI.button == KEY_KP_ENTER )

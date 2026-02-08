@@ -5,8 +5,9 @@
 #include "RageLog.h"
 #include "InputEventPlus.h"
 #include "ProfileManager.h"
-#include "EconomyManager.h"
+#include "Economy/EconomyManager.h"
 #include "GameSoundManager.h"
+#include "RageInput.h"
 
 REGISTER_SCREEN_CLASS( ScreenLoginQR );
 
@@ -40,10 +41,10 @@ void ScreenLoginQR::Input( const InputEventPlus &input )
 			return;
 		}
 
-		char c = input.DeviceI.ToChar();
+		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 		if( c >= 32 && c <= 126 ) // Printable ASCII
 		{
-			m_sBuffer += c;
+			m_sBuffer += (char)c;
 			m_textStatus.SetText( "Reading: " + std::string(m_sBuffer.length(), '*') ); // Masked for privacy
 		}
 		else if( input.DeviceI.button == KEY_ENTER || input.DeviceI.button == KEY_KP_ENTER )

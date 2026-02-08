@@ -354,8 +354,8 @@ source_group("Arch Specific\\\\Dialog"
              ${SMDATA_ARCH_DIALOG_SRC}
              ${SMDATA_ARCH_DIALOG_HPP})
 
-list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks.cpp")
-list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks.h")
+list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks.cpp" "arch/ArchHooks/ArchHooks_VR.cpp")
+list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks.h" "arch/ArchHooks/ArchHooks_VR.h")
 
 if(NOT APPLE)
   list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooksUtil.cpp")

@@ -1,6 +1,8 @@
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
+#include <cstdint>
+
 struct ThreadSlot;
 class RageTimer;
 /** @brief Thread, mutex, semaphore, and event classes. */

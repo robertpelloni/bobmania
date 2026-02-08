@@ -1,0 +1,135 @@
+#include "global.h"
+#include "SpectatorManager.h"
+#include "Network/GameClient.h" // Send data via GameClient
+#include "Network/StreamManager.h"
+#include "RageLog.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
+
+SpectatorManager* SpectatorManager::s_pInstance = NULL;
+
+SpectatorManager* SpectatorManager::Instance()
+{
+	if( !s_pInstance )
+	{
+		s_pInstance = new SpectatorManager;
+
+		// Register with Lua
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "SPECTATORMAN" );
+		s_pInstance->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+	return s_pInstance;
+}
+
+void SpectatorManager::Destroy()
+{
+	delete s_pInstance;
+	s_pInstance = NULL;
+}
+
+SpectatorManager::SpectatorManager()
+{
+	m_bIsBroadcasting = false;
+	m_bIsWatching = false;
+}
+
+SpectatorManager::~SpectatorManager()
+{
+}
+
+void SpectatorManager::StartBroadcasting()
+{
+	m_bIsBroadcasting = true;
+	LOG->Info("SpectatorManager: Started Broadcasting Match Data.");
+
+	// Start Video Stream (RTMP)
+	// Resolution and FPS hardcoded for MVP
+	StreamManager::Instance()->StartStream("rtmp://localhost/live/my_stream", 1280, 720, 60);
+}
+
+void SpectatorManager::StopBroadcasting()
+{
+	m_bIsBroadcasting = false;
+	LOG->Info("SpectatorManager: Stopped Broadcasting.");
+
+	StreamManager::Instance()->StopStream();
+}
+
+void SpectatorManager::BroadcastUpdate( float fDeltaTime, float fLife, long long iScore )
+{
+	if( !m_bIsBroadcasting ) return;
+
+	// Stub: Send packet via GameClient
+	// GameClient::Instance()->SendPacket(...)
+}
+
+void SpectatorManager::BroadcastNoteHit( int col, int tapScore )
+{
+	if( !m_bIsBroadcasting ) return;
+
+	SpectatorPacket pkt;
+	pkt.timestamp = 0; // GetTime();
+	pkt.column = col;
+	pkt.tapScore = tapScore;
+
+	// LOG->Trace("Broadcasting Hit: Col %d Score %d", col, tapScore);
+}
+
+void SpectatorManager::ConnectToMatch( const std::string& matchID )
+{
+	m_bIsWatching = true;
+	m_CurrentMatchID = matchID;
+	LOG->Info("SpectatorManager: Tuning into match %s", matchID.c_str());
+	GameClient::Instance()->SpectateMatch(matchID);
+}
+
+void SpectatorManager::Disconnect()
+{
+	m_bIsWatching = false;
+	m_CurrentMatchID = "";
+}
+
+std::vector<std::string> SpectatorManager::GetLiveMatches() const
+{
+	std::vector<std::string> matches;
+	matches.push_back("Pro Finals: Chris vs FEFEMZ");
+	matches.push_back("Gold Semis: HappyF33t vs DDR_Fan");
+	matches.push_back("Casual: Alice playing Butterfly");
+	return matches;
+}
+
+// Lua Bindings
+class LunaSpectatorManager: public Luna<SpectatorManager>
+{
+public:
+	static int ConnectToMatch( T* p, lua_State *L )
+	{
+		RString matchID = SArg(1);
+		p->ConnectToMatch(matchID);
+		return 0;
+	}
+
+	static int StartBroadcasting( T* p, lua_State *L )
+	{
+		p->StartBroadcasting();
+		return 0;
+	}
+
+	static int StopBroadcasting( T* p, lua_State *L )
+	{
+		p->StopBroadcasting();
+		return 0;
+	}
+
+	LunaSpectatorManager()
+	{
+		ADD_METHOD( ConnectToMatch );
+		ADD_METHOD( StartBroadcasting );
+		ADD_METHOD( StopBroadcasting );
+	}
+};
+
+LUA_REGISTER_CLASS( SpectatorManager )

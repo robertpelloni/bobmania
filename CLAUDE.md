@@ -1,3 +1,4 @@
+See `docs/LLM_UNIVERSAL.md`.
 See [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) for universal instructions.
 
 ## Claude Specifics

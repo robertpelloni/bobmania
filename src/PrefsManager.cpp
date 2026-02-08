@@ -311,7 +311,9 @@ PrefsManager::PrefsManager() :
 	m_bLogCheckpoints		( "LogCheckpoints",	false ),
 	m_bShowLoadingWindow		( "ShowLoadingWindow",	true ),
 	m_bPseudoLocalize		( "PseudoLocalize",	false ),
-	m_show_theme_errors("ShowThemeErrors", false)
+	m_show_theme_errors("ShowThemeErrors", false),
+
+	m_bVRMode("VRMode", false)
 
 #if !defined(WITHOUT_NETWORKING)
 	,

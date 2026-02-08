@@ -34,13 +34,20 @@ The economic backbone is managed by the `EconomyManager` singleton.
 *   **Evaluation:** `ScreenEvaluation.cpp` hooks into the result flow to trigger `EconomyManager::ResolveMatchBet` and display `ActorMsdGraph`.
 *   **Profile:** `ProfileManager` extended with `LoadProfileFromID` to support QR-based login flow.
 
+### 2.3 External Dependencies
+The project relies on a set of vendored libraries located in `extern/` to ensure cross-platform compatibility and stability:
+*   **Scripting:** Lua 5.1
+*   **Media:** ffmpeg, libjpeg, libpng, mad, vorbis/ogg
+*   **Parsing:** jsoncpp, pcre
+*   **System:** glew, zlib
+
 ## 3. Data Flow
 1.  **Login:** User logs in (Local or QR).
 2.  **Dashboard:** User selects "Wager Battle".
 3.  **Betting:** `ScreenBettingEntry` deducts funds to Escrow.
 4.  **Gameplay:** User plays song. `ActorCalorieGraph` tracks effort.
 5.  **Evaluation:**
-    *   Score is signed by `ScoreSigner`.
+    *   Score is signed by `ScoreSigner` (using `libtomcrypt` logic).
     *   `EconomyManager` checks score against difficulty.
     *   Funds released from Escrow to Winner (Player or House).
     *   Elo updated.
