@@ -164,7 +164,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				// case 'I': tn = TAP_ORIGINAL_ITEM;			break;
 				default: 
 					/* Invalid data. We don't want to assert, since there might
-					 * simply be invalid data in an .SM, and we don't want to die
+					 * simply be invalid data in a .SSC, and we don't want to die
 					 * due to invalid data. We should probably check for this when
 					 * we load SM data for the first time ... */
 					// ASSERT(0); 
@@ -182,7 +182,8 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 
 					char szModifiers[256] = "";
 					float fDurationSeconds = 0;
-					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )	// not fatal if this fails due to malformed data
+					// not fatal if this fails due to malformed data
+					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )				
 					{
 						tn.type = TapNote::attack;
 						tn.sAttackModifiers = szModifiers;
@@ -203,7 +204,8 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				{
 					p++;
 					int iKeysoundIndex = 0;
-					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )	// not fatal if this fails due to malformed data
+					// not fatal if this fails due to malformed data
+					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )
 		 				tn.iKeysoundIndex = iKeysoundIndex;
 
 					// skip past the ']'
@@ -214,13 +216,35 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					}
 				}
 
-#if 0
-				// look for optional item name (e.g. "<potion>"),
-				// where the name in the <> is a Lua function defined elsewhere
-				// (Data/ItemTypes.lua, perhaps?) -aj
+				// Look for optional obstacle data (pre-applied attacks).
+
 				if( *p == '<' )
 				{
 					p++;
+					
+					char szModifiers[256] = "";
+					// not fatal if this fails due to malformed data
+					if( sscanf( p, "%255[^>]>", szModifiers ) == 1 )
+					{
+						vector<RString> fullObstacles;
+						RString readMods = szModifiers;
+						split(readMods, ",", fullObstacles);
+						
+						FOREACH(RString, fullObstacles, r)
+						{
+							Trim(*r);
+							vector<RString> sizeCheck;
+							split(*r, " ", sizeCheck);
+							RString intensity = "100%";
+							if (sizeCheck.size() == 2)
+							{
+								intensity = sizeCheck[0];
+							}
+							Trim(intensity, "%");
+							tn.obstacles.insert(pair<RString, float>(sizeCheck.back(),
+																	 StringToFloat(intensity) / 100.f));
+						}
+					}
 
 					// skip past the '>'
 					while( p < endLine )
@@ -229,7 +253,6 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 							break;
 					}
 				}
-#endif
 
 				/* Optimization: if we pass TAP_EMPTY, NoteData will do a search
 				 * to remove anything in this position.  We know that there's nothing
@@ -416,7 +439,10 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
-					// hey maybe if we have TapNote::item we can do things here.
+					if (!tn.obstacles.empty())
+					{
+						sRet.append( ssprintf("<%s>", tn.ObstaclesToString().c_str() ) );
+					}
 					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
 				}

@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "Foreach.h"
 #include "RageLog.h"
 
 class XNode;
@@ -31,9 +32,6 @@ struct TapNoteResult
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-
-	// Lua
-	void PushSelf( lua_State *L );
 };
 /** @brief The result of holding (or letting go of) a hold note. */
 struct HoldNoteResult
@@ -62,7 +60,6 @@ struct HoldNoteResult
 	/** @brief Last index where fLife was greater than 0. If the tap was missed, this
 	 * will be the first index of the hold. */
 	int		iLastHeldRow;
-	float last_held_second;
 
 	/** @brief If checkpoint holds are enabled, the number of checkpoints hit. */
 	int		iCheckpointsHit;
@@ -77,91 +74,54 @@ struct HoldNoteResult
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-
-	// Lua
-	void PushSelf( lua_State *L );
 };
-
-/** @brief What is the TapNote's core type? */
-enum TapNoteType
-{
-	TapNoteType_Empty, 		/**< There is no note here. */
-	TapNoteType_Tap,		/**< The player simply steps on this. */
-	TapNoteType_HoldHead,	/**< This is graded like the Tap type, but should be held. */
-	TapNoteType_HoldTail,	/**< In 2sand3s mode, holds are deleted and hold_tail is added. */
-	TapNoteType_Mine,		/**< In most modes, it is suggested to not step on these mines. */
-	TapNoteType_Lift,		/**< Lift your foot up when it crosses the target area. */
-	TapNoteType_Attack,		/**< Hitting this note causes an attack to take place. */
-	TapNoteType_AutoKeysound,	/**< A special sound is played when this note crosses the target area. */
-	TapNoteType_Fake,		/**< This arrow can't be scored for or against the player. */
-	NUM_TapNoteType,
-	TapNoteType_Invalid
-};
-std::string const TapNoteTypeToString( TapNoteType tnt );
-std::string const TapNoteTypeToLocalizedString( TapNoteType tnt );
-LuaDeclareType( TapNoteType );
-
-/** @brief The list of a TapNote's sub types. */
-enum TapNoteSubType
-{
-	TapNoteSubType_Hold, /**< The start of a traditional hold note. */
-	TapNoteSubType_Roll, /**< The start of a roll note that must be hit repeatedly. */
-	//TapNoteSubType_Mine,
-	NUM_TapNoteSubType,
-	TapNoteSubType_Invalid
-};
-std::string const TapNoteSubTypeToString( TapNoteSubType tnst );
-std::string const TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
-LuaDeclareType( TapNoteSubType );
-
-/** @brief The different places a TapNote could come from. */
-enum TapNoteSource
-{
-	TapNoteSource_Original,	/**< This note is part of the original NoteData. */
-	TapNoteSource_Addition,	/**< This note is additional note added by a transform. */
-	NUM_TapNoteSource,
-	TapNoteSource_Invalid
-};
-std::string const TapNoteSourceToString( TapNoteSource tns );
-std::string const TapNoteSourceToLocalizedString( TapNoteSource tns );
-LuaDeclareType( TapNoteSource );
 
 /** @brief The various properties of a tap note. */
 struct TapNote
 {
+	/** @brief What is the TapNote's core type? */
+	enum Type
+	{ 
+		empty, 		/**< There is no note here. */
+		tap,		/**< The player simply steps on this. */
+		hold_head,	/**< This is graded like the Tap type, but should be held. */
+		hold_tail,	/**< In 2sand3s mode, holds are deleted and hold_tail is added. */
+		mine,		/**< In most modes, it is suggested to not step on these mines. */
+		lift,		/**< Lift your foot up when it crosses the target area. */
+		attack,		/**< Hitting this note causes an attack to take place. */
+		autoKeysound,	/**< A special sound is played when this note crosses the target area. */
+		fake,		/**< This arrow can't be scored for or against the player. */
+ 	};
+	/** @brief The list of a TapNote's sub types. */
+	enum SubType
+	{
+		hold_head_hold, /**< The start of a traditional hold note. */
+		hold_head_roll, /**< The start of a roll note that must be hit repeatedly. */
+		//hold_head_mine,
+		NUM_SubType,
+		SubType_Invalid
+	};
+	/** @brief The different places a TapNote could come from. */
+	enum Source
+	{
+		original,	/**< This note is part of the original NoteData. */
+		addition,	/**< This note is additional note added by a transform. */
+	};
 	/** @brief The core note type that is about to cross the target area. */
-	TapNoteType		type;
+	Type		type;
 	/** @brief The sub type of the note. This is only used if the type is hold_head. */
-	TapNoteSubType		subType;
+	SubType		subType;
 	/** @brief The originating source of the TapNote. */
-	TapNoteSource		source;
+	Source		source;
 	/** @brief The result of hitting or missing the TapNote. */
 	TapNoteResult	result;
 	/** @brief The Player that is supposed to hit this note. This is mainly for Routine Mode. */
 	PlayerNumber	pn;
-
-	// Empty until filled in by NoteData.  These exist so that the notefield
-	// doesn't have to call GetElapsedTimeFromBeat 2-6 times for every note
-	// during rendering. -Kyz
-	float occurs_at_second;
-	float end_second; // occurs_at_second plus duration.
-	// highest_subtype_on_row on row is for rendering a tap as a hold head if
-	// there is a hold head on the same row.  It needs to be a TapNoteSubType
-	// instead of a bool to handle rolls. -Kyz
-	TapNoteSubType highest_subtype_on_row;
-	// id_in_chart, id_in_column, and row_id are for passing to mods.  The mod
-	// system uses floating point for everything, so they're floats. -Kyz
-	float id_in_chart;
-	float id_in_column;
-	float row_id;
-
-	// Quantization data.  This probably means something, but nobody knows
-	// what. -Kyz
-	int parts_per_beat;
-	int part_id;
+	/** @brief Can this note be hammered on or pulled off? This is set before gameplay begins. */
+	bool		bHopoPossible;
 
 	// used only if Type == attack:
-	std::string		sAttackModifiers;
+	RString		sAttackModifiers;
 	float		fAttackDurationSeconds;
 
 	// Index into Song's vector of keysound files if nonnegative:
@@ -171,43 +131,80 @@ struct TapNote
 	int		iDuration;
 	HoldNoteResult	HoldResult;
 	
+	/**
+	 * @brief The pre-applied mods that players must deal with when hitting the arrow.
+	 *
+	 * This takes place regardless of the Type.
+	 * If this is empty, there are no obstacles. */
+	map<RString, float> obstacles;
+
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	// Lua
-	void PushSelf( lua_State *L );
-
-	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
-		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""), 
-		fAttackDurationSeconds(0), iKeysoundIndex(-1), iDuration(0), HoldResult() {}
+	TapNote(): type(empty), subType(SubType_Invalid), source(original),
+		result(), pn(PLAYER_INVALID), bHopoPossible(false), 
+		sAttackModifiers(""), fAttackDurationSeconds(0), 
+		iKeysoundIndex(-1), iDuration(0), HoldResult(), obstacles() {}
 	void Init()
 	{
-		type = TapNoteType_Empty;
-		subType = TapNoteSubType_Invalid; 
-		source = TapNoteSource_Original; 
+		type = empty;
+		subType = SubType_Invalid; 
+		source = original; 
 		pn = PLAYER_INVALID, 
+		bHopoPossible = false;
 		fAttackDurationSeconds = 0.f; 
 		iKeysoundIndex = -1;
 		iDuration = 0;
 	}
 	TapNote( 
-		TapNoteType type_,
-		TapNoteSubType subType_,
-		TapNoteSource source_, 
-		std::string sAttackModifiers_,
+		Type type_,
+		SubType subType_,
+		Source source_, 
+		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
-		int iKeysoundIndex_ ):
+		int iKeysoundIndex_):
 		type(type_), subType(subType_), source(source_), result(),
-		pn(PLAYER_INVALID), sAttackModifiers(sAttackModifiers_),
+		pn(PLAYER_INVALID), bHopoPossible(false),
+		sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult(),
+		obstacles()
 	{
-		if (type_ > TapNoteType_Fake )
+		if (type_ > TapNote::fake )
 		{
-			LOG->Trace("Invalid tap note type %s (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
-			type = TapNoteType_Empty;
+			LOG->Trace("Invalid tap note type %d (most likely) due to random vanish issues. Assume it doesn't need judging.", (int)type_ );
+			type = TapNote::empty;
 		}
+	}
+	
+	RString ObstaclesToString() const
+	{
+		vector<RString> allInOne;
+		FOREACHM_CONST(RString, float, obstacles, ob)
+		{
+			if (ob->second == 1)
+			{
+				allInOne.push_back(ob->first);
+			}
+			else
+			{
+				allInOne.push_back(ssprintf("%f%% %s",
+											ob->second * 100,
+											ob->first.c_str()));
+			}
+		}
+		return join(",", allInOne);
+	}
+	
+	float ObstacleIntensity(RString ob) const
+	{
+		map<RString, float>::const_iterator it = obstacles.find(ob);
+		if (it != obstacles.end())
+		{
+			return it->second;
+		}
+		return 0;
 	}
 
 	/**
@@ -249,6 +246,39 @@ extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 
 /**
+ * @brief Retrieve the string representing the TapNote Type.
+ *
+ * TODO: Find a way to standardize this with the other enum string calls.
+ * @param tn the TapNote's type.
+ * @return the intended string. */
+inline const RString TapNoteTypeToString( TapNote::Type tn )
+{
+	switch( tn )
+	{
+		case TapNote::empty:
+			return RString("empty");
+		case TapNote::tap:
+			return RString("tap");
+		case TapNote::hold_head:
+			return RString("hold_head");
+		case TapNote::hold_tail:
+			return RString("hold_tail");
+		case TapNote::mine:	
+			return RString("mine");
+		case TapNote::lift:	
+			return RString("lift");
+		case TapNote::attack:
+			return RString("attack");
+		case TapNote::autoKeysound:
+			return RString("autoKeysound");
+		case TapNote::fake:
+			return RString("fake");
+		default:
+			return RString("");
+	}
+}
+
+/**
  * @brief The number of tracks allowed.
  *
  * TODO: Don't have a hard-coded track limit.
@@ -283,11 +313,10 @@ enum NoteType
 	NUM_NoteType,
 	NoteType_Invalid
 };
-std::string const NoteTypeToString( NoteType nt );
-std::string const NoteTypeToLocalizedString( NoteType nt );
+const RString& NoteTypeToString( NoteType nt );
+const RString& NoteTypeToLocalizedString( NoteType nt );
 LuaDeclareType( NoteType );
 float NoteTypeToBeat( NoteType nt );
-int NoteTypeToRow( NoteType nt );
 NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int row, NoteType t );
@@ -298,16 +327,16 @@ bool IsNoteOfType( int row, NoteType t );
 /*
 inline int   BeatToNoteRow( float fBeatNum )
 {
-	float fraction = fBeatNum - std::trunc(fBeatNum);
+	float fraction = fBeatNum - truncf(fBeatNum);
 	int integer = int(fBeatNum) * ROWS_PER_BEAT;
-	return integer + std::lrint(fraction * ROWS_PER_BEAT);
+	return integer + lrintf(fraction * ROWS_PER_BEAT);
 }
 */
 /**
  * @brief Convert the beat into a note row.
  * @param fBeatNum the beat to convert.
  * @return the note row. */
-inline int   BeatToNoteRow( float fBeatNum )		{ return std::lrint( fBeatNum * ROWS_PER_BEAT ); }	// round
+inline int   BeatToNoteRow( float fBeatNum )		{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
 /**
  * @brief Convert the beat into a note row without rounding.
  * @param fBeatNum the beat to convert.
@@ -326,7 +355,7 @@ inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
  * @brief Convert the note row to note row (returns itself).
  * @param row the row to convert.
  */
-static inline int ToNoteRow(int row)	{ return row; }
+static inline int ToNoteRow(int row)    { return row; }
 
 /**
  * @brief Convert the beat to note row.
@@ -338,7 +367,7 @@ static inline int ToNoteRow(float beat) { return BeatToNoteRow(beat); }
  * @brief Convert the note row to beat.
  * @param row the row to convert.
  */
-static inline float ToBeat(int row)	{ return NoteRowToBeat(row); }
+static inline float ToBeat(int row)    { return NoteRowToBeat(row); }
 
 /**
  * @brief Convert the beat row to beat (return itself).
