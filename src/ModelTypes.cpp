@@ -9,6 +9,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 
+#include <cmath>
 #include <numeric>
 
 #define MS_MAX_NAME	32
@@ -28,6 +29,12 @@ AnimatedTexture::~AnimatedTexture()
 	Unload();
 }
 
+RageVector3 RadianToDegree(RageVector3 radian)
+{
+	constexpr float RAD_TO_DEG = 180.0f / PI;
+	return radian * RAD_TO_DEG;
+}
+
 void AnimatedTexture::LoadBlank()
 {
 	AnimatedTextureState state(
@@ -43,7 +50,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 	ASSERT( vFrames.empty() );	// don't load more than once
 
 	m_bSphereMapped = sTexOrIniPath.find("sphere") != RString::npos;
-	if( sTexOrIniPath.find("add") != string::npos )
+	if( sTexOrIniPath.find("add") != std::string::npos )
 		m_BlendMode = BLEND_ADD;
 	else
 		m_BlendMode = BLEND_NORMAL;
@@ -71,7 +78,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 			RString sFileName;
 			float fDelay = 0;
 			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
-				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) ) 
+				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) )
 			{
 				RString sTranslateXKey = ssprintf( "TranslateX%04d", i );
 				RString sTranslateYKey = ssprintf( "TranslateY%04d", i );
@@ -85,7 +92,7 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 				ID.bStretch = true;
 				ID.bHotPinkColorKey = true;
 				ID.bMipMaps = true;	// use mipmaps in Models
-				AnimatedTextureState state( 
+				AnimatedTextureState state(
 					TEXTUREMAN->LoadTexture( ID ),
 					fDelay,
 					vOffset
@@ -155,7 +162,7 @@ float AnimatedTexture::GetAnimationLengthSeconds() const
 
 void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )
 {
-	fSeconds = fmodf( fSeconds, GetAnimationLengthSeconds() );
+	fSeconds = std::fmod( fSeconds, GetAnimationLengthSeconds() );
 
 	m_iCurState = 0;
 	for( unsigned i=0; i<vFrames.size(); i++ )
@@ -234,12 +241,12 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 	{
 		iLineNum++;
 
-		if (!strncmp (sLine, "//", 2))
+		if (!strncmp (sLine.c_str(), "//", 2))
 			continue;
 
 		// bones
 		int nNumBones = 0;
-		if( sscanf (sLine, "Bones: %d", &nNumBones) != 1 )
+		if( sscanf (sLine.c_str(), "Bones: %d", &nNumBones) != 1 )
 			continue;
 
 		char szName[MS_MAX_NAME];
@@ -253,7 +260,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			// name
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
-			if (sscanf(sLine, "\"%31[^\"]\"", szName) != 1)
+			if (sscanf(sLine.c_str(), "\"%31[^\"]\"", szName) != 1)
 				THROW;
 			Bone.sName = szName;
 
@@ -261,7 +268,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
 			strcpy(szName, "");
-			sscanf(sLine, "\"%31[^\"]\"", szName);
+			sscanf(sLine.c_str(), "\"%31[^\"]\"", szName);
 
 			Bone.sParentName = szName;
 
@@ -271,7 +278,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 				THROW;
 
 			int nFlags;
-			if (sscanf (sLine, "%d %f %f %f %f %f %f",
+			if (sscanf (sLine.c_str(), "%d %f %f %f %f %f %f",
 				&nFlags,
 				&Position[0], &Position[1], &Position[2],
 				&Rotation[0], &Rotation[1], &Rotation[2]) != 7)
@@ -288,7 +295,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
 			int nNumPositionKeys = 0;
-			if (sscanf (sLine, "%d", &nNumPositionKeys) != 1)
+			if (sscanf (sLine.c_str(), "%d", &nNumPositionKeys) != 1)
 				THROW;
 
 			Bone.PositionKeys.resize( nNumPositionKeys );
@@ -299,10 +306,10 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 					THROW;
 
 				float fTime;
-				if (sscanf (sLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
+				if (sscanf (sLine.c_str(), "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
 					THROW;
 
-				msPositionKey key;
+				msPositionKey key = {};
 				key.fTime = fTime;
 				key.Position = RageVector3( Position[0], Position[1], Position[2] );
 				Bone.PositionKeys[j] = key;
@@ -312,7 +319,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
 			int nNumRotationKeys = 0;
-			if (sscanf (sLine, "%d", &nNumRotationKeys) != 1)
+			if (sscanf (sLine.c_str(), "%d", &nNumRotationKeys) != 1)
 				THROW;
 
 			Bone.RotationKeys.resize( nNumRotationKeys );
@@ -323,11 +330,11 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 					THROW;
 
 				float fTime;
-				if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
+				if (sscanf (sLine.c_str(), "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
 					THROW;
 				Rotation = RadianToDegree(Rotation);
 
-				msRotationKey key;
+				msRotationKey key = {};
 				key.fTime = fTime;
 				Rotation = RageVector3( Rotation[0], Rotation[1], Rotation[2] );
 				RageQuatFromHPR( &key.Rotation, Rotation );
@@ -341,9 +348,9 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 		{
 			msBone& Bone = Animation.Bones[i];
 			for( unsigned j = 0; j < Bone.PositionKeys.size(); ++j )
-				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
+				Animation.nTotalFrames = std::max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
 			for( unsigned j = 0; j < Bone.RotationKeys.size(); ++j )
-				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
+				Animation.nTotalFrames = std::max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
 		}
 	}
 
@@ -353,7 +360,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -363,7 +370,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

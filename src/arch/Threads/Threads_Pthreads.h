@@ -3,6 +3,8 @@
 
 #include "Threads.h"
 
+#include <cstdint>
+
 #include <pthread.h>
 #include <semaphore.h>
 

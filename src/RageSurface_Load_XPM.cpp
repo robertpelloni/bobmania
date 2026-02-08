@@ -6,7 +6,10 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface.h"
+
+#include <cstdint>
 #include <map>
+#include <vector>
 
 #define CheckLine() \
 	if( xpm[line] == nullptr ) { \
@@ -33,9 +36,9 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 		return nullptr;
 	}
 
-	vector<RageSurfaceColor> colors;
+	std::vector<RageSurfaceColor> colors;
 
-	map<RString,int> name_to_color;
+	std::map<RString, int> name_to_color;
 	for( int i = 0; i < num_colors; ++i )
 	{
 		CheckLine();
@@ -53,8 +56,8 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 			continue;
 
 		RString clr = color.substr( color_length+4 );
-		int r, g, b;
-		if( sscanf( clr, "%2x%2x%2x", &r, &g, &b ) != 3 )
+		unsigned int r, g, b;
+		if( sscanf( clr.c_str(), "%2x%2x%2x", &r, &g, &b ) != 3 )
 			continue;
 		RageSurfaceColor colorval;
 		colorval.r = (uint8_t) r;
@@ -93,8 +96,8 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 		int32_t *p32 = (int32_t *) p;
 		for( int x = 0; x < width; ++x )
 		{
-			RString color_name = row.substr( x*color_length, color_length );
-			map<RString,int>::const_iterator it;
+			RString color_name = row.substr( static_cast<size_t>(x) * color_length, color_length );
+			std::map<RString, int>::const_iterator it;
 			it = name_to_color.find( color_name );
 			if( it == name_to_color.end() )
 			{

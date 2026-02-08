@@ -3,12 +3,16 @@
 #include "XmlFile.h"
 #include "FontManager.h"
 #include "RageLog.h"
-#include "RageTimer.h"
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
+#include "RageTimer.h"
+
+#include <cmath>
+#include <cstddef>
+#include <vector>
 
 
 REGISTER_ACTOR_CLASS( BitmapText );
@@ -19,15 +23,13 @@ REGISTER_ACTOR_CLASS( BitmapText );
  *
  * Better, we could go all the way, drop all of the actor-specific font aliases,
  * and do "font=header2;valign=top;...". */
- 
+
  /* XXX: Changing a whole array of diffuse colors every frame (several times) is
  * a waste, when we're usually setting them all to the same value. Rainbow and
  * fading are annoying to optimize, but rarely used. Iterating over every
  * character in Draw() is dumb. */
-#define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
-#define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
-static vector<RageColor> RAINBOW_COLORS;
+static std::vector<RageColor> RAINBOW_COLORS;
 
 BitmapText::BitmapText()
 {
@@ -36,9 +38,11 @@ BitmapText::BitmapText()
 	static int iReloadCounter = 0;
 	if( iReloadCounter % 20==0 )
 	{
-		RAINBOW_COLORS.resize( NUM_RAINBOW_COLORS );
-		for( unsigned i = 0; i < RAINBOW_COLORS.size(); ++i )
-			RAINBOW_COLORS[i] = RAINBOW_COLOR(i);
+		RAINBOW_COLORS.resize(THEME->GetMetricI("BitmapText", "NumRainbowColors"));
+		for (unsigned i = 0; i < RAINBOW_COLORS.size(); ++i)
+		{
+			RAINBOW_COLORS[i] = THEME->GetMetricC("BitmapText", ssprintf("RainbowColor%i", i + 1));
+		}
 	}
 	iReloadCounter++;
 
@@ -75,29 +79,27 @@ BitmapText & BitmapText::operator=(const BitmapText &cpy)
 {
 	Actor::operator=(cpy);
 
-#define CPY(a) a = cpy.a
-	CPY( m_bUppercase );
-	CPY( m_sText );
-	CPY( m_wTextLines );
-	CPY( m_iLineWidths );
-	CPY( m_iWrapWidthPixels );
-	CPY( m_fMaxWidth );
-	CPY( m_fMaxHeight );
-	CPY( m_bRainbowScroll );
-	CPY( m_bJitter );
-	CPY( m_fDistortion );
-	CPY( m_bUsingDistortion );
-	CPY( m_mult_attrs_with_diffuse );
-	CPY( m_iVertSpacing );
-	CPY( m_MaxDimensionUsesZoom );
-	CPY( m_aVertices );
-	CPY( m_vpFontPageTextures );
-	CPY( m_mAttributes );
-	CPY( m_bHasGlowAttribute );
-	CPY( BMT_Tweens );
-	CPY( BMT_current );
-	CPY( BMT_start );
-#undef CPY
+	m_bUppercase = cpy.m_bUppercase;
+	m_sText = cpy.m_sText;
+	m_wTextLines = cpy.m_wTextLines;
+	m_iLineWidths = cpy.m_iLineWidths;
+	m_iWrapWidthPixels = cpy.m_iWrapWidthPixels;
+	m_fMaxWidth = cpy.m_fMaxWidth;
+	m_fMaxHeight = cpy.m_fMaxHeight;
+	m_bRainbowScroll = cpy.m_bRainbowScroll;
+	m_bJitter = cpy.m_bJitter;
+	m_fDistortion = cpy.m_fDistortion;
+	m_bUsingDistortion = cpy.m_bUsingDistortion;
+	m_mult_attrs_with_diffuse = cpy.m_mult_attrs_with_diffuse;
+	m_iVertSpacing = cpy.m_iVertSpacing;
+	m_MaxDimensionUsesZoom = cpy.m_MaxDimensionUsesZoom;
+	m_aVertices = cpy.m_aVertices;
+	m_vpFontPageTextures = cpy.m_vpFontPageTextures;
+	m_mAttributes = cpy.m_mAttributes;
+	m_bHasGlowAttribute = cpy.m_bHasGlowAttribute;
+	BMT_Tweens = cpy.BMT_Tweens;
+	BMT_current = cpy.BMT_current;
+	BMT_start = cpy.BMT_start;
 
 	if( m_pFont )
 		FONT->UnloadFont( m_pFont );
@@ -254,7 +256,7 @@ void BitmapText::BuildChars()
 	for( unsigned l=0; l<m_wTextLines.size(); l++ ) // for each line
 	{
 		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
-		m_size.x = max( m_size.x, m_iLineWidths.back() );
+		m_size.x = std::max( m_size.x, (float) m_iLineWidths.back() );
 	}
 
 	/* Ensure that the width is always even. This maintains pixel alignment;
@@ -277,19 +279,19 @@ void BitmapText::BuildChars()
 	m_size.y += iPadding * int(m_wTextLines.size()-1);
 
 	// the top position of the first row of characters
-	int iY = lrintf(-m_size.y/2.0f);
+	int iY = std::lrint(-m_size.y/2.0f);
 
 	for( unsigned i=0; i<m_wTextLines.size(); i++ ) // foreach line
 	{
 		iY += m_pFont->GetHeight();
 
-		wstring sLine = m_wTextLines[i];
+		std::wstring sLine = m_wTextLines[i];
 		if( m_pFont->IsRightToLeft() )
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
 
 		float fX = SCALE( m_fHorizAlign, 0.0f, 1.0f, -m_size.x/2.0f, +m_size.x/2.0f - iLineWidth );
-		int iX = lrintf( fX );
+		int iX = std::lrint( fX );
 
 		for( unsigned j = 0; j < sLine.size(); ++j )
 		{
@@ -326,7 +328,7 @@ void BitmapText::BuildChars()
 
 	if( m_bUsingDistortion )
 	{
-		int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*500000.0f );
+		int iSeed = RageTimer::GetTimeSinceStartSeconds() * 500000;
 		RandomGen rnd( iSeed );
 		for(unsigned int i= 0; i < m_aVertices.size(); i+=4)
 		{
@@ -344,15 +346,15 @@ void BitmapText::BuildChars()
 void BitmapText::DrawChars( bool bUseStrokeTexture )
 {
 	// bail if cropped all the way
-	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
-		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
-		return; 
+	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  ||
+		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 )
+		return;
 
 	const int iNumGlyphs = m_vpFontPageTextures.size();
-	int iStartGlyph = lrintf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
-	int iEndGlyph = lrintf( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
-	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
-	iEndGlyph = clamp( iEndGlyph, 0, iNumGlyphs );
+	int iStartGlyph = std::lrint( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
+	int iEndGlyph = std::lrint( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
+	iStartGlyph = std::clamp( iStartGlyph, 0, iNumGlyphs );
+	iEndGlyph = std::clamp( iEndGlyph, 0, iNumGlyphs );
 
 	if( m_pTempState->fade.top > 0 ||
 		m_pTempState->fade.bottom > 0 ||
@@ -399,14 +401,14 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 			{
 				// Add .5, so we fade wrt. the center of the vert, not the left side.
 				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
-				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				fPercent = std::clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fLeftAlpha;
 			}
 
 			if( FadeSize.right > 0.001f )
 			{
 				float fPercent = SCALE( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
-				fPercent = clamp( fPercent, 0.0f, 1.0f );
+				fPercent = std::clamp( fPercent, 0.0f, 1.0f );
 				fAlpha *= fPercent * fRightAlpha;
 			}
 
@@ -414,7 +416,7 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 				m_aVertices[i+j].c.a = (unsigned char)( m_aVertices[i+j].c.a * fAlpha );
 		}
 	}
-	
+
 	bool bDistanceField = m_pFont->IsDistanceField();
 	if( bDistanceField )
 		DISPLAY->SetEffectMode( EffectMode_DistanceField );
@@ -435,10 +437,10 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 				DISPLAY->SetTexture( TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle() );
 
 			// Don't bother setting texture render states for text. We never go outside of 0..1.
-			/* We should call SetTextureRenderStates because it does more than just setting 
-			 * the texture wrapping state. If setting the wrapping state is found to be slow, 
+			/* We should call SetTextureRenderStates because it does more than just setting
+			 * the texture wrapping state. If setting the wrapping state is found to be slow,
 			 * there should probably be a "don't care" texture wrapping mode set in Actor. -Chris */
-			 
+
 			// This is SLOW. We need to do something else about this. -Colby
 			//Actor::SetTextureRenderStates();
 
@@ -494,12 +496,12 @@ void BitmapText::SetTextInternal()
 		/* "...I can add Japanese wrapping, at least. We could handle hyphens
 		 * and soft hyphens and pretty easily, too." -glenn */
 		// TODO: Move this wrapping logic into Font.
-		vector<RString> asLines;
+		std::vector<RString> asLines;
 		split( m_sText, "\n", asLines, false );
 
 		for( unsigned line = 0; line < asLines.size(); ++line )
 		{
-			vector<RString> asWords;
+			std::vector<RString> asWords;
 			split( asLines[line], " ", asWords );
 
 			RString sCurLine;
@@ -598,28 +600,44 @@ void BitmapText::UpdateBaseZoom()
 	// Never apply a zoom greater than 1.
 	// Factor in the non-base zoom so that maxwidth will be in terms of theme
 	// pixels when zoom is used.
-#define APPLY_DIMENSION_ZOOM(dimension_max, dimension_get, dimension_zoom_get, base_zoom_set) \
-	if(dimension_max == 0) \
-	{ \
-		base_zoom_set(1); \
-	} \
-	else \
-	{ \
-		float dimension= dimension_get(); \
-		if(m_MaxDimensionUsesZoom) \
-		{ \
-			dimension/= dimension_zoom_get(); \
-		} \
-		if(dimension != 0) \
-		{ \
-			const float zoom= min(1, dimension_max / dimension); \
-			base_zoom_set(zoom); \
-		} \
+
+	constexpr float maxZoom = 1.0f;
+
+	if (m_fMaxWidth == 0)
+	{
+		SetBaseZoomX(1);
+	}
+	else
+	{
+		float width = GetUnzoomedWidth();
+		if (m_MaxDimensionUsesZoom)
+		{
+			width /= GetZoomX();
+		}
+		if (width != 0)
+		{
+			const float zoom = std::fmin(maxZoom, m_fMaxWidth / width);
+			SetBaseZoomX(zoom);
+		}
 	}
 
-	APPLY_DIMENSION_ZOOM(m_fMaxWidth, GetUnzoomedWidth, GetZoomX, SetBaseZoomX);
-	APPLY_DIMENSION_ZOOM(m_fMaxHeight, GetUnzoomedHeight, GetZoomY, SetBaseZoomY);
-#undef APPLY_DIMENSION_ZOOM
+	if (m_fMaxHeight == 0)
+	{
+		SetBaseZoomY(1);
+	}
+	else
+	{
+		float height = GetUnzoomedHeight();
+		if (m_MaxDimensionUsesZoom)
+		{
+			height /= GetZoomY();
+		}
+		if (height != 0)
+		{
+			const float zoom = std::fmin(maxZoom, m_fMaxHeight / height);
+			SetBaseZoomY(zoom);
+		}
+	}
 }
 
 bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
@@ -646,8 +664,8 @@ void BitmapText::CropLineToWidth(size_t l, int width)
 	if(l < m_wTextLines.size())
 	{
 		int used_width= width;
-		wstring& line= m_wTextLines[l];
-		int fit= m_pFont->GetGlyphsThatFit(line, &used_width);
+		std::wstring& line= m_wTextLines[l];
+		const size_t fit= m_pFont->GetGlyphsThatFit(line, &used_width);
 		if(fit < line.size())
 		{
 			line.erase(line.begin()+fit, line.end());
@@ -671,7 +689,7 @@ bool BitmapText::EarlyAbortDraw() const
 }
 
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
-void BitmapText::DrawPrimitives()
+void BitmapText::DrawPrimitives() noexcept
 {
 	Actor::SetGlobalRenderStates(); // set Actor-specified render states
 	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
@@ -687,32 +705,40 @@ void BitmapText::DrawPrimitives()
 
 			RageColor c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
-			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+			
+			for (RageSpriteVertex& vertex : m_aVertices)
+			{
+				vertex.c = c;
+			}
+			
 			DrawChars( false );
 
 			DISPLAY->PopMatrix();
 		}
 
 		// render the stroke
-		RageColor stroke_color= GetCurrStrokeColor();
+		RageColor stroke_color = GetCurrStrokeColor();
 		if( stroke_color.a > 0 )
 		{
 			stroke_color.a *= m_pTempState->diffuse[0].a;
-			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = stroke_color;
+			for (RageSpriteVertex& vertex : m_aVertices)
+			{
+				vertex.c = stroke_color;
+			}
 			DrawChars( true );
 		}
 
 		// render the diffuse pass
 		if( m_bRainbowScroll )
 		{
-			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % RAINBOW_COLORS.size();
-			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
+			int color_index = int(RageTimer::GetTimeSinceStart() / 0.200) % RAINBOW_COLORS.size();
+			for (size_t i = 0; i < m_aVertices.size(); i += 4)
 			{
 				const RageColor color = RAINBOW_COLORS[color_index];
-				for( unsigned j=i; j<i+4; j++ )
+				for (size_t j = i; j < i + 4; j++)
+				{
 					m_aVertices[j].c = color;
+				}
 
 				color_index = (color_index+1) % RAINBOW_COLORS.size();
 			}
@@ -720,13 +746,13 @@ void BitmapText::DrawPrimitives()
 		else
 		{
 			size_t i = 0;
-			map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+			std::map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
 			while( i < m_aVertices.size() )
 			{
 				// Set the colors up to the next attribute.
 				size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
-				iEnd = min( iEnd, m_aVertices.size() );
-				for( ; i < iEnd; i += 4 )
+				iEnd = std::min(iEnd, m_aVertices.size()); // clamp to vertex size
+				for (; i < iEnd; i += 4)
 				{
 					m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
 					m_aVertices[i+1].c = m_pTempState->diffuse[2];	// bottom left
@@ -734,16 +760,22 @@ void BitmapText::DrawPrimitives()
 					m_aVertices[i+3].c = m_pTempState->diffuse[1];	// top right
 				}
 				if( iter == m_mAttributes.end() )
+				{
 					break;
+				}
 				// Set the colors according to this attribute.
 				const Attribute &attr = iter->second;
 				++iter;
 				if( attr.length < 0 )
+				{
 					iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
+				}
 				else
+				{
 					iEnd = i + attr.length*4;
-				iEnd = min( iEnd, m_aVertices.size() );
-				vector<RageColor> temp_attr_diffuse(NUM_DIFFUSE_COLORS, m_internalDiffuse);
+				}
+				iEnd = std::min(iEnd, m_aVertices.size()); // clamp to vertex size
+				std::vector<RageColor> temp_attr_diffuse(NUM_DIFFUSE_COLORS, m_internalDiffuse);
 				for(size_t c= 0; c < NUM_DIFFUSE_COLORS; ++c)
 				{
 					temp_attr_diffuse[c]*= attr.diffuse[c];
@@ -763,14 +795,14 @@ void BitmapText::DrawPrimitives()
 		}
 
 		// apply jitter to verts
-		vector<RageVector3> vGlyphJitter;
+		std::vector<RageVector3> vGlyphJitter;
 		if( m_bJitter )
 		{
-			int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*8 );
+			int iSeed = RageTimer::GetTimeSinceStartSeconds() * 8;
 			RandomGen rnd( iSeed );
-
-			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
+			for (size_t i = 0; i < m_aVertices.size(); i += 4)
 			{
+				
 				RageVector3 jitter( rnd()%2, rnd()%3, 0 );
 				vGlyphJitter.push_back( jitter );
 
@@ -787,7 +819,7 @@ void BitmapText::DrawPrimitives()
 		if( m_bJitter )
 		{
 			ASSERT( vGlyphJitter.size() == m_aVertices.size()/4 );
-			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
+			for (size_t i = 0; i < m_aVertices.size(); i += 4)
 			{
 				const RageVector3 &jitter = vGlyphJitter[i/4];;
 
@@ -805,24 +837,31 @@ void BitmapText::DrawPrimitives()
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		size_t i = 0;
-		map<size_t,Attribute>::const_iterator iter = m_mAttributes.begin();
+		auto iter = m_mAttributes.begin();
 		while( i < m_aVertices.size() )
 		{
-			// Set the glow up to the next attribute.
 			size_t iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
-			iEnd = min( iEnd, m_aVertices.size() );
+			iEnd = std::min(iEnd, m_aVertices.size()); // clamp to vertex size
 			for( ; i < iEnd; ++i )
+			{
 				m_aVertices[i].c = m_pTempState->glow;
+			}
 			if( iter == m_mAttributes.end() )
+			{
 				break;
+			}
 			// Set the glow according to this attribute.
 			const Attribute &attr = iter->second;
 			++iter;
 			if( attr.length < 0 )
+			{
 				iEnd = iter == m_mAttributes.end()? m_aVertices.size():iter->first*4;
+			}
 			else
+			{
 				iEnd = i + attr.length*4;
-			iEnd = min( iEnd, m_aVertices.size() );
+			}
+			iEnd = std::min(iEnd, m_aVertices.size()); // clamp to vertex size
 			for( ; i < iEnd; ++i )
 			{
 				if( m_internalGlow.a > 0 )
@@ -875,18 +914,82 @@ BitmapText::Attribute BitmapText::GetDefaultAttribute() const
 void BitmapText::AddAttribute( size_t iPos, const Attribute &attr )
 {
 	// Fixup position for new lines.
+	Attribute newAttr = attr;
+	auto lineIter = m_wTextLines.cbegin();
+
 	int iLines = 0;
 	size_t iAdjustedPos = iPos;
-	
-	for (wstring const & line : m_wTextLines)
+
+	for( ; lineIter != m_wTextLines.cend(); ++lineIter )
 	{
-		size_t length = line.length();
-		if( length >= iAdjustedPos )
+		size_t length = lineIter->length() + 1; // +1 to account for implicit newline at the end
+		if( length > iAdjustedPos )
 			break;
 		iAdjustedPos -= length;
 		++iLines;
 	}
-	m_mAttributes[iPos-iLines] = attr;
+
+	if( newAttr.length > 0 )
+	{
+		// Fixup length for new lines.
+		size_t iAdjustedEndPos = iAdjustedPos + newAttr.length;
+		for( ; lineIter != m_wTextLines.cend(); ++lineIter )
+		{
+			size_t length = lineIter->length() + 1; // +1 to account for implicit newline at the end
+			if( length > iAdjustedEndPos || newAttr.length == 0 )
+				break;
+			iAdjustedEndPos -= length;
+			newAttr.length -= 1;
+		}
+	}
+
+	if( newAttr.length == 0 ) // Attribute doesn't cover any printable characters
+		return;
+
+	// Check if there are existing attributes overlapping this one. We might need to remove or fix them up.
+	const size_t iStartPos = iPos - iLines;
+	const size_t iEndPos = iStartPos + newAttr.length;
+
+	// First attribute starting at the same position or further than the new attribute
+	const auto iterFirstAfterStart = m_mAttributes.lower_bound( iStartPos );
+	if( iterFirstAfterStart != m_mAttributes.begin() )
+	{
+		// Last attribute starting at earlier position than the new attribute (if it exists)
+		auto iterLastBeforeStart = iterFirstAfterStart;
+		--iterLastBeforeStart;
+
+		// Fixup the length so that it ends before the new attribute
+		iterLastBeforeStart->second.length = std::min( iterLastBeforeStart->second.length, static_cast<int>(iStartPos - iterLastBeforeStart->first) );
+	}
+
+	// First attribute starting after the end of the new attribute
+	auto iterLastBeforeEnd = m_mAttributes.lower_bound( iEndPos );
+	if( iterLastBeforeEnd != iterFirstAfterStart )
+	{
+		// Go back one, so that we are at the last overlapping attribute
+		--iterLastBeforeEnd;
+		const bool lastAttrOverlappingCompletely = iterLastBeforeEnd->first + iterLastBeforeEnd->second.length <= iEndPos;
+
+		auto iterEraseEnd = iterLastBeforeEnd;
+		// If it's overlapping completely, erase it as well
+		if( lastAttrOverlappingCompletely )
+			++iterEraseEnd;
+		m_mAttributes.erase( iterFirstAfterStart, iterEraseEnd );
+
+		// Otherwise it's only overlapping partially so fix it up
+		if( !lastAttrOverlappingCompletely )
+		{
+			// Fixup the length accordingly
+			Attribute lastAttr = iterLastBeforeEnd->second;
+			lastAttr.length -= iEndPos - iterLastBeforeEnd->first;
+
+			// Erase it and insert just after the new attribute
+			m_mAttributes.erase( iterLastBeforeEnd );
+			m_mAttributes[iEndPos] = lastAttr;
+		}
+	}
+
+	m_mAttributes[iStartPos] = newAttr;
 	m_bHasGlowAttribute = m_bHasGlowAttribute || attr.glow.a > 0.0001f;
 }
 
@@ -940,7 +1043,7 @@ void BitmapText::Attribute::FromStack( lua_State *L, int iPos )
 // lua start
 #include "FontCharAliases.h"
 
-/** @brief Allow Lua to have access to the BitmapText. */ 
+/** @brief Allow Lua to have access to the BitmapText. */
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
@@ -984,7 +1087,7 @@ public:
 	static int distort( T* p, lua_State *L) { p->SetDistortion( FArg(1) ); COMMON_RETURN_SELF; }
 	static int undistort( T* p, lua_State *L) { p->UnSetDistortion(); COMMON_RETURN_SELF; }
 	GETTER_SETTER_BOOL_METHOD(mult_attrs_with_diffuse);
-	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
+	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText().c_str() ); return 1; }
 	static int AddAttribute( T* p, lua_State *L )
 	{
 		size_t iPos = IArg(1);
@@ -1032,7 +1135,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
 /*
  * (c) 2003-2007 Chris Danford, Charles Lohr, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1042,7 +1145,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

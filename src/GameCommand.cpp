@@ -23,6 +23,10 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "ScreenPrompt.h"
 
+#include <cstddef>
+#include <vector>
+
+
 static LocalizedString COULD_NOT_LAUNCH_BROWSER( "GameCommand", "Could not launch web browser." );
 
 REGISTER_CLASS_TRAITS( GameCommand, new GameCommand(*pCopy) );
@@ -56,7 +60,6 @@ void GameCommand::Init()
 	m_iGoalCalories = -1;
 	m_GoalType = GoalType_Invalid;
 	m_sProfileID = "";
-	m_sUrl = "";
 	m_bUrlExits = true;
 
 	m_bInsertCredit = false;
@@ -86,8 +89,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pStyle && GAMESTATE->GetCurrentStyle(pn) != m_pStyle )
 		return false;
-	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
-	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
+	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems
+	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty
 	// doesn't match the difficulty of m_pCurSteps.
 	if( m_pSteps == nullptr  &&  m_dc != Difficulty_Invalid )
 	{
@@ -278,7 +281,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
 			(SONGMAN->FindSong(sValue) == nullptr),
-			(ssprintf("Song \"%s\" not found", sValue.c_str()))); 
+			(ssprintf("Song \"%s\" not found", sValue.c_str())));
 	}
 
 	else if( sName == "steps" )
@@ -318,7 +321,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			(SONGMAN->FindCourse("", sValue) == nullptr),
 			(ssprintf( "Course \"%s\" not found", sValue.c_str())));
 	}
-	
+
 	else if( sName == "trail" )
 	{
 		RString sTrail = sValue;
@@ -348,7 +351,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			}
 		}
 	}
-	
+
 	else if( sName == "setenv" )
 	{
 		if((cmd.m_vsArgs.size() - 1) % 2 != 0)
@@ -363,7 +366,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			}
 		}
 	}
-	
+
 	else if( sName == "songgroup" )
 	{
 		CHECK_INVALID_COND(m_sSongGroup, sValue, (!SONGMAN->DoesSongGroupExist(sValue)), ("Song group \"" + sValue + "\" does not exist."));
@@ -398,8 +401,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "url" )
 	{
-		m_sUrl = sValue;
-		m_bUrlExits = true;
+		// url usage has been deprecated. This block exists for backwards compatibility.
 	}
 
 	else if( sName == "sound" )
@@ -435,8 +437,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	// sm-ssc additions begin:
 	else if( sName == "urlnoexit" )
 	{
-		m_sUrl = sValue;
-		m_bUrlExits = false;
+		// url usage has been deprecated. This block exists for backwards compatibility.
 	}
 
 	else if( sName == "setpref" )
@@ -466,8 +467,8 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( cmd.m_vsArgs.size() == 3 )
 		{
 			m_bFadeMusic = true;
-			m_fMusicFadeOutVolume = static_cast<float>(atof( cmd.m_vsArgs[1] ));
-			m_fMusicFadeOutSeconds = static_cast<float>(atof( cmd.m_vsArgs[2] ));
+			m_fMusicFadeOutVolume = static_cast<float>(atof( cmd.m_vsArgs[1].c_str() ));
+			m_fMusicFadeOutSeconds = static_cast<float>(atof( cmd.m_vsArgs[2].c_str() ));
 		}
 		else
 		{
@@ -490,7 +491,7 @@ int GetNumCreditsPaid()
 
 	// players other than the first joined for free
 	if( GAMESTATE->GetPremium() == Premium_2PlayersFor1Credit )
-		iNumCreditsPaid = min( iNumCreditsPaid, 1 );
+		iNumCreditsPaid = std::min( iNumCreditsPaid, 1 );
 
 	return iNumCreditsPaid;
 }
@@ -543,8 +544,10 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 			if( style->m_StyleType==StyleType_OnePlayerTwoSides ||
 				style->m_StyleType==StyleType_TwoPlayersSharedSides )
 				return false;
-		default: return true;
+		default: break;
 	}
+
+	return true;
 }
 
 bool GameCommand::IsPlayable( RString *why ) const
@@ -566,7 +569,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 		const int iNumCreditsPaid = GetNumCreditsPaid();
 		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-		
+
 		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough credits must
 		 * be paid. (This means that enough sides must be joined.)  Enabled, simply
 		 * having enough credits lying in the machine is sufficient; we'll deduct the
@@ -611,7 +614,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
 	{
-		vector<Course*> vCourses;
+		std::vector<Course*> vCourses;
 		SONGMAN->GetAllCourses( vCourses, false );
 
 		if( vCourses.size() == 0 )
@@ -659,7 +662,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 void GameCommand::ApplyToAllPlayers() const
 {
-	vector<PlayerNumber> vpns;
+	std::vector<PlayerNumber> vpns;
 
 	FOREACH_PlayerNumber( pn )
 		vpns.push_back( pn );
@@ -669,12 +672,12 @@ void GameCommand::ApplyToAllPlayers() const
 
 void GameCommand::Apply( PlayerNumber pn ) const
 {
-	vector<PlayerNumber> vpns;
+	std::vector<PlayerNumber> vpns;
 	vpns.push_back( pn );
 	Apply( vpns );
 }
 
-void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
+void GameCommand::Apply( const std::vector<PlayerNumber> &vpns ) const
 {
 	if( m_Commands.v.size() )
 	{
@@ -696,7 +699,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 }
 
-void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
+void GameCommand::ApplySelf( const std::vector<PlayerNumber> &vpns ) const
 {
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 
@@ -722,7 +725,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
             		//Credit Used, make sure to update CoinsFile
             		BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
 		}
-		
+
 		// If only one side is joined and we picked a style that requires both
 		// sides, join the other side.
 		switch( m_pStyle->m_StyleType )
@@ -738,7 +741,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			}
 			break;
 		default:
-			LuaHelpers::ReportScriptError("Invalid StyleType: " + m_pStyle->m_StyleType);
+			LuaHelpers::ReportScriptErrorFmt("Invalid StyleType: %d", m_pStyle->m_StyleType);
 		}
 	}
 	if( m_dc != Difficulty_Invalid )
@@ -790,17 +793,17 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pCharacter )
 		for (PlayerNumber const &pn : vpns)
 			GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
-	for( map<RString,RString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
+	for( std::map<RString, RString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
 	{
 		Lua *L = LUA->Get();
 		GAMESTATE->m_Environment->PushSelf(L);
-		lua_pushstring( L, i->first );
-		lua_pushstring( L, i->second );
+		lua_pushstring( L, i->first.c_str() );
+		lua_pushstring( L, i->second.c_str() );
 		lua_settable( L, -3 );
 		lua_pop( L, 1 );
 		LUA->Release(L);
 	}
-	for(map<RString,RString>::const_iterator setting= m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
+	for(std::map<RString, RString>::const_iterator setting= m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
 	{
 		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
 		if(pref != nullptr)
@@ -826,16 +829,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( !m_sProfileID.empty() )
 		for (PlayerNumber const &pn : vpns)
 			ProfileManager::m_sDefaultLocalProfileID[pn].Set( m_sProfileID );
-	if( !m_sUrl.empty() )
-	{
-		if( HOOKS->GoToURL( m_sUrl ) )
-		{
-			if( m_bUrlExits )
-				SCREENMAN->SetNewScreen( "ScreenExit" );
-		}
-		else
-			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER );
-	}
 
 	/* If we're going to stop music, do so before preparing new screens, so we
 	 * don't stop music between preparing screens and loading screens. */
@@ -869,7 +862,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		GAMESTATE->GetDefaultSongOptions( so );
 		GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 	}
-	// HACK: Set life type to BATTERY just once here so it happens once and 
+	// HACK: Set life type to BATTERY just once here so it happens once and
 	// we don't override the user's changes if they back out.
 	FOREACH_PlayerNumber(pn)
 	{
@@ -890,21 +883,22 @@ bool GameCommand::IsZero() const
 		m_sAnnouncer != "" ||
 		m_sPreferredModifiers != "" ||
 		m_sStageModifiers != "" ||
-		m_pSong != nullptr || 
-		m_pSteps != nullptr || 
-		m_pCourse != nullptr || 
-		m_pTrail != nullptr || 
-		m_pCharacter != nullptr || 
+		m_pSong != nullptr ||
+		m_pSteps != nullptr ||
+		m_pCourse != nullptr ||
+		m_pTrail != nullptr ||
+		m_pCharacter != nullptr ||
 		m_CourseDifficulty != Difficulty_Invalid ||
 		!m_sSongGroup.empty() ||
 		m_SortOrder != SortOrder_Invalid ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
 		m_GoalType != GoalType_Invalid ||
-		!m_sProfileID.empty() ||
-		!m_sUrl.empty() )
+		!m_sProfileID.empty()	 )
+		{
 		return false;
-
+		}
+	
 	return true;
 }
 
@@ -914,27 +908,31 @@ bool GameCommand::IsZero() const
 #include "Steps.h"
 #include "Character.h"
 
-/** @brief Allow Lua to have access to the GameCommand. */ 
+/** @brief Allow Lua to have access to the GameCommand. */
 class LunaGameCommand: public Luna<GameCommand>
 {
 public:
-	static int GetName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sName ); return 1; }
-	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText ); return 1; }
+	static int GetName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sName.c_str() ); return 1; }
+	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText.c_str() ); return 1; }
 	static int GetIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iIndex ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
 	static int GetStyle( T* p, lua_State *L )	{ if(p->m_pStyle== nullptr) lua_pushnil(L); else {Style *pStyle = (Style*)p->m_pStyle; pStyle->PushSelf(L);} return 1; }
-	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen ); return 1; }
-	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
+	static int GetScreen( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sScreen.c_str() ); return 1; }
+	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID.c_str() ); return 1; }
 	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong== nullptr) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 	static int GetSteps( T* p, lua_State *L )	{ if(p->m_pSteps== nullptr) lua_pushnil(L); else p->m_pSteps->PushSelf(L); return 1; }
 	static int GetCourse( T* p, lua_State *L )	{ if(p->m_pCourse== nullptr) lua_pushnil(L); else p->m_pCourse->PushSelf(L); return 1; }
 	static int GetTrail( T* p, lua_State *L )	{ if(p->m_pTrail== nullptr) lua_pushnil(L); else p->m_pTrail->PushSelf(L); return 1; }
 	static int GetCharacter( T* p, lua_State *L )	{ if(p->m_pCharacter== nullptr) lua_pushnil(L); else p->m_pCharacter->PushSelf(L); return 1; }
-	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
-	static int GetUrl( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sUrl ); return 1; }
-	static int GetAnnouncer( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sAnnouncer ); return 1; }
-	static int GetPreferredModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sPreferredModifiers ); return 1; }
-	static int GetStageModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sStageModifiers ); return 1; }
+	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup.c_str() ); return 1; }
+	static int GetUrl(T* p, lua_State* L)
+	{
+		LOG->Warn("GetUrl usage has been deprecated.");
+		return 1;
+	}
+	static int GetAnnouncer( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sAnnouncer.c_str() ); return 1; }
+	static int GetPreferredModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sPreferredModifiers.c_str() ); return 1; }
+	static int GetStageModifiers( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sStageModifiers.c_str() ); return 1; }
 
 	DEFINE_METHOD( GetCourseDifficulty,	m_CourseDifficulty )
 	DEFINE_METHOD( GetDifficulty,	m_dc )
@@ -973,7 +971,7 @@ LUA_REGISTER_CLASS( GameCommand )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -983,7 +981,7 @@ LUA_REGISTER_CLASS( GameCommand )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -4,6 +4,8 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 
+#include <cstdint>
+
 #define DitherMatDim 4
 
 // Fractions, 0/16 to 15/16:
@@ -59,7 +61,7 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 				DitherMatCalc[i][j] = DitherMat[i][j] * 65536 / 16;
 			}
 		}
-			
+
 		DitherMatCalc_initted = true;
 	}
 
@@ -115,7 +117,7 @@ void RageSurfaceUtils::OrderedDither( const RageSurface *src, RageSurface *dst )
 				/* Same as DitherPixel, except it doesn't actually dither;
 				 * dithering looks bad on the alpha channel. */
 				int out_intensity = colors[3] * conv[3];
-	
+
 				// Round:
 				colors[3] = uint8_t((out_intensity + 32767) >> 16);
 			}
@@ -145,7 +147,7 @@ static uint8_t EDDitherPixel( int x, int y, int intensity, int conv, int32_t &ac
 	 * To store it, we have to clamp it (prevent overflow) and shift it
 	 * from fixed-point to [0,255].  The error introduced in that calculation
 	 * becomes the new accumError. */
-	int clamped_intensity = clamp( out_intensity, 0, 0xFFFFFF );
+	int clamped_intensity = std::clamp( out_intensity, 0, 0xFFFFFF );
 	clamped_intensity &= 0xFF0000;
 
 	// Truncate.
@@ -191,7 +193,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 	const uint8_t alpha_max = uint8_t((1 << dst_cbits[3]) - 1);
 
 	// For each row:
-	for(int row = 0; row < src->h; ++row) 
+	for(int row = 0; row < src->h; ++row)
 	{
 		int32_t accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
 
@@ -235,7 +237,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
 /*
  * (c) 2002-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -245,7 +247,7 @@ void RageSurfaceUtils::ErrorDiffusionDither( const RageSurface *src, RageSurface
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -3,7 +3,10 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFile.h"
+
 #include <cstring>
+#include <vector>
+
 
 AnnouncerManager*	ANNOUNCER = nullptr; // global and accessible from anywhere in our program
 
@@ -29,7 +32,7 @@ AnnouncerManager::~AnnouncerManager()
 	LUA->UnsetGlobal( "ANNOUNCER" );
 }
 
-void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
+void AnnouncerManager::GetAnnouncerNames( std::vector<RString>& AddTo )
 {
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
 
@@ -38,7 +41,7 @@ void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 
 	// strip out the empty announcer folder
 	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( !strcasecmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
+		if( !strcasecmp( AddTo[i].c_str(), EMPTY_ANNOUNCER_NAME.c_str() ) )
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
 }
 
@@ -47,10 +50,10 @@ bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 	if( sAnnouncerName == "" )
 		return true;
 
-	vector<RString> asAnnouncerNames;
+	std::vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
 	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
-		if( 0==strcasecmp(sAnnouncerName, asAnnouncerNames[i]) )
+		if( 0==strcasecmp(sAnnouncerName.c_str(), asAnnouncerNames[i].c_str()) )
 			return true;
 	return false;
 }
@@ -154,7 +157,7 @@ bool AnnouncerManager::HasSoundsFor( RString sFolderName )
 
 void AnnouncerManager::NextAnnouncer()
 {
-	vector<RString> as;
+	std::vector<RString> as;
 	GetAnnouncerNames( as );
 	if( as.size()==0 )
 		return;
@@ -186,7 +189,7 @@ public:
 	static int DoesAnnouncerExist( T* p, lua_State *L ) { lua_pushboolean(L, p->DoesAnnouncerExist( SArg(1) )); return 1; }
 	static int GetAnnouncerNames( T* p, lua_State *L )
 	{
-		vector<RString> vAnnouncers;
+		std::vector<RString> vAnnouncers;
 		p->GetAnnouncerNames( vAnnouncers );
 		LuaHelpers::CreateTableFromArray(vAnnouncers, L);
 		return 1;
@@ -200,7 +203,7 @@ public:
 		}
 		else
 		{
-			lua_pushstring(L, s );
+			lua_pushstring(L, s.c_str() );
 		}
 		return 1;
 	}

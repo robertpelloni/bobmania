@@ -7,6 +7,8 @@
 #include "RageTextureID.h"
 #include "RageDisplay.h" // for RenderTargetParam
 
+#include <cstdint>
+
 class RageTextureRenderTarget: public RageTexture
 {
 public:

@@ -6,6 +6,9 @@
 #include "RageMath.h"
 #include "RageTextureID.h"
 
+#include <cstddef>
+#include <vector>
+
 enum DrawMode
 {
 	DrawMode_Quads = 0,
@@ -33,8 +36,8 @@ public:
 	ActorMultiVertex( const ActorMultiVertex &cpy );
 	virtual ~ActorMultiVertex();
 
-	void LoadFromNode( const XNode* Node );
-	virtual ActorMultiVertex *Copy() const;
+	void LoadFromNode( const XNode* Node ) override;
+	virtual ActorMultiVertex *Copy() const override;
 
 	struct AMV_TweenState
 	{
@@ -48,8 +51,8 @@ public:
 		void SetDrawState( DrawMode dm, int first, int num );
 		int GetSafeNumToDraw( DrawMode dm, int num ) const;
 
-		vector<RageSpriteVertex> vertices;
-		vector<size_t> quad_states;
+		std::vector<RageSpriteVertex> vertices;
+		std::vector<size_t> quad_states;
 
 		DrawMode _DrawMode;
 		int FirstToDraw;
@@ -68,20 +71,20 @@ public:
 	}
 	const AMV_TweenState& AMV_DestTweenState() const { return const_cast<ActorMultiVertex*>(this)->AMV_DestTweenState(); }
 
-	virtual void EnableAnimation(bool bEnable);
-	virtual void Update(float fDelta);
-	virtual bool EarlyAbortDraw() const;
-	virtual void DrawPrimitives();
+	virtual void EnableAnimation(bool bEnable) override;
+	virtual void Update(float fDelta) override;
+	virtual bool EarlyAbortDraw() const override;
+	virtual void DrawPrimitives() override;
 	virtual void DrawInternal( const AMV_TweenState *TS );
-	
-	void SetCurrentTweenStart();
-	void EraseHeadTween();
-	void UpdatePercentThroughTween( float PercentThroughTween );
-	void BeginTweening( float time, ITween *pInterp );
 
-	void StopTweening();
-	void FinishTweening();
-	
+	void SetCurrentTweenStart() override;
+	void EraseHeadTween() override;
+	void UpdatePercentThroughTween( float PercentThroughTween ) override;
+	void BeginTweening( float time, ITween *pInterp ) override;
+
+	void StopTweening() override;
+	void FinishTweening() override;
+
 	void SetTexture( RageTexture *Texture );
 	RageTexture* GetTexture() { return _Texture; };
 	void LoadFromTexture( RageTextureID ID );
@@ -89,6 +92,7 @@ public:
 	void UnloadTexture();
 	void SetNumVertices( size_t n );
 
+	void ResizeVertices(std::vector<RageSpriteVertex>& vertices, int size);
 	void AddVertex();
 	void AddVertices( int Add );
 
@@ -105,7 +109,7 @@ public:
 	int GetCurrFirstToDraw() const					{ return AMV_current.FirstToDraw; }
 	int GetCurrNumToDraw() const					{ return AMV_current.NumToDraw; }
 	size_t GetNumVertices() 					{ return AMV_DestTweenState().vertices.size(); }
-	
+
 	void SetVertexPos( int index , float x , float y , float z );
 	void SetVertexColor( int index , RageColor c );
 	void SetVertexCoords( int index , float TexCoordX , float TexCoordY );
@@ -119,7 +123,7 @@ public:
 		RectF rect;
 		float delay;
 	};
-	int GetNumStates() const { return _states.size(); }
+	int GetNumStates() const override { return _states.size(); }
 	void AddState(const State& new_state) { _states.push_back(new_state); }
 	void RemoveState(size_t i)
 	{ ASSERT(i < _states.size()); _states.erase(_states.begin()+i); }
@@ -128,12 +132,12 @@ public:
 	{ ASSERT(i < _states.size()); return _states[i]; }
 	void SetStateData(size_t i, const State& s)
 	{ ASSERT(i < _states.size()); _states[i]= s; }
-	void SetStateProperties(const vector<State>& new_states)
+	void SetStateProperties(const std::vector<State>& new_states)
 	{ _states= new_states; SetState(0); }
-	void SetState(size_t i);
+	void SetState(int i) override;
 	void SetAllStateDelays(float delay);
-	float GetAnimationLengthSeconds() const;
-	void SetSecondsIntoAnimation(float seconds);
+	float GetAnimationLengthSeconds() const override;
+	void SetSecondsIntoAnimation(float seconds) override;
 	void UpdateAnimationState(bool force_update= false);
 	size_t GetNumQuadStates() const
 	{ return AMV_DestTweenState().quad_states.size(); }
@@ -148,30 +152,30 @@ public:
 	bool _use_animation_state;
 	bool _decode_movie;
 
-	virtual void PushSelf( lua_State *L );
+	virtual void PushSelf( lua_State *L ) override;
 
 private:
 	RageTexture* _Texture;
 
-	vector<RageSpriteVertex> _Vertices;
-	vector<AMV_TweenState> AMV_Tweens;
+	std::vector<RageSpriteVertex> _Vertices;
+	std::vector<AMV_TweenState> AMV_Tweens;
 	AMV_TweenState AMV_current;
 	AMV_TweenState AMV_start;
 
 	// required to handle diffuse and glow
 	AMV_TweenState *AMV_TempState;
-	
+
 	EffectMode _EffectMode;
 	TextureMode _TextureMode;
 
 	// Four splines for controlling vert positions, because quads drawmode
 	// requires four. -Kyz
-	vector<CubicSplineN> _splines;
+	std::vector<CubicSplineN> _splines;
 
 	bool _skip_next_update;
 	float _secs_into_state;
 	size_t _cur_state;
-	vector<State> _states;
+	std::vector<State> _states;
 };
 
 /**
@@ -179,7 +183,7 @@ private:
  * @author Matthew Gardner and Eric Reese (c) 2014
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -189,7 +193,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

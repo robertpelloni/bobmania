@@ -34,10 +34,10 @@ static const char *MusicWheelItemTypeNames[] = {
 XToString( MusicWheelItemType );
 
 MusicWheelItemData::MusicWheelItemData( WheelItemDataType type, Song* pSong, 
-				       RString sSectionName, Course* pCourse, 
+				       RString sSectionName, Course* pCourse, Group* pGroup,
 				       RageColor color, int iSectionCount ):
 	WheelItemBaseData(type, sSectionName, color),
-	m_pCourse(pCourse), m_pSong(pSong), m_Flags(WheelNotifyIcon::Flags()),
+	m_pCourse(pCourse), m_pSong(pSong), m_pGroup(pGroup), m_Flags(WheelNotifyIcon::Flags()),
 	m_iSectionCount(iSectionCount), m_sLabel(""), m_pAction() {}
 
 MusicWheelItem::MusicWheelItem( RString sType ):
@@ -118,6 +118,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	this->SubscribeToMessage( Message_CurrentTrailP2Changed );
 	this->SubscribeToMessage( Message_PreferredDifficultyP1Changed );
 	this->SubscribeToMessage( Message_PreferredDifficultyP2Changed );
+	this->SubscribeToMessage( Message_PlayerProfileSet );
 }
 
 MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
@@ -172,7 +173,7 @@ MusicWheelItem::~MusicWheelItem()
 {
 	FOREACH_ENUM( MusicWheelItemType, i )
 	{
-		SAFE_DELETE(m_pText[i]);
+		RageUtil::SafeDelete(m_pText[i]);
 	}
 	delete m_pTextSectionCount;
 }
@@ -221,8 +222,21 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 		break;
 	case WheelItemDataType_Section:
 		{
-			sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
-
+			if ( pWID->m_pGroup == nullptr ) {
+				sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
+			}
+			else {
+				if ( pWID->m_pGroup->GetSeries().empty() ) {
+					sDisplayName = SONGMAN->ShortenGroupName(pWID->m_pGroup->GetDisplayTitle());
+					sTranslitName = SONGMAN->ShortenGroupName(pWID->m_pGroup->GetTranslitTitle());
+				}
+				else {
+					// This will eventually do something different when we eventually implement nested folders
+					// for now, use the same behavior.
+					sDisplayName = SONGMAN->ShortenGroupName(pWID->m_pGroup->GetDisplayTitle());
+					sTranslitName = SONGMAN->ShortenGroupName(pWID->m_pGroup->GetTranslitTitle());
+				}
+			}
 			if( GAMESTATE->sExpandedSectionName == pWID->m_sText )
 				type = MusicWheelItemType_SectionExpanded;
 			else
@@ -369,6 +383,11 @@ void MusicWheelItem::RefreshGrades()
 		{
 			msg.SetParam( "Grade", pHSL->HighGrade );
 			msg.SetParam( "NumTimesPlayed", pHSL->GetNumTimesPlayed() );
+
+			// Until we get a Grade for quints (need W0 support), send back the entire
+			// HighScoreList so we can determine if a player has a quint or not.
+			// TODO: Remove this once we have W0 support.
+			msg.SetParam( "HighScoreList", pHSL );
 		}
 		m_pGradeDisplay[p]->HandleMessage( msg );
 	}
@@ -382,7 +401,8 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 	    msg == Message_CurrentTrailP1Changed ||
 	    msg == Message_CurrentTrailP2Changed ||
 	    msg == Message_PreferredDifficultyP1Changed ||
-	    msg == Message_PreferredDifficultyP2Changed )
+	    msg == Message_PreferredDifficultyP2Changed ||
+	    msg == Message_PlayerProfileSet )
 	{
 		const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 		MusicWheelItemType type = MusicWheelItemType_Invalid;
@@ -422,14 +442,14 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 				break;
 		}
 
-		Message msg( "Set" );
-		msg.SetParam( "Song", pWID->m_pSong );
-		msg.SetParam( "Course", pWID->m_pCourse );
-		msg.SetParam( "Text", pWID->m_sText );
-		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
-		msg.SetParam( "Color", pWID->m_color );
-		msg.SetParam( "Label", pWID->m_sLabel );
-		this->HandleMessage( msg );
+		Message setMsg( "Set" );
+		setMsg.SetParam( "Song", pWID->m_pSong );
+		setMsg.SetParam( "Course", pWID->m_pCourse );
+		setMsg.SetParam( "Text", pWID->m_sText );
+		setMsg.SetParam( "Type", MusicWheelItemTypeToString(type) );
+		setMsg.SetParam( "Color", pWID->m_color );
+		setMsg.SetParam( "Label", pWID->m_sLabel );
+		this->HandleMessage( setMsg );
 		
 		RefreshGrades();
 	}

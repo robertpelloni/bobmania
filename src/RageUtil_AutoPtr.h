@@ -3,6 +3,8 @@
 #ifndef RAGE_UTIL_AUTO_PTR_H
 #define RAGE_UTIL_AUTO_PTR_H
 
+#include <utility>
+
 /*
  * This is a simple copy-on-write refcounted smart pointer.  Once constructed, all read-only
  * access to the object is made without extra copying.  If you need read-write access, you
@@ -43,8 +45,8 @@ public:
 
 	void Swap( AutoPtrCopyOnWrite<T> &rhs )
 	{
-		swap( m_pPtr, rhs.m_pPtr );
-		swap( m_iRefCount, rhs.m_iRefCount );
+		std::swap( m_pPtr, rhs.m_pPtr );
+		std::swap( m_iRefCount, rhs.m_iRefCount );
 	}
 
 	inline AutoPtrCopyOnWrite<T> &operator=( const AutoPtrCopyOnWrite &rhs )
@@ -150,7 +152,7 @@ public:
 	{
 		HiddenPtrTraits<T>::Delete( m_pPtr );
 	}
-	void Swap( HiddenPtr<T> &rhs ) { swap( m_pPtr, rhs.m_pPtr ); }
+	void Swap( HiddenPtr<T> &rhs ) { std::swap( m_pPtr, rhs.m_pPtr ); }
 
 	HiddenPtr<T> &operator=( T *p )
 	{
@@ -175,6 +177,8 @@ public:
 		return *this;
 	}
 #endif
+
+	bool isNull() const { return m_pPtr == nullptr; }
 
 private:
 	T *m_pPtr;

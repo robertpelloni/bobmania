@@ -1,22 +1,11 @@
 #include "global.h"
 #include "CrashHandlerInternal.h"
 #include "Crash.h"
-#include <errno.h>
-
-#include <windows.h>
-#include <commctrl.h>
-#include "archutils/Win32/ddk/dbghelp.h"
-#include <io.h>
-#if defined(HAVE_FCNTL_H)
-#include <fcntl.h>
-#endif
-#include <shellapi.h>
 
 #include "arch/ArchHooks/ArchHooks.h"
 #include "archutils/Win32/WindowsResources.h"
 #include "archutils/Win32/DialogUtil.h"
 #include "archutils/Win32/ErrorStrings.h"
-#include "archutils/Win32/GotoURL.h"
 #include "archutils/Win32/RestartProgram.h"
 #include "archutils/Win32/CrashHandlerNetworking.h"
 #include "archutils/Win32/WindowsDialogBox.h"
@@ -29,9 +18,21 @@
 #include "RageFileDriverDeflate.h"
 #include "ver.h"
 
-#if defined(_MSC_VER)
-#pragma comment(lib, "dbghelp.lib")
+#include <cerrno>
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+#include <windows.h>
+#include <commctrl.h>
+#include "dbghelp.h"
+#include <io.h>
+#if defined(HAVE_FCNTL_H)
+#include <fcntl.h>
 #endif
+#include <shellapi.h>
+
+#pragma comment(lib, "dbghelp.lib")
 
 // XXX: What happens when we *don't* have version info? Does that ever actually happen?
 #include "ver.h"
@@ -315,7 +316,7 @@ namespace SymbolLookup
 			| UNDNAME_NO_CV_THISTYPE
 			| UNDNAME_NO_ALLOCATION_MODEL
 			| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
-			| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
+			| UNDNAME_NO_MS_KEYWORDS // no __cdecl
 			| UNDNAME_NO_MEMBER_TYPE // no virtual, static
 			) )
 		{
@@ -394,7 +395,7 @@ namespace SymbolLookup
 		}
 
 		wsprintf( buf, "%" ADDRESS_ZEROS "Ix: %s!%" ADDRESS_ZEROS "Ix",
-			reinterpret_cast<uintptr_t>(ptr), sName.c_str(), 
+			reinterpret_cast<uintptr_t>(ptr), sName.c_str(),
 			reinterpret_cast<uintptr_t>(meminfo.AllocationBase) );
 	}
 }
@@ -410,7 +411,7 @@ RString SpliceProgramPath( RString fn )
 	char szModName[MAX_PATH];
 	char *pszFile;
 	GetFullPathName( szBuf, sizeof(szModName), szModName, &pszFile );
-	strcpy( pszFile, fn );
+	strcpy( pszFile, fn.c_str() );
 
 	return szModName;
 }
@@ -448,8 +449,8 @@ struct CompleteCrashData
 	RString m_sInfo;
 	RString m_sAdditionalLog;
 	RString m_sCrashedThread;
-	vector<RString> m_asRecent;
-	vector<RString> m_asCheckpoints;
+	std::vector<RString> m_asRecent;
+	std::vector<RString> m_asCheckpoints;
 };
 
 static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
@@ -457,7 +458,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += ssprintf(
 			"%s crash report (build %s, %s @ %s)\n"
 			"--------------------------------------\n\n",
-			(string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
+			(std::string(PRODUCT_FAMILY) + product_version).c_str(), ::sm_version_git_hash, version_date, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
@@ -500,8 +501,8 @@ static void DoSave( const RString &sReport )
 {
 	RString sName = SpliceProgramPath( "../crashinfo.txt" );
 
-	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
-	FILE *pFile = fopen( sName, "w+" );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_NORMAL );
+	FILE *pFile = fopen( sName.c_str(), "w+" );
 	if( pFile == nullptr )
 		return;
 	fprintf( pFile, "%s", sReport.c_str() );
@@ -509,7 +510,7 @@ static void DoSave( const RString &sReport )
 	fclose( pFile );
 
 	// Discourage changing crashinfo.txt.
-	SetFileAttributes( sName, FILE_ATTRIBUTE_READONLY );
+	SetFileAttributes( sName.c_str(), FILE_ATTRIBUTE_READONLY );
 }
 
 bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
@@ -682,8 +683,8 @@ void CrashDialog::SetDialogInitial()
 {
 	HWND hDlg = GetHwnd();
 
-	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue() );
-	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue().c_str() );
+	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue().c_str() );
 	ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 	ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 }
@@ -710,7 +711,7 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 			case IDC_STATIC_HEADER_TEXT:
 			case IDC_STATIC_ICON:
-				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 				SetBkMode( hdc, OPAQUE );
 				SetBkColor( hdc, RGB(255,255,255) );
 				break;
@@ -731,7 +732,7 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				KillTimer( hDlg, 0 );
 
 				SetDialogInitial();
-				SAFE_DELETE( m_pPost );
+				RageUtil::SafeDelete( m_pPost );
 				return TRUE;
 			}
 
@@ -744,7 +745,7 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		case IDC_VIEW_LOG:
 			{
 				RString sLogPath;
-				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini"), "r" );
+				FILE *pFile = fopen( SpliceProgramPath("../Portable.ini").c_str(), "r" );
 				if(pFile != nullptr)
 				{
 					sLogPath = SpliceProgramPath("../Logs/log.txt");
@@ -753,46 +754,21 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				else
 					sLogPath = SpecialDirs::GetAppDataDir() + PRODUCT_ID +"/Logs/log.txt";
 
-				ShellExecute( nullptr, "open", sLogPath, "", "", SW_SHOWNORMAL );
+				ShellExecute( nullptr, "open", sLogPath.c_str(), "", "", SW_SHOWNORMAL );
 			}
 			break;
 		case IDC_CRASH_SAVE:
-			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt"), "", "", SW_SHOWNORMAL );
+			ShellExecute( nullptr, "open", SpliceProgramPath("../crashinfo.txt").c_str(), "", "", SW_SHOWNORMAL );
 			return TRUE;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
 			EndDialog( hDlg, FALSE );
 			break;
 		case IDC_BUTTON_REPORT:
-			GotoURL( REPORT_BUG_URL );
+			// safe to remove button?
 			break;
 		case IDC_BUTTON_AUTO_REPORT:
-			if( !m_sUpdateURL.empty() )
-			{
-				/* We already sent the report, were told that there's an update,
-				 * and substituted the URL. */
-				GotoURL( m_sUpdateURL );
-				break;
-			}
-
-			ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), false );
-			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), true );
-			SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), REPORTING_THE_PROBLEM.GetValue() );
-			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CANCEL.GetValue() );
-			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETRANGE, 0, MAKELPARAM(0,100) );
-			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, 0, 0 );
-
-			// Create the form data to send.
-			m_pPost = new NetworkPostData;
-			m_pPost->SetData( "Product", PRODUCT_ID );
-			m_pPost->SetData( "Version", product_version );
-			m_pPost->SetData( "Arch", HOOKS->GetArchName().c_str() );
-			m_pPost->SetData( "Report", m_sCrashReport );
-			m_pPost->SetData( "Reason", m_CrashData.m_CrashInfo.m_CrashReason );
-
-			m_pPost->Start( CRASH_REPORT_HOST, CRASH_REPORT_PORT, CRASH_REPORT_PATH );
-
-			SetTimer( hDlg, 0, 100, nullptr );
+			// same here
 			break;
 		}
 		break;
@@ -815,12 +791,11 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				if( sError.empty() && sResult.empty() )
 					sError = "No data received";
 
-				SAFE_DELETE( m_pPost );
+				RageUtil::SafeDelete( m_pPost );
 
 				XNode xml;
 				if( sError.empty() )
 				{
-					RString sError;
 					XmlFileUtil::Load( &xml, sResult, sError );
 					if( !sError.empty() )
 					{
@@ -835,21 +810,21 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 					/* On error, don't show the "report" button again. If the submission was actually
 					* successful, then it'd be too easy to accidentally spam the server by holding
 					* down the button. */
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue().c_str() );
 				}
 				else if( xml.GetChildValue("UpdateAvailable", m_sUpdateURL) )
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
-					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue().c_str() );
+					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue().c_str() );
 					ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 				}
 				else if( xml.GetChildValue("ReportId", iID) )
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue().c_str() );
 				}
 				else
 				{
-					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue().c_str() );
 				}
 
 				if( xml.GetChildValue("ReportId", iID) )
@@ -860,7 +835,7 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				}
 
 				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
-				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue().c_str() );
 			}
 		}
 	}
@@ -910,7 +885,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
 /*
  * (c) 2003-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -920,7 +895,7 @@ void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

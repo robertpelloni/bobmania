@@ -8,26 +8,31 @@
 #include "NotesLoaderKSF.h"
 #include "RageUtil.h"
 
+#include <cstddef>
+#include <vector>
+
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
-	const RString sLeftSeps[]  = { "\t", " -", " ~", " (", " [" };
+	static const std::string_view sLeftSeps[] = { "\t", " -", " ~", " (", " [" };
+	size_t fullTitleSize = sFullTitle.size();
 
-	for( unsigned i=0; i<ARRAYLEN(sLeftSeps); i++ )
+	for (const auto& sep : sLeftSeps)
 	{
-		size_t iBeginIndex = sFullTitle.find( sLeftSeps[i] );
-		if( iBeginIndex == string::npos )
-			continue;
-		sMainTitleOut = sFullTitle.Left( (int) iBeginIndex );
-		sSubTitleOut = sFullTitle.substr( iBeginIndex+1, sFullTitle.size()-iBeginIndex+1 );
-		return;
+		size_t iBeginIndex = sFullTitle.find(sep);
+		if (iBeginIndex != std::string::npos)
+		{
+			sMainTitleOut = sFullTitle.Left(static_cast<int>(iBeginIndex));
+			sSubTitleOut = sFullTitle.substr(iBeginIndex + sep.size(), fullTitleSize - iBeginIndex - sep.size());
+			return;
+		}
 	}
-	sMainTitleOut = sFullTitle; 
-	sSubTitleOut = ""; 
-};
+	sMainTitleOut = sFullTitle;
+	sSubTitleOut = "";
+}
 
-bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages, bool load_autosave )
+bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, std::set<RString> &BlacklistedImages, bool load_autosave )
 {
-	vector<RString> list;
+	std::vector<RString> list;
 
 	BlacklistedImages.clear();
 	SSCLoader loaderSSC;
@@ -67,7 +72,7 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
 /*
  * (c) 2001-2004,2007 Chris Danford, Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -77,7 +82,7 @@ bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &Bl
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

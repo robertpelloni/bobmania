@@ -1,13 +1,6 @@
 #define __USE_GNU
 #include "global.h"
 
-#include <cstdio>
-#include <cstring>
-#include <cerrno>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/select.h>
-
 #include "Backtrace.h"
 #include "BacktraceNames.h"
 
@@ -23,6 +16,14 @@
 #endif
 
 #include "ver.h"
+
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
+#include <vector>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/select.h>
 
 bool child_read( int fd, void *p, int size );
 
@@ -134,7 +135,7 @@ static void child_process()
 	if( !child_read(3, temp, size) )
 		return;
 
-	vector<RString> Checkpoints;
+	std::vector<RString> Checkpoints;
 	split(temp, "$$", Checkpoints);
 	delete [] temp;
 
@@ -193,10 +194,10 @@ static void child_process()
 #endif
 	sCrashInfoPath += "/crashinfo.txt";
 
-	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
+	FILE *CrashDump = fopen( sCrashInfoPath.c_str(), "w+" );
 	if(CrashDump == nullptr)
 	{
-		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
+		fprintf( stderr, "Couldn't open %s: %s\n", sCrashInfoPath.c_str(), strerror(errno) );
 		exit(1);
 	}
 
@@ -230,6 +231,7 @@ static void child_process()
 			}
 			break;
 		}
+		[[fallthrough]];
 	}
 	case CrashData::FORCE_CRASH:
 		crash.reason[sizeof(crash.reason)-1] = 0;
@@ -243,7 +245,7 @@ static void child_process()
 
 	fprintf(CrashDump, "Checkpoints:\n");
 	for( unsigned i=0; i<Checkpoints.size(); ++i )
-		fputs( Checkpoints[i], CrashDump );
+		fputs( Checkpoints[i].c_str(), CrashDump );
 	fprintf( CrashDump, "\n" );
 
 	for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
@@ -274,7 +276,7 @@ static void child_process()
 	if( tty == nullptr )
 		tty = stderr;
 
-	fputs( 	"\n"
+	fputs(( 	"\n"
 		 PRODUCT_ID " has crashed.  Debug information has been output to\n"
 		 "\n"
 		 "    " + sCrashInfoPath + "\n"
@@ -282,7 +284,7 @@ static void child_process()
 		 "Please report a bug at:\n"
 		 "\n"
 		 "    " REPORT_BUG_URL "\n"
-		 "\n", tty );
+		 "\n").c_str(), tty );
 #endif
 }
 

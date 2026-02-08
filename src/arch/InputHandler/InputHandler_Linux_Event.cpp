@@ -5,6 +5,10 @@
 #include "LinuxInputManager.h"
 #include "GamePreferences.h" //needed for Axis Fix
 
+#include <cerrno>
+#include <cstdint>
+#include <vector>
+
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
@@ -13,10 +17,10 @@
 #include <fcntl.h>
 #endif
 
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <linux/input.h>
+#include <libudev.h>
 
 REGISTER_INPUT_HANDLER_CLASS2( LinuxEvent, Linux_Event );
 
@@ -67,7 +71,7 @@ struct EventDevice
 	DeviceButton aiAbsMappingLow[ABS_MAX];
 };
 
-static vector<EventDevice *> g_apEventDevices;
+static std::vector<EventDevice *> g_apEventDevices;
 
 static bool BitIsSet( const uint8_t *pArray, uint32_t iBit )
 {
@@ -83,7 +87,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 {
 	m_sPath = sFile;
 	m_Dev = dev;
-	m_iFD = open( sFile, O_RDWR );
+	m_iFD = open( sFile.c_str(), O_RDWR );
 	if( m_iFD == -1 )
 	{
 		// HACK: Let the caller handle errno.
@@ -98,14 +102,14 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		if( ioctl(m_iFD, EVIOCGVERSION, &iVersion) == -1 )
 			LOG->Warn( "ioctl(EVIOCGVERSION): %s", strerror(errno) );
 		else
-			LOG->Info( "Event driver: v%i.%i.%i", (iVersion >> 16) & 0xFF, (iVersion >> 8) & 0xFF, iVersion & 0xFF ); 
+			LOG->Info( "Event driver: v%i.%i.%i", (iVersion >> 16) & 0xFF, (iVersion >> 8) & 0xFF, iVersion & 0xFF );
 	}
 
 	char szName[1024];
 	if( ioctl(m_iFD, EVIOCGNAME(sizeof(szName)), szName) == -1 )
 	{
 		LOG->Warn( "ioctl(EVIOCGNAME): %s", strerror(errno) );
-		
+
 		m_sName = "(unknown)";
 	}
 	else
@@ -153,7 +157,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 		LOG->Warn( "ioctl(EV_MAX): %s", strerror(errno) );
 
 	{
-		vector<RString> setEventTypes;
+		std::vector<RString> setEventTypes;
 
 		if( BitIsSet(iEventTypes, EV_SYN) )		setEventTypes.push_back( "syn" );
 		if( BitIsSet(iEventTypes, EV_KEY) )		setEventTypes.push_back( "key" );
@@ -170,7 +174,7 @@ bool EventDevice::Open( RString sFile, InputDevice dev )
 
 		LOG->Info( "    Event types: %s", join(", ", setEventTypes).c_str() );
 	}
-	
+
 	int iTotalKeys = 0;
 	for( int i = 0; i < KEY_MAX; ++i )
 	{
@@ -263,17 +267,35 @@ EventDevice::~EventDevice()
 }
 
 InputHandler_Linux_Event::InputHandler_Linux_Event()
-	: m_bShutdown(true)
-	, m_bDevicesChanged(false)
+	: m_InputMutex("InputHandler_Linux")
 	, m_NextDevice(DEVICE_JOY10)
+	, m_bShutdown(true)
+	, m_bDevicesChanged(false)
+	, m_udev_fd(-1)
 {
 	if(LINUXINPUT == nullptr) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);
 
-	if( ! g_apEventDevices.empty() ) // LinuxInputManager found at least one valid device for us
-		StartThread();
+	m_udev = udev_new();
+	if( ! m_udev )
+		LOG->Warn( "Failed to create udev object" );
+
+	m_udev_monitor = udev_monitor_new_from_netlink(m_udev, "udev");
+	if( ! m_udev_monitor )
+	{
+		LOG->Warn( "Failed to create udev object" );
+		udev_unref(m_udev);
+	}
+
+	udev_monitor_filter_add_match_subsystem_devtype(m_udev_monitor, "input", NULL);
+	udev_monitor_enable_receiving(m_udev_monitor);
+
+	m_udev_fd = udev_monitor_get_fd(m_udev_monitor);
+
+	// Always start thread, if only to monitor udev events
+	StartThread();
 }
-	
+
 InputHandler_Linux_Event::~InputHandler_Linux_Event()
 {
 	if( m_InputThread.IsCreated() ) StopThread();
@@ -281,6 +303,9 @@ InputHandler_Linux_Event::~InputHandler_Linux_Event()
 	for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		delete g_apEventDevices[i];
 	g_apEventDevices.clear();
+
+	udev_monitor_unref(m_udev_monitor);
+	udev_unref(m_udev);
 }
 
 void InputHandler_Linux_Event::StartThread()
@@ -310,9 +335,13 @@ bool InputHandler_Linux_Event::TryDevice(RString devfile)
 			g_apEventDevices.push_back( pDev );
 		}
 		if( hotplug ) StartThread();
-		
+
 		m_NextDevice = enum_add2(m_NextDevice, 1);
+
+		m_InputMutex.Lock();
 		m_bDevicesChanged = true;
+		m_InputMutex.Unlock();
+
 		return true;
 	}
 	else
@@ -339,7 +368,13 @@ void InputHandler_Linux_Event::InputThread()
 		fd_set fdset;
 		FD_ZERO( &fdset );
 		int iMaxFD = -1;
-		
+
+		if( m_udev_fd >= 0 )
+		{
+			FD_SET( m_udev_fd, &fdset );
+			iMaxFD = std::max( iMaxFD, m_udev_fd );
+		}
+
 		for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		{
 			int iFD = g_apEventDevices[i]->m_iFD;
@@ -347,7 +382,7 @@ void InputHandler_Linux_Event::InputThread()
 				continue;
 
 			FD_SET( iFD, &fdset );
-			iMaxFD = max( iMaxFD, iFD );
+			iMaxFD = std::max( iMaxFD, iFD );
 		}
 
 		if( iMaxFD == -1 )
@@ -357,6 +392,31 @@ void InputHandler_Linux_Event::InputThread()
 		if( select(iMaxFD+1, &fdset, nullptr, nullptr, &zero) <= 0 )
 			continue;
 		RageTimer now;
+
+		if( FD_ISSET(m_udev_fd, &fdset) )
+		{
+			struct udev_device* device = udev_monitor_receive_device(m_udev_monitor);
+			if( device )
+			{
+				const char *action = udev_device_get_action(device);
+				const char *devnode = udev_device_get_devnode(device);
+
+				if( action && devnode && strcmp(action, "add") == 0 )
+				{
+					// Check if the device is a joystick
+					const char *devtype = udev_device_get_property_value(device, "ID_INPUT_JOYSTICK");
+					if( devtype && strcmp(devtype, "1") == 0 )
+					{
+						m_InputMutex.Lock();
+						m_bDevicesChanged = true;
+						m_InputMutex.Unlock();
+						LOG->Info("LinuxEvent: New joystick detected: %s\n", devnode);
+					}
+				}
+
+				udev_device_unref(device);
+			}
+		}
 
 		for( int i = 0; i < (int) g_apEventDevices.size(); ++i )
 		{
@@ -372,6 +432,9 @@ void InputHandler_Linux_Event::InputThread()
 			{
 				LOG->Warn( "Error reading from %s: %s; disabled", g_apEventDevices[i]->m_sPath.c_str(), strerror(errno) );
 				g_apEventDevices[i]->Close();
+				m_InputMutex.Lock();
+				m_bDevicesChanged = true;
+				m_InputMutex.Unlock();
 				continue;
 			}
 
@@ -379,6 +442,9 @@ void InputHandler_Linux_Event::InputThread()
 			{
 				LOG->Warn("Unexpected packet (size %i != %i) from joystick %i; disabled", ret, (int)sizeof(event), i);
 				g_apEventDevices[i]->Close();
+				m_InputMutex.Lock();
+				m_bDevicesChanged = true;
+				m_InputMutex.Unlock();
 				continue;
 			}
 
@@ -388,6 +454,8 @@ void InputHandler_Linux_Event::InputThread()
 				if (event.code >= BTN_JOYSTICK && event.code <= BTN_JOYSTICK + 0xf) {
 					// These guys have arbitrary names, but the kernel code in hid-input.c maps exactly 0xf of them.
 					iNum = event.code - BTN_JOYSTICK;
+				} else if (event.code >= BTN_GAMEPAD && event.code <= BTN_GAMEPAD + 0x0f) {
+					iNum = event.code - BTN_GAMEPAD;
 				} else if (event.code >= BTN_TRIGGER_HAPPY1 && event.code <= BTN_TRIGGER_HAPPY40) {
 					// Actually, we only have 32 buttons defined.
 					iNum = event.code - BTN_TRIGGER_HAPPY1 + 0x10;
@@ -400,7 +468,7 @@ void InputHandler_Linux_Event::InputThread()
 				ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, enum_add2(JOY_BUTTON_1, iNum), event.value != 0, now) );
 				break;
 			}
-				
+
 			case EV_ABS: {
 				ASSERT_M( event.code < ABS_MAX, ssprintf("%i", event.code) );
 				DeviceButton neg = g_apEventDevices[i]->aiAbsMappingLow[event.code];
@@ -414,8 +482,8 @@ void InputHandler_Linux_Event::InputThread()
 				}
 				else
 				{
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, max(-l,0), now) );
-				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, max(+l,0), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, neg, std::max(-l, 0.0f), now) );
+				  ButtonPressed( DeviceInput(g_apEventDevices[i]->m_Dev, pos, std::max(+l, 0.0f), now) );
 				}
 				break;
 			}
@@ -428,22 +496,24 @@ void InputHandler_Linux_Event::InputThread()
 	InputHandler::UpdateTimer();
 }
 
-void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
+void InputHandler_Linux_Event::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut )
 {
 	for( unsigned i = 0; i < g_apEventDevices.size(); ++i )
 	{
 		EventDevice *pDev = g_apEventDevices[i];
                 vDevicesOut.push_back( InputDeviceInfo(pDev->m_Dev, pDev->m_sName) );
 	}
-	
+
+	m_InputMutex.Lock();
 	m_bDevicesChanged = false;
+	m_InputMutex.Unlock();
 }
 
 /*
  * (c) 2003-2008 Glenn Maynard
  * (c) 2013 Ben "root" Anderson
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -453,7 +523,7 @@ void InputHandler_Linux_Event::GetDevicesAndDescriptions( vector<InputDeviceInfo
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

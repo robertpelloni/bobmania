@@ -6,10 +6,13 @@
 #include "Difficulty.h"
 #include "EnumHelper.h"
 #include "RageUtil_AutoPtr.h"
-#include "RageUtil_CachedObject.h"
 #include "RageTypes.h"
 #include "Steps.h"
+#include "Group.h"
+
 #include <set>
+#include <vector>
+
 
 class Style;
 class StepsID;
@@ -62,6 +65,7 @@ struct LyricSegment
 	RageColor m_Color; /** @brief The color of the lyrics. */
 };
 
+
 /** @brief Holds all music metadata and steps for one song. */
 class Song
 {
@@ -74,7 +78,7 @@ public:
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
-	{ 
+	{
 		SHOW_ALWAYS,	/**< always show on the wheel. */
 		SHOW_NEVER	/**< never show on the wheel (unless song hiding is turned off). */
 	} m_SelectionDisplay;
@@ -106,11 +110,11 @@ public:
 	void TidyUpData( bool fromCache = false, bool duringCache = false );
 
 	/**
-	 * @brief Get the new radar values, and determine the last second at the same time.
+	 * @brief Get the new step stats, and determine the last second at the same time.
 	 * This is called by TidyUpData, after saving the Song.
 	 * @param fromCache was this data loaded from the cache file?
 	 * @param duringCache was this data loaded during the cache process? */
-	void ReCalculateRadarValuesAndLastSecond(bool fromCache = false, bool duringCache = false);
+	void ReCalculateStepStatsAndLastSecond(bool fromCache = false, bool duringCache = false);
 	/**
 	 * @brief Translate any titles that aren't in english.
 	 * This is called by TidyUpData. */
@@ -124,11 +128,11 @@ public:
 	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
 	/** @brief Save to the SSC and SM files no matter what. */
 	void Save(bool autosave= false);
-	/** 
+	/**
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
 	bool SaveToJsonFile( RString sPath );
-	/** 
+	/**
 	  * @brief Save the current Song to a cache file using the preferred format.
 	  * @return its success or failure. */
 	bool SaveToCacheFile();
@@ -136,7 +140,7 @@ public:
 	 * @brief Save the current Song to a SM file.
 	 * @return its success or failure. */
 	bool SaveToSMFile();
-	/** 
+	/**
 	 * @brief Save the current Song to a DWI file if possible.
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
@@ -169,6 +173,9 @@ public:
 
 	/** @brief The group this Song is in. */
 	RString m_sGroupName;
+	
+	/** @brief The base directory name that this Song is in. */
+	RString m_sSongName;
 
 	/**
 	 * @brief the Profile this came from.
@@ -179,9 +186,9 @@ public:
 	bool	m_bEnabled;
 
 	/** @brief The title of the Song. */
-	RString	m_sMainTitle; 
+	RString	m_sMainTitle;
 	/** @brief The subtitle of the Song, if it exists. */
-	RString m_sSubTitle; 
+	RString m_sSubTitle;
 	/** @brief The artist of the Song, if it exists. */
 	RString m_sArtist;
 	/** @brief The transliterated title of the Song, if it exists. */
@@ -190,6 +197,7 @@ public:
 	RString m_sSubTitleTranslit;
 	/** @brief The transliterated artist of the Song, if it exists. */
 	RString m_sArtistTranslit;
+
 
 	RString m_sFileHash;
 	RString GetFileHash();
@@ -205,22 +213,22 @@ public:
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
 	 * @return the proper title. */
 	RString GetTranslitMainTitle() const
-	{ 
-		return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; 
+	{
+		return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle;
 	}
 	/**
 	 * @brief Retrieve the transliterated subtitle, or the main subtitle if there is no translit.
 	 * @return the proper subtitle. */
-	RString GetTranslitSubTitle() const 
-	{ 
+	RString GetTranslitSubTitle() const
+	{
 		return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle;
 	}
 	/**
 	 * @brief Retrieve the transliterated artist, or the main artist if there is no translit.
 	 * @return the proper artist. */
-	RString GetTranslitArtist() const 
-	{ 
-		return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; 
+	RString GetTranslitArtist() const
+	{
+		return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist;
 	}
 
 	// "title subtitle"
@@ -260,10 +268,10 @@ public:
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
 	RString m_sPreviewVidFile;
-	vector<RString> ImageDir;
+	std::vector<RString> ImageDir;
 
 	AttackArray m_Attacks;
-	vector<RString>	m_sAttackString;
+	std::vector<RString>	m_sAttackString;
 
 	static RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 	RString GetMusicPath() const;
@@ -271,14 +279,14 @@ public:
 	RString GetBannerPath() const;
 	RString GetJacketPath() const;
 	RString GetCDImagePath() const;
-	RString GetDiscPath() const;
+	RString GetDiscPath() const; 
 	RString	GetLyricsPath() const;
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
 	RString GetPreviewVidPath() const;
 	RString GetPreviewMusicPath() const;
 	float GetPreviewStartSeconds() const;
-	
+
 	RString GetCacheFile( RString sPath );
 
 	// For loading only:
@@ -320,7 +328,7 @@ public:
 	void SetLastSecond(const float f);
 	void SetSpecifiedLastSecond(const float f);
 
-	typedef vector<BackgroundChange> 	VBackgroundChange;
+	typedef std::vector<BackgroundChange> 	VBackgroundChange;
 private:
 	/** @brief The first second that a note is hit. */
 	float firstSecond;
@@ -341,23 +349,23 @@ private:
 	 * This must be sorted before gameplay. */
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;
 
-	vector<RString> GetChangesToVectorString(const vector<BackgroundChange> & changes) const;
+	std::vector<RString> GetChangesToVectorString(const std::vector<BackgroundChange> & changes) const;
 public:
-	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
-	vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
-	const vector<BackgroundChange>	&GetForegroundChanges() const;
-	vector<BackgroundChange>	&GetForegroundChanges();
+	const std::vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
+	std::vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
+	const std::vector<BackgroundChange>	&GetForegroundChanges() const;
+	std::vector<BackgroundChange>	&GetForegroundChanges();
 
-	vector<RString> GetBGChanges1ToVectorString() const;
-	vector<RString> GetBGChanges2ToVectorString() const;
-	vector<RString> GetFGChanges1ToVectorString() const;
+	std::vector<RString> GetBGChanges1ToVectorString() const;
+	std::vector<RString> GetBGChanges2ToVectorString() const;
+	std::vector<RString> GetFGChanges1ToVectorString() const;
 
-	vector<RString> GetInstrumentTracksToVectorString() const;
+	std::vector<RString> GetInstrumentTracksToVectorString() const;
 
 	/**
 	 * @brief The list of LyricSegments.
 	 * This must be sorted before gameplay. */
-	vector<LyricSegment>			m_LyricSegments;
+	std::vector<LyricSegment>			m_LyricSegments;
 
 /* [splittiming]
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
@@ -381,11 +389,11 @@ public:
 	void InitSteps(Steps *pSteps);
 
 	/* [splittiming]
-	float SongGetBeatFromElapsedTime( float fElapsedTime ) const 
+	float SongGetBeatFromElapsedTime( float fElapsedTime ) const
 	{
 		return m_SongTiming.GetBeatFromElapsedTime( fElapsedTime );
 	}
-	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const 
+	float StepsGetBeatFromElapsedTime( float fElapsedTime, const Steps &steps ) const
 	{
 		return steps.m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
@@ -401,8 +409,8 @@ public:
 	*/
 
 	/* [splittiming]
-	float GetBeatFromElapsedTime( float fElapsedTime ) const 
-	{ 
+	float GetBeatFromElapsedTime( float fElapsedTime ) const
+	{
 		return m_Timing.GetBeatFromElapsedTime( fElapsedTime );
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
@@ -417,8 +425,8 @@ public:
 	bool HasStepsType( StepsType st ) const;
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
 	// TODO: Allow for a non const version.
-	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
-	const vector<Steps*>& GetStepsByStepsType( StepsType st ) const { return m_vpStepsByType[st]; }
+	const std::vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
+	const std::vector<Steps*>& GetStepsByStepsType( StepsType st ) const { return m_vpStepsByType[st]; }
 	bool IsEasy( StepsType st ) const;
 	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
@@ -440,9 +448,9 @@ public:
 	void AddSteps( Steps* pSteps );
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const set<Steps*> *setInUse = nullptr );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid, const std::set<Steps*> *setInUse = nullptr );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
-	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
+	void GetStepsLoadedFromProfile( ProfileSlot slot, std::vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
@@ -455,9 +463,7 @@ public:
 	 * If you  change the index in here, you must change all NoteData too.
 	 * Any note that doesn't have a value in the range of this array
 	 * means "this note doesn't have a keysound". */
-	vector<RString> m_vsKeysoundFile;
-
-	CachedObject<Song> m_CachedObject;
+	std::vector<RString> m_vsKeysoundFile;
 
 	RString GetAttackString() const
 	{
@@ -470,11 +476,11 @@ public:
 private:
 	bool m_loaded_from_autosave;
 	/** @brief the Steps that belong to this Song. */
-	vector<Steps*> m_vpSteps;
+	std::vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
-	std::array<vector<Steps *>, NUM_StepsType> m_vpStepsByType;
+	std::array<std::vector<Steps *>, NUM_StepsType> m_vpStepsByType;
 	/** @brief the Steps that are of unrecognized Styles. */
-	vector<Steps*> m_UnknownStyleSteps;
+	std::vector<Steps*> m_UnknownStyleSteps;
 };
 
 #endif
@@ -484,7 +490,7 @@ private:
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -494,7 +500,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

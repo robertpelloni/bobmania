@@ -4,16 +4,17 @@
 #include "RageUtil.h"
 #include "archutils/Win32/ErrorStrings.h"
 
-#if defined(_MSC_VER)
-#pragma comment(lib, "setupapi.lib") 
-#pragma comment(lib, "hid.lib") 
-#endif
+#pragma comment(lib, "setupapi.lib")
+#pragma comment(lib, "hid.lib")
 
 extern "C" {
-#include "archutils/Win32/ddk/setupapi.h"
+#include "setupapi.h"
 /* Quiet header warning: */
-#include "archutils/Win32/ddk/hidsdi.h"
+#include "hidsdi.h"
 }
+
+#include <vector>
+
 
 static RString GetUSBDevicePath( int iNum )
 {
@@ -40,7 +41,7 @@ static RString GetUSBDevicePath( int iNum )
 
 	RString sRet;
 	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
-		DeviceDetail, iSize, &iSize, nullptr) ) 
+		DeviceDetail, iSize, &iSize, nullptr) )
 		sRet = DeviceDetail->DevicePath;
 	free( DeviceDetail );
 
@@ -55,7 +56,7 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 	RString path;
 	while( (path = GetUSBDevicePath(iIndex++)) != "" )
 	{
-		HANDLE h = CreateFile( path, GENERIC_READ,
+		HANDLE h = CreateFile( path.c_str(), GENERIC_READ,
 			FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
 
 		if( h == INVALID_HANDLE_VALUE )
@@ -137,7 +138,7 @@ bool WindowsFileIO::Open( RString path, int iBlockSize )
 	if( m_Handle != INVALID_HANDLE_VALUE )
 		CloseHandle( m_Handle );
 
-	m_Handle = CreateFile( path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+	m_Handle = CreateFile( path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
 		nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
 
 	if( m_Handle == INVALID_HANDLE_VALUE )
@@ -191,7 +192,7 @@ int WindowsFileIO::read( void *p )
 	return finish_read(p);
 }
 
-int WindowsFileIO::read_several(const vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout)
+int WindowsFileIO::read_several(const std::vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout)
 {
 	HANDLE *Handles = new HANDLE[sources.size()];
 	for( unsigned i = 0; i < sources.size(); ++i )
@@ -223,7 +224,7 @@ bool WindowsFileIO::IsOpen() const
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -233,7 +234,7 @@ bool WindowsFileIO::IsOpen() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

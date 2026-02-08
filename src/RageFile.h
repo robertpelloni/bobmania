@@ -4,12 +4,16 @@
 #define RAGE_FILE_H
 
 #include "RageFileBasic.h"
+
+#include <cstddef>
+#include <cstdint>
+
 struct lua_State;
 
 /**
  * @brief High-level file access.
  *
- * This is the high-level interface, which interfaces with RageFileObj 
+ * This is the high-level interface, which interfaces with RageFileObj
  * implementations and RageFileManager. */
 class RageFile: public RageFileBasic
 {
@@ -80,12 +84,12 @@ public:
 	virtual void PushSelf( lua_State *L );
 private:
 	void SetError( const RString &err );
-	
+
 	RageFileBasic *m_File;
 	RString	m_Path;
 	RString	m_sError;
 	int		m_Mode;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	RageFile& operator=(const RageFile& rhs);
 };

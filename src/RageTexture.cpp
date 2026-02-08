@@ -3,7 +3,9 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
+
 #include <cstring>
+#include <vector>
 
 
 RageTexture::RageTexture( RageTextureID name ):
@@ -26,17 +28,24 @@ void RageTexture::CreateFrameRects()
 
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	m_TextureCoordRects.clear();
+	m_TextureCoordRects.reserve(static_cast<size_t>(m_iFramesWide * m_iFramesHigh));
+
+	float frameWidth = (m_iImageWidth / static_cast<float>(m_iTextureWidth)) / m_iFramesWide;
+	float frameHeight = (m_iImageHeight / static_cast<float>(m_iTextureHeight)) / m_iFramesHigh;
 
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
 	{
+		float top = j * frameHeight;
+		float bottom = (j + 1) * frameHeight;
+
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			RectF frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
-						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight, 
-						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth, 
-						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
+			float left = i * frameWidth;
+			float right = (i + 1) * frameWidth;
+
+			RectF frect(left, top, right, bottom);  // these will all be in the range [0.0,1.0]
 			m_TextureCoordRects.push_back( frect );	// the index of this array element will be (i + j*m_iFramesWide)
-			
+
 			//LOG->Trace( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}
 	}
@@ -45,7 +54,7 @@ void RageTexture::CreateFrameRects()
 void RageTexture::GetFrameDimensionsFromFileName( RString sPath, int* piFramesWide, int* piFramesHigh, int source_width, int source_height )
 {
 	static Regex match( " ([0-9]+)x([0-9]+)([\\. ]|$)" );
-        vector<RString> asMatch;
+	std::vector<RString> asMatch;
 	if( !match.Compare(sPath, asMatch) )
 	{
 		*piFramesWide = *piFramesHigh = 1;
@@ -82,7 +91,7 @@ const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageTexture. */ 
+/** @brief Allow Lua to have access to the RageTexture. */
 class LunaRageTexture: public Luna<RageTexture>
 {
 public:

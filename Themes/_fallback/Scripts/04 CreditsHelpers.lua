@@ -23,6 +23,11 @@ local line_height= 30 -- so that actor logos can use it.
 
 local stepmania_credits= {
 	{
+		name="ITGmania Team",
+		"Martin Natano (natano)",
+		"teejusb",
+	},
+	{
 		name= "the spinal shark collective (project lead)",
 		"AJ Kelly as freem",
 		"Jonathan Payne (Midiman)",
@@ -67,6 +72,14 @@ local stepmania_credits= {
 	},
 	{
 		name= "Other Contributors",
+		{type= "subsection", name= "ITGmania"},
+		"Club Fantastic (https://www.clubfantastic.com/)",
+		"DinsFire64 (Mine Fix)",
+		"EvocaitArt (Enchantment NoteSkin)",
+		"jenx (Fast Profile Switching)",
+		"LightningXCE (Cyber NoteSkin)",
+		"MegaSphere (Note/Rainbow/Vivid NoteSkins)",
+		{type= "subsection", name= "StepMania"},
 		"Aldo Fregoso (Aldo_MX)", -- delays and much more. StepMania AMX creator
 		"Alfred Sorenson", -- new lua bindings
 		"A.C/@waiei", -- custom scoring fixes + Hybrid scoring
@@ -110,7 +123,6 @@ local stepmania_credits= {
 		"Jousway", -- Noteskins
 		"Luizsan", -- creator of Delta theme
 		"Matt1360", -- Automake magic + oitg bro
-		"Renard",
 		"Ryan McKanna (Plaguefox)",
 		"Sta Kousin", --help with Japanese bug reports
 	},
@@ -293,7 +305,7 @@ StepManiaCredits= {
 	RandomCopyrightMessage= function()
 		return {
 			name= "Copyright",
-			"StepMania is released under the terms of the MIT license.",
+			"ITGmania is released under the terms of the MIT license.",
 			"If you paid for the program you've been " .. Fooled() .. ".",
 			"All content is the sole property of their respectful owners."
 		}

@@ -5,8 +5,10 @@
 #include "RageThreads.h"
 
 #include <cstdarg>
+#include <cstdint>
 
-#if defined(_WINDOWS) && defined(DEBUG)
+#if defined(_WIN32) && defined(DEBUG)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #elif defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
@@ -44,7 +46,7 @@ void RageException::Throw( const char *sFmt, ... )
 	}
 	else
 	{
-		puts( msg );
+		puts( msg.c_str() );
 		fflush( stdout );
 	}
 

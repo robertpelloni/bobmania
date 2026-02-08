@@ -3,8 +3,12 @@
 #ifndef RAGE_SURFACE_H
 #define RAGE_SURFACE_H
 
+#include <array>
+#include <cstdint>
+#include <memory>
+
 /* XXX remove? */
-struct RageSurfaceColor 
+struct RageSurfaceColor
 {
 	uint8_t r, g, b, a;
 	RageSurfaceColor(): r(0), g(0), b(0), a(0) { }
@@ -26,7 +30,7 @@ inline bool operator!=(RageSurfaceColor const &lhs, RageSurfaceColor const &rhs)
   return !operator==(lhs, rhs);
 }
 
-struct RageSurfacePalette 
+struct RageSurfacePalette
 {
 	RageSurfaceColor colors[256];
 	int32_t ncolors;
@@ -40,16 +44,16 @@ struct RageSurfaceFormat
 {
 	RageSurfaceFormat();
 	RageSurfaceFormat( const RageSurfaceFormat &cpy );
-	~RageSurfaceFormat();
+	~RageSurfaceFormat() = default;
 
 	int32_t BytesPerPixel;
 	int32_t BitsPerPixel;
-	uint32_t Mask[4];
-	uint32_t Shift[4];
-	uint8_t Loss[4];
+	std::array<uint32_t, 4> Mask;
+	std::array<uint32_t, 4> Shift;
+	std::array<uint32_t, 4> Loss;
 	uint32_t &Rmask, &Gmask, &Bmask, &Amask; /* deprecated */
 	uint32_t &Rshift, &Gshift, &Bshift, &Ashift; /* deprecated */
-	RageSurfacePalette *palette;
+	std::unique_ptr<RageSurfacePalette> palette;
 
 	void GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b ) const;
 
@@ -60,7 +64,7 @@ struct RageSurfaceFormat
 
 	/* MapRGBA, but also do a nearest-match on palette colors. */
 	uint32_t MapNearestRGBA( uint8_t r, uint8_t g, uint8_t b, uint8_t a ) const;
-	
+
 	bool operator== ( const RageSurfaceFormat &rhs ) const;
 
 	/* Like operator==, but ignores the palette (which is really a part of the

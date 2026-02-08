@@ -5,6 +5,9 @@
 
 #include "global.h"
 
+#include <cstddef>
+#include <cstdint>
+
 /* This is a simple file I/O interface.  Although most of these operations
  * are straightforward, there are several of them; most of the time, you'll
  * only want to implement RageFileObj. */
@@ -71,7 +74,7 @@ public:
 
 	virtual RString GetError() const { return m_sError; }
 	virtual void ClearError() { SetError(""); }
-	
+
 	bool AtEOF() const { return m_bEOF; }
 
 	int Seek( int iOffset );
@@ -154,7 +157,7 @@ private:
 	 * file, and no seeking is performed. */
 	bool m_bCRC32Enabled;
 	uint32_t m_iCRC32;
-	
+
 	// Swallow up warnings. If they must be used, define them.
 	RageFileObj& operator=(const RageFileObj& rhs);
 };

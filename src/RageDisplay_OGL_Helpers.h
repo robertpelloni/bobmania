@@ -1,14 +1,17 @@
 #ifndef RAGE_DISPLAY_OGL_HELPERS_H
 #define RAGE_DISPLAY_OGL_HELPERS_H
 
-#if defined(WIN32)
+/* Import RageDisplay, for types.  Do not include RageDisplay_Legacy.h. */
+#include "RageDisplay.h"
+
+#include <cstdint>
+
+#if defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 
 #include <GL/glew.h>
-
-/* Import RageDisplay, for types.  Do not include RageDisplay_Legacy.h. */
-#include "RageDisplay.h"
 
 /* Windows defines GL_EXT_paletted_texture incompletely: */
 #ifndef GL_TEXTURE_INDEX_SIZE_EXT

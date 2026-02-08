@@ -16,8 +16,8 @@ XToString( InputDeviceState );
 XToLocalizedString( InputDeviceState );
 LuaXType(InputDevice);
 
-static map<DeviceButton,RString> g_mapNamesToString;
-static map<RString,DeviceButton> g_mapStringToNames;
+static std::map<DeviceButton, RString> g_mapNamesToString;
+static std::map<RString, DeviceButton> g_mapStringToNames;
 static void InitNames()
 {
 	if( !g_mapNamesToString.empty() )
@@ -148,7 +148,7 @@ RString DeviceButtonToString( DeviceButton key )
 
 	// Check the name map first to allow making names for keys that are inside
 	// the ascii range. -Kyz
-	map<DeviceButton,RString>::const_iterator it = g_mapNamesToString.find( key );
+	std::map<DeviceButton, RString>::const_iterator it = g_mapNamesToString.find( key );
 	if( it != g_mapNamesToString.end() )
 		return it->second;
 
@@ -176,19 +176,19 @@ DeviceButton StringToDeviceButton( const RString& s )
 		return (DeviceButton) s[0];
 
 	int i;
-	if( sscanf(s, "unk %i", &i) == 1 )
+	if( sscanf(s.c_str(), "unk %i", &i) == 1 )
 		return enum_add2( KEY_OTHER_0, i );
 
-	if( sscanf(s, "B%i", &i) == 1 )
+	if( sscanf(s.c_str(), "B%i", &i) == 1 )
 		return enum_add2( JOY_BUTTON_1, i-1 );
 
-	if( sscanf(s, "Midi %i", &i) == 1 )
+	if( sscanf(s.c_str(), "Midi %i", &i) == 1 )
 		return enum_add2( MIDI_FIRST, i );
 
-	if( sscanf(s, "Mouse %i", &i) == 1 )
+	if( sscanf(s.c_str(), "Mouse %i", &i) == 1 )
 		return enum_add2( MOUSE_LEFT, i );
 
-	map<RString,DeviceButton>::const_iterator it = g_mapStringToNames.find( s );
+	std::map<RString, DeviceButton>::const_iterator it = g_mapStringToNames.find( s );
 	if( it != g_mapStringToNames.end() )
 		return it->second;
 
@@ -255,7 +255,7 @@ bool DeviceInput::FromString( const RString &s )
 	char szDevice[32] = "";
 	char szButton[32] = "";
 
-	if( 2 != sscanf( s, "%31[^_]_%31[^_]", szDevice, szButton ) )
+	if( 2 != sscanf( s.c_str(), "%31[^_]_%31[^_]", szDevice, szButton ) )
 	{
 		device = InputDevice_Invalid;
 		return false;

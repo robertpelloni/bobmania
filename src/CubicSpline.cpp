@@ -2,8 +2,11 @@
 #include "CubicSpline.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+
+#include <cstddef>
 #include <list>
-using std::list;
+#include <vector>
+
 
 // Spline solving optimization:
 // The tridiagonal part of the system of equations for a spline of size n is
@@ -22,25 +25,25 @@ struct SplineSolutionCache
 {
 	struct Entry
 	{
-		vector<float> diagonals;
-		vector<float> multiples;
+		std::vector<float> diagonals;
+		std::vector<float> multiples;
 	};
-	void solve_diagonals_straight(vector<float>& diagonals, vector<float>& multiples);
-	void solve_diagonals_looped(vector<float>& diagonals, vector<float>& multiples);
+	void solve_diagonals_straight(std::vector<float>& diagonals, std::vector<float>& multiples);
+	void solve_diagonals_looped(std::vector<float>& diagonals, std::vector<float>& multiples);
 private:
-	void prep_inner(size_t last, vector<float>& out);
-	bool find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm);
-	void add_to_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm);
-	list<Entry> straight_diagonals;
-	list<Entry> looped_diagonals;
+	void prep_inner(size_t last, std::vector<float>& out);
+	bool find_in_cache(std::list<Entry>& cache, std::vector<float>& outd, std::vector<float>& outm);
+	void add_to_cache(std::list<Entry>& cache, std::vector<float>& outd, std::vector<float>& outm);
+	std::list<Entry> straight_diagonals;
+	std::list<Entry> looped_diagonals;
 };
 
 const size_t solution_cache_limit= 16;
 
-bool SplineSolutionCache::find_in_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
+bool SplineSolutionCache::find_in_cache(std::list<Entry>& cache, std::vector<float>& outd, std::vector<float>& outm)
 {
 	size_t out_size= outd.size();
-	for(list<Entry>::iterator entry= cache.begin();
+	for(std::list<Entry>::iterator entry= cache.begin();
 			entry != cache.end(); ++entry)
 	{
 		if(out_size == entry->diagonals.size())
@@ -60,7 +63,7 @@ bool SplineSolutionCache::find_in_cache(list<Entry>& cache, vector<float>& outd,
 	return false;
 }
 
-void SplineSolutionCache::add_to_cache(list<Entry>& cache, vector<float>& outd, vector<float>& outm)
+void SplineSolutionCache::add_to_cache(std::list<Entry>& cache, std::vector<float>& outd, std::vector<float>& outm)
 {
 	if(cache.size() >= solution_cache_limit)
 	{
@@ -71,7 +74,7 @@ void SplineSolutionCache::add_to_cache(list<Entry>& cache, vector<float>& outd, 
 	cache.front().multiples= outm;
 }
 
-void SplineSolutionCache::prep_inner(size_t last, vector<float>& out)
+void SplineSolutionCache::prep_inner(size_t last, std::vector<float>& out)
 {
 	for(size_t i= 1; i < last; ++i)
 	{
@@ -79,7 +82,7 @@ void SplineSolutionCache::prep_inner(size_t last, vector<float>& out)
 	}
 }
 
-void SplineSolutionCache::solve_diagonals_straight(vector<float>& diagonals, vector<float>& multiples)
+void SplineSolutionCache::solve_diagonals_straight(std::vector<float>& diagonals, std::vector<float>& multiples)
 {
 	if(find_in_cache(straight_diagonals, diagonals, multiples))
 	{
@@ -125,7 +128,7 @@ void SplineSolutionCache::solve_diagonals_straight(vector<float>& diagonals, vec
 	add_to_cache(straight_diagonals, diagonals, multiples);
 }
 
-void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals, vector<float>& multiples)
+void SplineSolutionCache::solve_diagonals_looped(std::vector<float>& diagonals, std::vector<float>& multiples)
 {
 	if(find_in_cache(looped_diagonals, diagonals, multiples))
 	{
@@ -165,7 +168,7 @@ void SplineSolutionCache::solve_diagonals_looped(vector<float>& diagonals, vecto
 	diagonals[0]= 4.0f;
 	prep_inner(last, diagonals);
 	// right_column is sized to not store the diagonal .
-	vector<float> right_column(diagonals.size()-1, 0.0f);
+	std::vector<float> right_column(diagonals.size()-1, 0.0f);
 	right_column[0]= 1.0f;
 	right_column[last-2]= 1.0f;
 
@@ -227,9 +230,9 @@ float loop_space_difference(float a, float b, float spatial_extent)
 	if(spatial_extent == 0.0f) { return norm_diff; }
 	const float plus_diff= a - (b + spatial_extent);
 	const float minus_diff= a - (b - spatial_extent);
-	const float abs_norm_diff= abs(norm_diff);
-	const float abs_plus_diff= abs(plus_diff);
-	const float abs_minus_diff= abs(minus_diff);
+	const float abs_norm_diff= std::abs(norm_diff);
+	const float abs_plus_diff= std::abs(plus_diff);
+	const float abs_minus_diff= std::abs(minus_diff);
 	if(abs_norm_diff < abs_plus_diff)
 	{
 		if(abs_norm_diff < abs_minus_diff)
@@ -253,9 +256,9 @@ void CubicSpline::solve_looped()
 {
 	if(check_minimum_size()) { return; }
 	size_t last= m_points.size();
-	vector<float> results(m_points.size());
-	vector<float> diagonals(m_points.size());
-	vector<float> multiples;
+	std::vector<float> results(m_points.size());
+	std::vector<float> diagonals(m_points.size());
+	std::vector<float> multiples;
 	solution_cache.solve_diagonals_looped(diagonals, multiples);
 	results[0]= 3 * loop_space_difference(
 		m_points[1].a, m_points[last-1].a, m_spatial_extent);
@@ -302,9 +305,9 @@ void CubicSpline::solve_straight()
 {
 	if(check_minimum_size()) { return; }
 	size_t last= m_points.size();
-	vector<float> results(m_points.size());
-	vector<float> diagonals(m_points.size());
-	vector<float> multiples;
+	std::vector<float> results(m_points.size());
+	std::vector<float> diagonals(m_points.size());
+	std::vector<float> multiples;
 	solution_cache.solve_diagonals_straight(diagonals, multiples);
 	results[0]= 3 * (m_points[1].a - m_points[0].a);
 	prep_inner(last, results);
@@ -373,7 +376,7 @@ bool CubicSpline::check_minimum_size()
 	return all_points_identical;
 }
 
-void CubicSpline::prep_inner(size_t last, vector<float>& results)
+void CubicSpline::prep_inner(size_t last, std::vector<float>& results)
 {
 	for(size_t i= 1; i < last - 1; ++i)
 	{
@@ -382,7 +385,7 @@ void CubicSpline::prep_inner(size_t last, vector<float>& results)
 	}
 }
 
-void CubicSpline::set_results(size_t last, vector<float>& diagonals, vector<float>& results)
+void CubicSpline::set_results(size_t last, std::vector<float>& diagonals, std::vector<float>& results)
 {
 	// No more operations left, everything not a diagonal should be zero now.
 	for(size_t i= 0; i < last; ++i)
@@ -650,7 +653,7 @@ void CubicSplineN::solve()
 }
 
 #define CSN_EVAL_SOMETHING(something) \
-void CubicSplineN::something(float t, vector<float>& v) const \
+void CubicSplineN::something(float t, std::vector<float>& v) const \
 { \
 	for(spline_cont_t::const_iterator spline= m_splines.begin(); \
 			spline != m_splines.end(); ++spline) \
@@ -680,7 +683,7 @@ CSN_EVAL_RV_SOMETHING(evaluate_derivative);
 
 #undef CSN_EVAL_RV_SOMETHING
 
-void CubicSplineN::set_point(size_t i, const vector<float>& v)
+void CubicSplineN::set_point(size_t i, const std::vector<float>& v)
 {
 	ASSERT_M(v.size() == m_splines.size(), "CubicSplineN::set_point requires the passed point to be the same dimension as the spline.");
 	for(size_t n= 0; n < m_splines.size(); ++n)
@@ -690,8 +693,8 @@ void CubicSplineN::set_point(size_t i, const vector<float>& v)
 	m_dirty= true;
 }
 
-void CubicSplineN::set_coefficients(size_t i, const vector<float>& b,
-	const vector<float>& c, const vector<float>& d)
+void CubicSplineN::set_coefficients(size_t i, const std::vector<float>& b,
+	const std::vector<float>& c, const std::vector<float>& d)
 {
 	ASSERT_M(b.size() == c.size() && c.size() == d.size() &&
 		d.size() == m_splines.size(), "CubicSplineN: coefficient vectors must be "
@@ -703,8 +706,8 @@ void CubicSplineN::set_coefficients(size_t i, const vector<float>& b,
 	m_dirty= true;
 }
 
-void CubicSplineN::get_coefficients(size_t i, vector<float>& b,
-	vector<float>& c, vector<float>& d)
+void CubicSplineN::get_coefficients(size_t i, std::vector<float>& b,
+	std::vector<float>& c, std::vector<float>& d)
 {
 	ASSERT_M(b.size() == c.size() && c.size() == d.size() &&
 		d.size() == m_splines.size(), "CubicSplineN: coefficient vectors must be "
@@ -814,7 +817,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 #define LCSN_EVAL_SOMETHING(something) \
 	static int something(T* p, lua_State* L) \
 	{ \
-		vector<float> pos; \
+		std::vector<float> pos; \
 		p->something(FArg(1), pos); \
 		lua_createtable(L, pos.size(), 0); \
 		for(size_t i= 0; i < pos.size(); ++i) \
@@ -831,7 +834,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 #undef LCSN_EVAL_SOMETHING
 
 	static void get_element_table_from_stack(T* p, lua_State* L, int s,
-		size_t limit, vector<float>& ret)
+		size_t limit, std::vector<float>& ret)
 	{
 		size_t elements= lua_objlen(L, s);
 		// Too many elements is not an error because allowing it allows the user
@@ -854,7 +857,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 		{
 			luaL_error(L, "Spline point must be a table.");
 		}
-		vector<float> pos;
+		std::vector<float> pos;
 		get_element_table_from_stack(p, L, s, p->dimension(), pos);
 		p->set_point(i, pos);
 	}
@@ -871,9 +874,9 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 			luaL_error(L, "Spline coefficient args must be three tables.");
 		}
 		size_t limit= p->dimension();
-		vector<float> b; get_element_table_from_stack(p, L, s, limit, b);
-		vector<float> c; get_element_table_from_stack(p, L, s+1, limit, c);
-		vector<float> d; get_element_table_from_stack(p, L, s+2, limit, d);
+		std::vector<float> b; get_element_table_from_stack(p, L, s, limit, b);
+		std::vector<float> c; get_element_table_from_stack(p, L, s+1, limit, c);
+		std::vector<float> d; get_element_table_from_stack(p, L, s+2, limit, d);
 		p->set_coefficients(i, b, c, d);
 	}
 	static int set_coefficients(T* p, lua_State* L)
@@ -886,7 +889,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 	{
 		size_t i= point_index(p, L, 1);
 		size_t limit= p->dimension();
-		vector<vector<float> > coeff(3);
+		std::vector<std::vector<float> > coeff(3);
 		coeff[0].resize(limit);
 		coeff[1].resize(limit);
 		coeff[2].resize(limit);
@@ -983,7 +986,7 @@ struct LunaCubicSplineN : Luna<CubicSplineN>
 			luaL_error(L, "This spline cannot be destroyed because it is "
 				"owned by an actor that relies on it existing.");
 		}
-		SAFE_DELETE(p);
+		RageUtil::SafeDelete(p);
 		return 0;
 	}
 	LunaCubicSplineN()

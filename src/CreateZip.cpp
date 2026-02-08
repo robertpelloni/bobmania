@@ -1,8 +1,10 @@
 #include "global.h"
 
-#include <stdio.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
 
-#if defined(_WINDOWS)
+#if defined(_WIN32)
 #include <tchar.h>
 #else
 #define _tcslen strlen
@@ -546,9 +548,7 @@ public:
 	TZip() : pfout(nullptr),ooffset(0),oerr(false),writ(0),hasputcen(false),zfis(0),hfin(0)
 	{
 	}
-	~TZip()
-	{
-	}
+	~TZip() = default;
 
 	// These variables say about the file we're writing into
 	// We can write to pipe, file-by-handle, file-by-name, memory-to-memmapfile
@@ -565,7 +565,7 @@ public:
 	ZRESULT Start(RageFile *f);
 	static unsigned sflush(void *param,const char *buf, unsigned *size);
 	static unsigned swrite(void *param,const char *buf, unsigned size);
-	unsigned int write(const char *buf,unsigned int size);
+	unsigned int write(const char *srcbuf,unsigned int size);
 	bool oseek(unsigned int pos);
 	ZRESULT Close();
 
@@ -586,7 +586,7 @@ public:
 	ZRESULT open_file(const TCHAR *fn);
 	ZRESULT open_dir();
 	ZRESULT set_times();
-	unsigned read(char *buf, unsigned size);
+	unsigned read(char *srcbuf, unsigned size);
 	ZRESULT iclose();
 
 	ZRESULT ideflate(TZipFileInfo *zfi);
@@ -628,13 +628,11 @@ unsigned TZip::swrite(void *param,const char *buf, unsigned size)
 	TZip *zip=(TZip*)param;
 	return zip->write(buf,size);
 }
-unsigned int TZip::write(const char *buf,unsigned int size)
+unsigned int TZip::write(const char *srcbuf,unsigned int size)
 {
-	const char *srcbuf=buf;
 	if (pfout != nullptr)
 	{
-		unsigned long writ = pfout->Write( srcbuf, size );
-		return writ;
+		return pfout->Write( srcbuf, size );
 	}
 	oerr=ZR_NOTINITED;
 	return 0;
@@ -679,7 +677,7 @@ ZRESULT TZip::open_file(const TCHAR *fn)
 	hfin = new RageFile();
 	if( !hfin->Open(fn) )
 	{
-		SAFE_DELETE( hfin );
+		RageUtil::SafeDelete( hfin );
 		return ZR_NOFILE;
 	}
 	isize = hfin->GetFileSize();
@@ -724,7 +722,7 @@ ZRESULT TZip::set_times()
 	return ZR_OK;
 }
 
-unsigned TZip::read(char *buf, unsigned size)
+unsigned TZip::read(char *srcbuf, unsigned size)
 {
 	if (bufin!=0)
 	{
@@ -732,19 +730,19 @@ unsigned TZip::read(char *buf, unsigned size)
 		ulg red = lenin-posin;
 		if (red>size)
 			red=size;
-		memcpy(buf, bufin+posin, red);
+		memcpy(srcbuf, bufin+posin, red);
 		posin += red;
 		ired += red;
-		crc = crc32(crc, (uch*)buf, red);
+		crc = crc32(crc, (uch*)srcbuf, red);
 		return red;
 	}
 	else if (hfin!=0)
 	{
-		int red = hfin->Read(buf,size);
+		int red = hfin->Read(srcbuf,size);
 		if (red <= 0)
 			return 0;
 		ired += red;
-		crc = crc32(crc, (uch*)buf, red);
+		crc = crc32(crc, (uch*)srcbuf, red);
 		return red;
 	}
 	else
@@ -757,7 +755,7 @@ unsigned TZip::read(char *buf, unsigned size)
 ZRESULT TZip::iclose()
 {
 	if (hfin!=0)
-		SAFE_DELETE( hfin);
+		RageUtil::SafeDelete( hfin);
 	bool mismatch = (isize!=-1 && isize!=ired);
 	isize=ired; // and crc has been being updated anyway
 	if (mismatch)
@@ -1011,12 +1009,12 @@ RString MakeDestZipFileName( RString fn )
 }
 bool CreateZip::AddFile(RString fn)
 {
-	lasterrorZ = hz->Add(MakeDestZipFileName(fn),fn,ZIP_FILENAME);
+	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),fn.c_str(),ZIP_FILENAME);
 	return lasterrorZ == ZR_OK;
 }
 bool CreateZip::AddDir(RString fn)
 {
-	lasterrorZ = hz->Add(MakeDestZipFileName(fn),nullptr,ZIP_FOLDER);
+	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),nullptr,ZIP_FOLDER);
 	return lasterrorZ == ZR_OK;
 }
 bool CreateZip::Finish()

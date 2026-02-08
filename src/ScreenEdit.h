@@ -1,6 +1,7 @@
 #ifndef SCREEN_EDIT_H
 #define SCREEN_EDIT_H
 
+#include "EditModePlayerManager.h"
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "Player.h"
@@ -20,6 +21,7 @@
 #include "EnumHelper.h"
 
 #include <map>
+#include <vector>
 
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
@@ -56,14 +58,14 @@ enum EditButton
 	EDIT_BUTTON_LAY_ROLL,
 	EDIT_BUTTON_LAY_TAP_ATTACK,
 	EDIT_BUTTON_REMOVE_NOTE,
-	
+
 	// These are modifiers to change the present tap note.
 	EDIT_BUTTON_CYCLE_TAP_LEFT, /**< Rotate the available tap notes once to the "left". */
 	EDIT_BUTTON_CYCLE_TAP_RIGHT, /**< Rotate the available tap notes once to the "right". */
 
 	EDIT_BUTTON_CYCLE_SEGMENT_LEFT, /**< Select one segment to the left for jumping. */
 	EDIT_BUTTON_CYCLE_SEGMENT_RIGHT, /**< Select one segment to the right for jumping. */
-	
+
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
 	EDIT_BUTTON_SCROLL_UP_TS,
@@ -79,7 +81,7 @@ enum EditButton
 
 	EDIT_BUTTON_SEGMENT_NEXT, /**< Jump to the start of the next segment downward. */
 	EDIT_BUTTON_SEGMENT_PREV, /**< Jump to the start of the previous segment upward. */
-	
+
 	// These are modifiers to EDIT_BUTTON_SCROLL_*.
 	EDIT_BUTTON_SCROLL_SELECT,
 
@@ -99,12 +101,12 @@ enum EditButton
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU,
 	EDIT_BUTTON_OPEN_COURSE_MENU,
 	EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU,
-	
+
 	EDIT_BUTTON_OPEN_STEP_ATTACK_MENU, /**< Open up the Step Attacks menu. */
 	EDIT_BUTTON_ADD_STEP_MODS, /**< Add a mod attack to the row. */
-	
+
 	EDIT_BUTTON_OPEN_INPUT_HELP,
-	
+
 	EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP,
 	EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE,
 
@@ -134,10 +136,10 @@ enum EditButton
 	EDIT_BUTTON_BPM_DOWN,
 	EDIT_BUTTON_STOP_UP,
 	EDIT_BUTTON_STOP_DOWN,
-	
+
 	EDIT_BUTTON_DELAY_UP,
 	EDIT_BUTTON_DELAY_DOWN,
-	
+
 	EDIT_BUTTON_OFFSET_UP,
 	EDIT_BUTTON_OFFSET_DOWN,
 	EDIT_BUTTON_SAMPLE_START_UP,
@@ -150,11 +152,11 @@ enum EditButton
 	EDIT_BUTTON_SAVE, /**< Save the present changes into the chart. */
 
 	EDIT_BUTTON_UNDO, /**< Undo a recent change. */
-	
+
 	EDIT_BUTTON_ADD_COURSE_MODS,
-	
+
 	EDIT_BUTTON_SWITCH_PLAYERS, /**< Allow entering notes for a different Player. */
-	
+
 	EDIT_BUTTON_SWITCH_TIMINGS, /**< Allow switching between Song and Step TimingData. */
 
 	// Add to the name_to_edit_button list when adding to this enum. -Kyz
@@ -229,9 +231,9 @@ public:
 
 protected:
 	virtual ScreenType GetScreenType() const
-	{ 
-		return m_EditState==STATE_PLAYING ? 
-		gameplay : 
+	{
+		return m_EditState==STATE_PLAYING ?
+		gameplay :
 		ScreenWithMenuElements::GetScreenType();
 	}
 
@@ -262,9 +264,9 @@ protected:
 
 	/** @brief Display the step attack menu for the current row. */
 	void DoStepAttackMenu();
-	
+
 	void DoHelp();
-	
+
 	/** @brief Display the TimingData menu for editing song and step timing. */
 	void DisplayTimingMenu();
 
@@ -284,34 +286,35 @@ protected:
 	Steps*			m_pSteps;
 
 	PlayerNumber	m_InputPlayerNumber;
+	PlayerNumber    main_player_;
 	PlayerState		m_PlayerStateEdit;
 	NoteField		m_NoteFieldEdit;
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
 
 	BitmapText		m_textInputTips;
-	
+
 	/** @brief The player options before messing with attacks. */
 	ModsGroup<PlayerOptions>	originalPlayerOptions;
-	
+
 	/**
 	 * @brief Keep a backup of the present Step TimingData when
 	 * entering a playing or recording state.
 	 *
 	 * This is mainly to allow playing a chart with Song Timing. */
 	TimingData		backupStepTiming;
-	
+
 	/**
 	 * @brief Allow for copying and pasting a song's (or steps's) full Timing Data.
 	 */
 	TimingData		clipboardFullTiming;
-	
+
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 
 	/** @brief The type of segment users will jump back and forth between. */
 	TimingSegmentType	currentCycleSegment;
-	
+
 	void UpdateTextInfo();
 	BitmapText		m_textInfo; // status information that changes
 	bool			m_bTextInfoNeedsUpdate;
@@ -365,7 +368,7 @@ protected:
 	void RevertFromDisk();
 
 	Song m_SongLastSave;
-	vector<Steps> m_vStepsLastSave;
+	std::vector<Steps> m_vStepsLastSave;
 
 
 // for MODE_RECORD
@@ -375,8 +378,8 @@ protected:
 	bool			m_bRemoveNoteButtonDown;
 
 // for MODE_PLAY
+	EditModePlayerManager player_manager_;
 	void SetupCourseAttacks();
-	PlayerPlus		m_Player;
 	Background		m_Background;
 	Foreground		m_Foreground;
 	bool			m_bReturnToRecordMenuAfterPlay;
@@ -416,8 +419,8 @@ public:
 		MAIN_MENU_CHOICE_INVALID
 	};
 	int GetSongOrNotesEnd();
-	void HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers );
-	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
+	void HandleMainMenuChoice( MainMenuChoice c, const std::vector<int> &iAnswers );
+	void HandleMainMenuChoice( MainMenuChoice c ) { const std::vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;
 
 	/** @brief How does one alter a selection of NoteData? */
@@ -443,9 +446,9 @@ public:
 		routine_mirror_1_to_2, /**< Mirror Player 1's notes for Player 2. */
 		routine_mirror_2_to_1, /**< Mirror Player 2's notes for Player 1. */
 		NUM_ALTER_MENU_CHOICES
-		
+
 	};
-	
+
 	enum AreaMenuChoice
 	{
 		paste_at_current_beat, /**< Paste note data starting at the current beat. */
@@ -465,18 +468,18 @@ public:
 	};
 	void HandleArbitraryRemapping(RString const& mapstr);
 	void HandleAlterMenuChoice(AlterMenuChoice choice,
-		const vector<int> &answers, bool allow_undo= true,
+		const std::vector<int> &answers, bool allow_undo= true,
 		bool prompt_clear= true);
 	void HandleAlterMenuChoice(AlterMenuChoice c, bool allow_undo= true,
 		bool prompt_clear= true)
 	{
-		const vector<int> v; HandleAlterMenuChoice(c, v, allow_undo, prompt_clear);
+		const std::vector<int> v; HandleAlterMenuChoice(c, v, allow_undo, prompt_clear);
 	}
-	
-	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo = true );
+
+	void HandleAreaMenuChoice( AreaMenuChoice c, const std::vector<int> &iAnswers, bool bAllowUndo = true );
 	void HandleAreaMenuChoice( AreaMenuChoice c, bool bAllowUndo = true )
-	{ 
-		const vector<int> v; HandleAreaMenuChoice( c, v, bAllowUndo );
+	{
+		const std::vector<int> v; HandleAreaMenuChoice( c, v, bAllowUndo );
 	}
 	/** @brief How should the selected notes be transformed? */
 	enum TurnType
@@ -484,33 +487,36 @@ public:
 		left, /**< Turn the notes as if you were facing to the left. */
 		right, /**< Turn the notes as if you were facing to the right. */
 		mirror, /**< Flip the notes vertically. */
+		lrmirror, /**< Swap the left and right columns. */
+		udmirror, /**< Swap the up and down columns. */
 		turn_backwards, /**< Turn the notes as if you were facing away from the machine. */
 		shuffle, /**< Replace one column with another column. */
 		super_shuffle, /**< Replace each note individually. */
-		NUM_TURN_TYPES 
+		hyper_shuffle, /**< Replace each note individually but more fairly. */
+		NUM_TURN_TYPES
 	};
 	enum TransformType
 	{
-		noholds, 
-		nomines, 
-		little, 
-		wide, 
-		big, 
-		quick, 
-		skippy, 
-		add_mines, 
-		echo, 
-		stomp, 
-		planted, 
-		floored, 
-		twister, 
-		nojumps, 
-		nohands, 
-		noquads, 
+		noholds,
+		nomines,
+		little,
+		wide,
+		big,
+		quick,
+		skippy,
+		add_mines,
+		echo,
+		stomp,
+		planted,
+		floored,
+		twister,
+		nojumps,
+		nohands,
+		noquads,
 		nostretch,
-		NUM_TRANSFORM_TYPES 
+		NUM_TRANSFORM_TYPES
 	};
-	enum AlterType 
+	enum AlterType
 	{
 		autogen_to_fill_width,
 		backwards,
@@ -525,17 +531,17 @@ public:
 		shift_right,
 		swap_up_down,
 		arbitrary_remap,
-		NUM_ALTER_TYPES 
+		NUM_ALTER_TYPES
 	};
-	enum TempoType 
-	{ 
-		compress_2x, 
-		compress_3_2, 
-		compress_4_3, 
-		expand_4_3, 
-		expand_3_2, 
-		expand_2x, 
-		NUM_TEMPO_TYPES 
+	enum TempoType
+	{
+		compress_2x,
+		compress_3_2,
+		compress_4_3,
+		expand_4_3,
+		expand_3_2,
+		expand_2x,
+		NUM_TEMPO_TYPES
 	};
 
 	enum StepsInformationChoice
@@ -553,8 +559,8 @@ public:
 		step_music,
 		NUM_STEPS_INFORMATION_CHOICES
 	};
-	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
-	
+	void HandleStepsInformationChoice( StepsInformationChoice c, const std::vector<int> &iAnswers );
+
 	enum StepsDataChoice
 	{
 		tap_notes,
@@ -573,7 +579,7 @@ public:
 		chaos,
 		NUM_STEPS_DATA_CHOICES
 	};
-	void HandleStepsDataChoice(StepsDataChoice c, const vector<int> &answers);
+	void HandleStepsDataChoice(StepsDataChoice c, const std::vector<int> &answers);
 
 	enum SongInformationChoice
 	{
@@ -594,8 +600,8 @@ public:
 		max_bpm,
 		NUM_SONG_INFORMATION_CHOICES
 	};
-	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
-	
+	void HandleSongInformationChoice( SongInformationChoice c, const std::vector<int> &iAnswers );
+
 	enum TimingDataInformationChoice
 	{
 		beat_0_offset,
@@ -624,7 +630,7 @@ public:
 		NUM_TIMING_DATA_INFORMATION_CHOICES
 	};
 	void HandleTimingDataInformationChoice (TimingDataInformationChoice c,
-						const vector<int> &iAnswers );
+						const std::vector<int> &iAnswers );
 
 	enum TimingDataChangeChoice
 	{
@@ -643,7 +649,7 @@ public:
 		NUM_TimingDataChangeChoices
 	};
 	void HandleTimingDataChangeChoice(TimingDataChangeChoice choice,
-		const vector<int>& answers);
+		const std::vector<int>& answers);
 
 	enum BGChangeChoice
 	{
@@ -672,7 +678,7 @@ public:
 		delete_change,
 		NUM_BGCHANGE_CHOICES
 	};
-	
+
 	enum SpeedSegmentModes
 	{
 		SSMODE_Beats,
@@ -685,7 +691,7 @@ public:
 	 * It is important that this is only called in Song Timing mode.
 	 * @param c the Background Change style requested.
 	 * @param iAnswers the other settings involving the change. */
-	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
+	void HandleBGChangeChoice( BGChangeChoice c, const std::vector<int> &iAnswers );
 
 	enum CourseAttackChoice
 	{
@@ -694,7 +700,7 @@ public:
 		remove,
 		NUM_CourseAttackChoice
 	};
-	
+
 	enum StepAttackChoice
 	{
 		sa_duration,
@@ -722,10 +728,10 @@ public:
 	MapEditButtonToMenuButton m_RecordPausedMappingsMenuButton;
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
-	void EditMiniMenu(const MenuDef* pDef, 
-			  ScreenMessage SM_SendOnOK = SM_None, 
+	void EditMiniMenu(const MenuDef* pDef,
+			  ScreenMessage SM_SendOnOK = SM_None,
 			  ScreenMessage SM_SendOnCancel = SM_None );
-	
+
 	int attackInProcess;
 	int modInProcess;
 private:
@@ -743,7 +749,7 @@ private:
 	void SetBeat(float fBeat);
 	float GetBeat();
 	int GetRow();
-	
+
 };
 
 #endif
@@ -751,7 +757,7 @@ private:
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -761,7 +767,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

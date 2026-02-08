@@ -4,8 +4,13 @@
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
 #include "RegistryAccess.h"
+#include "ErrorStrings.h"
+
+#include <vector>
+
 #include <windows.h>
 #include <mmsystem.h>
+
 
 static void LogVideoDriverInfo( VideoDriverInfo info )
 {
@@ -15,13 +20,19 @@ static void LogVideoDriverInfo( VideoDriverInfo info )
 
 static void GetMemoryDebugInfo()
 {
-	MEMORYSTATUS mem;
-	GlobalMemoryStatus(&mem);
-
-	LOG->Info("Memory: %imb total, %imb swap (%imb swap avail)",
-		mem.dwTotalPhys / 1048576,
-		mem.dwTotalPageFile / 1048576,
-		mem.dwAvailPageFile / 1048576);
+	MEMORYSTATUSEX mem;
+	mem.dwLength = sizeof(mem);
+	if (GlobalMemoryStatusEx(&mem))
+	{
+		LOG->Info("Memory: %lluMB total, %lluMB swap (%lluMB swap avail)",
+			mem.ullTotalPhys / (1024 * 1024),
+			mem.ullTotalPageFile / (1024 * 1024),
+			mem.ullAvailPageFile / (1024 * 1024));
+	}
+	else
+	{
+		LOG->Warn("GlobalMemoryStatusEx failed: %s", werr_ssprintf(GetLastError(), "GlobalMemoryStatusEx").c_str());
+	}
 }
 
 static void GetDisplayDriverDebugInfo()
@@ -79,43 +90,7 @@ static RString wo_ssprintf( MMRESULT err, const char *fmt, ...)
 	return s += ssprintf( "(%s)", buf );
 }
 
-static void GetDriveDebugInfo9x()
-{
-
-	/*
-	 * HKEY_LOCAL_MACHINE\Enum\ESDI
-	 *  *\  (disk id)
-	 *   *\  (eg. MF&CHILD0000&PCI&VEN_8086&DEV_7111&SUBSYS_197615AD&REV_01&BUS_00&DEV_07&FUNC_0100)
-	 *    DMACurrentlyUsed  0 or 1
-	 *    DeviceDesc        "GENERIC IDE  DISK TYPE01"
-	 */
-	vector<RString> Drives;
-	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives ) )
-		return;
-
-	for( unsigned drive = 0; drive < Drives.size(); ++drive )
-	{
-		vector<RString> IDs;
-		if( !RegistryAccess::GetRegSubKeys( Drives[drive], IDs ) )
-			continue;
-
-		for( unsigned id = 0; id < IDs.size(); ++id )
-		{
-			RString DeviceDesc;
-
-			RegistryAccess::GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
-			TrimRight( DeviceDesc );
-
-			int DMACurrentlyUsed = -1;
-			RegistryAccess::GetRegValue( IDs[id], "DMACurrentlyUsed", DMACurrentlyUsed );
-
-			LOG->Info( "Drive: \"%s\" DMA: %s",
-				DeviceDesc.c_str(), DMACurrentlyUsed? "yes":"NO" );
-		}
-	}
-}
-
-static void GetDriveDebugInfoNT()
+static void GetDriveDebugInfo()
 {
 	/*
 	 * HKEY_LOCAL_MACHINE\HARDWARE\DEVICEMAP\Scsi\
@@ -128,7 +103,7 @@ static void GetDriveDebugInfoNT()
 	 *		     Identifier  "WDC WD1200JB-75CRA0"
 	 *			 Type        "DiskPeripheral"
 	 */
-	vector<RString> Ports;
+	std::vector<RString> Ports;
 	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\Scsi", Ports ) )
 		return;
 
@@ -140,19 +115,19 @@ static void GetDriveDebugInfoNT()
 		RString Driver;
 		RegistryAccess::GetRegValue( Ports[i], "Driver", Driver );
 
-		vector<RString> Busses;
+		std::vector<RString> Busses;
 		if( !RegistryAccess::GetRegSubKeys( Ports[i], Busses, "Scsi Bus .*" ) )
 			continue;
 
 		for( unsigned bus = 0; bus < Busses.size(); ++bus )
 		{
-			vector<RString> TargetIDs;
+			std::vector<RString> TargetIDs;
 			if( !RegistryAccess::GetRegSubKeys( Busses[bus], TargetIDs, "Target Id .*" ) )
 				continue;
 
 			for( unsigned tid = 0; tid < TargetIDs.size(); ++tid )
 			{
-				vector<RString> LUIDs;
+				std::vector<RString> LUIDs;
 				if( !RegistryAccess::GetRegSubKeys( TargetIDs[tid], LUIDs, "Logical Unit Id .*" ) )
 					continue;
 
@@ -169,104 +144,52 @@ static void GetDriveDebugInfoNT()
 	}
 }
 
-static void GetDriveDebugInfo()
-{
-	OSVERSIONINFO ovi;
-	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	if( !GetVersionEx(&ovi) )
-	{
-		LOG->Info("GetVersionEx failed!");
-		return;
-	}
-
-	switch( ovi.dwPlatformId )
-	{
-	case VER_PLATFORM_WIN32_WINDOWS:
-		GetDriveDebugInfo9x(); break;
-	case VER_PLATFORM_WIN32_NT:
-		GetDriveDebugInfoNT(); break;
-	}
-}
-
 static void GetWindowsVersionDebugInfo()
 {
-	// Detect operating system.
-	OSVERSIONINFO ovi;
-	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	if (!GetVersionEx(&ovi))
+	typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+	HMODULE hMod = GetModuleHandleW(L"ntdll.dll");
+	if (hMod)
 	{
-		LOG->Info("GetVersionEx failed!");
-		return;
-	}
+		RtlGetVersionPtr pRtlGetVersion = (RtlGetVersionPtr)GetProcAddress(hMod, "RtlGetVersion");
+		if (pRtlGetVersion)
+		{
+			OSVERSIONINFOEXW osvi = { 0 };
+			osvi.dwOSVersionInfoSize = sizeof(osvi);
+			if (pRtlGetVersion((PRTL_OSVERSIONINFOW)&osvi) == 0)
+			{
+				RString Ver = ssprintf("Windows %lu.%lu (", osvi.dwMajorVersion, osvi.dwMinorVersion);
+				if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
+				{
+					Ver += "Win7";
+				}
+				else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2)
+				{
+					Ver += "Win8";
+				}
+				else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3)
+				{
+					Ver += "Win8.1";
+				}
+				else if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0 && osvi.dwBuildNumber < 22000)
+				{
+					Ver += "Win10";
+				}
+				else if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0 && osvi.dwBuildNumber >= 22000)
+				{
+					Ver += "Win11";
+				}
+				else
+				{
+					Ver += "unknown";
+				}
 
-	RString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
-	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-	{
-		if(ovi.dwMinorVersion == 0)
-			Ver += "Win95";
-		else if(ovi.dwMinorVersion == 10)
-			Ver += "Win98";
-		else if(ovi.dwMinorVersion == 90)
-			Ver += "WinME";
-		else
-			Ver += "unknown 9x-based";
+				Ver += ssprintf(") build %lu [%s]", osvi.dwBuildNumber, osvi.szCSDVersion);
+				LOG->Info("%s", Ver.c_str());
+				return;
+			}
+		}
 	}
-	else if(ovi.dwPlatformId == VER_PLATFORM_WIN32_NT)
-	{
-		if(ovi.dwMajorVersion == 4 && ovi.dwMinorVersion == 0)
-			Ver += "WinNT 4.0";
-		else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 0)
-			Ver += "Win2000";
-		else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 1)
-			Ver += "WinXP";
-		else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 2)
-		{
-			Ver += "WinServer2003";
-			// todo: check for R2
-			/*
-			if(GetSystemMetrics(SM_SERVERR2) != 0)
-				Ver += "R2";
-			*/
-		}
-		else if(ovi.dwMajorVersion == 6 && ovi.dwMinorVersion == 0)
-		{
-			Ver += "Vista";
-			// todo: make this check work
-			/*
-			if(ovi.wProductType == VER_NT_WORKSTATION)
-				Ver += "Vista";
-			else
-				Ver += "WinServer2008";
-			*/
-		}
-		else if(ovi.dwMajorVersion == 6 && ovi.dwMinorVersion == 1)
-		{
-			Ver += "Win7";
-			// todo: make this check work
-			/*
-			if(ovi.wProductType == VER_NT_WORKSTATION)
-				Ver += "Win7";
-			else
-				Ver += "WinServer2008 R2";
-			*/
-		}
-		else if(ovi.dwMajorVersion == 6 && ovi.dwMinorVersion == 2)
-		{
-			Ver += "Win8";
-			// todo: make this check work
-			/*
-			if(ovi.wProductType == VER_NT_WORKSTATION)
-				Ver += "Win7";
-			else
-				Ver += "WinServer2008 R2";
-			*/
-		}
-		else
-			Ver += "unknown NT-based";
-	} else Ver += "???";
-
-	Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
-	LOG->Info("%s", Ver.c_str());
+	LOG->Info("RtlGetVersion failed!");
 }
 
 static void GetSoundDriverDebugInfo()

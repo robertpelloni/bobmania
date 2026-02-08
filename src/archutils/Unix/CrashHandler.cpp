@@ -1,17 +1,20 @@
 #include "global.h"
 
+#include <csignal>
+#include <cstdarg>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdarg>
+#include <cstring>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
 #include <cerrno>
+#include <cstddef>
 #include <limits.h>
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif
-#include <csignal>
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
 #include "RageThreads.h"
@@ -69,7 +72,8 @@ static void GetExecutableName( char *buf, int bufsize )
 }
 #endif
 
-static void NORETURN spawn_child_process( int from_parent )
+[[noreturn]]
+static void spawn_child_process( int from_parent )
 {
 	/* We need to re-exec ourself, to get a clean process.  Close all
 	 * FDs except for 0-2 and to_child, and then assign to_child to 3. */
@@ -107,7 +111,7 @@ static int retried_write( int fd, const void *buf, size_t count )
 		ret = write( fd, buf, count );
 	}
 	while( ret == -1 && errno == EINTR && tries-- );
-	
+
 	return ret;
 }
 
@@ -134,7 +138,7 @@ static void parent_process( int to_child, const CrashData *crash )
 	/* 1. Write the CrashData. */
 	if( !parent_write(to_child, crash, sizeof(CrashData)) )
 		return;
-	
+
 	/* 2. Write info. */
 	const char *p = RageLog::GetInfo();
 	int size = strlen( p )+1;
@@ -150,7 +154,7 @@ static void parent_process( int to_child, const CrashData *crash )
 		return;
 	if( !parent_write(to_child, p, size) )
 		return;
-	
+
 	/* 4. Write RecentLogs. */
 	int cnt = 0;
 	const char *ps[1024];
@@ -175,7 +179,7 @@ static void parent_process( int to_child, const CrashData *crash )
 		return;
 	if( !parent_write(to_child, buf, size) )
 		return;
-	
+
 	/* 6. Write the crashed thread's name. */
 	p = RageThread::GetCurrentThreadName();
 	size = strlen( p )+1;
@@ -188,7 +192,7 @@ static void parent_process( int to_child, const CrashData *crash )
 
 /* The parent process is the crashed process.  It'll send data to the
  * child, who will do stuff with it.  The parent then waits for the
- * child to quit, and exits. 
+ * child to quit, and exits.
  *
  * We can do whatever fancy things we want in the child process.  However,
  * let's not open any windows until we at least try to shut down OpenGL,
@@ -216,7 +220,7 @@ static void RunCrashHandler( const CrashData *crash )
 		safe_print( fileno(stderr), "Crash handler failed: CrashHandlerHandleArgs was not called\n", nullptr );
 		_exit( 1 );
 	}
-	
+
 	/* Block SIGPIPE, so we get EPIPE. */
 	struct sigaction sa;
 	memset( &sa, 0, sizeof(sa) );
@@ -261,7 +265,7 @@ static void RunCrashHandler( const CrashData *crash )
 	/* Stop other threads.  XXX: This prints a spurious ptrace error if any threads
 	 * are already suspended, which happens in ForceCrashHandlerDeadlock(). */
 	RageThread::HaltAllThreads();
-	
+
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
 	int fds[2];
@@ -313,19 +317,19 @@ static void BacktraceAllThreads( CrashData& crash )
 {
 	int iCnt = 1;
 	uint64_t iID;
-	
+
 	for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
 	{
 		if( iID == GetInvalidThreadId() || iID == RageThread::GetCurrentThreadID() )
 			continue;
-		
+
 		BacktraceContext ctx;
 		if( GetThreadBacktraceContext( iID, &ctx ) )
 			GetBacktrace( crash.BacktracePointers[iCnt], BACKTRACE_MAX_SIZE, &ctx );
 		strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
-		
+
 		++iCnt;
-		
+
 		if( iCnt == CrashData::MAX_BACKTRACE_THREADS )
 			break;
 	}
@@ -371,7 +375,7 @@ void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 
 	strncpy( crash.m_ThreadName[0], RageThread::GetCurrentThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
-	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
+	strncpy( crash.reason, reason.c_str(), std::min(sizeof(crash.reason) - 1, reason.length()) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
 	RunCrashHandler( &crash );
@@ -426,7 +430,7 @@ void CrashHandler::InitializeCrashHandler()
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -436,7 +440,7 @@ void CrashHandler::InitializeCrashHandler()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

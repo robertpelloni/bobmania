@@ -4,6 +4,8 @@
 #include "RageFile.h"
 #include "RageFileDriver.h"
 
+#include <cstddef>
+
 /** @brief File driver for accessing a regular filesystem. */
 class RageFileDriverDirect: public RageFileDriver
 {
@@ -43,14 +45,14 @@ public:
 	virtual RString GetDisplayPath() const { return m_sPath; }
 	virtual int GetFileSize() const;
 	virtual int GetFD();
-	
+
 private:
 	bool FinalFlush();
-	
+
 	int m_iFD;
 	int m_iMode;
 	RString m_sPath; /* for Copy */
-	
+
 	/*
 	 * When not streaming to disk, we write to a temporary file, and rename to the
 	 * real file on completion.  If any write, this is aborted.  When streaming to
@@ -58,7 +60,7 @@ private:
 	 */
 	bool m_bWriteFailed;
 	bool WriteFailed() const { return !(m_iMode & RageFile::STREAMED) && m_bWriteFailed; }
-	
+
 	// unused
 	RageFileObjDirect& operator=(const RageFileObjDirect& rhs);
 	RageFileObjDirect(const RageFileObjDirect& rhs);

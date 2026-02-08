@@ -52,7 +52,7 @@ void ScreenWithMenuElements::Init()
 		}
 	}
 
-	if( TIMER_SECONDS != -1 )
+	if( TIMER_SECONDS != -1.0f )
 	{
 		ASSERT( m_MenuTimer == nullptr );	// don't load twice
 		m_MenuTimer = new MenuTimer;
@@ -161,11 +161,11 @@ void ScreenWithMenuElements::HandleScreenMessage( const ScreenMessage SM )
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
 {
-	SAFE_DELETE( m_MenuTimer );
+	RageUtil::SafeDelete( m_MenuTimer );
 	FOREACH_PlayerNumber( p )
 	{
 		if( m_MemoryCardDisplay[p] != nullptr )
-			SAFE_DELETE( m_MemoryCardDisplay[p] );
+			RageUtil::SafeDelete( m_MemoryCardDisplay[p] );
 	}
 	for (Actor *actor : m_vDecorations)
 		delete actor;
@@ -279,7 +279,7 @@ void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenD
 		// Time the transition so that it finishes exactly when all actors have 
 		// finished tweening.
 		float fSecondsUntilFinished = GetTweenTimeLeft();
-		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetTweenTimeLeft(), 0 );
+		float fSecondsUntilBeginOff = std::max( fSecondsUntilFinished - m_Out.GetTweenTimeLeft(), 0.0f );
 		m_Out.SetHibernate( fSecondsUntilBeginOff );
 	}
 }

@@ -1,8 +1,10 @@
 #include "global.h"
 #include "ArchHooks.h"
 
+#include <cstdint>
+
 /*
- * This is a helper for GetMicrosecondsSinceStart on systems with a system
+ * This is a helper for GetSystemTimeInMicroseconds on systems with a system
  * timer that may loop or move backwards.
  *
  * The time may decrease last for at least two reasons:
@@ -21,7 +23,7 @@
  *
  * This helper only needs to be used if one or both of the above conditions can occur.
  * If the underlying timer is reliable, this doesn't need to be used (for a small
- * efficiency bonus).  Also, you may omit this for GetMicrosecondsSinceStart() when
+ * efficiency bonus).  Also, you may omit this for GetSystemTimeInMicroseconds() when
  * bAccurate == false.
  */
 
@@ -61,7 +63,7 @@ int64_t ArchHooks::FixupTimeIfBackwards( int64_t usecs )
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -71,7 +73,7 @@ int64_t ArchHooks::FixupTimeIfBackwards( int64_t usecs )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

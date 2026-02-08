@@ -18,6 +18,13 @@ static const RString COINS_DAT = "Save/Coins.xml";
 
 Bookkeeper::Bookkeeper()
 {
+	// GameState resets the coin count, but once the Bookkeeper is initialized, the coin count is overwritten by the ReadFromDisk function.
+	// Resetting the CoinsFile before reloading allows the game to start without credits.
+	if (PREFSMAN->m_bResetCoinsAtStartup)
+	{
+		WriteCoinsFile(0);
+	}
+
 	ClearAll();
 	ReadFromDisk();
 }
@@ -98,7 +105,7 @@ XNode* Bookkeeper::CreateNode() const
 	{
 		XNode* pData = xml->AppendChild("Data");
 
-		for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+		for( std::map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 		{
 			int iCoins = it->second;
 			XNode *pDay = pData->AppendChild( "Coins", iCoins );
@@ -127,7 +134,7 @@ void Bookkeeper::ReadFromDisk()
 
 	if ( numCoins < 0 )
 		numCoins = 0;
-	else if ( numCoins / PREFSMAN->m_iCoinsPerCredit > MAX_NUM_CREDITS )
+	else if ( numCoins / PREFSMAN->m_iCoinsPerCredit > PREFSMAN->m_iMaxNumCredits )
 		numCoins = 0;
 
     LOG->Trace("Number of Coins to Load on boot: %i", numCoins);
@@ -173,7 +180,7 @@ void Bookkeeper::ReadCoinsFile( int &coins )
 }
 
 // Return the number of coins between [beginning,ending).
-int Bookkeeper::GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const
+int Bookkeeper::GetNumCoinsInRange( std::map<Date,int>::const_iterator begin, std::map<Date,int>::const_iterator end ) const
 {
 	int iCoins = 0;
 
@@ -237,7 +244,7 @@ void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const
 	for( int i=0; i<DAYS_IN_WEEK; i++ )
 		coins[i] = 0;
 
-	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+	for( std::map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 	{
 		const Date &d = it->first;
 		int iDayOfWeek = GetDayInYearAndYear( d.m_iDayOfYear, d.m_iYear ).tm_wday;
@@ -248,7 +255,7 @@ void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const
 void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
 {
 	memset( coins, 0, sizeof(int) * HOURS_IN_DAY );
-	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+	for( std::map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 	{
 		const Date &d = it->first;
 

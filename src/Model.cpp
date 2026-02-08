@@ -13,6 +13,11 @@
 #include "LuaBinding.h"
 #include "PrefsManager.h"
 
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+
 REGISTER_ACTOR_CLASS( Model );
 
 static const float FRAMES_PER_SECOND = 30;
@@ -141,16 +146,16 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 	{
 		iLineNum++;
 
-		if( !strncmp (sLine, "//", 2) )
+		if( !strncmp (sLine.c_str(), "//", 2) )
 			continue;
 
 		int nFrame;
-		if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frames: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pModel->nTotalFrames = nFrame;
 		}
-		if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
+		if( sscanf(sLine.c_str(), "Frame: %d", &nFrame) == 1 )
 		{
 			// ignore
 			// m_pModel->nFrame = nFrame;
@@ -158,7 +163,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 
 		// materials
 		int nNumMaterials = 0;
-		if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
+		if( sscanf(sLine.c_str(), "Materials: %d", &nNumMaterials) == 1 )
 		{
 			m_Materials.resize( nNumMaterials );
 
@@ -171,7 +176,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// name
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				if( sscanf(sLine, "\"%255[^\"]\"", szName) != 1 )
+				if( sscanf(sLine.c_str(), "\"%255[^\"]\"", szName) != 1 )
 					THROW;
 				Material.sName = szName;
 
@@ -179,33 +184,33 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Ambient;
-				if( sscanf(sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
 					THROW;
-				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
+				Material.Ambient = Ambient;
 
 				// diffuse
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Diffuse;
-				if( sscanf(sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
 					THROW;
-				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
+				Material.Diffuse = Diffuse;
 
 				// specular
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Specular;
-				if( sscanf(sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
+				if( sscanf(sLine.c_str(), "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
 					THROW;
-				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
+				Material.Specular = Specular;
 
 				// emissive
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				RageVector4 Emissive;
-				if( sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
+				if( sscanf (sLine.c_str(), "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
 					THROW;
-				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
+				Material.Emissive = Emissive;
 
 				// shininess
 				if( f.GetLine( sLine ) <= 0 )
@@ -227,7 +232,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%255[^\"]\"", szName );
+				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
 				RString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture == "" )
@@ -249,7 +254,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%255[^\"]\"", szName );
+				sscanf( sLine.c_str(), "\"%255[^\"]\"", szName );
 				RString sAlphaTexture = szName;
 
 				if( sAlphaTexture == "" )
@@ -297,13 +302,13 @@ void Model::DrawCelShaded()
 	DISPLAY->SetCullMode(CULL_FRONT);
 	this->SetZWrite(false); // XXX: Why on earth isn't the culling working? -Colby
 	this->Draw();
-	
+
 	// Second pass: cel shading
 	DISPLAY->SetCelShaded(2);
 	DISPLAY->SetCullMode(CULL_BACK);
 	this->SetZWrite(true);
 	this->Draw();
-	
+
 	DISPLAY->SetCelShaded(0);
 }
 
@@ -534,7 +539,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 	{
 		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-		vector<RageModelVertex> &Vertices = pMesh->Vertices;
+		std::vector<RageModelVertex> &Vertices = pMesh->Vertices;
 		for( unsigned j = 0; j < Vertices.size(); j++ )
 		{
 			// int iBoneIndex = (pMesh->m_iBoneIndex!=-1) ? pMesh->m_iBoneIndex : bone;
@@ -565,13 +570,13 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 void Model::SetPosition( float fSeconds )
 {
 	m_fCurFrame = FRAMES_PER_SECOND * fSeconds;
-	m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+	m_fCurFrame = std::clamp( m_fCurFrame, (float) 0, (float) m_pCurAnimation->nTotalFrames );
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
 {
-	if( m_pGeometry == nullptr || 
-		m_pGeometry->m_Meshes.empty() || 
+	if( m_pGeometry == nullptr ||
+		m_pGeometry->m_Meshes.empty() ||
 		!m_pCurAnimation )
 	{
 		return; // bail early
@@ -591,14 +596,14 @@ void Model::AdvanceFrame( float fDeltaTime )
 		else if( m_bLoop )
 			wrap( m_fCurFrame, (float) m_pCurAnimation->nTotalFrames );
 		else
-			m_fCurFrame = clamp( m_fCurFrame, 0, (float) m_pCurAnimation->nTotalFrames );
+			m_fCurFrame = std::clamp( m_fCurFrame, (float) 0, (float) m_pCurAnimation->nTotalFrames );
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
 	UpdateTempGeometry();
 }
 
-void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones )
+void Model::SetBones( const msAnimation* pAnimation, float fFrame, std::vector<myBone_t> &vpBones )
 {
 	for( size_t i = 0; i < pAnimation->Bones.size(); ++i )
 	{
@@ -688,8 +693,8 @@ void Model::UpdateTempGeometry()
 	{
 		const msMesh &origMesh = m_pGeometry->m_Meshes[i];
 		msMesh &tempMesh = m_vTempMeshes[i];
-		const vector<RageModelVertex> &origVertices = origMesh.Vertices;
-		vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
+		const std::vector<RageModelVertex> &origVertices = origMesh.Vertices;
+		std::vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
 		for( unsigned j = 0; j < origVertices.size(); j++ )
 		{
 			RageVector3 &tempPos =			tempVertices[j].p;
@@ -731,7 +736,7 @@ int Model::GetNumStates() const
 {
 	int iMaxStates = 0;
 	for (msMaterial const &m : m_Materials)
-		iMaxStates = max( iMaxStates, m.diffuse.GetNumStates() );
+		iMaxStates = std::max( iMaxStates, m.diffuse.GetNumStates() );
 	return iMaxStates;
 }
 
@@ -744,12 +749,12 @@ void Model::SetState( int iNewState )
 	}
 }
 
-void Model::RecalcAnimationLengthSeconds() 
+void Model::RecalcAnimationLengthSeconds()
 {
 	m_animation_length_seconds= 0;
 	for (msMaterial const &m : m_Materials)
 	{
-		m_animation_length_seconds= max(m_animation_length_seconds,
+		m_animation_length_seconds= std::max(m_animation_length_seconds,
 			m.diffuse.GetAnimationLengthSeconds());
 	}
 }
@@ -771,14 +776,14 @@ bool Model::MaterialsNeedNormals() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the Model. */ 
+/** @brief Allow Lua to have access to the Model. */
 class LunaModel: public Luna<Model>
 {
 public:
 	static int position( T* p, lua_State *L )	{ p->SetPosition( FArg(1) ); COMMON_RETURN_SELF; }
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); COMMON_RETURN_SELF; }
 	static int SetDefaultAnimation( T* p, lua_State *L )	{ p->SetDefaultAnimation(SArg(1),FArg(2)); COMMON_RETURN_SELF; }
-	static int GetDefaultAnimation( T* p, lua_State *L )	{ lua_pushstring( L, p->GetDefaultAnimation() ); return 1; }
+	static int GetDefaultAnimation( T* p, lua_State *L )	{ lua_pushstring( L, p->GetDefaultAnimation().c_str() ); return 1; }
 	static int loop( T* p, lua_State *L )		{ p->SetLoop(BArg(1)); COMMON_RETURN_SELF; }
 	static int rate( T* p, lua_State *L )		{ p->SetRate(FArg(1)); COMMON_RETURN_SELF; }
 	static int GetNumStates( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumStates() ); return 1; }
@@ -805,7 +810,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -815,7 +820,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

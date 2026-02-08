@@ -3,6 +3,8 @@
 #ifndef RAGE_DISPLAY_NULL_H
 #define RAGE_DISPLAY_NULL_H
 
+#include <cstdint>
+
 class RageDisplay_Null: public RageDisplay
 {
 public:
@@ -53,11 +55,11 @@ public:
 		) { }
 	void SetLighting( bool ) { }
 	void SetLightOff( int /* index */ ) { }
-	void SetLightDirectional( 
-		int /* index */, 
-		const RageColor & /* unreferenced: ambient */, 
-		const RageColor & /* unreferenced: diffuse */, 
-		const RageColor & /* unreferenced: specular */, 
+	void SetLightDirectional(
+		int /* index */,
+		const RageColor & /* unreferenced: ambient */,
+		const RageColor & /* unreferenced: diffuse */,
+		const RageColor & /* unreferenced: specular */,
 		const RageVector3 & /* unreferenced: dir */ ) { }
 
 	void SetSphereEnvironmentMapping( TextureUnit /* tu */, bool /* b */ ) { }
@@ -79,7 +81,7 @@ protected:
 	VideoModeParams m_Params;
 	RString TryVideoMode( const VideoModeParams &p, bool & /* bNewDeviceOut */ ) { m_Params = p; return RString(); }
 	RageSurface* CreateScreenshot();
-	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf );
 	bool SupportsSurfaceFormat( RagePixelFormat ) { return true; }
 };
 

@@ -3,6 +3,8 @@
 #ifndef RAGE_SURFACE_UTILS_H
 #define RAGE_SURFACE_UTILS_H
 
+#include <cstdint>
+
 struct RageSurfaceColor;
 struct RageSurfacePalette;
 struct RageSurfaceFormat;
@@ -45,7 +47,7 @@ namespace RageSurfaceUtils
 	 * It only needs one bit of alpha. */
 	enum { TRAIT_BOOL_TRANSPARENCY = 0x0002 }; /* 1alpha */
 
-	void BlitTransform( const RageSurface *src, RageSurface *dst, 
+	void BlitTransform( const RageSurface *src, RageSurface *dst,
 					const float fCoords[8] /* TL, BR, BL, TR */ );
 
 	void Blit( const RageSurface *src, RageSurface *dst, int width = -1, int height = -1 );
@@ -55,7 +57,7 @@ namespace RageSurfaceUtils
 	RageSurface *LoadSurface( RString file );
 
 	/* Quickly palettize to an gray/alpha texture. */
-	RageSurface *PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits );
+	RageSurface *PalettizeToGrayscale( const RageSurface *src_surf, unsigned int GrayBits, unsigned int AlphaBits );
 
 	RageSurface *MakeDummySurface( int height, int width );
 

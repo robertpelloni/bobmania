@@ -13,17 +13,21 @@
 #include "MessageManager.h"
 #include "ver.h"
 
-#include <sstream> // conversion for lua functions.
-#include <csetjmp>
 #include <cassert>
+#include <cmath>
+#include <csetjmp>
+#include <cstddef>
+#include <cstdint>
 #include <map>
+#include <sstream> // conversion for lua functions.
+#include <vector>
 
 LuaManager *LUA = nullptr;
 struct Impl
 {
 	Impl(): g_pLock("Lua") {}
-	vector<lua_State *> g_FreeStateList;
-	map<lua_State *, bool> g_ActiveStates;
+	std::vector<lua_State *> g_FreeStateList;
+	std::map<lua_State *, bool> g_ActiveStates;
 
 	RageMutex g_pLock;
 };
@@ -56,7 +60,7 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = Get();
 	LuaHelpers::Push( L, val );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -64,7 +68,7 @@ void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = Get();
 	LuaHelpers::Push( L, val );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -72,7 +76,7 @@ void LuaManager::UnsetGlobal( const RString &sName )
 {
 	Lua *L = Get();
 	lua_pushnil( L );
-	lua_setglobal( L, sName );
+	lua_setglobal( L, sName.c_str() );
 	Release( L );
 }
 
@@ -105,7 +109,7 @@ namespace LuaHelpers
 	}
 }
 
-void LuaHelpers::CreateTableFromArrayB( Lua *L, const vector<bool> &aIn )
+void LuaHelpers::CreateTableFromArrayB( Lua *L, const std::vector<bool> &aIn )
 {
 	lua_newtable( L );
 	for( unsigned i = 0; i < aIn.size(); ++i )
@@ -115,7 +119,7 @@ void LuaHelpers::CreateTableFromArrayB( Lua *L, const vector<bool> &aIn )
 	}
 }
 
-void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
+void LuaHelpers::ReadArrayFromTableB( Lua *L, std::vector<bool> &aOut )
 {
 	luaL_checktype( L, -1, LUA_TTABLE );
 
@@ -139,7 +143,7 @@ namespace
 
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			lua_pushstring( L, pAttr->first );			// push key
+			lua_pushstring( L, pAttr->first.c_str() );			// push key
 			pNode->PushAttrValue( L, pAttr->first );	// push value
 
 			//add key-value pair to our table
@@ -149,7 +153,7 @@ namespace
 		FOREACH_CONST_Child( pNode, c )
 		{
 			const XNode *pChild = c;
-			lua_pushstring( L, pChild->m_sName ); // push key
+			lua_pushstring( L, pChild->m_sName.c_str() ); // push key
 
 			// push value (more correctly, build this child's table and leave it there)
 			CreateTableFromXNodeRecursive( L, pChild );
@@ -170,9 +174,9 @@ static int GetLuaStack( lua_State *L )
 {
 	RString sErr;
 	LuaHelpers::Pop( L, sErr );
-	
+
 	lua_Debug ar;
-	
+
 	for( int iLevel = 0; lua_getstack(L, iLevel, &ar); ++iLevel )
 	{
 		if( !lua_getinfo(L, "nSluf", &ar) )
@@ -180,8 +184,8 @@ static int GetLuaStack( lua_State *L )
 		// The function is now on the top of the stack.
 		const char *file = ar.source[0] == '@' ? ar.source + 1 : ar.short_src;
 		const char *name;
-		vector<RString> vArgs;
-		
+		std::vector<RString> vArgs;
+
 		if( !strcmp(ar.what, "C") )
 		{
 			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != nullptr; ++i )
@@ -236,12 +240,12 @@ static int LuaPanic( lua_State *L )
 }
 
 // Actor registration
-static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
+static std::vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
 	if( g_vRegisterActorTypes == nullptr )
-		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
+		g_vRegisterActorTypes = new std::vector<RegisterWithLuaFn>;
 
 	g_vRegisterActorTypes->push_back( pfn );
 }
@@ -263,13 +267,6 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 ); // this one seems safe -shake
-	// these two can be dangerous. don't use them
-	// (unless you know what you are doing). -aj
-#if 0
-	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
-#endif
 
 	// Store the thread pool in a table on the stack, in the main thread.
 #define THREAD_POOL 1
@@ -281,7 +278,7 @@ LuaManager::LuaManager()
 LuaManager::~LuaManager()
 {
 	lua_close( m_pLuaMain );
-	SAFE_DELETE( pImpl );
+	RageUtil::SafeDelete( pImpl );
 }
 
 Lua *LuaManager::Get()
@@ -552,7 +549,7 @@ namespace
 	struct LClass
 	{
 		RString m_sBaseName;
-		vector<RString> m_vMethods;
+		std::vector<RString> m_vMethods;
 	};
 }
 
@@ -567,13 +564,13 @@ XNode *LuaHelpers::GetLuaInformation()
 	XNode *pEnumsNode = pLuaNode->AppendChild( "Enums" );
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 
-	vector<RString> vFunctions;
-	map<RString, LClass> mClasses;
-	map<RString, vector<RString> > mNamespaces;
-	map<RString, RString> mSingletons;
-	map<RString, float> mConstants;
-	map<RString, RString> mStringConstants;
-	map<RString, vector<RString> > mEnums;
+	std::vector<RString> vFunctions;
+	std::map<RString, LClass> mClasses;
+	std::map<RString, std::vector<RString>> mNamespaces;
+	std::map<RString, RString> mSingletons;
+	std::map<RString, float> mConstants;
+	std::map<RString, RString> mStringConstants;
+	std::map<RString, std::vector<RString>> mEnums;
 
 	Lua *L = LUA->Get();
 	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )
@@ -614,8 +611,8 @@ XNode *LuaHelpers::GetLuaInformation()
 				sort( c.m_vMethods.begin(), c.m_vMethods.end() );
 				break;
 			}
+			[[fallthrough]];
 		}
-		// fall through
 		case LUA_TUSERDATA: // table or userdata: class instance
 		{
 			if( !luaL_callmeta(L, -1, "__type") )
@@ -663,9 +660,9 @@ XNode *LuaHelpers::GetLuaInformation()
 	{
 		RString sNamespace;
 		LuaHelpers::Pop( L, sNamespace );
-		if( find(BuiltInPackages, end, sNamespace) != end )
+		if( std::find(BuiltInPackages, end, sNamespace) != end )
 			continue;
-		vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
+		std::vector<RString> &vNamespaceFunctions = mNamespaces[sNamespace];
 		FOREACH_LUATABLE( L, -1 )
 		{
 			RString sFunction;
@@ -712,10 +709,10 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Namespaces */
-	for( map<RString, vector<RString> >::const_iterator iter = mNamespaces.begin(); iter != mNamespaces.end(); ++iter )
+	for( std::map<RString, std::vector<RString>>::const_iterator iter = mNamespaces.begin(); iter != mNamespaces.end(); ++iter )
 	{
 		XNode *pNamespaceNode = pNamespacesNode->AppendChild( "Namespace" );
-		const vector<RString> &vNamespace = iter->second;
+		const std::vector<RString> &vNamespace = iter->second;
 		pNamespaceNode->AppendAttr( "name", iter->first );
 
 		for (RString const &func: vNamespace)
@@ -726,11 +723,11 @@ XNode *LuaHelpers::GetLuaInformation()
 	}
 
 	/* Enums */
-	for( map<RString, vector<RString> >::const_iterator iter = mEnums.begin(); iter != mEnums.end(); ++iter )
+	for( std::map<RString, std::vector<RString>>::const_iterator iter = mEnums.begin(); iter != mEnums.end(); ++iter )
 	{
 		XNode *pEnumNode = pEnumsNode->AppendChild( "Enum" );
 
-		const vector<RString> &vEnum = iter->second;
+		const std::vector<RString> &vEnum = iter->second;
 		pEnumNode->AppendAttr( "name", iter->first );
 
 		for( unsigned i = 0; i < vEnum.size(); ++i )
@@ -747,7 +744,7 @@ XNode *LuaHelpers::GetLuaInformation()
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 
 		pConstantNode->AppendAttr( "name", c.first );
-		if( c.second == truncf(c.second) )
+		if( c.second == std::trunc(c.second) )
 			pConstantNode->AppendAttr( "value", static_cast<int>(c.second) );
 		else
 			pConstantNode->AppendAttr( "value", c.second );
@@ -787,7 +784,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError )
 {
 	// load string
-	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
+	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName.c_str() );
 	if( ret )
 	{
 		LuaHelpers::Pop( L, sError );
@@ -917,7 +914,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		ParseCommands( sCommands, cmds, bLegacy );
 
 		// Convert cmds to a Lua function
-		ostringstream s;
+		std::ostringstream s;
 
 		s << "return function(self)\n";
 
@@ -1058,7 +1055,7 @@ static float scale( float x, float l1, float h1, float l2, float h2 )
 }
 LuaFunction( scale, scale(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5)) );
 
-LuaFunction( clamp, clamp(FArg(1), FArg(2), FArg(3)) );
+LuaFunction( clamp, std::clamp(FArg(1), FArg(2), FArg(3)) );
 
 #include "LuaBinding.h"
 namespace
@@ -1083,7 +1080,7 @@ namespace
 	static int CheckType( lua_State *L )
 	{
 		RString sType = SArg(1);
-		bool bRet = LuaBinding::CheckLuaObjectType( L, 2, sType );
+		bool bRet = LuaBinding::CheckLuaObjectType( L, 2, sType.c_str() );
 		LuaHelpers::Push( L, bRet );
 		return 1;
 	}
@@ -1120,7 +1117,7 @@ namespace
 		luaL_checktype( L, 1, LUA_TFUNCTION );
 		luaL_checktype( L, 2, LUA_TTABLE );
 
-		vector<LuaThreadVariable *> apVars;
+		std::vector<LuaThreadVariable *> apVars;
 		FOREACH_LUATABLE( L, 2 )
 		{
 			lua_pushvalue( L, -2 );
@@ -1184,7 +1181,7 @@ LUA_REGISTER_NAMESPACE( lua )
 /*
  * (c) 2004-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1194,7 +1191,7 @@ LUA_REGISTER_NAMESPACE( lua )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -11,6 +11,8 @@
 #include "RageTextureRenderTarget.h"
 #include "Sprite.h"
 
+#include <cstdint>
+
 /* Making an OpenGL call doesn't also flush the error state; if we happen
  * to have an error from a previous call, then the assert below will fail.
  * Flush it. */
@@ -103,11 +105,11 @@ public:
 		);
 	void SetLighting( bool b );
 	void SetLightOff( int index );
-	void SetLightDirectional( 
-		int index, 
-		const RageColor &ambient, 
-		const RageColor &diffuse, 
-		const RageColor &specular, 
+	void SetLightDirectional(
+		int index,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		const RageVector3 &dir );
 
 	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
@@ -132,7 +134,7 @@ public:
 	virtual void SetPolygonMode( PolygonMode pm );
 	virtual void SetLineWidth( float fWidth );
 
-	RString GetTextureDiagnostics( unsigned id ) const;
+	RString GetTextureDiagnostics( uintptr_t id ) const;
 
 protected:
 	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
@@ -148,7 +150,7 @@ protected:
 	RageSurface* CreateScreenshot();
 	RagePixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
 	bool SupportsSurfaceFormat( RagePixelFormat pixfmt );
-	
+
 	void SendCurrentMatrices();
 
 private:

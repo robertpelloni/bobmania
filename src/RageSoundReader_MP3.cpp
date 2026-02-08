@@ -5,8 +5,9 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#include <cstdio>
 #include <cerrno>
+#include <cstdint>
+#include <cstdio>
 #include <map>
 
 #include "mad.h"
@@ -45,9 +46,9 @@ static unsigned long id3_parse_uint( const unsigned char **ptr, unsigned int byt
 
 	switch (bytes)
 	{
-	case 4: value = (value << 8) | *(*ptr)++;
-	case 3: value = (value << 8) | *(*ptr)++;
-	case 2: value = (value << 8) | *(*ptr)++;
+	case 4: value = (value << 8) | *(*ptr)++; [[fallthrough]];
+	case 3: value = (value << 8) | *(*ptr)++; [[fallthrough]];
+	case 2: value = (value << 8) | *(*ptr)++; [[fallthrough]];
 	case 1: value = (value << 8) | *(*ptr)++;
 	}
 
@@ -63,7 +64,7 @@ static unsigned long id3_parse_syncsafe( const unsigned char **ptr, unsigned int
 	switch (bytes)
 	{
 	case 5:
-		value = (value << 4) | (*(*ptr)++ & 0x0f);
+		value = (value << 4) | (*(*ptr)++ & 0x0f); [[fallthrough]];
 	case 4:
 		value = (value << 7) | (*(*ptr)++ & 0x7f);
 		value = (value << 7) | (*(*ptr)++ & 0x7f);
@@ -213,8 +214,8 @@ struct madlib_t
 			return mad_timer_compare( timer1, timer2 ) < 0;
 		}
 	};
-		
-	typedef map<mad_timer_t, int, mad_timer_compare_lt> tocmap_t;
+
+	typedef std::map<mad_timer_t, int, mad_timer_compare_lt> tocmap_t;
 	tocmap_t tocmap;
 
 	/* Position in the file of inbuf: */
@@ -283,7 +284,7 @@ bool RageSoundReader_MP3::handle_first_frame()
 		/*
 		 * "Info" tags are written by some tools.  They're just Xing tags, but for
 		 * CBR files.
-		 * 
+		 *
 		 * However, DWI's decoder, BASS, doesn't understand this, and treats it as a
 		 * corrupt frame, outputting a frame of silence.  Let's ignore the tag, so
 		 * it'll be treated as an invalid frame, so we match DWI sync.
@@ -296,7 +297,7 @@ bool RageSoundReader_MP3::handle_first_frame()
 		if( mad->xingtag.type == xing::INFO )
 			return false;
 
-		mad->header_bytes = max( mad->header_bytes, get_this_frame_byte(mad) );
+		mad->header_bytes = std::max( mad->header_bytes, get_this_frame_byte(mad) );
 
 		mad->has_xing = true;
 
@@ -458,7 +459,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 					continue;
 				}
 
-				/* We've decoded the first frame of data. 
+				/* We've decoded the first frame of data.
 				 *
 				 * We want mad->Timer to represent the timestamp of the first sample of the
 				 * currently decoded frame.  Don't increment mad->Timer on the first frame,
@@ -549,53 +550,6 @@ int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 
 	return 1;
 }
-
-
-#if 0
-/* Call this after seeking the stream.  We'll back up a bit and reread
- * frames until we're back where we started, so the next read is aligned
- * to a frame and synced.  This must never leave the position ahead of where
- * it way, since that can confuse the seek optimizations. */
-int RageSoundReader_MP3::resync()
-{
-	/* Save the timer; decoding will change it, and we need to put it back. */
-	mad_timer_t orig = mad->Timer;
-
-	/* Seek backwards up to 4k. */
-	const int origpos = mad->inbuf_filepos;
-	const int seekpos = max( 0, origpos - 1024*4 );
-	seek_stream_to_byte( seekpos );
-
-	/* Agh.  This is annoying.  We want to decode enough so that the next frame
-	 * read will be the first frame after the current file pointer.  If we just
-	 * read until the file pointer is >= what it was, we've passed it already.
-	 * So, read until it's >= what it was, counting the number of times we had
-	 * to read; then back up again and read n-1 times.  Gross. */
-	int reads = 0;
-	do
-	{
-		if( do_mad_frame_decode() <= 0 ) /* XXX eof */
-			return -1; /* it set the error */
-
-		reads++;
-	} while( get_this_frame_byte(mad) < origpos );
-
-	seek_stream_to_byte( seekpos );
-
-	reads--;
-	while( reads-- > 0 )
-	{
-		if( do_mad_frame_decode() <= 0 ) /* XXX eof */
-			return -1; /* it set the error */
-	}
-
-	/* Restore the timer. */
-	mad->Timer = orig;
-	mad->outpos = mad->outleft = 0;
-
-	return 1;
-}
-#endif
 
 RageSoundReader_MP3::RageSoundReader_MP3()
 {
@@ -700,7 +654,7 @@ int RageSoundReader_MP3::Read( float *buf, int iFrames )
 	{
 		if( mad->outleft > 0 )
 		{
-			int iFramesToCopy = min( iFrames, int(mad->outleft / GetNumChannels()) );
+			int iFramesToCopy = std::min( iFrames, int(mad->outleft / GetNumChannels()) );
 			const int iSamplesToCopy = iFramesToCopy * GetNumChannels();
 			const int iBytesToCopy = iSamplesToCopy * sizeof(float);
 
@@ -730,7 +684,7 @@ int RageSoundReader_MP3::Read( float *buf, int iFrames )
 bool RageSoundReader_MP3::MADLIB_rewind()
 {
 	m_pFile->Seek(0);
-			
+
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);
 	mad_timer_reset(&mad->Timer);
@@ -754,88 +708,17 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 
 /* Methods of seeking:
  *
- * 1. We can jump based on a TOC.  We potentially have two; the Xing TOC and our
- *    own index.  The Xing TOC is only accurate to 1/256th of the file size,
- *    so it's unsuitable for precise seeks.  Our own TOC is byte-accurate.
- *    (SetPosition_toc)
+ * 1. We can seek from any position to any higher position by decoding headers.
+ *    (SetPosition_hard)
  *
  * 2. We can jump based on the bitrate.  This is fast, but not accurate.
  *    (SetPosition_estimate)
  *
- * 3. We can seek from any position to any higher position by decoding headers.
- *    (SetPosition_hard)
+ * 3. MADLIB_rewind will rewind the stream to the beginning.  This is always accurate.
  *
- * Both 1 and 2 will leave the position behind the actual requested position; 
- * combine them with 3 to catch up. Never do 3 alone in "fast" mode, since it's
- * slow if it ends up seeking from the beginning of the file.  Never do 2 in
- * "precise" mode.
+ * SetPosition_estimate will leave the position behind the actual requested position;
+ * combine them with MADLIB_rewind or SetPosition_hard to catch up. 
  */
-
-/* Returns actual position on success, 0 if past EOF, -1 on error. */
-int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
-{
-	ASSERT( !Xing || mad->has_xing );
-	ASSERT( mad->length != -1 );
-
-	/* This leaves our timer accurate if we're using our own TOC, and inaccurate
-	 * if we're using Xing. */
-	mad->timer_accurate = !Xing;
-
-	int bytepos = -1;
-	if( Xing )
-	{
-		/* We can speed up the seek using the XING tag.  First, figure
-		 * out what percentage the requested position falls in. */
-		ASSERT( SampleRate != 0 );
-		int ms = int( (iFrame * 1000LL) / SampleRate );
-		ASSERT( mad->length != 0 );
-		int percent = ms * 100 / mad->length;
-		if( percent < 100 )
-		{
-			int jump = mad->xingtag.toc[percent];
-			bytepos = mad->filesize * jump / 256;
-		}
-		else
-			bytepos = 2000000000; /* force EOF */
-
-		mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
-	}
-	else
-	{
-		mad_timer_t desired;
-		mad_timer_set( &desired, 0, iFrame, SampleRate );
-
-		if( mad->tocmap.empty() )
-			return 1; /* don't have any info */
-
-		/* Find the last entry <= iFrame that we actually have an entry for;
-		 * this will get us as close as possible. */
-		madlib_t::tocmap_t::iterator it = mad->tocmap.upper_bound( desired );
-		if( it == mad->tocmap.begin() )
-			return 1; /* don't have any info */
-		--it;
-
-		mad->Timer = it->first;
-		bytepos = it->second;
-	}
-
-	if( bytepos != -1 )
-	{
-		/* Seek backwards up to 4k. */
-		const int seekpos = max( 0, bytepos - 1024*4 );
-		seek_stream_to_byte( seekpos );
-
-		do
-		{
-			int ret = do_mad_frame_decode();
-			if( ret <= 0 )
-				return ret; /* it set the error */
-		} while( get_this_frame_byte(mad) < bytepos );
-		synth_output();
-	}
-
-	return 1;
-}
 
 int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 {
@@ -855,8 +738,14 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 	/* If we're already past the requested position, rewind. */
 	if(mad_timer_compare(mad->Timer, desired) > 0)
 	{
-		MADLIB_rewind();
-		do_mad_frame_decode();
+		if (!MADLIB_rewind())
+		{
+			return -1;
+		}
+		if (do_mad_frame_decode() <= 0)
+		{
+			return -1;
+		}
 		synthed = false;
 	}
 
@@ -867,7 +756,7 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 		 * already decoded the frame, synth it, too. */
 		mad_timer_t next_frame_timer = mad->Timer;
 		mad_timer_add( &next_frame_timer, mad->framelength );
-		
+
 		if( mad_timer_compare(desired, next_frame_timer) < 0 )
 		{
 			if( !synthed )
@@ -937,8 +826,8 @@ int RageSoundReader_MP3::SetPosition_estimate( int iFrame )
 	seekpos += mad->header_bytes;
 	seek_stream_to_byte( seekpos );
 
-	/* We've jumped across the file, so the decoder is currently desynced. 
-	 * Don't use resync(); it's slow.  Just decode a few frames. */
+	/* We've jumped across the file, so the decoder is currently desynced.
+	 * Just decode a few frames. */
 	for( int i = 0; i < 2; ++i )
 	{
 		int ret = do_mad_frame_decode();
@@ -959,33 +848,23 @@ int RageSoundReader_MP3::SetPosition_estimate( int iFrame )
 
 int RageSoundReader_MP3::SetPosition( int iFrame )
 {
-	if( m_bAccurateSync )
+	/* Rewinding is always fast and accurate, and SetPosition_estimate is bad at 0. */
+	if (!iFrame)
 	{
-		/* Seek using our own internal (accurate) TOC. */
-		int ret = SetPosition_toc( iFrame, false );
-		if( ret <= 0 )
-			return ret; /* it set the error */
-		
-		/* Align exactly. */
-		return SetPosition_hard( iFrame );
+		MADLIB_rewind();
+		return 1; /* ok */
 	}
-	else
+
+	/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
+	if (mad->has_xing)
 	{
-		/* Rewinding is always fast and accurate, and SetPosition_estimate is bad at 0. */
-		if( !iFrame )
-		{
-			MADLIB_rewind();
-			return 1; /* ok */
-		}
-
-		/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
-		if( mad->has_xing )
-			return SetPosition_toc( iFrame, true );
-
-		/* Guess.  This is only remotely accurate when we're not VBR, but also
-		 * do it if we have no Xing tag. */
-		return SetPosition_estimate( iFrame );
+		return SetPosition_hard(iFrame);
 	}
+
+	LOG->Trace("MP3 decoder had to revert to guessing the song position");
+	/* Guess.  This is only remotely accurate when we're not VBR, but also
+	 * do it if we have no Xing tag. */
+	return SetPosition_estimate(iFrame);
 }
 
 bool RageSoundReader_MP3::SetProperty( const RString &sProperty, float fValue )

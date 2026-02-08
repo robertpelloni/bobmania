@@ -3,9 +3,11 @@
 #ifndef RAGE_SOUND_MANAGER_H
 #define RAGE_SOUND_MANAGER_H
 
-#include <set>
-#include <map>
 #include "RageUtil_CircularBuffer.h"
+
+#include <cstdint>
+#include <map>
+#include <set>
 
 class RageSound;
 class RageSoundBase;
@@ -44,11 +46,8 @@ public:
 	RageSoundReader *GetLoadedSound( const RString &sPath );
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
-	void fix_bogus_sound_driver_pref(RString const& valid_setting);
-	void low_sample_count_workaround();
-
 private:
-	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
+	std::map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
 	RageSoundDriver *m_pDriver;
 

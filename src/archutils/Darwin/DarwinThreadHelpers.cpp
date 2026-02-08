@@ -5,6 +5,10 @@
 #include "global.h"
 #include "Backtrace.h"
 
+#include <cmath>
+#include <cstdint>
+#include <string>
+
 bool SuspendThread( uint64_t threadHandle )
 {
 	return !thread_suspend( thread_act_t(threadHandle) );
@@ -56,17 +60,17 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 #endif
 }
 
-RString SetThreadPrecedence( float prec )
+std::string SetThreadPrecedence( float prec )
 {
 	// Real values are between 0 and 63.
 	DEBUG_ASSERT( 0.0f <= prec && prec <= 1.0f );
-	thread_precedence_policy po = { integer_t( lrintf(prec * 63) ) };
+	thread_precedence_policy po = { integer_t( std::lrint(prec * 63) ) };
 	kern_return_t ret = thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY,
 					       (thread_policy_t)&po, THREAD_PRECEDENCE_POLICY_COUNT );
 
 	if( ret != KERN_SUCCESS )
 		return mach_error_string( ret );
-	return RString();
+	return "";
 }
 
 /*

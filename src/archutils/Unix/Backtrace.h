@@ -1,6 +1,9 @@
 #ifndef BACKTRACE_H
 #define BACKTRACE_H
 
+#include <cstddef>
+#include <cstdint>
+
 /* This API works like backtrace_pointers(), to retrieve a stack trace. */
 
 #if defined(CPU_PPC)

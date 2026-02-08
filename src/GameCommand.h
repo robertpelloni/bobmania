@@ -8,7 +8,10 @@
 #include "Difficulty.h"
 #include "LuaReference.h"
 #include "Command.h"
+
 #include <map>
+#include <vector>
+
 
 class Song;
 class Steps;
@@ -38,7 +41,7 @@ public:
 		m_sSongGroup(""), m_SortOrder(SortOrder_Invalid),
 		m_sSoundPath(""), m_vsScreensToPrepare(), m_iWeightPounds(-1),
 		m_iGoalCalories(-1), m_GoalType(GoalType_Invalid),
-		m_sProfileID(""), m_sUrl(""), m_bUrlExits(true),
+		m_sProfileID(""), m_bUrlExits(true),
 		m_bInsertCredit(false), m_bClearCredits(false),
 		m_bStopMusic(false), m_bApplyDefaultOptions(false),
 		m_bFadeMusic(false), m_fMusicFadeOutVolume(-1),
@@ -54,8 +57,8 @@ public:
 	void ApplyToAllPlayers() const;
 	void Apply( PlayerNumber pn ) const;
 private:
-	void Apply( const vector<PlayerNumber> &vpns ) const;
-	void ApplySelf( const vector<PlayerNumber> &vpns ) const;
+	void Apply( const std::vector<PlayerNumber> &vpns ) const;
+	void ApplySelf( const std::vector<PlayerNumber> &vpns ) const;
 public:
 
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
@@ -96,7 +99,7 @@ public:
 	RString		m_sSongGroup;
 	SortOrder	m_SortOrder;
 	RString		m_sSoundPath;	// "" for no sound
-	vector<RString>	m_vsScreensToPrepare;
+	std::vector<RString>	m_vsScreensToPrepare;
 	/**
 	 * @brief What is the player's weight in pounds?
 	 *
@@ -105,7 +108,6 @@ public:
 	int		m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
 	RString		m_sProfileID;
-	RString		m_sUrl;
 	// sm-ssc adds:
 	bool		m_bUrlExits;	// for making stepmania not exit on url
 
@@ -132,7 +134,7 @@ private:
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -142,7 +144,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

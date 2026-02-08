@@ -2,20 +2,24 @@
  * This provides an interface to open files in RageFileManager's namespace
  * This is just a simple RageFileBasic wrapper on top of another RageFileBasic;
  * when a file is open, is acts like the underlying RageFileBasic, except that
- * a few extra sanity checks are made to check file modes.  
+ * a few extra sanity checks are made to check file modes.
  */
 
 #include "global.h"
 #include "RageFileBasic.h"
 #include "RageFile.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "RageFileDriver.h"
+
+#include <cstddef>
+#include <cstdint>
 
 RageFile::RageFile()
 {
 	m_File = nullptr;
 }
-	
+
 RageFile::RageFile( const RageFile &cpy ):
 	RageFileBasic( cpy )
 {
@@ -316,7 +320,7 @@ int32_t FileReading::read_32_le( RageFileBasic &f, RString &sError )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the RageFile. */ 
+/** @brief Allow Lua to have access to the RageFile. */
 class LunaRageFile: public Luna<RageFile>
 {
 public:
@@ -345,13 +349,23 @@ public:
 	}
 	static int destroy( T* p, lua_State *L )
 	{
-		SAFE_DELETE(p);
+		RageUtil::SafeDelete(p);
 		return 1;
 	}
 
 	static int Open( T* p, lua_State *L )
 	{
-		lua_pushboolean( L, p->Open( SArg(1), IArg(2) ) );
+		const RString path = SArg(1);
+		int mode = IArg(2);
+
+		if ((mode & RageFile::WRITE) && FILEMAN->IsPathProtected(path))
+		{
+			LOG->Warn("Writing to %s is not allowed", path.c_str());
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		lua_pushboolean( L, p->Open(path, mode) );
 		return 1;
 	}
 
@@ -379,16 +393,16 @@ public:
 		can_safely_read(p, L);
 		RString string;
 		p->Read(string);
-		lua_pushstring( L, string );
+		lua_pushstring( L, string.c_str() );
 		return 1;
 	}
-	
+
 	static int ReadBytes( T* p, lua_State *L )
 	{
 		can_safely_read(p, L);
 		RString string;
 		p->Read( string, IArg(1) );
-		lua_pushstring( L, string );
+		lua_pushstring( L, string.c_str() );
 		return 1;
 	}
 
@@ -411,7 +425,7 @@ public:
 		can_safely_read(p, L);
 		RString string;
 		p->GetLine(string);
-		lua_pushstring( L, string );
+		lua_pushstring( L, string.c_str() );
 		return 1;
 	}
 
@@ -421,21 +435,21 @@ public:
 		lua_pushinteger( L, p->PutLine( SArg(1) ) );
 		return 1;
 	}
-	
+
 	static int GetError( T* p, lua_State *L )
 	{
 		RString error;
 		error = p->GetError();
-		lua_pushstring( L, error );
+		lua_pushstring( L, error.c_str() );
 		return 1;
 	}
-	
+
 	static int ClearError( T* p, lua_State *L )
 	{
 		p->ClearError();
 		return 1;
 	}
-	
+
 	static int AtEOF( T* p, lua_State *L )
 	{
 		can_safely_read(p, L);
@@ -443,7 +457,7 @@ public:
 		return 1;
 	}
 
-	LunaRageFile() 
+	LunaRageFile()
 	{
 		ADD_METHOD( Open );
 		ADD_METHOD( Close );

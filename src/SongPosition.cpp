@@ -3,7 +3,7 @@
 
 static Preference<float> g_fVisualDelaySeconds( "VisualDelaySeconds", 0.0f );
 
-void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
+void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp, float fAdditionalVisualDelay )
 {
 
 	if( !timestamp.IsZero() )
@@ -31,29 +31,10 @@ void SongPosition::UpdateSongPosition( float fPositionSeconds, const TimingData 
 
 	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 	
-	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get();
+	m_fMusicSecondsVisible = fPositionSeconds - g_fVisualDelaySeconds.Get() - fAdditionalVisualDelay;
 	beat_info.elapsed_time= m_fMusicSecondsVisible;
 	timing.GetBeatAndBPSFromElapsedTime(beat_info);
 	m_fSongBeatVisible= beat_info.beat;
-}
-
-void SongPosition::Reset()
-{
-
-	m_fMusicSecondsVisible = 0;
-	m_fSongBeatVisible = 0;
-
-	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
-	// todo: move me to FOREACH_EnabledPlayer( p ) after [NUM_PLAYERS]ing
-	m_fSongBeat = 0;
-	m_fSongBeatNoOffset = 0;
-	m_fCurBPS = 10;
-	//m_bStop = false;
-	m_bFreeze = false;
-	m_bDelay = false;
-	m_iWarpBeginRow = -1; // Set to -1 because some song may want to warp to row 0. -aj
-	m_fWarpDestination = -1; // Set when a warp is encountered. also see above. -aj
-
 }
 
 //lua start

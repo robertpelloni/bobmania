@@ -8,6 +8,8 @@
 #include "PrefsManager.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+#include <cstdint>
+
 REGISTER_SOUND_DRIVER_CLASS2( DirectSound-sw, DSound_Software );
 
 static const int channels = 2;
@@ -27,12 +29,12 @@ void RageSoundDriver_DSound_Software::MixerThread()
 
 	/* Fill a buffer before we start playing, so we don't play whatever junk is
 	 * in the buffer. */
-	char *locked_buf;
-	unsigned len;
-	while( m_pPCM->get_output_buf(&locked_buf, &len, chunksize()) )
+	char *locked_buf_init;
+	unsigned len_init;
+	while( m_pPCM->get_output_buf(&locked_buf_init, &len_init, chunksize()) )
 	{
-		memset( locked_buf, 0, len );
-		m_pPCM->release_output_buf(locked_buf, len);
+		memset( locked_buf_init, 0, len_init );
+		m_pPCM->release_output_buf(locked_buf_init, len_init);
 	}
 
 	/* Start playing. */
@@ -72,9 +74,8 @@ int RageSoundDriver_DSound_Software::MixerThread_start(void *p)
 }
 
 RageSoundDriver_DSound_Software::RageSoundDriver_DSound_Software()
+	: m_pPCM(nullptr), m_iSampleRate(0), m_bShutdownMixerThread(false)
 {
-	m_bShutdownMixerThread = false;
-	m_pPCM = nullptr;
 }
 
 RString RageSoundDriver_DSound_Software::Init()
@@ -96,7 +97,10 @@ RString RageSoundDriver_DSound_Software::Init()
 	m_pPCM = new DSoundBuf;
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_iSampleRate == 0 )
-		m_iSampleRate = 44100;
+	{
+		m_iSampleRate = kFallbackSampleRate;
+	}
+	// This m_iSampleRate (driver's) is then passed as the iSampleRate parameter to DSoundBuf::Init()
 	sError = m_pPCM->Init( ds, DSoundBuf::HW_DONT_CARE, channels, m_iSampleRate, 16, g_iMaxWriteahead );
 	if( sError != "" )
 		return sError;
@@ -146,7 +150,7 @@ int RageSoundDriver_DSound_Software::GetSampleRate() const
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -156,7 +160,7 @@ int RageSoundDriver_DSound_Software::GetSampleRate() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

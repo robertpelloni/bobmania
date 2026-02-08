@@ -6,6 +6,11 @@
 #include "PlayerNumber.h"
 #include "MemoryCardManager.h"
 
+#include <cmath>
+#include <cstddef>
+#include <vector>
+
+
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
 	m_dwLastLogicalDrives = 0;
@@ -23,8 +28,8 @@ static bool TestReady( const RString &sDrive, RString &sVolumeLabelOut )
 	DWORD lpFileSystemFlags;
 	TCHAR szFileSystemNameBuffer[MAX_PATH];
 
-	if( !GetVolumeInformation( 
-		sDrive,
+	if( !GetVolumeInformation(
+		sDrive.c_str(),
 		szVolumeNameBuffer,
 		sizeof(szVolumeNameBuffer),
 		&dwVolumeSerialNumber,
@@ -71,7 +76,7 @@ static bool IsFloppyDrive( const RString &sDrive )
 {
 	char szBuf[1024];
 
-	int iRet = QueryDosDevice( sDrive, szBuf, 1024 );
+	int iRet = QueryDosDevice( sDrive.c_str(), szBuf, 1024 );
 	if( iRet == 0 )
 	{
 		LOG->Warn( werr_ssprintf(GetLastError(), "QueryDosDevice(%s)", sDrive.c_str()) );
@@ -93,7 +98,7 @@ static bool IsFloppyDrive( const RString &sDrive )
 	return false;
 }
 
-void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
+void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( std::vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "MemoryCardDriverThreaded_Windows::GetUSBStorageDevices" );
 
@@ -111,18 +116,19 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 
 		LOG->Trace( sDrive );
 
-		if( IsFloppyDrive(sDrive) )
+		// we definitely don't need this lol
+		if (IsFloppyDrive(sDrive.c_str()))
 		{
 			LOG->Trace( "IsFloppyDrive" );
 			continue;
 		}
 
-		// Testing hack:  Allow non-removable drive letters to be used if that 
+		// Testing hack:  Allow non-removable drive letters to be used if that
 		// driver letter is specified as a m_sMemoryCardOsMountPoint.
 
 		bool bIsSpecifiedMountPoint = false;
 		FOREACH_ENUM( PlayerNumber, p )
-			bIsSpecifiedMountPoint |= MEMCARDMAN->m_sMemoryCardOsMountPoint[p].Get().EqualsNoCase(sDrive);
+			bIsSpecifiedMountPoint |= MEMCARDMAN->m_sMemoryCardOsMountPoint[p].Get().EqualsNoCase(sDrive.c_str());
 
 		RString sDrivePath = sDrive + "\\";
 
@@ -132,24 +138,24 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		}
 		else
 		{
-			if( GetDriveType(sDrivePath) != DRIVE_REMOVABLE )
+			if( GetDriveType(sDrivePath.c_str()) != DRIVE_REMOVABLE )
 			{
 				LOG->Trace( "not DRIVE_REMOVABLE" );
-				continue;	
+				continue;
 			}
 		}
 
 		RString sVolumeLabel;
-		if( !TestReady(sDrivePath, sVolumeLabel) )
+		if( !TestReady(sDrivePath.c_str(), sVolumeLabel) )
 		{
 			LOG->Trace( "not TestReady" );
-			continue;	
+			continue;
 		}
 
 		vDevicesOut.push_back( UsbStorageDevice() );
 		UsbStorageDevice &usbd = vDevicesOut.back();
-		usbd.SetOsMountDir( sDrive );
-		usbd.sDevice = "\\\\.\\" + sDrive;
+		usbd.SetOsMountDir( sDrive.c_str() );
+		usbd.sDevice = RString("\\\\.\\") + sDrive.c_str();
 		usbd.sVolumeLabel = sVolumeLabel;
 	}
 
@@ -166,13 +172,13 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		DWORD dwNumberOfFreeClusters;
 		DWORD dwTotalNumberOfClusters;
 		if( GetDiskFreeSpace(
-				usbd.sOsMountDir,
+				usbd.sOsMountDir.c_str(),
 				&dwSectorsPerCluster,
 				&dwBytesPerSector,
 				&dwNumberOfFreeClusters,
 				&dwTotalNumberOfClusters ) )
 		{
-			usbd.iVolumeSizeMB = (int)roundf( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
+			usbd.iVolumeSizeMB = std::round( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
 		}
 	}
 }
@@ -191,7 +197,7 @@ bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
 void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 {
 	/* Try to flush the device before returning.  This requires administrator priviliges. */
-	HANDLE hDevice = CreateFile( pDevice->sDevice, GENERIC_WRITE,
+	HANDLE hDevice = CreateFile( pDevice->sDevice.c_str(), GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
 		nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
 
@@ -209,7 +215,7 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -219,7 +225,7 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

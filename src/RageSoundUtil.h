@@ -1,5 +1,8 @@
 #ifndef RAGE_SOUND_UTIL_H
 #define RAGE_SOUND_UTIL_H
+
+#include <cstdint>
+
 /** @brief Simple utilities that operate on sound buffers. */
 namespace RageSoundUtil
 {

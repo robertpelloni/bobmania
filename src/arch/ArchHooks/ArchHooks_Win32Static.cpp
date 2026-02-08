@@ -5,47 +5,55 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
-#include "SpecialFiles.h"
 
-// for timeGetTime
+#include <cstdint>
+#include <vector>
+#include <mutex> // for call_once
+
+// for QueryPerformanceCounter
 #include <windows.h>
 #include <mmsystem.h>
 #if defined(_MSC_VER)
 #pragma comment(lib, "winmm.lib")
 #endif
 
+static std::once_flag g_timerInitFlag;
 
-static bool g_bTimerInitialized;
+/* QueryPerformanceCounter variables below.
+ * QueryPerformanceCounter and QueryPerformanceFrequency expect
+ * a LARGE_INTEGER, which is a union. These functions store data
+ * in the QuadPart of the LARGE_INTEGER, which is a 64-bit integer. */
+namespace {
+    LARGE_INTEGER g_liFrequency;
+}  // namespace
 
 static void InitTimer()
 {
-	if( g_bTimerInitialized )
-		return;
-	g_bTimerInitialized = true;
-
-	timeBeginPeriod( 1 );
+	// Set the thread scheduler to let us update every 1ms.
+	timeBeginPeriod(1);
+	
+	// Retrieve the number of ticks per second.
+	QueryPerformanceFrequency(&g_liFrequency);
 }
 
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+int64_t ArchHooks::GetSystemTimeInMicroseconds()
 {
-	if( !g_bTimerInitialized )
-		InitTimer();
-
-	int64_t ret = timeGetTime() * int64_t(1000);
-	if( bAccurate )
-	{
-		ret = FixupTimeIfLooped( ret );
-		ret = FixupTimeIfBackwards( ret );
-	}
+	// Make sure the timer is initialized.
+	std::call_once(g_timerInitFlag, InitTimer);
 	
-	return ret;
+	// Get the current time.
+	LARGE_INTEGER current_time;
+	QueryPerformanceCounter(&current_time);
+
+	// Calculate the elapsed time in microseconds.
+	return (current_time.QuadPart * 1000000LL) / g_liFrequency.QuadPart;
 }
 
 static RString GetMountDir( const RString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<RString> asParts;
+	std::vector<RString> asParts;
 	split( sDirOfExecutable, "/", asParts );
 	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
 	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
@@ -53,43 +61,44 @@ static RString GetMountDir( const RString &sDirOfExecutable )
 	return sDir;
 }
 
-void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
-{
-	RString sDir = GetMountDir( sDirOfExecutable );
-	
-	FILEMAN->Mount( "dir", sDir, "/" );
+void MountDirectories(const RString& baseDir) {
+	const std::vector<RString> winDirectoryStructureITGm = {
+		"/Announcers",
+		"/BGAnimations",
+		"/BackgroundEffects",
+		"/BackgroundTransitions",
+		"/Cache",
+		"/CDTitles",
+		"/Characters",
+		"/Courses",
+		"/Downloads",
+		"/Logs",
+		"/NoteSkins",
+		"/Packages",
+		"/Save",
+		"/Screenshots",
+		"/Songs",
+		"/RandomMovies",
+		"/Themes"
+	};
+
+	for (const RString& dir : winDirectoryStructureITGm) {
+		FILEMAN->Mount("dir", baseDir + dir, dir);
+	}
 }
 
-void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
-{
-	/*
-	 * Look, I know what you're thinking: "Hey, let's put all this stuff into
-	 * their respective 'proper' places on the filesystem!" Stop. Now.
-	 * This was done before and it was the most ungodly confusing thing to ever
-	 * happen. Just don't do it, seriously. Keep them in one place.
-	 * - Colby
-	 */
-	RString sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
-	//RString sCommonAppDataDir = SpecialDirs::GetCommonAppDataDir() + PRODUCT_ID;
-	//RString sLocalAppDataDir = SpecialDirs::GetLocalAppDataDir() + PRODUCT_ID;
-	//RString sPicturesDir = SpecialDirs::GetPicturesDir() + PRODUCT_ID;
+void ArchHooks::MountInitialFilesystems(const RString& sDirOfExecutable) {
+	RString sDir = GetMountDir(sDirOfExecutable);
+	FILEMAN->Mount("dirro", sDir, "/");
 
-	FILEMAN->Mount( "dir", sAppDataDir + "/Announcers", "/Announcers" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BGAnimations", "/BGAnimations" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundEffects", "/BackgroundEffects" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/BackgroundTransitions", "/BackgroundTransitions" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/CDTitles", "/CDTitles" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Characters", "/Characters" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Courses", "/Courses" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Logs", "/Logs" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/NoteSkins", "/NoteSkins" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Packages", "/" + SpecialFiles::USER_PACKAGES_DIR );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Screenshots", "/Screenshots" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Songs", "/Songs" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/RandomMovies", "/RandomMovies" );
-	FILEMAN->Mount( "dir", sAppDataDir + "/Themes", "/Themes" );
+	if (DoesFileExist("/Portable.ini")) {
+		MountDirectories(sDir);
+	}
+}
+
+void ArchHooks::MountUserFilesystems(const RString& sDirOfExecutable) {
+	RString sAppDataDir = SpecialDirs::GetAppDataDir() + PRODUCT_ID;
+	MountDirectories(sAppDataDir);
 }
 
 static RString LangIdToString( LANGID l )
@@ -200,7 +209,7 @@ RString ArchHooks::GetPreferredLanguage()
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -210,7 +219,7 @@ RString ArchHooks::GetPreferredLanguage()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

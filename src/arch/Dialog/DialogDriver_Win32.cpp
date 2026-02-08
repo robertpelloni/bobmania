@@ -9,7 +9,6 @@
 
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/ErrorStrings.h"
-#include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
 #include "archutils/Win32/SpecialDirs.h"
 #if !defined(SMPACKAGE)
@@ -54,7 +53,7 @@ static INT_PTR CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			// Set static text.
 			RString sMessage = g_sMessage;
 			sMessage.Replace( "\n", "\r\n" );
-			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
+			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage.c_str() );
 
 			// Focus is on any of the controls in the dialog by default.
 			// I'm not sure why. Set focus to the button manually. -Chris
@@ -72,7 +71,7 @@ static INT_PTR CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		{
 		case IDOK:
 			g_bHush = !!IsDlgButtonChecked( hWnd, IDC_HUSH );
-			// fall through
+			[[fallthrough]];
 		case IDCANCEL:
 			EndDialog( hWnd, 0 );
 			break;
@@ -120,7 +119,7 @@ Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
 
 #if !defined(SMPACKAGE)
 	//DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
-	int result = ::MessageBox( nullptr, sMessage, GetWindowTitle(), MB_OKCANCEL );
+	int result = ::MessageBox( nullptr, sMessage.c_str(), GetWindowTitle().c_str(), MB_OKCANCEL );
 #else
 	int result = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_OKCANCEL, 0 );
 #endif
@@ -146,11 +145,11 @@ static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	case WM_INITDIALOG:
 		{
 			DialogUtil::SetHeaderFont( hWnd, IDC_STATIC_HEADER_TEXT );
-		
+
 			// Set static text
 			RString sMessage = g_sErrorString;
 			sMessage.Replace( "\n", "\r\n" );
-			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
+			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage.c_str() );
 		}
 		break;
 	case WM_COMMAND:
@@ -164,7 +163,7 @@ static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 				RString sAppDataDir = SpecialDirs::GetAppDataDir();
 				RString sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
-				CreateProcess(
+				CreateProcess( // TODO: resolve Warning C6335 "leaking process information"
 					nullptr,		// pointer to name of executable module
 					const_cast<char *>(sCommand.c_str()),	// pointer to command line string
 					nullptr,  // process security attributes
@@ -179,12 +178,10 @@ static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			}
 			break;
 		case IDC_BUTTON_REPORT:
-			GotoURL( REPORT_BUG_URL );
+			// safe to remove this button?
 			break;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();
-			// Possibly make W32RP a NORETURN call?
-			FAIL_M("Win32RestartProgram failed?");
 		case IDOK:
 			EndDialog( hWnd, 0 );
 			break;
@@ -201,7 +198,7 @@ static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			{
 			case IDC_STATIC_HEADER_TEXT:
 			case IDC_STATIC_ICON:
-				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 				SetBkMode( hdc, OPAQUE );
 				SetBkColor( hdc, RGB(255,255,255) );
 				break;
@@ -244,7 +241,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString I
 	default:
 		FAIL_M(ssprintf("Unexpected response to Abort/Retry/Ignore dialog: %i", iRet));
 	}
-} 
+}
 
 Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 {
@@ -261,7 +258,7 @@ Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 	default:
 		FAIL_M(ssprintf("Unexpected response to Retry/Cancel dialog: %i", iRet));
 	}
-} 
+}
 
 Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
 {
@@ -283,7 +280,7 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -293,7 +290,7 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

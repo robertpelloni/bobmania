@@ -6,6 +6,8 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 
+#include <cstddef>
+#include <cstdint>
 
 #if defined(WINDOWS)
 #include <windows.h>
@@ -364,7 +366,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 		m_hResolve = WSAAsyncGetHostByName(
 			mw.GetHwnd(),
 			WM_USER,
-			m_sHost,
+			m_sHost.c_str(),
 			(char *) pHost,
 			MAXGETHOSTSTRUCT
 		);
@@ -439,7 +441,7 @@ void NetworkStream_Win32::Close()
 {
 	if( m_State == STATE_IDLE )
 		return;
-	
+
 	/* If we have an active, stable connection, make sure we flush any data
 	 * completely before closing. If you don't want to do this, call Cancel()
 	 * first. */
@@ -582,7 +584,7 @@ NetworkPostData::~NetworkPostData()
 }
 
 /** @brief Create a MIME multipart data block from the given set of fields. */
-void NetworkPostData::CreateMimeData( const map<RString,RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut )
+void NetworkPostData::CreateMimeData( const std::map<RString, RString> &mapNameToData, RString &sOut, RString &sMimeBoundaryOut )
 {
 	// Find a non-conflicting mime boundary.
 	while(1)
@@ -667,7 +669,7 @@ void NetworkPostData::HttpThread()
 
 	// Parse the results.
 	int iStart = 0, iSize = -1;
-	map<RString,RString> mapHeaders;
+	std::map<RString, RString> mapHeaders;
 	while( 1 )
 	{
 		split( sResult, "\n", iStart, iSize, false );
@@ -747,7 +749,7 @@ void NetworkPostData::SetData( const RString &sKey, const RString &sData )
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -757,7 +759,7 @@ void NetworkPostData::SetData( const RString &sKey, const RString &sData )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

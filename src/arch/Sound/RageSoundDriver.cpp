@@ -6,45 +6,66 @@
 
 #include "arch/arch_default.h"
 
+#include <cstddef>
+#include <vector>
+
+namespace
+{
+	void WarnUserAboutBadSoundDriverEntry()
+	{
+		std::vector<RString> list = GetDefaultSoundDriverList();
+		RString list_string = join( ",", list );
+		RString trace = RString(" - Valid sound drivers for your OS are: ") + list_string;
+		LOG->Trace("%s", trace.c_str());
+		LOG->Trace(" - Make sure the driver entry is spelled correctly, and is supported on your OS.");
+	}
+}  // namespace
+
 DriverList RageSoundDriver::m_pDriverList;
 
 RageSoundDriver *RageSoundDriver::Create( const RString& drivers )
 {
-	vector<RString> drivers_to_try;
+	std::vector<RString> driversToTry;
 	if(drivers.empty())
 	{
-		split(DEFAULT_SOUND_DRIVER_LIST, ",", drivers_to_try);
+		driversToTry = GetDefaultSoundDriverList();
 	}
 	else
 	{
-		split(drivers, ",", drivers_to_try);
-		size_t to_try= 0;
-		bool had_to_erase= false;
-		while(to_try < drivers_to_try.size())
+		size_t start = 0;
+		size_t end = drivers.find(',');
+
+		while (end != RString::npos)
 		{
-			if(m_pDriverList.m_pRegistrees->find(istring(drivers_to_try[to_try]))
-				== m_pDriverList.m_pRegistrees->end())
+			driversToTry.emplace_back(drivers.substr(start, end - start));
+			start = end + 1;
+			end = drivers.find(',', start);
+		}
+
+		driversToTry.emplace_back(drivers.substr(start));
+
+		size_t to_try = 0;
+
+		while (to_try < driversToTry.size())
+		{
+			if (std::find(GetDefaultSoundDriverList().begin(), GetDefaultSoundDriverList().end(), driversToTry[to_try]) == GetDefaultSoundDriverList().end())
 			{
-				LOG->Warn("Removed unusable sound driver %s", drivers_to_try[to_try].c_str());
-				drivers_to_try.erase(drivers_to_try.begin() + to_try);
-				had_to_erase= true;
+				LOG->Warn("Removed unusable sound driver %s", driversToTry[to_try].c_str());
+				WarnUserAboutBadSoundDriverEntry();
+				driversToTry.erase(driversToTry.begin() + to_try);
 			}
 			else
 			{
 				++to_try;
 			}
 		}
-		if(had_to_erase)
+		if(driversToTry.empty())
 		{
-			SOUNDMAN->fix_bogus_sound_driver_pref(join(",", drivers_to_try));
-		}
-		if(drivers_to_try.empty())
-		{
-			split(DEFAULT_SOUND_DRIVER_LIST, ",", drivers_to_try);
+			driversToTry = GetDefaultSoundDriverList();
 		}
 	}
 
-	for (RString const &Driver : drivers_to_try)
+	for (RString const &Driver : driversToTry)
 	{
 		RageDriver *pDriver = m_pDriverList.Create( Driver );
 		char const *driverString = Driver.c_str();
@@ -64,20 +85,20 @@ RageSoundDriver *RageSoundDriver::Create( const RString& drivers )
 			return pRet;
 		}
 		LOG->Info( "Couldn't load driver %s: %s", driverString, sError.c_str() );
-		SAFE_DELETE( pRet );
+		RageUtil::SafeDelete( pRet );
 	}
 	return nullptr;
 }
 
-RString RageSoundDriver::GetDefaultSoundDriverList()
+std::vector<RString> RageSoundDriver::GetSoundDriverList()
 {
-	return DEFAULT_SOUND_DRIVER_LIST;
+	return GetDefaultSoundDriverList();
 }
 
 /*
  * (c) 2002-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -87,7 +108,7 @@ RString RageSoundDriver::GetDefaultSoundDriverList()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

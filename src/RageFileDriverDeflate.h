@@ -5,6 +5,9 @@
 
 #include "RageFileBasic.h"
 
+#include <cstddef>
+#include <cstdint>
+
 typedef struct z_stream_s z_stream;
 
 class RageFileObjInflate: public RageFileObj
@@ -50,7 +53,7 @@ protected:
 	int ReadInternal( void * /* pBuffer */, size_t /* iBytes */ ) { SetError( "Not implemented" ); return -1; }
 	int WriteInternal( const void *pBuffer, size_t iBytes );
 	int FlushInternal();
-	
+
 	RageFileBasic *m_pFile;
 	z_stream *m_pDeflate;
 	bool m_bFileOwned;

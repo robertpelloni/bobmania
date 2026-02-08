@@ -3,9 +3,12 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#if defined(_WINDOWS)
+#include <vector>
+
+#if defined(_WIN32)
 
 #include "archutils/Win32/ErrorStrings.h"
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
@@ -18,7 +21,7 @@ static bool CodePageConvert( RString &sText, int iCodePage )
 		return false; /* error */
 	}
 
-	wstring sOut;
+	std::wstring sOut;
 	sOut.append( iSize, ' ' );
 	/* Nonportable: */
 	iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), (wchar_t *) sOut.data(), iSize );
@@ -33,6 +36,7 @@ static bool AttemptKoreanConversion( RString &sText ) { return CodePageConvert( 
 static bool AttemptJapaneseConversion( RString &sText ) { return CodePageConvert( sText, 932 ); }
 
 #elif defined(HAVE_ICONV)
+#include <cstddef>
 #include <errno.h>
 #include <iconv.h>
 
@@ -85,21 +89,22 @@ static bool AttemptKoreanConversion( RString &sText ) { return ConvertFromCharse
 static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromCharset( sText, "CP932" ); }
 
 #elif defined(MACOSX)
+#include <cstddef>
 #include <CoreFoundation/CoreFoundation.h>
 
 static bool ConvertFromCP( RString &sText, int iCodePage )
 {
 	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( iCodePage );
-	
+
 	if( encoding == kCFStringEncodingInvalidId )
 		return false;
-	
-	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
-	
+
+	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText.c_str(), encoding );
+
 	if( old == nullptr )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
-	
+
 	char *buf = new char[size+1];
 	buf[0] = '\0';
 	bool result = CFStringGetCString( old, buf, size, kCFStringEncodingUTF8 );
@@ -127,7 +132,7 @@ bool ConvertString( RString &str, const RString &encodings )
 	if( str.empty() )
 		return true;
 
-	vector<RString> lst;
+	std::vector<RString> lst;
 	split( encodings, ",", lst );
 
 	for(unsigned i = 0; i < lst.size(); ++i)

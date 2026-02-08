@@ -3,6 +3,9 @@
 
 #include "LightsDriver.h"
 
+#include <cstddef>
+#include <cstdint>
+
 /*
  * Utility functions that both `LightsDriver_Win32Serial` and `LightsDriver_SextetStream`
  * take advantage of, in order to encode the lights data into a common format.

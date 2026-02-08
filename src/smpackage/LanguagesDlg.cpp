@@ -20,8 +20,10 @@
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
 #include "archutils/Win32/SpecialDirs.h"
-#include "archutils/Win32/GotoURL.h"
 #include "archutils/Win32/ErrorStrings.h"
+
+#include <vector>
+
 
 // LanguagesDlg dialog
 
@@ -49,10 +51,10 @@ BOOL LanguagesDlg::OnInitDialog()
 
 	DialogUtil::LocalizeDialogAndContents( *this );
 
-	vector<RString> vs;
+	std::vector<RString> vs;
 	GetDirListing( SpecialFiles::THEMES_DIR+"*", vs, true );
 	StripCvsAndSvn( vs );
-	for (vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+	for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
 		m_listThemes.AddString( *s );
 	if( !vs.empty() )
 		m_listThemes.SetSel( 0 );
@@ -87,7 +89,7 @@ static void SelectString( CListBox &list, const RString &sToSelect )
 	}
 }
 
-void LanguagesDlg::OnSelchangeListThemes() 
+void LanguagesDlg::OnSelchangeListThemes()
 {
 	// TODO: Add your control notification handler code here
 	m_listLanguages.ResetContent();
@@ -97,9 +99,9 @@ void LanguagesDlg::OnSelchangeListThemes()
 	{
 		RString sLanguagesDir = SpecialFiles::THEMES_DIR + sTheme + "/" + SpecialFiles::LANGUAGES_SUBDIR;
 
-		vector<RString> vs;
+		std::vector<RString> vs;
 		GetDirListing( sLanguagesDir+"*.ini", vs, false );
-		for (vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+		for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
 		{
 			RString sIsoCode = GetFileNameWithoutExtension(*s);
 			RString sLanguage = SMPackageUtil::GetLanguageDisplayString(sIsoCode);
@@ -152,7 +154,7 @@ static int GetNumIntersectingIniValues( const RString &sIniFile1, const RString 
 	return count;
 }
 
-void LanguagesDlg::OnSelchangeListLanguages() 
+void LanguagesDlg::OnSelchangeListLanguages()
 {
 	// TODO: Add your control notification handler code here
 	int iTotalStrings = -1;
@@ -175,15 +177,15 @@ void LanguagesDlg::OnSelchangeListLanguages()
 		}
 	}
 
-	GetDlgItem(IDC_STATIC_TOTAL_STRINGS		)->SetWindowText( ssprintf(iTotalStrings==-1?"":"%d",iTotalStrings) ); 
-	GetDlgItem(IDC_STATIC_NEED_TRANSLATION	)->SetWindowText( ssprintf(iNeedTranslation==-1?"":"%d",iNeedTranslation) ); 
+	GetDlgItem(IDC_STATIC_TOTAL_STRINGS		)->SetWindowText( ssprintf(iTotalStrings==-1?"":"%d",iTotalStrings) );
+	GetDlgItem(IDC_STATIC_NEED_TRANSLATION	)->SetWindowText( ssprintf(iNeedTranslation==-1?"":"%d",iNeedTranslation) );
 
-	GetDlgItem(IDC_BUTTON_CREATE)->EnableWindow( !sTheme.empty() ); 
-	GetDlgItem(IDC_BUTTON_DELETE)->EnableWindow( !sLanguage.empty() ); 
-	GetDlgItem(IDC_BUTTON_EXPORT)->EnableWindow( !sLanguage.empty() ); 
+	GetDlgItem(IDC_BUTTON_CREATE)->EnableWindow( !sTheme.empty() );
+	GetDlgItem(IDC_BUTTON_DELETE)->EnableWindow( !sLanguage.empty() );
+	GetDlgItem(IDC_BUTTON_EXPORT)->EnableWindow( !sLanguage.empty() );
 	GetDlgItem(IDC_BUTTON_IMPORT)->EnableWindow( !sLanguage.empty() );
 	GetDlgItem(IDC_CHECK_LANGUAGE)->EnableWindow( !sLanguage.empty() );
-	GetDlgItem(IDC_CHECK_EXPORT_ALREADY_TRANSLATED)->EnableWindow( !sLanguage.empty() ); 
+	GetDlgItem(IDC_CHECK_EXPORT_ALREADY_TRANSLATED)->EnableWindow( !sLanguage.empty() );
 }
 
 
@@ -274,7 +276,7 @@ void LanguagesDlg::OnBnClickedButtonExport()
 	ini2.ReadFile( sLanguageFile );
 	int iNumExpored = 0;
 
-	vector<RString> vs;
+	std::vector<RString> vs;
 	vs.push_back( "Section" );
 	vs.push_back( "ID" );
 	vs.push_back( "Base Language Value" );
@@ -301,7 +303,7 @@ void LanguagesDlg::OnBnClickedButtonExport()
 			bool bAlreadyTranslated = !tl.sCurrentLanguage.empty();
 			if( !bAlreadyTranslated || bExportAlreadyTranslated )
 			{
-				vector<RString> vs;
+				std::vector<RString> vs;
 				vs.push_back( tl.sSection );
 				vs.push_back( tl.sID );
 				vs.push_back( tl.sBaseLanguage );
@@ -318,7 +320,7 @@ void LanguagesDlg::OnBnClickedButtonExport()
 	file.Open( sFullFile, RageFile::WRITE );
 	if( iNumExpored == 0 )
 	{
-		Dialog::OK( THERE_ARE_NO_STRINGS_TO_EXPORT.GetValue() );	
+		Dialog::OK( THERE_ARE_NO_STRINGS_TO_EXPORT.GetValue() );
 		return;
 	}
 
@@ -388,7 +390,7 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	int iNumModified = 0;
 	int iNumUnchanged = 0;
 	int iNumIgnored = 0;
-	for (vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
+	for (std::vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
 	{
 		int iLineIndex = line - csv.m_vvs.begin();
 
@@ -444,13 +446,13 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	OnSelchangeListThemes();
 }
 
-void GetAllMatches( const RString &sRegex, const RString &sString, vector<RString> &asOut )
+void GetAllMatches( const RString &sRegex, const RString &sString, std::vector<RString> &asOut )
 {
 	Regex re( sRegex + "(.*)$");
 	RString sMatch( sString );
 	while(1)
 	{
-		vector<RString> asMatches;
+		std::vector<RString> asMatches;
 		if( !re.Compare(sMatch, asMatches) )
 			break;
 		asOut.push_back( asMatches[0] );
@@ -458,10 +460,10 @@ void GetAllMatches( const RString &sRegex, const RString &sString, vector<RStrin
 	}
 }
 
-void DumpList( const vector<RString> &asList, RageFile &file )
+void DumpList( const std::vector<RString> &asList, RageFile &file )
 {
 	RString sLine;
-	for (vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
+	for (std::vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
 	{
 		if( sLine.size() + s->size() > 100 )
 		{
@@ -519,10 +521,10 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 				 * languages with substantially different word order rules than English. */
 				{
 					RString sRegex = "(&[A-Za-z]+;|%{[A-Za-z]+}|%[+-]?[0-9]*.?[0-9]*[sidf]|%)";
-					vector<RString> asMatchesBase;
+					std::vector<RString> asMatchesBase;
 					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
 
-					vector<RString> asMatches;
+					std::vector<RString> asMatches;
 					GetAllMatches( sRegex, sCurrentLanguage, asMatches );
 
 					if( asMatchesBase.size() != asMatches.size() ||
@@ -538,10 +540,10 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 				 * of the above. */
 				{
 					RString sRegex = "(\"|::|\\n)";
-					vector<RString> asMatchesBase;
+					std::vector<RString> asMatchesBase;
 					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
 
-					vector<RString> asMatches;
+					std::vector<RString> asMatches;
 					GetAllMatches( sRegex, sCurrentLanguage, asMatches );
 
 					if( asMatchesBase.size() != asMatches.size() ||
@@ -598,7 +600,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	{
 		FOREACH_CONST_Child( &ini2, key )
 		{
-			vector<RString> asList;
+			std::vector<RString> asList;
 			const RString &sSection = key->m_sName;
 			FOREACH_CONST_Attr( key, value )
 			{
@@ -620,7 +622,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	{
 		FOREACH_CONST_Child( &ini1, key )
 		{
-			vector<RString> asList;
+			std::vector<RString> asList;
 			const RString &sSection = key->m_sName;
 			FOREACH_CONST_Attr( key, value )
 			{
@@ -643,6 +645,4 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	}
 
 	file.Close();
-
-	GotoURL( ssprintf("file://%s", sFullFile.c_str()) );
 }

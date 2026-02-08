@@ -3,6 +3,9 @@
 #include "RageUtil.h"
 #include "RageUtil_AutoPtr.h"
 
+#include <cstddef>
+#include <cstdint>
+
 REGISTER_CLASS_TRAITS( RageFileBasic, pCopy->Copy() );
 
 RageFileObj::RageFileObj()
@@ -108,7 +111,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 		if( m_pReadBuffer != nullptr && m_iReadBufAvail )
 		{
 			/* Copy data out of the buffer first. */
-			int iFromBuffer = min( (int) iBytes, m_iReadBufAvail );
+			int iFromBuffer = std::min( (int) iBytes, m_iReadBufAvail );
 			memcpy( pBuffer, m_pReadBuf, iFromBuffer );
 			if( m_bCRC32Enabled )
 				CRC32( m_iCRC32, pBuffer, iFromBuffer );
@@ -169,7 +172,7 @@ int RageFileObj::Read( RString &sBuffer, int iBytes )
 	{
 		int ToRead = sizeof(buf);
 		if( iBytes != -1 )
-			ToRead  = min( ToRead, iBytes-iRet );
+			ToRead  = std::min( ToRead, iBytes-iRet );
 
 		const int iGot = Read( buf, ToRead );
 		if( iGot == 0 )
@@ -439,7 +442,7 @@ int RageFileObj::FillReadBuf()
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
 	 * for seeking backwards.) */
 	const int iBufAvail = BSIZE - (m_pReadBuf-m_pReadBuffer) - m_iReadBufAvail;
-	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pReadBuf, m_pReadBuffer, (int) BSIZE ) );
+	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", static_cast<void*>(m_pReadBuf), static_cast<void*>(m_pReadBuffer), BSIZE ) );
 	const int iSize = this->ReadInternal( m_pReadBuf+m_iReadBufAvail, iBufAvail );
 
 	if( iSize > 0 )

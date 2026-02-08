@@ -3,6 +3,9 @@
 
 #include "EnumHelper.h"
 
+#include <vector>
+
+
 static const int MAX_OPTIONS=16;
 enum OptEffect
 {
@@ -13,7 +16,9 @@ enum OptEffect
 	OPT_APPLY_SOUND				=	(1<<4),
 	OPT_APPLY_SONG				=	(1<<5),
 	OPT_APPLY_ASPECT_RATIO		=	(1<<6),
-	NUM_OptEffect				=	7,
+	OPT_APPLY_PROFILES			=	(1<<7),
+	OPT_RELOAD_SONGS			=	(1<<8),
+	NUM_OptEffect				=	9,
 	OptEffect_Invalid			=	MAX_OPTIONS+1
 };
 const RString& OptEffectToString( OptEffect e );
@@ -41,7 +46,7 @@ struct ConfOption
 
 	/* Return the list of available selections; Get() and Put() use indexes into
 	 * this array. UpdateAvailableOptions() should be called before using this. */
-	void MakeOptionsList( vector<RString> &out ) const;
+	void MakeOptionsList( std::vector<RString> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
 	inline void Put( int sel ) const { MoveData( sel, false, this ); }
@@ -59,11 +64,11 @@ struct ConfOption
 #define PUSH( c )	if(c) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 	}
-	void AddOption( const RString &sName ) { PUSH(sName); }
+	void AddOption( const RString &sName ) { PUSH(sName.c_str()); }
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
-			void (*lst)( vector<RString> &out ) )
+			void (*lst)( std::vector<RString> &out ) )
 	{
 		name = n;
 		MoveData = m;
@@ -74,8 +79,8 @@ struct ConfOption
 
 
 // private:
-	vector<RString> names;
-	void (*MakeOptionsListCB)( vector<RString> &out );
+	std::vector<RString> names;
+	void (*MakeOptionsListCB)( std::vector<RString> &out );
 };
 
 #endif
@@ -85,7 +90,7 @@ struct ConfOption
  * @author Glenn Maynard (c) 2003-2004
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -95,7 +100,7 @@ struct ConfOption
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

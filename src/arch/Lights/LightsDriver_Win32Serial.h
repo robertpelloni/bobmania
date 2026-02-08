@@ -11,6 +11,8 @@
 #include "LightsDriver.h"
 #include "SextetUtils.h"
 
+#include <cstdint>
+
 class LightsDriver_Win32Serial : public LightsDriver
 {
 protected:

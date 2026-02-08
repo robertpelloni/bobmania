@@ -5,6 +5,8 @@
 
 #include "RageTexture.h"
 
+#include <cstddef>
+
 class RageBitmapTexture : public RageTexture
 {
 public:

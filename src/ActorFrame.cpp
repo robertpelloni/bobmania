@@ -10,9 +10,11 @@
 #include "RageDisplay.h"
 #include "ScreenDimensions.h"
 
+#include <cstdint>
+#include <vector>
 
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
- * We don't want classes that derive from ActorFrame to auto delete their 
+ * We don't want classes that derive from ActorFrame to auto delete their
  * children.  The name "ActorFrame" is widely used in Lua, so we'll have
  * that string instead create an ActorFrameAutoDeleteChildren object.
  */
@@ -140,7 +142,7 @@ void ActorFrame::AddChild( Actor *pActor )
 {
 #ifdef DEBUG
 	// check that this Actor isn't already added.
-	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
+	std::vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
 		Dialog::OK( ssprintf("Actor \"%s\" adds child \"%s\" more than once", GetLineage().c_str(), pActor->GetName().c_str()) );
 #endif
@@ -154,7 +156,7 @@ void ActorFrame::AddChild( Actor *pActor )
 
 void ActorFrame::RemoveChild( Actor *pActor )
 {
-	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
+	std::vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter != m_SubActors.end() )
 		m_SubActors.erase( iter );
 }
@@ -169,8 +171,9 @@ Actor* ActorFrame::GetChild( const RString &sName )
 {
 	for (Actor *a : m_SubActors)
 	{
-		if( a->GetName() == sName )
+		if (a->GetName() == sName || a->IsAlias(sName)) {
 			return a;
+		}
 	}
 	return nullptr;
 }
@@ -182,7 +185,7 @@ void ActorFrame::RemoveAllChildren()
 
 void ActorFrame::MoveToTail( Actor* pActor )
 {
-	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
+	std::vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter == m_SubActors.end() )	// didn't find
 		FAIL_M("Nonexistent actor");
 
@@ -192,7 +195,7 @@ void ActorFrame::MoveToTail( Actor* pActor )
 
 void ActorFrame::MoveToHead( Actor* pActor )
 {
-	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
+	std::vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
 	if( iter == m_SubActors.end() )	// didn't find
 		FAIL_M("Nonexistent actor");
 
@@ -226,7 +229,7 @@ void ActorFrame::DrawPrimitives()
 		m_bClearZBuffer = false;
 	}
 
-	// Don't set Actor-defined render states because we won't be drawing 
+	// Don't set Actor-defined render states because we won't be drawing
 	// any geometry that belongs to this object.
 	// Actor::DrawPrimitives();
 
@@ -259,7 +262,7 @@ void ActorFrame::DrawPrimitives()
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	if( m_bDrawByZPosition )
 	{
-		vector<Actor*> subs = m_SubActors;
+		std::vector<Actor*> subs = m_SubActors;
 		ActorUtil::SortByZPosition( subs );
 		for( unsigned i=0; i<subs.size(); i++ )
 		{
@@ -409,19 +412,19 @@ void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
 	int found= 0;
 	for (Actor *a: m_SubActors)
 	{
-		if(a->GetName() == sName)
+		if (a->GetName() == sName || a->IsAlias(sName))
 		{
-			switch(found)
+			if (found == 0)
 			{
-				case 0:
-					a->PushSelf(L);
-					break;
-				case 1:
-					CreateChildTable(L, a);
-					break;
-				default:
-					AddToChildTable(L, a);
-					break;
+				a->PushSelf(L);
+			}
+			else if (found == 1)
+			{
+				CreateChildTable(L, a);
+			}
+			else
+			{
+				AddToChildTable(L, a);
 			}
 			++found;
 		}
@@ -474,7 +477,7 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 	Actor::UpdateInternal( fDeltaTime );
 
 	// update all sub-Actors
-	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
+	for( std::vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
 	{
 		Actor *pActor = *it;
 		pActor->Update(fDeltaTime);
@@ -531,7 +534,7 @@ float ActorFrame::GetTweenTimeLeft() const
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 	{
 		const Actor* pActor = m_SubActors[i];
-		m = max(m, m_fHibernateSecondsLeft + pActor->GetTweenTimeLeft());
+		m = std::max(m, m_fHibernateSecondsLeft + pActor->GetTweenTimeLeft());
 	}
 
 	return m;
@@ -577,7 +580,7 @@ void ActorFrame::HandleMessage( const Message &msg )
 	if( msg.IsBroadcast() )
 		return;
 
-	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 	{
 		Actor* pActor = m_SubActors[i];
 		pActor->HandleMessage( msg );
@@ -593,7 +596,7 @@ void ActorFrame::SetDrawByZPosition( bool b )
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the ActorFrame. */ 
+/** @brief Allow Lua to have access to the ActorFrame. */
 class LunaActorFrame : public Luna<ActorFrame>
 {
 public:
@@ -659,7 +662,7 @@ public:
 			p->SetDrawFunction( ref );
 			COMMON_RETURN_SELF;
 		}
-		
+
 		luaL_checktype( L, 1, LUA_TFUNCTION );
 
 		LuaReference ref;
@@ -683,7 +686,7 @@ public:
 			p->SetUpdateFunction( ref );
 			COMMON_RETURN_SELF;
 		}
-		
+
 		luaL_checktype( L, 1, LUA_TFUNCTION );
 
 		LuaReference ref;
@@ -702,7 +705,7 @@ public:
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
 		lua_pushvalue( L, 1 );
-		vector<float> coords;
+		std::vector<float> coords;
 		LuaHelpers::ReadArrayFromTable( coords, L );
 		lua_pop( L, 1 );
 		if( coords.size() !=3 )
@@ -734,7 +737,7 @@ public:
 		if(child)
 		{
 			p->RemoveChild(child);
-			SAFE_DELETE(child);
+			RageUtil::SafeDelete(child);
 		}
 		COMMON_RETURN_SELF;
 	}
@@ -769,7 +772,7 @@ public:
 		ADD_METHOD( AddChildFromPath );
 		ADD_METHOD( RemoveChild );
 		ADD_METHOD( RemoveAllChildren );
-		
+
 	}
 };
 
@@ -779,7 +782,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrame, Actor )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -789,7 +792,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrame, Actor )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

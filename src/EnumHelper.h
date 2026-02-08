@@ -68,16 +68,22 @@ namespace Enum
 	}
 
 	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName );
+
+	template<typename E>
+	constexpr auto to_integral(E e)
+	{
+		return static_cast<typename std::underlying_type<E>::type>(e);
+	}
 };
 
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, unique_ptr<RString> *pNameCache ); // XToString helper
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
 
 #define XToString(X) \
 const RString& X##ToString(X x); \
-COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
+static_assert( NUM_##X == ARRAYLEN(X##Names) ); \
 const RString& X##ToString( X x ) \
 {	\
-	static unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
+	static std::unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
 	return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 } \
 namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
@@ -86,12 +92,12 @@ namespace StringConversion { template<> RString ToString<X>( const X &value ) { 
 const RString &X##ToLocalizedString(X x); \
 const RString &X##ToLocalizedString( X x ) \
 {       \
-	static unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
+	static std::unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
 	if( g_##X##Name[0].get() == nullptr ) { \
 		for( unsigned i = 0; i < NUM_##X; ++i ) \
 		{ \
-			unique_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
-			g_##X##Name[i] = move(ap); \
+			std::unique_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
+			g_##X##Name[i] = std::move(ap); \
 		} \
 	} \
 	return g_##X##Name[x]->GetValue();  \
@@ -127,7 +133,7 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
-		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, ((#X "_")+s).c_str() ); \
 		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
 	} \
 	EnumTraits<X>::EnumToString.SetFromStack( L ); \
@@ -138,12 +144,12 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
-		lua_pushstring( L, (#X "_")+s ); \
+		lua_pushstring( L, ((#X "_")+s).c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, case-insensitive values */ \
 		s.MakeLower(); \
-		lua_pushstring( L, s ); \
+		lua_pushstring( L, s.c_str() ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 		/* Compatibility with old, raw values */ \
@@ -180,7 +186,7 @@ namespace LuaHelpers \
  * @author Chris Danford, Glenn Maynard (c) 2004-2006
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -190,7 +196,7 @@ namespace LuaHelpers \
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

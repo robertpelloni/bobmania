@@ -5,6 +5,8 @@
 
 #include "RageFileBasic.h"
 
+#include <cstddef>
+
 class RageFileDriverSlice: public RageFileObj
 {
 public:

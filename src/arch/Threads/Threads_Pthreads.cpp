@@ -4,8 +4,11 @@
 #include "RageTimer.h"
 #include "RageThreads.h"
 #include "RageUtil.h"
+
+#include <cerrno>
+#include <cstddef>
+#include <cstdint>
 #include <sys/time.h>
-#include <errno.h>
 
 #if defined(UNIX)
 #include "archutils/Unix/RunningUnderValgrind.h"
@@ -244,7 +247,7 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
-#endif // On MinGW clockid_t is defined in pthread.h
+#endif
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
@@ -457,7 +460,7 @@ bool SemaImpl_Pthreads::TryWait()
 	return true;
 }
 #else
-// Use conditions, to work around OS X "forgetting" to implement semaphores.
+// Use conditions, to work around macOS "forgetting" to implement semaphores.
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	int ret = pthread_cond_init( &m_Cond, nullptr );

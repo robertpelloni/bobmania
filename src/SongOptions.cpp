@@ -4,6 +4,10 @@
 #include "GameState.h"
 #include "CommonMetrics.h"
 
+#include <cmath>
+#include <vector>
+
+
 static const char *AutosyncTypeNames[] = {
 	"Off",
 	"Song",
@@ -22,22 +26,6 @@ static const char *SoundEffectTypeNames[] = {
 XToString( SoundEffectType );
 XToLocalizedString( SoundEffectType );
 LuaXType( SoundEffectType );
-
-void SongOptions::Init() 
-{
-	m_bAssistClap = false;
-	m_bAssistMetronome = false;
-	m_fMusicRate = 1.0f;
-	m_SpeedfMusicRate = 1.0f;
-	m_fHaste = 0.0f;
-	m_SpeedfHaste = 1.0f;
-	m_AutosyncType = AutosyncType_Off;
-	m_SoundEffectType = SoundEffectType_Off;
-	m_bStaticBackground = false;
-	m_bRandomBGOnly = false;
-	m_bSaveScore = true;
-	m_bSaveReplay = false; // don't save replays by default?
-}
 
 void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 {
@@ -60,17 +48,17 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 #undef DO_COPY
 }
 
-static void AddPart( vector<RString> &AddTo, float level, RString name )
+static void AddPart( std::vector<RString> &AddTo, float level, RString name )
 {
 	if( level == 0 )
 		return;
 
-	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", lrintf(level*100) );
+	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%ld%% ", std::lrint(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
 
-void SongOptions::GetMods( vector<RString> &AddTo ) const
+void SongOptions::GetMods( std::vector<RString> &AddTo ) const
 {
 	if( m_fMusicRate != 1 )
 	{
@@ -112,7 +100,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 		AddTo.push_back( "RandomBG" );
 }
 
-void SongOptions::GetLocalizedMods( vector<RString> &v ) const
+void SongOptions::GetLocalizedMods( std::vector<RString> &v ) const
 {
 	GetMods( v );
 	for (RString &s : v)
@@ -123,14 +111,14 @@ void SongOptions::GetLocalizedMods( vector<RString> &v ) const
 
 RString SongOptions::GetString() const
 {
-	vector<RString> v;
+	std::vector<RString> v;
 	GetMods( v );
 	return join( ", ", v );
 }
 
 RString SongOptions::GetLocalizedString() const
 {
-	vector<RString> v;
+	std::vector<RString> v;
 	GetLocalizedMods( v );
 	return join( ", ", v );
 }
@@ -141,7 +129,7 @@ RString SongOptions::GetLocalizedString() const
 void SongOptions::FromString( const RString &sMultipleMods )
 {
 	RString sTemp = sMultipleMods;
-	vector<RString> vs;
+	std::vector<RString> vs;
 	split( sTemp, ",", vs, true );
 	RString sThrowAway;
 	for (RString &s : vs)
@@ -157,7 +145,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	Trim( sBit );
 
 	Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
-	vector<RString> matches;
+	std::vector<RString> matches;
 	if( mult.Compare(sBit, matches) )
 	{
 		m_fMusicRate = StringToFloat( matches[0] );
@@ -166,7 +154,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 
 	matches.clear();
 
-	vector<RString> asParts;
+	std::vector<RString> asParts;
 	split( sBit, " ", asParts, true );
 	bool on = true;
 	if( asParts.size() > 1 )
@@ -179,7 +167,7 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	if( sBit == "clap" )				m_bAssistClap = on;
 	else if( sBit == "metronome" )				m_bAssistMetronome = on;
 	else if( sBit == "autosync" || sBit == "autosyncsong" )	m_AutosyncType = on ? AutosyncType_Song : AutosyncType_Off;
-	else if( sBit == "autosyncmachine" )			m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off; 
+	else if( sBit == "autosyncmachine" )			m_AutosyncType = on ? AutosyncType_Machine : AutosyncType_Off;
 	else if( sBit == "autosynctempo" )			m_AutosyncType = on ? AutosyncType_Tempo : AutosyncType_Off;
 	else if( sBit == "effect" && !on )			m_SoundEffectType = SoundEffectType_Off;
 	else if( sBit == "effectspeed" )			m_SoundEffectType = on ? SoundEffectType_Speed : SoundEffectType_Off;
@@ -195,20 +183,17 @@ bool SongOptions::FromOneModString( const RString &sOneMod, RString &sErrorOut )
 	return true;
 }
 
-bool SongOptions::operator==( const SongOptions &other ) const
-{
-#define COMPARE(x) { if( x != other.x ) return false; }
-	COMPARE( m_fMusicRate );
-	COMPARE( m_fHaste );
-	COMPARE( m_bAssistClap );
-	COMPARE( m_bAssistMetronome );
-	COMPARE( m_AutosyncType );
-	COMPARE( m_SoundEffectType );
-	COMPARE( m_bStaticBackground );
-	COMPARE( m_bRandomBGOnly );
-	COMPARE( m_bSaveScore );
-	COMPARE( m_bSaveReplay );
-#undef COMPARE
+bool SongOptions::operator==(const SongOptions& other) const {
+	if (m_fMusicRate != other.m_fMusicRate) return false;
+	if (m_fHaste != other.m_fHaste) return false;
+	if (m_bAssistClap != other.m_bAssistClap) return false;
+	if (m_bAssistMetronome != other.m_bAssistMetronome) return false;
+	if (m_AutosyncType != other.m_AutosyncType) return false;
+	if (m_SoundEffectType != other.m_SoundEffectType) return false;
+	if (m_bStaticBackground != other.m_bStaticBackground) return false;
+	if (m_bRandomBGOnly != other.m_bRandomBGOnly) return false;
+	if (m_bSaveScore != other.m_bSaveScore) return false;
+	if (m_bSaveReplay != other.m_bSaveReplay) return false;
 	return true;
 }
 
@@ -254,7 +239,7 @@ LUA_REGISTER_CLASS( SongOptions )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -264,7 +249,7 @@ LUA_REGISTER_CLASS( SongOptions )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

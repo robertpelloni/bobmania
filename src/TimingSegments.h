@@ -3,6 +3,10 @@
 
 #include "NoteTypes.h" // Converting rows to beats and vice~versa.
 
+#include <cmath>
+#include <vector>
+
+
 enum TimingSegmentType
 {
 	SEGMENT_BPM,
@@ -36,9 +40,6 @@ const RString& TimingSegmentTypeToString( TimingSegmentType tst );
 
 const int ROW_INVALID = -1;
 
-#define COMPARE(x) if( this->x!=other.x ) return false
-#define COMPARE_FLOAT(x) if( fabsf(this->x - other.x) > EPSILON ) return false
-
 /**
  * @brief The base timing segment for make glorious benefit wolfman
  * XXX: this should be an abstract class.
@@ -60,7 +61,12 @@ struct TimingSegment
 		m_iStartRow( other.GetRow() ) { }
 
 	// for our purposes, two floats within this level of error are equal
-	static const double EPSILON;
+	static constexpr double EPSILON = 1e-6;
+
+	// A helper for testing equality of two floats within a level of error epsilon.
+	bool AreEqual(float f1, float f2) const {
+		return std::abs(f1 - f2) < EPSILON;
+	}
 
 	virtual ~TimingSegment() { }
 
@@ -83,9 +89,9 @@ struct TimingSegment
 		return std::to_string(GetBeat());
 	}
 
-	virtual vector<float> GetValues() const
+	virtual std::vector<float> GetValues() const
 	{
-		return vector<float>(0);
+		return std::vector<float>(0);
 	}
 
 	bool operator<( const TimingSegment &other ) const
@@ -153,11 +159,13 @@ struct FakeSegment : public TimingSegment
 	void Scale( int start, int length, int newLength );
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetLength()); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetLength()); }
 
 	bool operator==( const FakeSegment &other ) const
 	{
-		COMPARE( m_iLengthRows );
+		if (m_iLengthRows != other.m_iLengthRows) {
+			return false;
+		}
 		return true;
 	}
 
@@ -211,11 +219,13 @@ struct WarpSegment : public TimingSegment
 
 	void Scale( int start, int length, int newLength );
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetLength()); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetLength()); }
 
 	bool operator==( const WarpSegment &other ) const
 	{
-		COMPARE( m_iLengthRows );
+		if (m_iLengthRows != other.m_iLengthRows) {
+			return false;
+		}
 		return true;
 	}
 
@@ -266,11 +276,13 @@ struct TickcountSegment : public TimingSegment
 	void SetTicks( int iTicks ) { m_iTicksPerBeat = iTicks; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetTicks() * 1.f); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetTicks() * 1.f); }
 
 	bool operator==( const TickcountSegment &other ) const
 	{
-		COMPARE( m_iTicksPerBeat );
+		if (m_iTicksPerBeat != other.m_iTicksPerBeat) {
+			return false;
+		}
 		return true;
 	}
 
@@ -318,12 +330,16 @@ struct ComboSegment : public TimingSegment
 	void SetMissCombo( int iCombo ) { m_iMissCombo = iCombo; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const;
+	std::vector<float> GetValues() const;
 
 	bool operator==( const ComboSegment &other ) const
 	{
-		COMPARE( m_iCombo );
-		COMPARE( m_iMissCombo );
+		if (m_iCombo != other.m_iCombo) {
+			return false;
+		}
+		if (m_iMissCombo != other.m_iMissCombo) {
+			return false;
+		}
 		return true;
 	}
 
@@ -375,7 +391,9 @@ struct LabelSegment : public TimingSegment
 
 	bool operator==( const LabelSegment &other ) const
 	{
-		COMPARE( m_sLabel );
+		if (m_sLabel != other.m_sLabel) {
+			return false;
+		}
 		return true;
 	}
 
@@ -419,12 +437,11 @@ struct BPMSegment : public TimingSegment
 	void SetBPM( float fBPM ) { m_fBPS = fBPM / 60.0f; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetBPM()); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetBPM()); }
 
 	bool operator==( const BPMSegment &other ) const
 	{
-		COMPARE_FLOAT( m_fBPS );
-		return true;
+		return AreEqual(m_fBPS, other.m_fBPS);
 	}
 
 	bool operator==( const TimingSegment &other ) const
@@ -476,7 +493,7 @@ struct TimeSignatureSegment : public TimingSegment
 	void Set( int num, int den ) { m_iNumerator = num; m_iDenominator = den; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const;
+	std::vector<float> GetValues() const;
 
 	/**
 	 * @brief Retrieve the number of note rows per measure within the TimeSignatureSegment.
@@ -495,8 +512,12 @@ struct TimeSignatureSegment : public TimingSegment
 
 	bool operator==( const TimeSignatureSegment &other ) const
 	{
-		COMPARE( m_iNumerator );
-		COMPARE( m_iDenominator );
+		if (m_iNumerator != other.m_iNumerator) {
+			return false;
+		}
+		if (m_iDenominator != other.m_iDenominator) {
+			return false;
+		}
 		return true;
 	}
 
@@ -558,13 +579,19 @@ struct SpeedSegment : public TimingSegment
 	void Scale( int start, int length, int newLength );
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const;
+	std::vector<float> GetValues() const;
 
 	bool operator==( const SpeedSegment &other ) const
 	{
-		COMPARE_FLOAT( m_fRatio );
-		COMPARE_FLOAT( m_fDelay );
-		COMPARE( m_Unit );
+		if (!AreEqual(m_fRatio, other.m_fRatio)) {
+			return false;
+		}
+		if (!AreEqual(m_fDelay, other.m_fDelay)) {
+			return false;
+		}
+		if (m_Unit != other.m_Unit) {
+			return false;
+		}
 		return true;
 	}
 
@@ -618,12 +645,11 @@ struct ScrollSegment : public TimingSegment
 	void SetRatio( float fRatio ) { m_fRatio = fRatio; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetRatio()); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetRatio()); }
 
 	bool operator==( const ScrollSegment &other ) const
 	{
-		COMPARE_FLOAT( m_fRatio );
-		return true;
+		return AreEqual(m_fRatio, other.m_fRatio);
 	}
 
 	bool operator==( const TimingSegment &other ) const
@@ -663,12 +689,11 @@ struct StopSegment : public TimingSegment
 	void SetPause( float fSeconds ) { m_fSeconds = fSeconds; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetPause()); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetPause()); }
 
 	bool operator==( const StopSegment &other ) const
 	{
-		COMPARE_FLOAT( m_fSeconds );
-		return true;
+		return AreEqual(m_fSeconds, other.m_fSeconds);
 	}
 
 	bool operator==( const TimingSegment &other ) const
@@ -707,12 +732,11 @@ struct DelaySegment : public TimingSegment
 	void SetPause( float fSeconds ) { m_fSeconds = fSeconds; }
 
 	RString ToString( int dec ) const;
-	vector<float> GetValues() const { return vector<float>(1, GetPause()); }
+	std::vector<float> GetValues() const { return std::vector<float>(1, GetPause()); }
 
 	bool operator==( const DelaySegment &other ) const
 	{
-		COMPARE_FLOAT( m_fSeconds );
-		return true;
+		return AreEqual(m_fSeconds, other.m_fSeconds);
 	}
 
 	bool operator==( const TimingSegment &other ) const
@@ -727,9 +751,6 @@ private:
 	float m_fSeconds;
 };
 
-#undef COMPARE
-#undef COMPARE_FLOAT
-
 #endif
 
 /**
@@ -737,7 +758,7 @@ private:
  * @author Jason Felds (c) 2011
  * @section LICENSE
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -747,7 +768,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -15,6 +15,10 @@
 #include "RageLog.h"
 #include "RageFileBasic.h"
 
+#include <cstdint>
+#include <vector>
+
+
 namespace
 {
 	/* pBuf contains iSamples 8-bit samples; convert to 16-bit.  pBuf must
@@ -134,7 +138,7 @@ struct WavReaderPCM: public WavReader
 		if( !iBytesLeftInDataChunk )
 			return RageSoundReader::END_OF_FILE;
 
-		len = min( len, iBytesLeftInDataChunk );
+		len = std::min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
 
 		int iGotSamples = iGot / iBytesPerSample;
@@ -192,11 +196,11 @@ struct WavReaderPCM: public WavReader
 struct WavReaderADPCM: public WavReader
 {
 public:
-	vector<int16_t> m_iaCoef1, m_iaCoef2;
+	std::vector<int16_t> m_iaCoef1, m_iaCoef2;
 	int16_t m_iFramesPerBlock;
 	float *m_pBuffer;
 	int m_iBufferAvail, m_iBufferUsed;
-	
+
 	WavReaderADPCM( RageFileBasic &f, const RageSoundReader_WAV::WavData &data ):
 		WavReader(f, data)
 	{
@@ -286,7 +290,7 @@ public:
 		}
 
 		/* We've read the block header; read the rest.  Don't read past the end of the data chunk. */
-		int iMaxSize = min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
+		int iMaxSize = std::min( (int) m_WavData.m_iBlockAlign - 7 * m_WavData.m_iChannels, (m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos) - m_File.Tell() );
 
 		char *pBuf = (char *) alloca( iMaxSize );
 
@@ -334,7 +338,7 @@ public:
 				int32_t iPredSample = (iSamp1[c] * iCoef1[c] + iSamp2[c] * iCoef2[c]) / (1<<8);
 				if( iPredSample < -32768 ) iPredSample = -32768;
 				if( iPredSample > 32767 )  iPredSample = 32767;
-				
+
 				int16_t iNewSample = (int16_t)iPredSample + (iDelta[c] * iErrorDelta);
 				pBuffer[m_iBufferAvail++] = iNewSample / 32768.0f;
 
@@ -343,22 +347,22 @@ public:
 					768, 614, 512, 409, 307, 230, 230, 230
 				};
 				iDelta[c] = int16_t( (iDelta[c] * aAdaptionTable[iErrorDeltaUnsigned]) / (1<<8) );
-				iDelta[c] = max( (int16_t) 16, iDelta[c] );
-				
+				iDelta[c] = std::max( (int16_t) 16, iDelta[c] );
+
 				iSamp2[c] = iSamp1[c];
 				iSamp1[c] = iNewSample;
 			}
 		}
-		
+
 		return true;
 	}
 
 	int Read( float *buf, int iFrames )
 	{
 		int iGotFrames = 0;
-		
+
 		int iSample = 0;
-		
+
 		while( iGotFrames < (int) iFrames )
 		{
 			if( m_iBufferUsed == m_iBufferAvail )
@@ -386,15 +390,15 @@ public:
 	{
 		const int iNumWholeBlocks = m_WavData.m_iDataChunkSize / m_WavData.m_iBlockAlign;
 		const int iExtraBytes = m_WavData.m_iDataChunkSize - (iNumWholeBlocks*m_WavData.m_iBlockAlign);
-		
+
 		int iFrames = iNumWholeBlocks * m_iFramesPerBlock;
 
 		const int iBlockHeaderSize = 7 * m_WavData.m_iChannels;
 		if( iExtraBytes > iBlockHeaderSize )
 		{
-			const int iExtraADPCMNibbles = max( 0, iExtraBytes-iBlockHeaderSize )*2;
+			const int iExtraADPCMNibbles = std::max( 0, iExtraBytes-iBlockHeaderSize )*2;
 			const int iExtraADPCMFrames = iExtraADPCMNibbles/m_WavData.m_iChannels;
-			
+
 			iFrames += 2+iExtraADPCMFrames;
 		}
 
@@ -625,7 +629,7 @@ RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -635,7 +639,7 @@ RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

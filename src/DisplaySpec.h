@@ -22,16 +22,13 @@ struct DisplayMode {
 	 * configuration
 	 */
 
-	bool operator<( const DisplayMode &other ) const
-	{
-/** @brief A quick way to compare the two DisplayResolutions. */
-#define COMPARE(x) if( x != other.x ) return x < other.x;
-		COMPARE( width );
-		COMPARE( height );
-		COMPARE( refreshRate );
-#undef COMPARE
+	bool operator<(const DisplayMode& other) const {
+		if (width != other.width) return width < other.width;
+		if (height != other.height) return height < other.height;
+		if (refreshRate != other.refreshRate) return refreshRate < other.refreshRate;
 		return false;
 	}
+
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -89,14 +86,15 @@ public:
 	}
 
 	// Create a specification for a display supporting a single (and currently active) mode
-	DisplaySpec(std::string id, std::string name, DisplayMode mode) : m_sId( id ), m_sName( name ), m_bIsVirtual( false ),
-		m_bCurModeActive( true ), m_CurMode( mode )
+	DisplaySpec(std::string id, std::string name, DisplayMode mode) : m_sId( id ), m_sName( name ),
+		m_bCurModeActive( true ), m_CurMode( mode ), m_bIsVirtual( false )
 	{
 		m_sModes.insert( mode );
 		m_rectBounds = RectI( 0, 0, mode.width, mode.height );
 	}
 
 	DisplaySpec( const DisplaySpec &other ) = default;
+	DisplaySpec& operator=(const DisplaySpec& other) = default;
 
 	std::string name() const
 	{

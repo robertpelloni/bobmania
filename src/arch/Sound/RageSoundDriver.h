@@ -6,6 +6,9 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil_CircularBuffer.h"
+#include "RageSound.h"
+
+#include <cstdint>
 
 class RageSoundBase;
 class RageTimer;
@@ -18,7 +21,7 @@ public:
 	/* Pass an empty string to get the default sound driver list. */
 	static RageSoundDriver *Create( const RString &sDrivers );
 	static DriverList m_pDriverList;
-	static RString GetDefaultSoundDriverList();
+	static std::vector<RString> GetSoundDriverList();
 
 	friend class RageSoundManager;
 
@@ -35,7 +38,7 @@ public:
 
 	/* A RageSound calls this to request it not be played.  When this function
 	 * returns, snd is no longer valid; ensure no running threads are still
-	 * accessing it before returning.  This must handle gracefully the case where 
+	 * accessing it before returning.  This must handle gracefully the case where
 	 * snd was not actually being played, though it may print a warning. */
 	void StopMixing( RageSoundBase *pSound );
 
@@ -50,7 +53,6 @@ public:
 	 * RageSound::CommitPlayingPosition. */
 	int64_t GetHardwareFrame( RageTimer *pTimer ) const;
 	virtual int64_t GetPosition() const = 0;
-	void low_sample_count_workaround();
 
 	/* When a sound is finished playing (GetDataToPlay returns 0) and the sound has
 	 * been completely flushed (so GetPosition is no longer meaningful), call
@@ -65,7 +67,7 @@ public:
 	 * hearing it.  (This isn't necessarily the same as the buffer latency.) */
 	virtual float GetPlayLatency() const { return 0.0f; }
 
-	virtual int GetSampleRate() const { return 44100; }
+	virtual int GetSampleRate() const { return kFallbackSampleRate; }
 
 protected:
 	/* Start the decoding.  This should be called once the hardware is set up and
@@ -77,7 +79,7 @@ protected:
 	 * at once.  This should generally be slightly larger than the sound writeahead,
 	 * to allow filling the buffer after an underrun.  The default is 4096 frames. */
 	void SetDecodeBufferSize( int frames );
-	
+
 	/* Override this to set the priority of the decoding thread, which should be above
 	 * normal priority but not realtime. */
 	virtual void SetupDecodingThread() { }
@@ -98,7 +100,7 @@ protected:
 	void Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 	void Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 
-	void MixDeinterlaced( float **pBufs, int channels, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
+	void MixDeinterlaced( float **pBufs, int iChannels, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 
 private:
 	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
@@ -133,13 +135,13 @@ private:
 	 * HALTING: The main thread has called StopMixing or the data buffer is empty.  The mixing
 	 * thread will flush any remaining buffered data without playing it, and then move the
 	 * sound to STOPPED.
-	 * 
+	 *
 	 * The mixing thread operates without any locks.  This can lead to a little overlap.  For
 	 * example, if StopMixing() is called, moving the sound from PLAYING to HALTING, the mixing
 	 * thread might be in the middle of mixing data.  Although HALTING means "discard buffered
 	 * data", some data will still be mixed.  This is OK; the data is valid, and the flush will
 	 * happen on the next iteration.
-	 * 
+	 *
 	 * The only state change made by the decoding thread is on EOF: the state is changed
 	 * from PLAYING to STOPPING.  This is done while m_Mutex is held, to prevent
 	 * races with other threads.
@@ -157,7 +159,7 @@ private:
 		int m_FramesInBuffer; // total number of frames at m_BufferNext
 		int64_t m_iPosition; // stream frame of m_BufferNext
 		sound_block(): m_BufferNext(m_Buffer),
-			m_FramesInBuffer(0), m_iPosition(0) {} 
+			m_FramesInBuffer(0), m_iPosition(0) {}
 	};
 
 	struct Sound
@@ -203,7 +205,6 @@ private:
 	int64_t ClampHardwareFrame( int64_t iHardwareFrame ) const;
 	mutable int64_t m_iMaxHardwareFrame;
 	mutable int64_t m_iVMaxHardwareFrame;
-	mutable int32_t soundDriverMaxSamples = 0;
 
 	bool m_bShutdownDecodeThread;
 
@@ -224,7 +225,7 @@ private:
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -234,7 +235,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

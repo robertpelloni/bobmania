@@ -1,11 +1,16 @@
 #include "global.h"
 #include "DSoundHelpers.h"
+#include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageSound.h"
 #include "archutils/Win32/DirectXHelpers.h"
 #include "archutils/Win32/GetFileInformation.h"
 
-#if defined(_WINDOWS)
+#include <cmath>
+#include <cstdint>
+
+#if defined(_WIN32)
 #include <mmsystem.h>
 #endif
 #define DIRECTSOUND_VERSION 0x0700
@@ -40,7 +45,7 @@ void DSound::SetPrimaryBufferMode()
 {
 	DSBUFFERDESC format;
 	memset( &format, 0, sizeof(format) );
-	format.dwSize = sizeof(format);
+	format.dwSize = sizeof(DSBUFFERDESC);
 	format.dwFlags = DSBCAPS_PRIMARYBUFFER;
 	format.dwBufferBytes = 0;
 	format.lpwfxFormat = nullptr;
@@ -59,8 +64,13 @@ void DSound::SetPrimaryBufferMode()
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 	waveformat.wBitsPerSample = 16;
 	waveformat.nChannels = 2;
-	waveformat.nSamplesPerSec = 44100;
-	waveformat.nBlockAlign = 4;
+	int preferredSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if (preferredSampleRate == 0)
+	{
+		preferredSampleRate = kFallbackSampleRate;
+	}
+	waveformat.nSamplesPerSec = preferredSampleRate;
+	waveformat.nBlockAlign = (waveformat.nChannels * waveformat.wBitsPerSample) / 8;
 	waveformat.nAvgBytesPerSec = waveformat.nSamplesPerSec * waveformat.nBlockAlign;
 
 	// Set the primary buffer's format
@@ -78,7 +88,7 @@ void DSound::SetPrimaryBufferMode()
 	/*
 	 * MS docs:
 	 *
-	 * When there are no sounds playing, DirectSound stops the mixer engine and halts DMA 
+	 * When there are no sounds playing, DirectSound stops the mixer engine and halts DMA
 	 * (direct memory access) activity. If your application has frequent short intervals of
 	 * silence, the overhead of starting and stopping the mixer each time a sound is played
 	 * may be worse than the DMA overhead if you kept the mixer active. Also, some sound
@@ -90,7 +100,7 @@ void DSound::SetPrimaryBufferMode()
 	 *
 	 * However, I just added the above code and I don't want to change more until it's tested.
 	 */
-//	pBuffer->Play( 0, 0, DSBPLAY_LOOPING );
+	pBuffer->Play( 0, 0, DSBPLAY_LOOPING );
 
 	pBuffer->Release();
 }
@@ -117,7 +127,6 @@ RString DSound::Init()
 
 		DSCAPS Caps;
 		Caps.dwSize = sizeof(Caps);
-		HRESULT hr;
 		if( FAILED(hr = m_pDS->GetCaps(&Caps)) )
 		{
 			LOG->Warn( hr_ssprintf(hr, "m_pDS->GetCaps failed") );
@@ -162,9 +171,27 @@ bool DSound::IsEmulated() const
 }
 
 DSoundBuf::DSoundBuf()
+:	m_pBuffer(nullptr),
+	m_iLastCursors{{0, 0}, {0, 0}, {0, 0}, {0, 0}},
+	m_pLockedBuf1(nullptr),
+	m_pLockedBuf2(nullptr),
+	m_pTempBuffer(nullptr),
+	m_iLockedSize1(0),
+	m_iLockedSize2(0),
+	m_iWriteCursor(0),
+	m_iWriteCursorPos(0),
+	m_iBufferBytesFilled(0),
+	m_iExtraWriteahead(0),
+	m_bBufferLocked(false),
+	m_bPlaying(false),
+	m_iBufferSize(0),
+	m_iChannels(0),
+	m_iLastPosition(0),
+	m_iSampleBits(0),
+	m_iSampleRate(0),
+	m_iVolume(-1),
+	m_iWriteAhead(0)
 {
-	m_pBuffer = nullptr;
-	m_pTempBuffer = nullptr;
 }
 
 RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
@@ -180,12 +207,12 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	m_iExtraWriteahead = 0;
 	m_iLastPosition = 0;
 	m_bPlaying = false;
-	ZERO( m_iLastCursors );
+	memset( &(m_iLastCursors), 0, sizeof(m_iLastCursors) );
 
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
 	m_iBufferSize = 1024*64;
-	m_iBufferSize = max( m_iBufferSize, m_iWriteAhead );
+	m_iBufferSize = std::max( m_iBufferSize, m_iWriteAhead );
 
 	WAVEFORMATEX waveformat;
 	memset( &waveformat, 0, sizeof(waveformat) );
@@ -193,9 +220,10 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 
 	bool bNeedCtrlFrequency = false;
+	// DYNAMIC_SAMPLERATE is usually 0 or some special value
 	if( m_iSampleRate == DYNAMIC_SAMPLERATE )
 	{
-		m_iSampleRate = 44100;
+		m_iSampleRate = kFallbackSampleRate;
 		bNeedCtrlFrequency = true;
 	}
 
@@ -209,9 +237,9 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	/* Try to create the secondary buffer */
 	DSBUFFERDESC format;
 	memset( &format, 0, sizeof(format) );
-	format.dwSize = sizeof(format);
+	format.dwSize = sizeof(DSBUFFERDESC);
 
-	if (at_least_vista())
+	if (IsWindowsVistaOrGreater())
 	{
 		format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_TRUEPLAYPOSITION;
 	}
@@ -250,7 +278,7 @@ RString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	{
 		LOG->Warn( "bcaps.dwBufferBytes (%i) != m_iBufferSize(%i); adjusting", bcaps.dwBufferBytes, m_iBufferSize );
 		m_iBufferSize = bcaps.dwBufferBytes;
-		m_iWriteAhead = min( m_iWriteAhead, m_iBufferSize );
+		m_iWriteAhead = std::min( m_iWriteAhead, m_iBufferSize );
 	}
 
 	if( !(bcaps.dwFlags & DSBCAPS_CTRLVOLUME) )
@@ -281,13 +309,13 @@ void DSoundBuf::SetSampleRate( int hz )
 void DSoundBuf::SetVolume( float fVolume )
 {
 	ASSERT_M( fVolume >= 0 && fVolume <= 1, ssprintf("%f",fVolume) );
-	
+
 	if( fVolume == 0 )
-		fVolume = 0.001f;		// fix log10f(0) == -INF
-	float iVolumeLog2 = log10f(fVolume) / log10f(2); /* vol log 2 */
+		fVolume = 0.001f;		// fix log10(0) == -INF
+	float iVolumeLog2 = std::log10(fVolume) / std::log10(2); /* vol log 2 */
 
 	/* Volume is a multiplier; SetVolume wants attenuation in hundredths of a decibel. */
-	const int iNewVolume = max( int(1000 * iVolumeLog2), DSBVOLUME_MIN );
+	const int iNewVolume = std::max( int(1000 * iVolumeLog2), DSBVOLUME_MIN );
 
 	if( m_iVolume == iNewVolume )
 		return;
@@ -339,7 +367,8 @@ void DSoundBuf::CheckWriteahead( int iCursorStart, int iCursorEnd )
 	int iPrefetch = iCursorEnd - iCursorStart;
 	wrap( iPrefetch, m_iBufferSize );
 
-	if( iPrefetch >= 1024*32 )
+	constexpr int kMaxAllowedPrefetch = 1024 * 32; // 32 KB
+	if( iPrefetch >= kMaxAllowedPrefetch )
 	{
 		static bool bLogged = false;
 		if( bLogged )
@@ -488,11 +517,11 @@ bool DSoundBuf::get_output_buf( char **pBuffer, unsigned *pBufferSize, int iChun
 		wrap( bytes_played, m_iBufferSize );
 
 		m_iBufferBytesFilled -= bytes_played;
-		m_iBufferBytesFilled = max( 0, m_iBufferBytesFilled );
+		m_iBufferBytesFilled = std::max( 0, m_iBufferBytesFilled );
 
 		if( m_iExtraWriteahead )
 		{
-			int used = min( m_iExtraWriteahead, bytes_played );
+			int used = std::min( m_iExtraWriteahead, bytes_played );
 			RString s = ssprintf("used %i of %i (%i..%i)", used, m_iExtraWriteahead, iCursorStart, iCursorEnd );
 			s += "; last: ";
 			for( int i = 0; i < 4; ++i )
@@ -591,7 +620,7 @@ int64_t DSoundBuf::GetPosition() const
 
 	/* Failsafe: never return a value smaller than we've already returned.
 	 * This can happen once in a while in underrun conditions. */
-	iRet = max( m_iLastPosition, iRet );
+	iRet = std::max( m_iLastPosition, iRet );
 	m_iLastPosition = iRet;
 
 	return iRet;
@@ -631,7 +660,7 @@ void DSoundBuf::Stop()
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -641,7 +670,7 @@ void DSoundBuf::Stop()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

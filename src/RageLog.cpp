@@ -6,10 +6,13 @@
 #include "RageThreads.h"
 
 #include <ctime>
-#if defined(_WINDOWS)
+#include <cstdarg>
+#include <map>
+#include <vector>
+
+#if defined(_WIN32)
 #include <windows.h>
 #endif
-#include <map>
 
 RageLog* LOG;		// global and accessible from anywhere in the program
 
@@ -51,7 +54,7 @@ RageLog* LOG;		// global and accessible from anywhere in the program
  *
  * The identifier is never displayed, so we can use a simple local object to
  * map/unmap, using any mechanism to generate unique IDs. */
-static map<RString, RString> LogMaps;
+static std::map<RString, RString> LogMaps;
 
 #define LOG_PATH	"/Logs/log.txt"
 #define INFO_PATH	"/Logs/info.txt"
@@ -87,9 +90,9 @@ m_bUserLogToDisk(false), m_bFlush(false), m_bShowLogOutput(false)
 	g_fileUserLog = new RageFile;
 	g_fileTimeLog = new RageFile;
 
-	if(!g_fileTimeLog->Open(TIME_PATH, RageFile::WRITE|RageFile::STREAMED))
+	if(m_bLogToDisk && !g_fileTimeLog->Open(TIME_PATH, RageFile::WRITE|RageFile::STREAMED))
 	{ fprintf(stderr, "Couldn't open %s: %s\n", TIME_PATH, g_fileTimeLog->GetError().c_str()); }
-	
+
 	g_Mutex = new RageMutex( "Log" );
 }
 
@@ -97,7 +100,7 @@ RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
 	const RString AdditionalLog = GetAdditionalLog();
-	vector<RString> AdditionalLogLines;
+	std::vector<RString> AdditionalLogLines;
 	split( AdditionalLog, "\n", AdditionalLogLines );
 	for( unsigned i = 0; i < AdditionalLogLines.size(); ++i )
 	{
@@ -112,10 +115,10 @@ RageLog::~RageLog()
 	g_fileUserLog->Close();
 	g_fileTimeLog->Close();
 
-	SAFE_DELETE( g_Mutex );
-	SAFE_DELETE( g_fileLog );
-	SAFE_DELETE( g_fileInfo );
-	SAFE_DELETE( g_fileUserLog );
+	RageUtil::SafeDelete( g_Mutex );
+	RageUtil::SafeDelete( g_fileLog );
+	RageUtil::SafeDelete( g_fileInfo );
+	RageUtil::SafeDelete( g_fileUserLog );
 }
 
 void RageLog::SetLogToDisk( bool b )
@@ -158,9 +161,9 @@ void RageLog::SetUserLogToDisk( bool b )
 {
 	if( m_bUserLogToDisk == b )
 		return;
-	
+
 	m_bUserLogToDisk = b;
-	
+
 	if( !m_bUserLogToDisk )
 	{
 		if( g_fileUserLog->IsOpen() )
@@ -181,11 +184,12 @@ void RageLog::SetShowLogOutput( bool show )
 {
 	m_bShowLogOutput = show;
 
-#if defined(WIN32)
+#if defined(_WIN32)
 	if( m_bShowLogOutput )
 	{
 		// create a new console window and attach standard handles
 		AllocConsole();
+		SetConsoleOutputCP(CP_UTF8);
 		freopen( "CONOUT$","wb", stdout );
 		freopen( "CONOUT$","wb", stderr );
 	}
@@ -244,10 +248,10 @@ void RageLog::UserLog( const RString &sType, const RString &sElement, const char
 	va_start( va, fmt );
 	RString sBuf = vssprintf( fmt, va );
 	va_end( va );
-	
+
 	if( !sType.empty() )
 		sBuf = ssprintf( "%s \"%s\" %s", sType.c_str(), sElement.c_str(), sBuf.c_str() );
-	
+
 	Write( WRITE_TO_USER_LOG, sBuf );
 }
 
@@ -256,7 +260,7 @@ void RageLog::Write( int where, const RString &sLine )
 	LockMut( *g_Mutex );
 
 	const char *const sWarningSeparator = "/////////////////////////////////////////";
-	vector<RString> asLines;
+	std::vector<RString> asLines;
 	split( sLine, "\n", asLines, false );
 	if( where & WRITE_LOUD )
 	{
@@ -265,7 +269,7 @@ void RageLog::Write( int where, const RString &sLine )
 		puts( sWarningSeparator );
 	}
 
-	RString sTimestamp = SecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStart() ) + ": ";
+	RString sTimestamp = MicrosecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStartMicroseconds() ) + ": ";
 	RString sWarning;
 	if( where & WRITE_LOUD )
 		sWarning = "WARNING: ";
@@ -278,7 +282,7 @@ void RageLog::Write( int where, const RString &sLine )
 			sStr.insert( 0, sWarning );
 
 		if( m_bShowLogOutput || (where&WRITE_TO_INFO) )
-			puts(sStr); //fputws( (const wchar_t *)sStr.c_str(), stdout );
+			puts(sStr.c_str()); //fputws( (const wchar_t *)sStr.c_str(), stdout );
 		if( where & WRITE_TO_INFO )
 			AddToInfo( sStr );
 		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
@@ -290,11 +294,11 @@ void RageLog::Write( int where, const RString &sLine )
 		 * and stdout. */
 		sStr.insert( 0, sTimestamp );
 
-		if(where & WRITE_TO_TIME)
+		if( m_bLogToDisk && (where & WRITE_TO_TIME))
 			g_fileTimeLog->PutLine(sStr);
 
 		AddToRecentLogs( sStr );
-		
+
 		if( m_bLogToDisk && g_fileLog->IsOpen() )
 			g_fileLog->PutLine( sStr );
 	}
@@ -328,13 +332,13 @@ void RageLog::AddToInfo( const RString &str )
 	static bool limit_reached = false;
 	if( limit_reached )
 		return;
-	
+
 	unsigned len = str.size() + strlen( NEWLINE );
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
 		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
-		
-		const unsigned pos = min( staticlog_size, sizeof(staticlog) - txt.size() );
+
+		const unsigned int pos = std::min<unsigned int>(staticlog_size, sizeof(staticlog) - txt.size());
 		memcpy( staticlog+pos, txt.data(), txt.size() );
 		limit_reached = true;
 		return;
@@ -361,7 +365,7 @@ void RageLog::AddToRecentLogs( const RString &str )
 	if( len > sizeof(backlog[backlog_start])-1 )
 		len = sizeof(backlog[backlog_start])-1;
 
-	strncpy( backlog[backlog_start], str, len );
+	strncpy( backlog[backlog_start], str.c_str(), len );
 	backlog[backlog_start] [ len ] = 0;
 
 	backlog_start++;
@@ -396,14 +400,14 @@ void RageLog::UpdateMappedLog()
 	for (auto const &i : LogMaps)
 		str += ssprintf( "%s" NEWLINE, i.second.c_str() );
 
-	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
+	g_AdditionalLogSize = std::min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
 	g_AdditionalLogStr[ sizeof(g_AdditionalLogStr)-1 ] = 0;
 }
 
 const char *RageLog::GetAdditionalLog()
 {
-	int size = min( g_AdditionalLogSize, (int) sizeof(g_AdditionalLogStr)-1 );
+	int size = std::min( g_AdditionalLogSize, (int) sizeof(g_AdditionalLogStr)-1 );
 	g_AdditionalLogStr[size] = 0;
 	return g_AdditionalLogStr;
 }
@@ -425,6 +429,11 @@ void RageLog::UnmapLog( const RString &key )
 {
 	LogMaps.erase( key );
 	UpdateMappedLog();
+}
+
+void ShowWarningOrTrace( const char *file, int line, const RString& message, bool bWarning )
+{
+	ShowWarningOrTrace(file, line, message.c_str(), bWarning);
 }
 
 void ShowWarningOrTrace( const char *file, int line, const char *message, bool bWarning )

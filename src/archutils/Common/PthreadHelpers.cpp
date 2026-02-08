@@ -9,15 +9,17 @@
 #include "archutils/Unix/RunningUnderValgrind.h"
 #endif
 
+#include <cerrno>
+#include <cstdint>
+#include <cstdlib>
+
 #if defined(LINUX)
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#include <stdlib.h>
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/ptrace.h>
@@ -87,7 +89,7 @@ static int waittid( int ThreadID, int *status, int options )
 			return ret;
 		bSupportsWall = false;
 	}
-			
+
 	/* XXX: on 2.2, we need to use __WCLONE only if ThreadID isn't the main thread;
 	 * perhaps wait and retry without it if errno == ECHILD? */
 	int ret;
@@ -133,7 +135,7 @@ static uint64_t GetCurrentThreadIdInternal()
 	 * usable, unique ID, then mutexes won't work. */
 	if( RunningUnderValgrind() )
 		return (int) pthread_self();
-	
+
 	InitializePidThreadHelpers(); // for g_bUsingNPTL
 
 	/* Don't keep calling gettid() if it's not supported; it'll make valgrind spam us. */
@@ -283,7 +285,7 @@ int ResumeThread( uint64_t id )
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -293,7 +295,7 @@ int ResumeThread( uint64_t id )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

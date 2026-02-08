@@ -3,14 +3,16 @@
 #include "global.h"
 #include "BacktraceNames.h"
 
+#include <cerrno>
+#include <cstdarg>
+#include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <cstdarg>
+#include <cstring>
 #if defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #endif
-#include <cstring>
-#include <cerrno>
 
 #include "RageUtil.h"
 

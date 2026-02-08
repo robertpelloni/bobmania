@@ -7,6 +7,10 @@
 #include "RageTimer.h"
 #include "RageSoundPosMap.h"
 
+#include <cstdint>
+
+constexpr int kFallbackSampleRate = 44100;
+
 class RageSoundReader;
 struct lua_State;
 
@@ -92,7 +96,7 @@ public:
 	 *
 	 * If cache == false, we'll always stream the sound on demand, which
 	 * makes loads much faster.
-	 * 
+	 *
 	 * If the file failed to load, false is returned, Error() is set
 	 * and a null sample will be loaded.  This makes failed loads nonfatal;
 	 * they can be ignored most of the time, so we continue to work if a file
@@ -100,7 +104,7 @@ public:
 	 */
 	bool Load( RString sFile, bool bPrecache, const RageSoundLoadParams *pParams = nullptr );
 
-	/* Using this version means the "don't care" about caching. Currently, 
+	/* Using this version means the "don't care" about caching. Currently,
 	 * this always will not cache the sound; this may become a preference. */
 	bool Load( RString sFile );
 
@@ -129,7 +133,7 @@ public:
 	bool Pause( bool bPause );
 
 	float GetLengthSeconds();
-	float GetPositionSeconds( bool *approximate=nullptr, RageTimer *Timestamp=nullptr ) const;
+	float GetPositionSeconds( RageTimer *Timestamp=nullptr ) const;
 	RString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return m_bPlaying; }
 
@@ -164,7 +168,7 @@ private:
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
 	 * when we stop (too slow), but we want to be able to report the position we
-	 * were at when we stopped without jumping to the last position we buffered. 
+	 * were at when we stopped without jumping to the last position we buffered.
 	 * Keep track of the position after a seek or stop, so we can return a sane
 	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
 	int m_iStoppedSourceFrame;
@@ -173,7 +177,7 @@ private:
 
 	RString m_sError;
 
-	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = nullptr ) const;
+	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame ) const;
 
 	bool SetPositionFrames( int frames = -1 );
 	RageSoundParams::StopMode_t GetStopMode() const; // resolves M_AUTO

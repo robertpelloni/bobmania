@@ -6,9 +6,19 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
+#if LINUX
+// FIXME: bit gross to include this here, see GH issue #73:
+// https://github.com/itgmania/itgmania/issues/73#issuecomment-2597176788
+#include "arch/InputHandler/LinuxInputManager.h"
+#endif
+
+#include <vector>
+
+
 RageInput* INPUTMAN = nullptr; // global and accessible from anywhere in our program
 
 Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
+Preference<RString> g_sInputDeviceOrder( "InputDeviceOrder", "" ); // "" == DEFAULT_LINUX_INPUT_DEVICE_ORDER_LIST
 
 namespace
 {
@@ -16,8 +26,8 @@ namespace
 	{
 		InputHandler *m_pDevice;
 	};
-	vector<LoadedInputHandler> m_InputHandlers;
-	map<InputDevice, InputHandler *> g_mapDeviceToHandler;
+	std::vector<LoadedInputHandler> m_InputHandlers;
+	std::map<InputDevice, InputHandler*> g_mapDeviceToHandler;
 }
 
 RageInput::RageInput()
@@ -56,8 +66,15 @@ void RageInput::LoadDrivers()
 	m_InputHandlers.clear();
 	g_mapDeviceToHandler.clear();
 
+#if LINUX
+	// Recreating this forces it to re-scan for devices.
+	if( LINUXINPUT != nullptr )
+		delete LINUXINPUT;
+	LINUXINPUT = new LinuxInputManager;
+#endif
+
 	// Init optional devices.
-	vector<InputHandler *> apDevices;
+	std::vector<InputHandler *> apDevices;
 
 	InputHandler::Create( g_sInputDrivers, apDevices );
 	for( unsigned i = 0; i < apDevices.size(); ++i )
@@ -86,7 +103,7 @@ bool RageInput::DevicesChanged()
 	return false;
 }
 
-void RageInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut ) const
+void RageInput::GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut ) const
 {
 	for( unsigned i = 0; i < m_InputHandlers.size(); ++i )
 		m_InputHandlers[i].m_pDevice->GetDevicesAndDescriptions( vDevicesOut );
@@ -106,7 +123,7 @@ void RageInput::AddHandler( InputHandler *pHandler )
 	hand.m_pDevice = pHandler;
 	m_InputHandlers.push_back(hand);
 
-	vector<InputDeviceInfo> aDeviceInfo;
+	std::vector<InputDeviceInfo> aDeviceInfo;
 	hand.m_pDevice->GetDevicesAndDescriptions( aDeviceInfo );
 	for (InputDeviceInfo const &idi : aDeviceInfo)
 		g_mapDeviceToHandler[idi.id] = pHandler;
@@ -115,7 +132,7 @@ void RageInput::AddHandler( InputHandler *pHandler )
 /** @brief Return the first InputDriver for the requested InputDevice. */
 InputHandler *RageInput::GetHandlerForDevice( const InputDevice id )
 {
-	map<InputDevice, InputHandler *>::iterator it = g_mapDeviceToHandler.find(id);
+	std::map<InputDevice, InputHandler*>::iterator it = g_mapDeviceToHandler.find(id);
 	if( it == g_mapDeviceToHandler.end() )
 		return nullptr;
 	return it->second;
@@ -159,10 +176,10 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 
 RString RageInput::GetDisplayDevicesString() const
 {
-	vector<InputDeviceInfo> vDevices;
+	std::vector<InputDeviceInfo> vDevices;
 	GetDevicesAndDescriptions( vDevices );
 
-	vector<RString> vs;
+	std::vector<RString> vs;
 	for( unsigned i=0; i<vDevices.size(); ++i )
 	{
 		const RString &sDescription = vDevices[i].sDesc;
@@ -177,15 +194,15 @@ RString RageInput::GetDisplayDevicesString() const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to RageInput. */ 
+/** @brief Allow Lua to have access to RageInput. */
 class LunaRageInput: public Luna<RageInput>
 {
 public:
 	static int GetDescriptions( T* p, lua_State *L )
 	{
-		vector<InputDeviceInfo> vDevices;
+		std::vector<InputDeviceInfo> vDevices;
 		p->GetDevicesAndDescriptions( vDevices );
-		vector<RString> vsDescriptions;
+		std::vector<RString> vsDescriptions;
 		for (InputDeviceInfo const &idi : vDevices)
 			vsDescriptions.push_back( idi.sDesc );
 		LuaHelpers::CreateTableFromArray( vsDescriptions, L );

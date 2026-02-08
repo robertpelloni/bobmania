@@ -6,6 +6,7 @@
 #include "archutils/Unix/BacktraceNames.h"
 #include "test_misc.h"
 
+#include <cstdint>
 #include <unistd.h>
 #include "archutils/Common/PthreadHelpers.h"
 
@@ -34,7 +35,7 @@ void test_suspend_threadid( uint64_t ThreadId )
 {
 	/* Wait for g_Counter to increment a bit. */
 	usleep( 100000 );
-	       
+
 	/* Stop the thread. */
 	SuspendThread( ThreadId );
 
@@ -83,7 +84,7 @@ void test_suspend_secondary_thread()
 		;
 
 	test_suspend_threadid( g_ThreadId );
-	
+
 	g_Finish = true;
 	testing.Wait();
 	g_Finish = false;
@@ -143,7 +144,7 @@ bool test_thread_backtrace( int ThreadId, const void *expect1, const void *expec
 	BacktraceContext ctx;
 	int ret = GetThreadBacktraceContext( ThreadId, &ctx );
 	ASSERT( ret );
-	
+
 	const void *BacktracePointers[1024];
 	GetBacktrace( BacktracePointers, 1024, &ctx );
 
@@ -179,7 +180,7 @@ void test_backtracing_secondary_thread()
 
 	while( g_ThreadId == (uint64_t) -1 )
 		;
-	
+
 	if( !test_thread_backtrace( g_ThreadId, (void *) TestBacktraceThread, (void *) TestBacktraceThreadLoop ) )
 	{
 		printf( "test_backtracing_secondary_thread failed\n" );
@@ -198,7 +199,7 @@ int TestBacktraceMainThread( void *p )
 
 	while( g_ThreadId == (uint64_t) -1 )
 		;
-	
+
 	if( !test_thread_backtrace( g_ThreadId, (void *) TestBacktraceThread, (void *) TestBacktraceThreadLoop ) )
 	{
 		printf( "test_backtracing_main_thread failed\n" );
@@ -284,7 +285,7 @@ void go()
 	/* Test the main thread suspending a secondary thread, and vice versa. */
 	test_suspend_secondary_thread();
 	test_suspend_main_thread();
-	
+
 	/* Test the main thread backtracing a secondary thread, and vice versa. */
 	test_backtracing_secondary_thread();
 	test_backtracing_main_thread();

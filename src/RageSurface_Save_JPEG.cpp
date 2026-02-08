@@ -6,6 +6,9 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 
+#include <cstddef>
+#include <cstdint>
+
 #undef FAR // fix for VC
 /** @brief A helper to get the jpeg lib. */
 namespace jpeg
@@ -15,13 +18,6 @@ namespace jpeg
 #include "jpeglib.h"
 	}
 }
-
-// Newer versions of jpeglib and jpeglib-turbo define TRUE/FALSE in a
-// typedef enum {}
-#if defined(SYSTEM_JPEGLIB) && JPEG_LIB_VERSION > 80
-#define TRUE jpeg::TRUE
-#define FALSE jpeg::FALSE
-#endif
 
 #define OUTPUT_BUFFER_SIZE	4096
 typedef struct
@@ -121,7 +117,7 @@ bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQu
 	jpeg::jpeg_set_defaults(&cinfo);
 
 	if( bHighQual )
-		jpeg::jpeg_set_quality( &cinfo, 150, TRUE );
+		jpeg::jpeg_set_quality( &cinfo, 95, TRUE );
 	else
 		jpeg::jpeg_set_quality( &cinfo, 70, TRUE );
 

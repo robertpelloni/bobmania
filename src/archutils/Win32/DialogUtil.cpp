@@ -4,6 +4,9 @@
 #include "ThemeManager.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+#include <cmath>
+#include <memory>
+
 // Create*Font copied from MFC's CFont
 
 // pLogFont->nHeight is interpreted as PointSize * 10
@@ -20,7 +23,7 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 	::DPtoLP(hDC, &pt, 1);
 	POINT ptOrg = { 0, 0 };
 	::DPtoLP(hDC, &ptOrg, 1);
-	logFont.lfHeight = -abs(pt.y - ptOrg.y);
+	logFont.lfHeight = -std::abs(pt.y - ptOrg.y);
 
 	ReleaseDC(nullptr, hDC);
 
@@ -41,17 +44,27 @@ static HFONT CreatePointFont(int nPointSize, LPCTSTR lpszFaceName)
 	return ::CreatePointFontIndirect(&logFont);
 }
 
-void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
+struct FontDeleter
 {
-	ASSERT( hdlg != nullptr );
+	void operator()(HFONT font) const
+	{
+		if (font)
+		{
+			::DeleteObject(font);
+		}
+	}
+};
 
-	HWND hControl = ::GetDlgItem( hdlg, nID );
-	ASSERT( hControl != nullptr );
+void DialogUtil::SetHeaderFont(HWND hdlg, int nID)
+{
+	ASSERT(hdlg != nullptr);
 
-	// TODO: Fix font leak
-	const int FONT_POINTS = 16;
-	HFONT hfont = CreatePointFont( FONT_POINTS*10, "Arial Black" );
-	::SendMessage( hControl, WM_SETFONT, (WPARAM)hfont, TRUE );
+	HWND hControl = ::GetDlgItem(hdlg, nID);
+	ASSERT(hControl != nullptr);
+
+	static std::unique_ptr<std::remove_pointer<HFONT>::type, FontDeleter> hfont(CreatePointFont(16 * 10, "Arial Black"));
+
+	::SendMessage(hControl, WM_SETFONT, (WPARAM)hfont.get(), TRUE);
 }
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
@@ -84,7 +97,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -94,7 +107,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

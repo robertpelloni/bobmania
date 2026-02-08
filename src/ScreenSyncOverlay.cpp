@@ -11,6 +11,9 @@
 #include "AdjustSync.h"
 #include "ActorUtil.h"
 
+#include <vector>
+
+
 static bool IsGameplay()
 {
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
@@ -24,7 +27,7 @@ void ScreenSyncOverlay::Init()
 
 	m_overlay.Load(THEME->GetPathB(m_sName, "overlay"));
 	AddChild(m_overlay);
-	
+
 	Update( 0 );
 }
 
@@ -42,12 +45,6 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 	UpdateText();
 }
 
-bool g_bShowAutoplay = true;
-void ScreenSyncOverlay::SetShowAutoplay( bool b )
-{
-	g_bShowAutoplay = b;
-}
-
 static LocalizedString AUTO_PLAY		( "ScreenSyncOverlay", "AutoPlay" );
 static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
 static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
@@ -60,19 +57,20 @@ static LocalizedString STANDARD_DEVIATION( "ScreenSyncOverlay", "Standard deviat
 void ScreenSyncOverlay::UpdateText()
 {
 	// Update Status
-	vector<RString> vs;
+	std::vector<RString> vs;
 
-	if( g_bShowAutoplay )
+	PlayerController pc = GamePreferences::m_AutoPlay.Get();
+	switch( pc )
 	{
-		PlayerController pc = GamePreferences::m_AutoPlay.Get();
-		switch( pc )
-		{
 		case PC_HUMAN:						break;
 		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
 		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
 		default:
 			FAIL_M(ssprintf("Invalid PlayerController: %i", pc));
-		}
+	}
+
+	if (GAMESTATE->m_SongOptions.GetCurrent().m_bAssistClap) {
+		vs.push_back("Assist Clap");
 	}
 
 	AutosyncType type = GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType;
@@ -103,8 +101,15 @@ void ScreenSyncOverlay::UpdateText()
 	set_adjustments.SetParam("visible", visible);
 	if(visible)
 	{
-		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
-		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
+		float fNew;
+		float fOld;
+		if (GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType == AutosyncType_Machine) {
+			fNew = PREFSMAN->m_fGlobalOffsetSeconds;
+			fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
+		} else {
+			fNew = GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds;
+			fOld = AdjustSync::s_vpTimingDataOriginal[0].m_fBeat0OffsetInSeconds;
+		}
 		float fStdDev = AdjustSync::s_fStandardDeviation;
 		RString s;
 		s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
@@ -143,10 +148,20 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 	bool bIncrease = true;
 	switch( input.DeviceI.button )
 	{
-	case KEY_F4:	a = RevertSyncChanges; break;
-	case KEY_F9:	bIncrease = false; /* fall through */
-	case KEY_F10:	a = ChangeSongBPM; break;
-	case KEY_F11:	bIncrease = false; /* fall through */
+	case KEY_F4:
+		a = RevertSyncChanges;
+		break;
+
+	case KEY_F9:
+		bIncrease = false;
+		[[fallthrough]];
+	case KEY_F10:
+		a = ChangeSongBPM;
+		break;
+
+	case KEY_F11:
+		bIncrease = false;
+		[[fallthrough]];
 	case KEY_F12:
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
 		    INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
@@ -212,7 +227,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
 				BPMSegment * seg = sTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg->SetBPS( seg->GetBPS() + fDelta );
-				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+				const std::vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 				for (Steps *s : vpSteps)
 				{
 					TimingData &pTiming = s->m_Timing;
@@ -262,7 +277,7 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 					if( GAMESTATE->m_pCurSong != nullptr )
 					{
 						GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
-						const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+						const std::vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
 						for (Steps *s : vpSteps)
 						{
 							// Empty means it inherits song timing,
@@ -301,7 +316,7 @@ void ScreenSyncOverlay::HideHelp()
 /*
  * (c) 2001-2005 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -311,7 +326,7 @@ void ScreenSyncOverlay::HideHelp()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

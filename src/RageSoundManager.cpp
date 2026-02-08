@@ -21,6 +21,8 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
+#include <cstdint>
+
 /*
  * The lock ordering requirements are:
  * RageSound::Lock before g_SoundManMutex
@@ -55,17 +57,6 @@ RageSoundManager::~RageSoundManager()
 	m_mapPreloadedSounds.clear();
 }
 
-
-void RageSoundManager::low_sample_count_workaround()
-{
-	m_pDriver->low_sample_count_workaround();
-}
-
-void RageSoundManager::fix_bogus_sound_driver_pref(RString const& valid_setting)
-{
-	g_sSoundDrivers.Set(valid_setting);
-}
-
 /*
  * Previously, we went to some lengths to shut down sounds before exiting threads.
  * The only other thread that actually starts sounds is SOUND.  Doing this was ugly;
@@ -75,7 +66,7 @@ void RageSoundManager::fix_bogus_sound_driver_pref(RString const& valid_setting)
  */
 void RageSoundManager::Shutdown()
 {
-	SAFE_DELETE( m_pDriver );
+	RageUtil::SafeDelete( m_pDriver );
 }
 
 void RageSoundManager::StartMixing( RageSoundBase *pSound )
@@ -110,20 +101,18 @@ void RageSoundManager::Update()
 	/* Scan m_mapPreloadedSounds for sounds that are no longer loaded, and delete them. */
 	g_SoundManMutex.Lock(); /* lock for access to m_mapPreloadedSounds, owned_sounds */
 	{
-		map<RString, RageSoundReader_Preload *>::iterator it, next;
-		it = m_mapPreloadedSounds.begin();
-		
-		while( it != m_mapPreloadedSounds.end() )
+		for( auto it = m_mapPreloadedSounds.begin(); it != m_mapPreloadedSounds.end(); )
 		{
-			next = it; ++next;
 			if( it->second->GetReferenceCount() == 1 )
 			{
 				LOG->Trace( "Deleted old sound \"%s\"", it->first.c_str() );
 				delete it->second;
-				m_mapPreloadedSounds.erase( it );
+				it = m_mapPreloadedSounds.erase(it);
 			}
-
-			it = next;
+			else
+			{
+				++it;
+			}
 		}
 	}
 
@@ -144,8 +133,9 @@ float RageSoundManager::GetPlayLatency() const
 int RageSoundManager::GetDriverSampleRate() const
 {
 	if( m_pDriver == nullptr )
-		return 44100;
+		return kFallbackSampleRate;
 
+	// Returns the *actual* operating rate of the loaded driver
 	return m_pDriver->GetSampleRate();
 }
 
@@ -157,7 +147,7 @@ RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 
 	RString sPath(sPath_);
 	sPath.MakeLower();
-	map<RString, RageSoundReader_Preload *>::const_iterator it;
+	std::map<RString, RageSoundReader_Preload*>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	if( it == m_mapPreloadedSounds.end() )
 		return nullptr;
@@ -176,10 +166,10 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	 * used in GetLoadedSound. */
 	RString sPath(sPath_);
 	sPath.MakeLower();
-	map<RString, RageSoundReader_Preload *>::const_iterator it;
+	std::map<RString, RageSoundReader_Preload*>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath );
-	
+
 	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }
 
