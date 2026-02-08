@@ -7,10 +7,12 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "DateTime.h"
+#include "JsonUtil.h"
 
 EconomyManager*	ECONOMYMAN = nullptr;
 
 static const RString ECONOMY_DAT = "Save/Economy.xml";
+static const RString CATALOG_JSON = "Data/MarketplaceCatalog.json";
 
 EconomyManager::EconomyManager()
 {
@@ -18,13 +20,6 @@ EconomyManager::EconomyManager()
 	m_bConnected = false;
 	m_sWalletAddress = "0xMockAddress123";
     m_fCurrentHashRate = 0.0f;
-
-    // Initialize Mock Catalog
-    m_MarketplaceCatalog.push_back({ "song_pack_1", "Classic Pack 1", 500, "Song", "Graphics/song_pack_icon.png" });
-    m_MarketplaceCatalog.push_back({ "avatar_frame_gold", "Gold Frame", 200, "Item", "Graphics/item_icon.png" });
-    m_MarketplaceCatalog.push_back({ "xp_boost_1h", "1h XP Boost", 100, "Boost", "Graphics/boost_icon.png" });
-    m_MarketplaceCatalog.push_back({ "theme_dark", "Dark Mode Theme", 0, "Theme", "Graphics/theme_icon.png" });
-    m_MarketplaceCatalog.push_back({ "bobcoin_miner", "Bobcoin Miner", 5000, "Hardware", "Graphics/miner_icon.png" });
 }
 
 EconomyManager::~EconomyManager()
@@ -35,8 +30,45 @@ EconomyManager::~EconomyManager()
 void EconomyManager::Init()
 {
 	LOG->Trace( "EconomyManager::Init()" );
+    LoadCatalog();
 	ReadFromDisk();
 	ConnectToTempo();
+}
+
+void EconomyManager::LoadCatalog()
+{
+    if( !IsAFile(CATALOG_JSON) )
+    {
+        LOG->Warn( "Marketplace Catalog not found at %s", CATALOG_JSON.c_str() );
+        return;
+    }
+
+    RString sJson;
+    if( !GetFileContents(CATALOG_JSON, sJson) ) return;
+
+    Json::Value root;
+    RString sError;
+    if( !JsonUtil::LoadFromString(root, sJson, sError) )
+    {
+        LOG->Warn( "Failed to parse Marketplace Catalog: %s", sError.c_str() );
+        return;
+    }
+
+    if( root.isArray() )
+    {
+        m_MarketplaceCatalog.clear();
+        for( unsigned i=0; i<root.size(); ++i )
+        {
+            const Json::Value& item = root[i];
+            EconomyItem ei;
+            ei.ID = item["ID"].asString();
+            ei.Name = item["Name"].asString();
+            ei.Price = item["Price"].asInt64();
+            ei.Type = item["Type"].asString();
+            ei.Icon = item["Icon"].asString();
+            m_MarketplaceCatalog.push_back(ei);
+        }
+    }
 }
 
 void EconomyManager::LoadFromNode( const XNode *pNode )

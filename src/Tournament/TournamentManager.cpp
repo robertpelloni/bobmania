@@ -13,17 +13,6 @@ static const RString TOURNAMENT_DAT = "Save/Tournament.xml";
 
 TournamentManager::TournamentManager()
 {
-    // Mock Ladder
-    m_Ladder.push_back({ 1, "SwiftFeet", 2450, 150, 12 });
-    m_Ladder.push_back({ 2, "RhythmMaster", 2410, 142, 20 });
-    m_Ladder.push_back({ 3, "ArrowKing", 2380, 130, 15 });
-    m_Ladder.push_back({ 4, "Dancer01", 2200, 100, 50 });
-    m_Ladder.push_back({ 5, "StepPro", 2150, 95, 55 });
-    m_Ladder.push_back({ 6, "Newbie", 1500, 10, 5 });
-
-    // Mock Matches
-    m_Matches.push_back({ "SwiftFeet", "RhythmMaster", "18:00 UTC", "1000 BOB" });
-    m_Matches.push_back({ "ArrowKing", "Dancer01", "19:00 UTC", "500 BOB" });
 }
 
 TournamentManager::~TournamentManager()
@@ -34,6 +23,24 @@ TournamentManager::~TournamentManager()
 void TournamentManager::Init()
 {
 	ReadFromDisk();
+
+    // If no ladder loaded, seed default
+    if( m_Ladder.empty() )
+    {
+        m_Ladder.push_back({ 1, "SwiftFeet", 2450, 150, 12 });
+        m_Ladder.push_back({ 2, "RhythmMaster", 2410, 142, 20 });
+        m_Ladder.push_back({ 3, "ArrowKing", 2380, 130, 15 });
+        m_Ladder.push_back({ 4, "Dancer01", 2200, 100, 50 });
+        m_Ladder.push_back({ 5, "StepPro", 2150, 95, 55 });
+        m_Ladder.push_back({ 6, "Newbie", 1500, 10, 5 });
+    }
+
+    // If no matches, seed default
+    if( m_Matches.empty() )
+    {
+        m_Matches.push_back({ "SwiftFeet", "RhythmMaster", "18:00 UTC", "1000 BOB" });
+        m_Matches.push_back({ "ArrowKing", "Dancer01", "19:00 UTC", "500 BOB" });
+    }
 }
 
 void TournamentManager::LoadFromNode( const XNode *pNode )

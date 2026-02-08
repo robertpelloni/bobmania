@@ -207,12 +207,10 @@ public:
         int minM = IArg(2);
         int maxM = IArg(3);
         std::vector<Song*> playlist = GymPlaylistGenerator::GeneratePlaylist( dur, minM, maxM );
-        lua_newtable(L);
-        for( size_t i=0; i<playlist.size(); ++i )
-        {
-            lua_pushstring(L, playlist[i]->GetMainTitle());
-            lua_rawseti(L, -2, i+1);
-        }
+
+        bool success = GymPlaylistGenerator::StartPlaylistAsCourse( playlist );
+
+        lua_pushboolean(L, success);
         return 1;
     }
 

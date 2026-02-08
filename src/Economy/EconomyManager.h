@@ -29,6 +29,7 @@ public:
 	~EconomyManager();
 
 	void Init();
+    void LoadCatalog();
 	void Update( float fDeltaTime );
 
 	// Basic Ledger
