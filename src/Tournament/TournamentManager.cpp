@@ -113,6 +113,35 @@ void TournamentManager::UpdateELO( const RString& sPlayer, int iChange )
     }
 }
 
+bool TournamentManager::StartMatch( const RString& sOpponentName, int iSongID )
+{
+    // 1. Validate Opponent
+    // 2. Load Song (Simulated via ID)
+    // 3. Set GameState to Versus Mode
+    // 4. Set Opponent Name for UI
+
+    // For MVP, we'll just log and return true.
+    LOG->Trace("Starting match against %s on Song %d", sOpponentName.c_str(), iSongID);
+    return true;
+}
+
+void TournamentManager::ReportMatchResult( const RString& sWinner )
+{
+    LOG->Trace("Match Finished. Winner: %s", sWinner.c_str());
+
+    if( sWinner == "Player" )
+    {
+        UpdateELO("Newbie", 25); // Assume player is "Newbie"
+        UpdateELO("RhythmMaster", -25); // Mock opponent
+    }
+    else
+    {
+        UpdateELO("Newbie", -20);
+        UpdateELO("RhythmMaster", 20);
+    }
+    WriteToDisk();
+}
+
 // Lua
 class LunaTournamentManager: public Luna<TournamentManager>
 {
@@ -150,10 +179,27 @@ public:
         return 1;
     }
 
+    static int StartMatch( T* p, lua_State *L )
+    {
+        RString opp = SArg(1);
+        int song = IArg(2);
+        lua_pushboolean(L, p->StartMatch(opp, song));
+        return 1;
+    }
+
+    static int ReportMatchResult( T* p, lua_State *L )
+    {
+        RString winner = SArg(1);
+        p->ReportMatchResult(winner);
+        return 0;
+    }
+
     LunaTournamentManager()
     {
         ADD_METHOD( GetLadder );
         ADD_METHOD( GetMatches );
+        ADD_METHOD( StartMatch );
+        ADD_METHOD( ReportMatchResult );
     }
 };
 

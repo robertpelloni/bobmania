@@ -1,25 +1,19 @@
 #ifndef GYM_PLAYLIST_GENERATOR_H
 #define GYM_PLAYLIST_GENERATOR_H
 
+#include "RageTypes.h"
 #include <vector>
-#include "Song.h"
-#include "Course.h"
 
-enum WorkoutIntensity {
-	INTENSITY_LIGHT,
-	INTENSITY_MODERATE,
-	INTENSITY_VIGOROUS,
-	INTENSITY_PRO_ATHLETE
-};
+class Song;
 
-class GymPlaylistGenerator
+namespace GymPlaylistGenerator
 {
-public:
-	// Generates a dynamic course based on target duration and intensity
-	static Course* GenerateCircuit( float targetDurationSeconds, WorkoutIntensity intensity );
+    // Generates a random playlist of songs matching the target duration (in seconds)
+    // and difficulty range (e.g., 3-5 meter).
+    std::vector<Song*> GeneratePlaylist( float fTargetDuration, int iMinMeter, int iMaxMeter );
 
-	// Helper to estimate calories for a song at a given rate
-	static float EstimateCalories( Song* pSong, float fRate );
-};
+    // Helper to start the playlist as a Course (replaces current game mode)
+    bool StartPlaylistAsCourse( const std::vector<Song*>& playlist );
+}
 
 #endif

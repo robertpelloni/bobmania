@@ -37,7 +37,10 @@ public:
 
     // Matches
     const std::vector<MatchInfo>& GetUpcomingMatches() const;
-    void SimulateMatchResult( const RString& sWinner );
+
+    // Logic
+    bool StartMatch( const RString& sOpponentName, int iSongID );
+    void ReportMatchResult( const RString& sWinner );
 
 	// Persistence
 	void LoadFromNode( const XNode *pNode );

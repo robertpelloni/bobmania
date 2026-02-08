@@ -120,6 +120,19 @@ list(APPEND SM_DATA_SCORE_HPP
             "ScoreKeeperShared.h"
             "Scoring/WifeScoring.h")
 
+list(APPEND SM_DATA_GYM_SRC
+            "Gym/GymManager.cpp"
+            "Gym/GymPlaylistGenerator.cpp")
+
+list(APPEND SM_DATA_GYM_HPP
+            "Gym/GymManager.h"
+            "Gym/GymPlaylistGenerator.h")
+
+source_group("Data Structures\\\\Gym"
+             FILES
+             ${SM_DATA_GYM_SRC}
+             ${SM_DATA_GYM_HPP})
+
 source_group("Data Structures\\\\Score Keepers"
              FILES
              ${SM_DATA_SCORE_SRC}
@@ -288,7 +301,8 @@ list(APPEND SMDATA_ALL_DATA_SRC
             ${SM_DATA_SCORE_SRC}
             ${SM_DATA_SONG_SRC}
             ${SM_DATA_STEPS_SRC}
-            ${SM_DATA_REST_SRC})
+            ${SM_DATA_REST_SRC}
+            ${SM_DATA_GYM_SRC})
 
 list(APPEND SMDATA_ALL_DATA_HPP
             ${SM_DATA_COURSE_HPP}
@@ -300,4 +314,5 @@ list(APPEND SMDATA_ALL_DATA_HPP
             ${SM_DATA_SCORE_HPP}
             ${SM_DATA_SONG_HPP}
             ${SM_DATA_STEPS_HPP}
-            ${SM_DATA_REST_HPP})
+            ${SM_DATA_REST_HPP}
+            ${SM_DATA_GYM_HPP})

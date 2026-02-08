@@ -7,6 +7,27 @@ function HelpOverlay.Register(screenName, data)
     HelpOverlay.ScreenData[screenName] = data
 end
 
+-- Default Registrations
+HelpOverlay.Register("ScreenGymWelcome", {
+    Description = "Welcome to Gym Mode!\n\nThis mode tracks your calorie burn and workout streaks.\nUse 'Start Workout' to begin a session, or 'Update Profile' to change your weight/goals."
+})
+
+HelpOverlay.Register("ScreenGymWorkout", {
+    Description = "Gym Workout In Progress\n\nPlay through the playlist to burn calories. The intensity will match your settings.\nPause to take a break."
+})
+
+HelpOverlay.Register("ScreenMarketplace", {
+    Description = "Economy Marketplace\n\nSpend your hard-earned Bobcoins here.\nBuy Songs, Avatar Frames, and XP Boosts.\nItems are linked to your wallet address."
+})
+
+HelpOverlay.Register("ScreenTournamentLadder", {
+    Description = "Competitive Ladder\n\nChallenge other players to climb the ranks.\nWin matches to gain ELO and earn Bobcoin prizes.\nUse 'Spectate' to watch live high-level matches."
+})
+
+HelpOverlay.Register("ScreenWalletHistory", {
+    Description = "Transaction History\n\nView your recent earnings from Mining, Tips, and Tournament wins.\nOutgoing transactions (Purchases) are shown in red."
+})
+
 function HelpOverlay.Create()
     return Def.ActorFrame {
         Name = "HelpOverlay",

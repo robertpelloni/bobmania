@@ -2,6 +2,8 @@ local standings = GetTournamentStandings()
 local matches = GetUpcomingMatches()
 local t = Def.ActorFrame {}
 
+t[#t+1] = HelpOverlay.Create()
+
 t[#t+1] = Def.ActorFrame {
     InitCommand=function(self) self:Center() end,
 
@@ -97,6 +99,9 @@ local function InputHandler(event)
 
     if event.GameButton == "Back" then
         SCREENMAN:SetNewScreen("ScreenUnifiedDashboard")
+    elseif event.GameButton == "Select" then
+        MESSAGEMAN:Broadcast("HelpToggle")
+        SOUND:PlayOnce(THEME:GetPathS("Common", "value"))
     end
 
     return true

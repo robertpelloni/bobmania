@@ -1,6 +1,8 @@
 local profile = GetGymProfile(PLAYER_1)
 local t = Def.ActorFrame {}
 
+t[#t+1] = HelpOverlay.Create()
+
 t[#t+1] = Def.ActorFrame {
     InitCommand=function(self) self:Center() end,
 
@@ -49,7 +51,7 @@ t[#t+1] = Def.ActorFrame {
 
     -- Back Button Hint
     LoadFont("Common Normal")..{
-        Text="Press BACK to Dashboard",
+        Text="Press BACK to Dashboard  |  Press SELECT for Help",
         InitCommand=function(self) self:y(230):zoom(0.6):diffuse(0.7,0.7,0.7,1) end
     }
 }
@@ -64,6 +66,9 @@ local function InputHandler(event)
         SCREENMAN:SetNewScreen("ScreenGymWorkout")
     elseif event.GameButton == "Back" then
         SCREENMAN:SetNewScreen("ScreenUnifiedDashboard")
+    elseif event.GameButton == "Select" then
+        MESSAGEMAN:Broadcast("HelpToggle")
+        SOUND:PlayOnce(THEME:GetPathS("Common", "value"))
     end
 
     return true
