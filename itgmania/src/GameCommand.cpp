@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/GameCommand.cpp
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 #include "global.h"
 #include "GameCommand.h"
 #include "RageUtil.h"
@@ -281,7 +284,11 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
 			(SONGMAN->FindSong(sValue) == nullptr),
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 			(ssprintf("Song \"%s\" not found", sValue.c_str())));
+=======
+			(ssprintf("Song \"%s\" not found", sValue.c_str()))); 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 	}
 
 	else if( sName == "steps" )
@@ -527,6 +534,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
 	if( style == nullptr || pm == PlayMode_Invalid )
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 		return true;
 
 	switch( pm )
@@ -1394,6 +1402,8 @@ void GameCommand::LoadOne( const Command& cmd )
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
 	if( style == nullptr || pm == PlayMode_Invalid )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		return true;
 
 	switch( pm )
@@ -1442,7 +1452,11 @@ bool GameCommand::IsPlayable( RString *why ) const
 	if( m_pm != PlayMode_Invalid || m_pStyle != nullptr )
 	{
 		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 		const Style *style = (m_pStyle != nullptr)? m_pStyle: GAMESTATE->GetCurrentStyle();
+=======
+		const Style *style = (m_pStyle != nullptr)? m_pStyle: GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
@@ -1551,6 +1565,25 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle );
 
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
+=======
+		// It's possible to choose a style that didn't have enough players joined.
+		// If enough players aren't joined, then  we need to subtract credits
+		// for the sides that will be joined as a result of applying this option.
+		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
+		{
+			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
+			int iNumCreditsPaid = GetNumCreditsPaid();
+			int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
+			GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit );
+			LOG->Trace( "Deducted %i coins, %i remaining",
+					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
+
+            		//Credit Used, make sure to update CoinsFile
+            		BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
+		}
+		
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		// If only one side is joined and we picked a style that requires both
 		// sides, join the other side.
 		switch( m_pStyle->m_StyleType )
@@ -1580,7 +1613,11 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_sStageModifiers != "" )
 		for (PlayerNumber const &pn : vpns)
 			GAMESTATE->ApplyStageModifiers( pn, m_sStageModifiers );
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 	if( m_LuaFunction.IsSet() )
+=======
+	if( m_LuaFunction.IsSet() && !m_LuaFunction.IsNil() )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 	{
 		Lua *L = LUA->Get();
 		for (PlayerNumber const &pn : vpns)
@@ -1589,7 +1626,12 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT( !lua_isnil(L, -1) );
 
 			lua_pushnumber( L, pn ); // 1st parameter
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 			lua_call( L, 1, 0 ); // call function with 1 argument and 0 results
+=======
+			RString error= "Lua GameCommand error: ";
+			LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		}
 		LUA->Release(L);
 	}
@@ -1627,6 +1669,17 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		lua_pop( L, 1 );
 		LUA->Release(L);
 	}
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
+=======
+	for(map<RString,RString>::const_iterator setting= m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
+	{
+		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
+		if(pref != nullptr)
+		{
+			pref->FromString(setting->second);
+		}
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
 	if( m_SortOrder != SortOrder_Invalid )
@@ -1665,6 +1718,17 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	for (RString const &s : m_vsScreensToPrepare)
 		SCREENMAN->PrepareScreen( s );
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
+=======
+
+	if( m_bInsertCredit )
+	{
+		StepMania::InsertCredit();
+	}
+
+	if( m_bClearCredits )
+		StepMania::ClearCredits();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 
 	if( m_bApplyDefaultOptions )
 	{
@@ -1802,4 +1866,7 @@ LUA_REGISTER_CLASS( GameCommand )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 >>>>>>> origin/c++11:src/GameCommand.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp

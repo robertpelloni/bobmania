@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/SongUtil.h
+<<<<<<< HEAD:itgmania/src/SongUtil.h
 /** @brief SongUtil - Utility functions that deal with Song. */
 
 #ifndef SONG_UTIL_H
@@ -268,6 +269,8 @@ public:
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.h
 /** @brief SongUtil - Utility functions that deal with Song. */
 
 #ifndef SONG_UTIL_H
@@ -519,4 +522,7 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/SongUtil.h
 >>>>>>> origin/c++11:src/SongUtil.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.h

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 #include "global.h"
 #include "USB.h"
 #include "RageLog.h"
@@ -42,7 +45,11 @@ static RString GetUSBDevicePath( int iNum )
 
 	RString sRet;
 	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
+<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 		DeviceDetail, iSize, &iSize, nullptr) )
+=======
+		DeviceDetail, iSize, &iSize, nullptr) ) 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 		sRet = DeviceDetail->DevicePath;
 	free( DeviceDetail );
 
@@ -57,7 +64,11 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 	RString path;
 	while( (path = GetUSBDevicePath(iIndex++)) != "" )
 	{
+<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 		HANDLE h = CreateFile( path.c_str(), GENERIC_READ,
+=======
+		HANDLE h = CreateFile( path, GENERIC_READ,
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 			FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
 
 		if( h == INVALID_HANDLE_VALUE )
@@ -118,6 +129,7 @@ WindowsFileIO::WindowsFileIO()
 	ZeroMemory( &m_Overlapped, sizeof(m_Overlapped) );
 	m_Handle = INVALID_HANDLE_VALUE;
 	m_pBuffer = nullptr;
+<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 }
 
 WindowsFileIO::~WindowsFileIO()
@@ -365,6 +377,8 @@ WindowsFileIO::WindowsFileIO()
 	ZeroMemory( &m_Overlapped, sizeof(m_Overlapped) );
 	m_Handle = INVALID_HANDLE_VALUE;
 	m_pBuffer = nullptr;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 }
 
 WindowsFileIO::~WindowsFileIO()
@@ -387,7 +401,11 @@ bool WindowsFileIO::Open( RString path, int iBlockSize )
 		CloseHandle( m_Handle );
 
 	m_Handle = CreateFile( path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 		NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
+=======
+		nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 
 	if( m_Handle == INVALID_HANDLE_VALUE )
 		return false;
@@ -493,4 +511,7 @@ bool WindowsFileIO::IsOpen() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 >>>>>>> origin/c++11:src/archutils/Win32/USB.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandler.cpp
 #include "global.h"
 
 #include <csignal>
@@ -536,7 +539,11 @@ static void NORETURN spawn_child_process( int from_parent )
 
 	/* Use execve; it's the lowest-level of the exec calls.  The others may allocate. */
 	char *argv[3] = { path, magic, nullptr };
+<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
 	char *envp[1] = { NULL };
+=======
+	char *envp[1] = { nullptr };
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandler.cpp
 	execve( path, argv, envp );
 
 	/* If we got here, the exec failed.  We can't call strerror. */
@@ -894,4 +901,7 @@ void CrashHandler::InitializeCrashHandler()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
 >>>>>>> origin/c++11:src/archutils/Unix/CrashHandler.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandler.cpp

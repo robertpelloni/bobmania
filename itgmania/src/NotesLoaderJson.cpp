@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/NotesLoaderJson.cpp
+<<<<<<< HEAD:itgmania/src/NotesLoaderJson.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderJson.cpp
 #include "global.h"
 #include "NotesLoaderJson.h"
 #include "json/json.h"
@@ -481,7 +484,7 @@ static void Deserialize( Song &out, const Json::Value &root )
 		JsonUtil::DeserializeVectorObjects( vBgc, Deserialize, root["ForegroundChanges"] );
 	}
 
-	JsonUtil::DeserializeArrayValuesIntoVector( out.m_vsKeysoundFile, root["KeySounds"] );
+	out.m_vsKeysoundFile = JsonUtil::DeserializeArrayStrings(root["KeySounds"]);
 
 	{
 		vector<Steps*> vpSteps;
@@ -531,4 +534,7 @@ bool NotesLoaderJson::LoadFromDir( const RString &sPath, Song &out )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/NotesLoaderJson.cpp
 >>>>>>> origin/c++11:src/NotesLoaderJson.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderJson.cpp

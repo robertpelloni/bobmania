@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Unix.cpp
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Unix.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_Unix.cpp
 #include "global.h"
 #include "ArchHooks_Unix.h"
 #include "ProductInfo.h"
@@ -450,6 +453,7 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Unix.cpp
 =======
 #include "global.h"
 #include "ArchHooks_Unix.h"
@@ -787,3 +791,5 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/arch/ArchHooks/ArchHooks_Unix.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_Unix.cpp

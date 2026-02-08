@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ActorMultiTexture.cpp
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorMultiTexture.cpp
 #include "global.h"
 #include "ActorMultiTexture.h"
 #include "RageTextureManager.h"
@@ -8,6 +11,10 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.cpp
+=======
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorMultiTexture.cpp
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
@@ -438,4 +445,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorMultiTexture, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.cpp
 >>>>>>> origin/c++11:src/ActorMultiTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorMultiTexture.cpp

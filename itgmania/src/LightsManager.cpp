@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/LightsManager.cpp
+<<<<<<< HEAD:itgmania/src/LightsManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 #include "global.h"
 #include "LightsManager.h"
 #include "GameState.h"
@@ -11,6 +14,7 @@
 #include "PrefsManager.h"
 #include "Actor.h"
 #include "Preference.h"
+<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 #include "GameManager.h"
 #include "PlayerState.h"
 #include "GameState.h"
@@ -618,6 +622,8 @@ void LightsManager::TurnOffAllLights()
 #include "Actor.h"
 #include "Preference.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 #include "GameManager.h"
 #include "CommonMetrics.h"
 #include "Style.h"
@@ -688,8 +694,14 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		{
 			for( int iCol=0; iCol < style->m_iColsPerPlayer; ++iCol )
 			{
+<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 				GameInput gi = style->StyleInputToGameInput( iCol, pn );
 				if( gi.IsValid() )
+=======
+				vector<GameInput> gi;
+				style->StyleInputToGameInput( iCol, pn, gi );
+				for(size_t i= 0; i < gi.size(); ++i)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 				{
 					vGIs.insert( gi );
 				}
@@ -701,7 +713,11 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		vGameInputsOut.push_back( input );
 }
 
+<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 LightsManager*	LIGHTSMAN = nullptr;	// global and accessable from anywhere in our program
+=======
+LightsManager*	LIGHTSMAN = nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 
 LightsManager::LightsManager()
 {
@@ -953,6 +969,14 @@ void LightsManager::Update( float fDeltaTime )
 					{
 						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENULEFT] = true;
 						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENURIGHT] = true;
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENUUP] = true;
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_MENUDOWN] = true;
+					}
+					else
+					{
+						//flash select during evaluation screen to indicate
+						//that the button can be used for screenshots etc.
+						m_LightsState.m_bGameButtonLights[pn][GAME_BUTTON_SELECT] = true;
 					}
 				}
 			}
@@ -1105,6 +1129,12 @@ bool LightsManager::IsEnabled() const
 	return m_vpDrivers.size() >= 1 || PREFSMAN->m_bDebugLights;
 }
 
+void LightsManager::TurnOffAllLights()
+{
+	for(LightsDriver *iter : m_vpDrivers)
+		iter->Reset();
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
@@ -1129,4 +1159,7 @@ bool LightsManager::IsEnabled() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 >>>>>>> origin/c++11:src/LightsManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp

@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/ActorUtil.h
+<<<<<<< HEAD:itgmania/src/ActorUtil.h
 #ifndef ActorUtil_H
 #define ActorUtil_H
 
@@ -170,6 +171,8 @@ namespace ActorUtil
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.h
 #ifndef ActorUtil_H
 #define ActorUtil_H
 
@@ -331,4 +334,7 @@ namespace ActorUtil
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorUtil.h
 >>>>>>> origin/c++11:src/ActorUtil.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.h

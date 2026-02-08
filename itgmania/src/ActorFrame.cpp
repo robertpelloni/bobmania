@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ActorFrame.cpp
+<<<<<<< HEAD:itgmania/src/ActorFrame.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.cpp
 #include "global.h"
 #include "ActorFrame.h"
 #include "arch/Dialog/Dialog.h"
@@ -11,8 +14,11 @@
 #include "RageDisplay.h"
 #include "ScreenDimensions.h"
 
+<<<<<<< HEAD:itgmania/src/ActorFrame.cpp
 #include <cstdint>
 #include <vector>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.cpp
 
 /* Tricky: We need ActorFrames created in Lua to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their
@@ -172,9 +178,14 @@ Actor* ActorFrame::GetChild( const RString &sName )
 {
 	for (Actor *a : m_SubActors)
 	{
+<<<<<<< HEAD:itgmania/src/ActorFrame.cpp
 		if (a->GetName() == sName || a->IsAlias(sName)) {
 			return a;
 		}
+=======
+		if( a->GetName() == sName )
+			return a;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.cpp
 	}
 	return nullptr;
 }
@@ -413,10 +424,15 @@ void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
 	int found= 0;
 	for (Actor *a: m_SubActors)
 	{
+<<<<<<< HEAD:itgmania/src/ActorFrame.cpp
 		if (a->GetName() == sName || a->IsAlias(sName))
+=======
+		if(a->GetName() == sName)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.cpp
 		{
 			if (found == 0)
 			{
+<<<<<<< HEAD:itgmania/src/ActorFrame.cpp
 				a->PushSelf(L);
 			}
 			else if (found == 1)
@@ -426,6 +442,17 @@ void ActorFrame::PushChildTable(lua_State* L, const RString &sName)
 			else
 			{
 				AddToChildTable(L, a);
+=======
+				case 0:
+					a->PushSelf(L);
+					break;
+				case 1:
+					CreateChildTable(L, a);
+					break;
+				default:
+					AddToChildTable(L, a);
+					break;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.cpp
 			}
 			++found;
 		}
@@ -1430,4 +1457,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrame, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorFrame.cpp
 >>>>>>> origin/c++11:src/ActorFrame.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.cpp

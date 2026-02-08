@@ -82,7 +82,11 @@ public:
 	void SetEffectMode( EffectMode em ) { m_EffectMode = em; }
 
 	void LoadFromCached( const RString &sDir, const RString &sPath );
+<<<<<<< HEAD:itgmania/src/Sprite.h
 
+=======
+	
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.h
 	void SetTexCoordVelocity(float fVelX, float fVelY);
 	/**
 	 * @brief Scale the Sprite while maintaining the aspect ratio.

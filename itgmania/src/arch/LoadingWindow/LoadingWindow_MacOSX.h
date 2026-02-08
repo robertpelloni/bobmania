@@ -3,7 +3,11 @@
 
 #include "LoadingWindow.h"
 #include "global.h"
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_MacOSX.h
 /** @brief Loading window for macOS. */
+=======
+/** @brief Loading window for Mac OS X. */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_MacOSX.h
 class LoadingWindow_MacOSX : public LoadingWindow
 {
 public:

@@ -6,6 +6,10 @@
 #include "arch/arch_default.h"
 #include "arch/LuaDriver/LuaDriver.h"
 
+//We explicitly load these drivers as they should always be available.
+#include "arch/Lights/LightsDriver_SystemMessage.h"
+#include "arch/Lights/LightsDriver_Export.h"
+
 DriverList LightsDriver::m_pDriverList;
 
 void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
@@ -36,11 +40,27 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 		Add.push_back( pDriver );
 	}
 
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver.cpp
 	// always add Export
 	Add.push_back( new LightsDriver_Export );
 
 	// Add any additional Lua modules
 	LuaDriver::AddLightsModules( sDrivers, Add );
+=======
+	//ensure these are always available to use for debugging
+	//or if InputHandlers that want lighting state.
+	Add.push_back(new LightsDriver_SystemMessage);
+	Add.push_back(new LightsDriver_Export);
+}
+
+void LightsDriver::Reset()
+{
+	LightsState state;
+	ZERO( state.m_bCabinetLights );
+	ZERO( state.m_bGameButtonLights );
+	ZERO( state.m_bCoinCounter );
+	Set( &state );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver.cpp
 }
 
 /*

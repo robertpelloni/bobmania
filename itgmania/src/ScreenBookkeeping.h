@@ -30,6 +30,19 @@ public:
 	virtual void Update( float fDelta );
 	virtual bool Input( const InputEventPlus &input );
 
+<<<<<<< HEAD:itgmania/src/ScreenBookkeeping.h
+=======
+	void StartSelectedSong();
+	bool SelectCurrent();
+
+	MusicWheel* GetMusicWheel();
+	// Lua
+	virtual void PushSelf(lua_State *L);
+
+protected:
+	virtual bool MenuStart( const InputEventPlus &input );
+	virtual bool MenuBack( const InputEventPlus &input );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenNetSelectMusic.h
 	virtual bool MenuLeft( const InputEventPlus &input );
 	virtual bool MenuRight( const InputEventPlus &input );
 	virtual bool MenuStart( const InputEventPlus &input );

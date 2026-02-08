@@ -18,7 +18,13 @@ const RString SpecialFiles::TYPE_TXT_FILE = "Data/Type.txt";
 const RString SpecialFiles::SONGS_DIR = "Songs/";
 const RString SpecialFiles::COURSES_DIR	= "Courses/";
 const RString SpecialFiles::NOTESKINS_DIR = "NoteSkins/";
+<<<<<<< HEAD:itgmania/src/SpecialFiles.cpp
 const RString SpecialFiles::LUADRIVER_MODULES_DIR = "Data/Modules/";
+=======
+const RString SpecialFiles::COINS_INI = "Save/Coin.ini";
+
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SpecialFiles.cpp
 
 /*
  * (c) 2003-2005 Chris Danford

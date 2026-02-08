@@ -93,7 +93,11 @@ bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 		//float fLyricOffset = 0.0f;
 
 		// Enforce strict timestamp format to prevent crashing the program.
+<<<<<<< HEAD:itgmania/src/LyricsLoader.cpp
 		std::vector<RString> dummy;
+=======
+		vector<RString> dummy;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LyricsLoader.cpp
 		static Regex timestamp("^([0-9]+:){0,2}[0-9]+(.[0-9]*)?$");
 		if (timestamp.Compare(sValueName, dummy))
 		{

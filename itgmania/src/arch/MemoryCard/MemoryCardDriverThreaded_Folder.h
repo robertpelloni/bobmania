@@ -1,11 +1,18 @@
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
 #ifndef MemoryCardDriverThreaded_Folder_H
+=======
+﻿#ifndef MemoryCardDriverThreaded_Folder_H
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
 #define MemoryCardDriverThreaded_Folder_H 1
 
 #include "MemoryCardDriver.h"
 
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
 #include <vector>
 
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
 class MemoryCardDriverThreaded_Folder : public MemoryCardDriver
 {
 public:
@@ -16,7 +23,11 @@ public:
 	virtual void Unmount( UsbStorageDevice* pDevice );
 
 protected:
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
 	void GetUSBStorageDevices( std::vector<UsbStorageDevice>& vDevicesOut );
+=======
+	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
 	bool USBStorageDevicesChanged();
 	bool TestWrite( UsbStorageDevice* pDevice );
 	bool FolderExists(RString path);
@@ -31,7 +42,11 @@ protected:
 /*
  * (c) 2018-2019 Electromuis
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
  *
+=======
+ * 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -41,7 +56,11 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
  *
+=======
+ * 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_Folder.h
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_Win32_Pump.cpp
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_Win32_Pump.cpp
 #include "global.h"
 #include "InputHandler_Win32_Pump.h"
 
@@ -195,6 +196,8 @@ void InputHandler_Win32_Pump::Update()
  */
 
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_Win32_Pump.cpp
 #include "global.h"
 #include "InputHandler_Win32_Pump.h"
 
@@ -385,4 +388,7 @@ void InputHandler_Win32_Pump::Update()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_Win32_Pump.cpp
 >>>>>>> origin/c++11:src/arch/InputHandler/InputHandler_Win32_Pump.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_Win32_Pump.cpp

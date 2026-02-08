@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
+<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/Dialog.cpp
 #include "global.h"
 #include "Dialog.h"
 #include "DialogDriver.h"
@@ -42,6 +45,7 @@ DialogDriver *MakeDialogDriver()
 #endif
 
 		if( pRet == nullptr )
+<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
 		{
 			continue;
 		}
@@ -327,6 +331,8 @@ DialogDriver *MakeDialogDriver()
 #endif
 
 		if( pRet == nullptr )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/Dialog.cpp
 		{
 			continue;
 		}
@@ -569,4 +575,7 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
 >>>>>>> origin/c++11:src/arch/Dialog/Dialog.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/Dialog.cpp

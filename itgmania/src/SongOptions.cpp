@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/SongOptions.cpp
+<<<<<<< HEAD:itgmania/src/SongOptions.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongOptions.cpp
 #include "global.h"
 #include "SongOptions.h"
 #include "RageUtil.h"
@@ -525,4 +528,7 @@ bool SongOptions::operator==( const SongOptions &other ) const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/SongOptions.cpp
 >>>>>>> origin/c++11:src/SongOptions.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongOptions.cpp

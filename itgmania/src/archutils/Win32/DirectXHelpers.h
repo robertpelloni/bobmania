@@ -1,6 +1,7 @@
 #ifndef DIRECTX_HELPERS_H
 #define DIRECTX_HELPERS_H
 #include "windows.h"
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DirectXHelpers.h
 #include "VersionHelpers.h"
 
 RString hr_ssprintf( int hr, const char *fmt, ... );
@@ -11,6 +12,31 @@ RString GetErrorString(HRESULT hr);
 #define DIRECTINPUT_VERSION 0x0800
 #define DIRECTSOUND_VERSION 0x0700
 
+=======
+
+RString hr_ssprintf( int hr, const char *fmt, ... );
+
+//Keep XP on life support
+static bool at_least_vista()
+{
+OSVERSIONINFOEXW osvi = { sizeof(osvi), 0, 0, 0, 0, { 0 }, 0, 0 };
+DWORDLONG        const dwlConditionMask = VerSetConditionMask(
+	VerSetConditionMask(
+	VerSetConditionMask(
+	0, VER_MAJORVERSION, VER_GREATER_EQUAL),
+	VER_MINORVERSION, VER_GREATER_EQUAL),
+	VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+
+osvi.dwMajorVersion = 0x0600;
+osvi.dwMinorVersion = 0x0;
+osvi.wServicePackMajor = 0;
+
+return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != false;
+}
+
+RString GetErrorString(HRESULT hr);
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/DirectXHelpers.h
 #endif
 
 /*

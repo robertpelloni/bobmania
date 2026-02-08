@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/Actor.cpp
+<<<<<<< HEAD:itgmania/src/Actor.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Actor.cpp
 #include "global.h"
 #include "Actor.h"
 #include "ActorFrame.h"
@@ -2404,6 +2407,7 @@ LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Actor.cpp
 =======
 #include "global.h"
 #include "Actor.h"
@@ -4151,3 +4155,5 @@ LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/Actor.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Actor.cpp

@@ -20,12 +20,16 @@ struct MenuRowDef
 	RString		sName;
 	bool		bEnabled;
 <<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
+<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 	MenuRowUpdateEnabled	pfnEnabled;	// if ! nullptr, used instead of bEnabled
 	EditMode	emShowIn;
 	int			iDefaultChoice;
 	std::vector<RString>		choices;
 =======
 	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used instead of bEnabled
+=======
+	MenuRowUpdateEnabled	pfnEnabled;	// if ! nullptr, used instead of bEnabled
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenMiniMenu.h
 	EditMode	emShowIn;
 	int			iDefaultChoice;
 	vector<RString>		choices;
@@ -54,6 +58,7 @@ struct MenuRowDef
 		   const char *c25=nullptr ): iRowCode(r), sName(n),
 =======
 	MenuRowDef( int r, RString n, MenuRowUpdateEnabled pe, EditMode s, 
+<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 		   bool bTT, bool bTI, int d, const char *c0=NULL, 
 		   const char *c1=NULL, const char *c2=NULL, 
 		   const char *c3=NULL, const char *c4=NULL, 
@@ -69,6 +74,22 @@ struct MenuRowDef
 		   const char *c23=NULL, const char *c24=NULL, 
 		   const char *c25=NULL ): iRowCode(r), sName(n),
 >>>>>>> origin/c++11:src/ScreenMiniMenu.h
+=======
+		   bool bTT, bool bTI, int d, const char *c0=nullptr, 
+		   const char *c1=nullptr, const char *c2=nullptr, 
+		   const char *c3=nullptr, const char *c4=nullptr, 
+		   const char *c5=nullptr, const char *c6=nullptr, 
+		   const char *c7=nullptr, const char *c8=nullptr, 
+		   const char *c9=nullptr, const char *c10=nullptr, 
+		   const char *c11=nullptr, const char *c12=nullptr, 
+		   const char *c13=nullptr, const char *c14=nullptr, 
+		   const char *c15=nullptr, const char *c16=nullptr, 
+		   const char *c17=nullptr, const char *c18=nullptr, 
+		   const char *c19=nullptr, const char *c20=nullptr, 
+		   const char *c21=nullptr, const char *c22=nullptr, 
+		   const char *c23=nullptr, const char *c24=nullptr, 
+		   const char *c25=nullptr ): iRowCode(r), sName(n),
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenMiniMenu.h
 			bEnabled(true), pfnEnabled(pe), emShowIn(s),
 			iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
@@ -118,6 +139,7 @@ struct MenuRowDef
 =======
 	
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI, 
+<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 		   int d, const char *c0=NULL, const char *c1=NULL, 
 		   const char *c2=NULL, const char *c3=NULL, 
 		   const char *c4=NULL, const char *c5=NULL, 
@@ -132,6 +154,21 @@ struct MenuRowDef
 		   const char *c22=NULL, const char *c23=NULL, 
 		   const char *c24=NULL, const char *c25=NULL ):
 >>>>>>> origin/c++11:src/ScreenMiniMenu.h
+=======
+		   int d, const char *c0=nullptr, const char *c1=nullptr, 
+		   const char *c2=nullptr, const char *c3=nullptr, 
+		   const char *c4=nullptr, const char *c5=nullptr, 
+		   const char *c6=nullptr, const char *c7=nullptr, 
+		   const char *c8=nullptr, const char *c9=nullptr, 
+		   const char *c10=nullptr, const char *c11=nullptr, 
+		   const char *c12=nullptr, const char *c13=nullptr, 
+		   const char *c14=nullptr, const char *c15=nullptr, 
+		   const char *c16=nullptr, const char *c17=nullptr, 
+		   const char *c18=nullptr, const char *c19=nullptr, 
+		   const char *c20=nullptr, const char *c21=nullptr, 
+		   const char *c22=nullptr, const char *c23=nullptr, 
+		   const char *c24=nullptr, const char *c25=nullptr ):
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenMiniMenu.h
 		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
 		bThemeTitle(bTT), bThemeItems(bTI)

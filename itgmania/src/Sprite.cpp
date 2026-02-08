@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/Sprite.cpp
+<<<<<<< HEAD:itgmania/src/Sprite.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.cpp
 #include "global.h"
 #include "Sprite.h"
 #include "RageTextureManager.h"
@@ -14,12 +17,15 @@
 #include "ImageCache.h"
 #include "ThemeMetric.h"
 #include <numeric>
+<<<<<<< HEAD:itgmania/src/Sprite.cpp
 
 #include <cassert>
 #include <cfloat>
 #include <cmath>
 #include <cstddef>
 #include <vector>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.cpp
 
 REGISTER_ACTOR_CLASS( Sprite );
 
@@ -1690,6 +1696,27 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 	SetTexture( pTexture );
 }
 
+void Sprite::LoadFromCached( const RString &sDir, const RString &sPath )
+{
+	if( sPath.empty() )
+	{
+		Load( THEME->GetPathG("Common","fallback %s", sDir) );
+		return;
+	}
+
+	RageTextureID ID;
+	
+	// Try to load the low quality version.
+	ID = IMAGECACHE->LoadCachedImage( sDir, sPath );
+
+	if( TEXTUREMAN->IsTextureRegistered(ID) )
+		Load( ID );
+	else if( IsAFile(sPath) )
+		Load( sPath );
+	else
+		Load( THEME->GetPathG("Common","fallback %s", sDir) );
+}
+
 void Sprite::LoadStatesFromTexture()
 {
 	// Assume the frames of this animation play in sequential order with 0.1 second delay.
@@ -2123,7 +2150,15 @@ void Sprite::SetState( int iNewState )
 
 float Sprite::GetAnimationLengthSeconds() const
 {
+<<<<<<< HEAD:itgmania/src/Sprite.cpp
 	return std::accumulate(m_States.begin(), m_States.end(), 0.f, [](float total, State const &s) { return total + s.fDelay; });
+=======
+	m_animation_length_seconds = 0;
+	for (State const &s : m_States)
+	{
+		m_animation_length_seconds += s.fDelay;
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.cpp
 }
 
 void Sprite::SetSecondsIntoAnimation( float fSeconds )
@@ -2137,7 +2172,11 @@ void Sprite::SetSecondsIntoAnimation( float fSeconds )
 
 RString	Sprite::GetTexturePath() const
 {
+<<<<<<< HEAD:itgmania/src/Sprite.cpp
 	if( m_pTexture== nullptr )
+=======
+	if( m_pTexture == nullptr )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.cpp
 		return RString();
 
 	return m_pTexture->GetID().filename;
@@ -2246,7 +2285,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
-		
+
 		if( bXDimNeedsToBeCropped ) // crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
@@ -2255,9 +2294,9 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
-				fPercentageToCutOffEachSide, 
-				0, 
-				1 - fPercentageToCutOffEachSide, 
+				fPercentageToCutOffEachSide,
+				0,
+				1 - fPercentageToCutOffEachSide,
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -2269,9 +2308,9 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
-				0, 
+				0,
 				fPercentageToCutOffEachSide,
-				1, 
+				1,
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -2307,7 +2346,7 @@ void Sprite::CropTo( float fWidth, float fHeight )
 		Sprite::ScaleToCover( RectF(0, 0, fWidth, fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
-		
+
 		if( bXDimNeedsToBeCropped )	// crop X
 		{
 			float fPercentageToCutOff = (this->GetZoomedWidth() - fWidth) / this->GetZoomedWidth();
@@ -2315,9 +2354,9 @@ void Sprite::CropTo( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
-				fPercentageToCutOffEachSide, 
-				0, 
-				1 - fPercentageToCutOffEachSide, 
+				fPercentageToCutOffEachSide,
+				0,
+				1 - fPercentageToCutOffEachSide,
 				1 );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -2328,9 +2367,9 @@ void Sprite::CropTo( float fWidth, float fHeight )
 
 			// generate a rectangle with new texture coordinates
 			RectF fCustomImageRect( 
-				0, 
+				0,
 				fPercentageToCutOffEachSide,
-				1, 
+				1,
 				1 - fPercentageToCutOffEachSide );
 			SetCustomImageRect( fCustomImageRect );
 		}
@@ -2388,6 +2427,11 @@ public:
 		else
 		{
 			RageTextureID ID( SArg(1) );
+			if(lua_isstring(L, 2))
+			{
+				RString additional_hints= SArg(2);
+				ID.AdditionalTextureHints= additional_hints;
+			}
 			p->Load( ID );
 		}
 		return 0;
@@ -2445,13 +2489,33 @@ public:
 		return 0;
 	}
 	static int GetNumStates( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumStates() ); return 1; }
+<<<<<<< HEAD:itgmania/src/Sprite.cpp
 	static int SetAllStateDelays( T* p, lua_State *L ) { p->SetAllStateDelays(FArg(1)); return 0; }
+=======
+	static int SetAllStateDelays( T* p, lua_State *L )
+	{
+		p->SetAllStateDelays(FArg(-1));
+		COMMON_RETURN_SELF;
+	}
+	DEFINE_METHOD(GetDecodeMovie, m_DecodeMovie);
+	static int SetDecodeMovie(T* p, lua_State *L)
+	{
+		p->m_DecodeMovie= BArg(1);
+		COMMON_RETURN_SELF;
+	}
+	static int LoadFromCached( T* p, lua_State *L )
+	{ 
+		p->LoadFromCached( SArg(1), SArg(2) );
+		COMMON_RETURN_SELF;
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.cpp
 
 	LunaSprite()
 	{
 		ADD_METHOD( Load );
 		ADD_METHOD( LoadBanner );
 		ADD_METHOD( LoadBackground );
+		ADD_METHOD( LoadFromCached );
 		ADD_METHOD( customtexturerect );
 		ADD_METHOD( SetCustomImageRect );
 		ADD_METHOD( texcoordvelocity );
@@ -2498,4 +2562,7 @@ LUA_REGISTER_DERIVED_CLASS( Sprite, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Sprite.cpp
 >>>>>>> origin/c++11:src/Sprite.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Sprite.cpp

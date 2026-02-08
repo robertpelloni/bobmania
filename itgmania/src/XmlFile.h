@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/XmlFile.h
+<<<<<<< HEAD:itgmania/src/XmlFile.h
 /* XmlFile - Simple XML reading and writing. */
 
 #ifndef XML_FILE_H
@@ -150,6 +151,8 @@ private:
 
 #endif
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFile.h
 /* XmlFile - Simple XML reading and writing. */
 
 #ifndef XML_FILE_H
@@ -220,16 +223,28 @@ typedef vector<XNode*> XNodes;
 /** @brief Loop through each child. */
 #define FOREACH_Child( pNode, Var ) \
 	XNode *Var = nullptr; \
+<<<<<<< HEAD:itgmania/src/XmlFile.h
 	for( XNodes::iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
+=======
+	for( XNodes::iterator Var##Iter = (pNode)->GetChildrenBegin(); \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
+		Var##Iter != (pNode)->GetChildrenEnd(); \
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFile.h
 		++Var##Iter )
 /** @brief Loop through each child, using a constant iterator. */
 #define FOREACH_CONST_Child( pNode, Var ) \
 	const XNode *Var = nullptr; \
+<<<<<<< HEAD:itgmania/src/XmlFile.h
 	for( XNodes::const_iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
+=======
+	for( XNodes::const_iterator Var##Iter = (pNode)->GetChildrenBegin(); \
+		Var = (Var##Iter != (pNode)->GetChildrenEnd())? *Var##Iter:nullptr, \
+		Var##Iter != (pNode)->GetChildrenEnd(); \
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFile.h
 		++Var##Iter )
 
 class XNode
@@ -286,4 +301,7 @@ private:
 };
 
 #endif
+<<<<<<< HEAD:itgmania/src/XmlFile.h
 >>>>>>> origin/c++11:src/XmlFile.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFile.h

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/NotesWriterJson.cpp
+<<<<<<< HEAD:itgmania/src/NotesWriterJson.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterJson.cpp
 #include "global.h"
 #include "NotesWriterJson.h"
 #include "TimingData.h"
@@ -459,4 +462,7 @@ bool NotesWriterJson::WriteSteps( const RString &sFile, const Steps &out )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/NotesWriterJson.cpp
 >>>>>>> origin/c++11:src/NotesWriterJson.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterJson.cpp

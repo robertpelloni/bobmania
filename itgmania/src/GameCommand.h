@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/GameCommand.h
+<<<<<<< HEAD:itgmania/src/GameCommand.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.h
 /* GameCommand */
 
 #ifndef GameCommand_H
@@ -305,4 +308,7 @@ private:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/GameCommand.h
 >>>>>>> origin/c++11:src/GameCommand.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.h

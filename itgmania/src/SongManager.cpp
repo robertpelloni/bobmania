@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/SongManager.cpp
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 #include "global.h"
 #include "SongManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
@@ -35,6 +38,10 @@
 #include "ThemeManager.h"
 #include "TitleSubstitution.h"
 #include "TrailUtil.h"
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+#include "UnlockManager.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 #include "SpecialFiles.h"
 
 SongManager*	SONGMAN = nullptr;	// global and accessible from anywhere in our program
@@ -49,6 +56,12 @@ const RString ATTACK_FILE		= "/Data/RandomAttacks.txt";
 static const ThemeMetric<RageColor>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
 static const ThemeMetric<int>		EXTRA_COLOR_METER		( "SongManager", "ExtraColorMeter" );
 static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePreferredSortColor" );
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+static const ThemeMetric<bool>		USE_UNLOCK_COLOR		( "SongManager", "UseUnlockColor" );
+static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
+static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
 static Preference<RString> g_sDisabledSongs( "DisabledSongs", "" );
@@ -140,8 +153,14 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 
 	InitAll( ld );
 
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 	// reload scores
 	PROFILEMAN->LoadMachineProfile();
+=======
+	// reload scores and unlocks afterward
+	PROFILEMAN->LoadMachineProfile();
+	UNLOCKMAN->Reload();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
@@ -601,6 +620,14 @@ RageColor SongManager::GetSongColor( const Song* pSong ) const
 		return RageColor(1.0f,0.8f,0.0f,1.0f);
 	// end royal freem protection
 
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+	// Use unlock color if applicable
+	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
+	if( pUE && USE_UNLOCK_COLOR.GetValue() )
+		return UNLOCK_COLOR.GetValue();
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 	if( USE_PREFERRED_SORT_COLOR )
 	{
 		int sortIndex = 0;
@@ -694,6 +721,14 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup ) const
 
 RageColor SongManager::GetCourseColor( const Course* pCourse ) const
 {
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+	// Use unlock color if applicable
+	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
+	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
+		return UNLOCK_COLOR.GetValue();
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 	if( USE_PREFERRED_SORT_COLOR )
 	{
 		int courseIndex = 0;
@@ -800,6 +835,9 @@ int SongManager::GetNumSongs() const
 }
 
 <<<<<<< HEAD:itgmania/src/SongManager.cpp
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 int SongManager::GetNumLockedSongs() const
 {
 	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [](Song const *s) { return UNLOCKMAN->SongIsLocked(s); });
@@ -815,8 +853,11 @@ int SongManager::GetNumSelectableAndUnlockedSongs() const
 	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [](Song const *s) { return UNLOCKMAN->SongIsLocked(s) & ~(LOCKED_LOCK | LOCKED_SELECTABLE); });
 }
 
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 =======
 >>>>>>> origin/broken:src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 int SongManager::GetNumAdditionalSongs() const
 {
 	return std::count_if(m_pSongs.begin(), m_pSongs.end(), [&](Song const *s) { return WasLoadedFromAdditionalSongs(s); });
@@ -1372,6 +1413,11 @@ Song* SongManager::GetRandomSong()
 		Song *pSong = m_pShuffledSongs[ i ];
 		if( pSong->IsTutorial() )
 			continue;
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+		if( !pSong->NormallyDisplayed() )
+			continue;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		return pSong;
 	}
 
@@ -1394,6 +1440,11 @@ Course* SongManager::GetRandomCourse()
 			continue;
 		if( pCourse->GetCourseType() == COURSE_TYPE_ENDLESS )
 			continue;
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+		if( UNLOCKMAN->CourseIsLocked(pCourse) )
+			continue;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		return pCourse;
 	}
 
@@ -1511,6 +1562,23 @@ void SongManager::UpdatePopular()
 {
 	// update players best
 	vector<Song*> apBestSongs = m_pSongs;
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+	for ( unsigned j=0; j < apBestSongs.size() ; ++j )
+	{
+		bool bFiltered = false;
+		// Filter out locked songs.
+		if( !apBestSongs[j]->NormallyDisplayed() )
+			bFiltered = true;
+		if( !bFiltered )
+			continue;
+
+		// Remove it.
+		swap( apBestSongs[j], apBestSongs.back() );
+		apBestSongs.erase( apBestSongs.end()-1 );
+		--j;
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 
 	SongUtil::SortSongPointerArrayByTitle( apBestSongs );
 
@@ -1545,10 +1613,15 @@ void SongManager::UpdateShuffled()
 void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferredCourses)
 {
 <<<<<<< HEAD:itgmania/src/SongManager.cpp
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 	ASSERT( UNLOCKMAN != nullptr );
 
 =======
 >>>>>>> origin/broken:src/SongManager.cpp
+=======
+	ASSERT( UNLOCKMAN != nullptr );
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 	{
 		m_vPreferredSongSort.clear();
 
@@ -1599,6 +1672,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 				Song *pSong = FindSong( sLine );
 				if( pSong == nullptr )
 					continue;
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+				if( UNLOCKMAN->SongIsLocked(pSong) & LOCKED_SELECTABLE )
+					continue;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 				section.vpSongs.push_back( pSong );
 			}
 		}
@@ -1610,6 +1688,9 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		}
 
 <<<<<<< HEAD:itgmania/src/SongManager.cpp
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
 		{
 			// move all unlock songs to a group at the bottom
@@ -1640,8 +1721,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			m_vPreferredSongSort.push_back( PFSection );
 		}
 
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 =======
 >>>>>>> origin/broken:src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		// prune empty groups
 		for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
 			if( m_vPreferredSongSort[i].vpSongs.empty() )
@@ -1680,6 +1764,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			Course *pCourse = FindCourse( sLine );
 			if( pCourse == nullptr )
 				continue;
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+			if( UNLOCKMAN->CourseIsLocked(pCourse) & LOCKED_SELECTABLE )
+				continue;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 			vpCourses.push_back( pCourse );
 		}
 
@@ -1690,6 +1779,9 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 		}
 
 <<<<<<< HEAD:itgmania/src/SongManager.cpp
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
 		{
 			// move all unlock Courses to a group at the bottom
@@ -1716,8 +1808,11 @@ void SongManager::UpdatePreferredSort(RString sPreferredSongs, RString sPreferre
 			m_vPreferredCourseSort.push_back( vpUnlockCourses );
 		}
 
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 =======
 >>>>>>> origin/broken:src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		// prune empty groups
 		for( int i=m_vPreferredCourseSort.size()-1; i>=0; i-- )
 			if( m_vPreferredCourseSort[i].empty() )
@@ -2031,6 +2126,7 @@ public:
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomCourse( T* p, lua_State *L )	{ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetNumSongs( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumSongs() ); return 1; }
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 	static int GetNumAdditionalSongs( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
 	static int GetNumSongGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
 	static int GetNumCourses( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumCourses() ); return 1; }
@@ -4083,6 +4179,8 @@ public:
 	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomCourse( T* p, lua_State *L )	{ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetNumSongs( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumSongs() ); return 1; }
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 	static int GetNumLockedSongs( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumLockedSongs() ); return 1; }
 	static int GetNumUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumUnlockedSongs() ); return 1; }
 	static int GetNumSelectableAndUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSelectableAndUnlockedSongs() ); return 1; }
@@ -4236,6 +4334,10 @@ public:
 		ADD_METHOD( ShortenGroupName );
 		ADD_METHOD( SetPreferredSongs );
 		ADD_METHOD( SetPreferredCourses );
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
+=======
+		ADD_METHOD( LoadNewSongs );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
 		ADD_METHOD( GetPreferredSortSongs );
 		ADD_METHOD( GetPreferredSortCourses );
 		ADD_METHOD( GetSongGroupBannerPath );
@@ -4256,7 +4358,11 @@ LUA_REGISTER_CLASS( SongManager )
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
  * 
+=======
+ *
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -4266,7 +4372,11 @@ LUA_REGISTER_CLASS( SongManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
  * 
+=======
+ *
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -4277,4 +4387,7 @@ LUA_REGISTER_CLASS( SongManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/SongManager.cpp
 >>>>>>> origin/c++11:src/SongManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SongManager.cpp

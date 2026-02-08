@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/AutoActor.cpp
+<<<<<<< HEAD:itgmania/src/AutoActor.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AutoActor.cpp
 #include "global.h"
 #include "AutoActor.h"
 #include "ThemeManager.h"
@@ -97,6 +100,7 @@ void AutoActor::LoadAndSetName( const RString &sScreenName, const RString &sActo
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/AutoActor.cpp
 =======
 #include "global.h"
 #include "AutoActor.h"
@@ -194,3 +198,5 @@ void AutoActor::LoadAndSetName( const RString &sScreenName, const RString &sActo
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/AutoActor.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AutoActor.cpp

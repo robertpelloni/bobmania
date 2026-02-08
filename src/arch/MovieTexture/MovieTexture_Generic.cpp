@@ -145,7 +145,7 @@ public:
 
 	virtual void Invalidate() { m_uTexHandle = 0; }
 	virtual void Reload() { }
-	virtual unsigned GetTexHandle() const
+	virtual uintptr_t GetTexHandle() const
 	{
 		return m_uTexHandle;
 	}
@@ -168,7 +168,7 @@ private:
 		delete pSurface;
 	}
 
-	unsigned m_uTexHandle;
+	uintptr_t m_uTexHandle;
 	RageSurfaceFormat m_SurfaceFormat;
 	RagePixelFormat m_PixFmt;
 };
@@ -454,7 +454,11 @@ void MovieTexture_Generic::UpdateFrame()
 
 	if( m_pTextureLock != nullptr )
 	{
+<<<<<<< HEAD
 		int iHandle = m_pTextureIntermediate != nullptr? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
+=======
+		uintptr_t iHandle = m_pTextureIntermediate != nullptr? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
+>>>>>>> origin/unified-ui-features-13937230807013224518
 		m_pTextureLock->Lock( iHandle, m_pSurface );
 	}
 
@@ -468,6 +472,10 @@ void MovieTexture_Generic::UpdateFrame()
 
 		/* If we have no m_pTextureLock, we still have to upload the texture. */
 		if( m_pTextureLock == nullptr )
+<<<<<<< HEAD
+=======
+		{
+>>>>>>> origin/unified-ui-features-13937230807013224518
 			DISPLAY->UpdateTexture(
 				m_pTextureIntermediate->GetTexHandle(),
 				m_pSurface,
@@ -481,8 +489,13 @@ void MovieTexture_Generic::UpdateFrame()
 	}
 	else
 	{
+<<<<<<< HEAD
 		CHECKPOINT;
 		if( m_pTextureLock == nullptr )
+=======
+		if( m_pTextureLock == nullptr )
+		{
+>>>>>>> origin/unified-ui-features-13937230807013224518
 			DISPLAY->UpdateTexture(
 				m_uTexHandle,
 				m_pSurface,
@@ -523,7 +536,7 @@ void MovieTexture_Generic::SetPosition( float fSeconds )
 	m_bWantRewind = true;
 }
 
-unsigned MovieTexture_Generic::GetTexHandle() const
+uintptr_t MovieTexture_Generic::GetTexHandle() const
 {
 	if( m_pRenderTarget != nullptr )
 		return m_pRenderTarget->GetTexHandle();

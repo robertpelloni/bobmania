@@ -156,10 +156,14 @@ static void child_process()
 	FD_SET( 3, &rs );
 	int ret = select( 4, &rs, nullptr, nullptr, &timeout );
 <<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandlerChild.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandlerChild.cpp
 
 =======
 	
 >>>>>>> origin/c++11:src/archutils/Unix/CrashHandlerChild.cpp
+=======
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandlerChild.cpp
 	if( ret == 0 )
 	{
 		fputs( "Timeout exceeded.\n", stderr );

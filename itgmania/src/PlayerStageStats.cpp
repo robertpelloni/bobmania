@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 <<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
+<<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
 #include "LuaManager.h"
 =======
 
@@ -10,6 +11,10 @@
 #include <float.h>
 #include <numeric>
 >>>>>>> origin/c++11:src/PlayerStageStats.cpp
+=======
+#include "LuaManager.h"
+#include <float.h>
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerStageStats.cpp
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
@@ -17,9 +22,12 @@
 #include "PrefsManager.h"
 #include "CommonMetrics.h"
 
+<<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
 #include <cfloat>
 #include <cmath>
 #include <cstddef>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerStageStats.cpp
 #include <numeric>
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
@@ -350,6 +358,7 @@ int PlayerStageStats::GetLessonScoreActual() const
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
 <<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
+<<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
 	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
 		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds]; });
 	return std::lrint( fScore * LESSON_PASS_THRESHOLD );
@@ -358,6 +367,11 @@ int PlayerStageStats::GetLessonScoreNeeded() const
 		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1).m_Values.v.fNumTapsAndHolds; });
 	return lrintf( score * LESSON_PASS_THRESHOLD );
 >>>>>>> origin/c++11:src/PlayerStageStats.cpp
+=======
+	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
+		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds]; });
+	return lrintf( fScore * LESSON_PASS_THRESHOLD );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerStageStats.cpp
 }
 
 void PlayerStageStats::ResetScoreForLesson()
@@ -901,7 +915,11 @@ public:
 		}
 		COMMON_RETURN_SELF;
 	}
+<<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
 
+=======
+  
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerStageStats.cpp
 	static int FailPlayer( T* p, lua_State *L )
 	{
 		p->m_bFailed = true;

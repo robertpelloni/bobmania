@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenNameEntry.cpp
+<<<<<<< HEAD:itgmania/src/ScreenNameEntry.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenNameEntry.cpp
 #include "global.h"
 #include "ScreenNameEntry.h"
 #include "GameConstantsAndTypes.h"
@@ -862,4 +865,7 @@ bool ScreenNameEntry::MenuStart( const InputEventPlus &input )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenNameEntry.cpp
 >>>>>>> origin/c++11:src/ScreenNameEntry.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenNameEntry.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/InputFilter.cpp
+<<<<<<< HEAD:itgmania/src/InputFilter.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputFilter.cpp
 #include "global.h"
 #include "LocalizedString.h"
 #include "InputFilter.h"
@@ -1031,4 +1034,7 @@ LUA_REGISTER_CLASS( InputFilter )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/InputFilter.cpp
 >>>>>>> origin/c++11:src/InputFilter.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputFilter.cpp

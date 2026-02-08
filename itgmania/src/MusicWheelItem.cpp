@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/MusicWheelItem.cpp
+<<<<<<< HEAD:itgmania/src/MusicWheelItem.cpp
 #include "global.h"
 #include "MusicWheelItem.h"
 #include "RageUtil.h"
@@ -483,6 +484,8 @@ void MusicWheelItem::HandleMessage( const Message &msg )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MusicWheelItem.cpp
 #include "global.h"
 #include "MusicWheelItem.h"
 #include "RageUtil.h"
@@ -790,6 +793,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pData, int 
 
 void MusicWheelItem::RefreshGrades()
 {
+	if(!IsLoaded()) { return; }
 	const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
 
 	if( pWID == nullptr )
@@ -860,6 +864,7 @@ void MusicWheelItem::RefreshGrades()
 
 void MusicWheelItem::HandleMessage( const Message &msg )
 {
+	if(!IsLoaded()) { return; }
 	if( msg == Message_CurrentStepsP1Changed ||
 	    msg == Message_CurrentStepsP2Changed ||
 	    msg == Message_CurrentTrailP1Changed ||
@@ -867,6 +872,53 @@ void MusicWheelItem::HandleMessage( const Message &msg )
 	    msg == Message_PreferredDifficultyP1Changed ||
 	    msg == Message_PreferredDifficultyP2Changed )
 	{
+		const MusicWheelItemData *pWID = dynamic_cast<const MusicWheelItemData*>( m_pData );
+		MusicWheelItemType type = MusicWheelItemType_Invalid;
+
+		switch( pWID->m_Type )
+		{
+			DEFAULT_FAIL( pWID->m_Type );
+			case WheelItemDataType_Song:
+				type = MusicWheelItemType_Song;
+				break;
+			case WheelItemDataType_Section:
+				if( GAMESTATE->sExpandedSectionName == pWID->m_sText )
+					type = MusicWheelItemType_SectionExpanded;
+				else
+					type = MusicWheelItemType_SectionCollapsed;
+				break;
+			case WheelItemDataType_Course:
+				type = MusicWheelItemType_Course;
+				break;
+			case WheelItemDataType_Sort:
+				if( pWID->m_pAction->m_pm != PlayMode_Invalid )
+					type = MusicWheelItemType_Mode;
+				else
+					type = MusicWheelItemType_Sort;
+				break;
+			case WheelItemDataType_Roulette:
+				type = MusicWheelItemType_Roulette;
+				break;
+			case WheelItemDataType_Random:
+				type = MusicWheelItemType_Random;
+				break;
+			case WheelItemDataType_Portal:
+				type = MusicWheelItemType_Portal;
+				break;
+			case WheelItemDataType_Custom:
+				type = MusicWheelItemType_Custom;
+				break;
+		}
+
+		Message msg( "Set" );
+		msg.SetParam( "Song", pWID->m_pSong );
+		msg.SetParam( "Course", pWID->m_pCourse );
+		msg.SetParam( "Text", pWID->m_sText );
+		msg.SetParam( "Type", MusicWheelItemTypeToString(type) );
+		msg.SetParam( "Color", pWID->m_color );
+		msg.SetParam( "Label", pWID->m_sLabel );
+		this->HandleMessage( msg );
+		
 		RefreshGrades();
 	}
 
@@ -897,4 +949,7 @@ void MusicWheelItem::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/MusicWheelItem.cpp
 >>>>>>> origin/c++11:src/MusicWheelItem.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MusicWheelItem.cpp

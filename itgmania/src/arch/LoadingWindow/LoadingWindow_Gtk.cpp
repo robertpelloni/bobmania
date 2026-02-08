@@ -48,9 +48,14 @@ extern "C" const char *Init( int *argc, char ***argv )
 		return "Couldn't initialize gtk (cannot open display)";
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Gtk.cpp
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
 	gtk_widget_set_size_request(window,468,-1);
 >>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow_GtkModule.cpp
+=======
+	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS );
+	gtk_widget_set_size_request(window,-1,-1);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 	gtk_window_set_deletable( GTK_WINDOW(window), FALSE );
 	gtk_window_set_resizable(GTK_WINDOW(window),FALSE);
 	gtk_window_set_role( GTK_WINDOW(window), "sm-startup" );
@@ -58,12 +63,18 @@ extern "C" const char *Init( int *argc, char ***argv )
 	gtk_widget_realize(window);
 
 <<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Gtk.cpp
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Gtk.cpp
 	splash = gtk_image_new_from_pixbuf(
 		gdk_pixbuf_new_from_file (splash_image_path, nullptr)
 	);
 =======
 	splash = gtk_image_new_from_file(splash_image_path);
 >>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow_GtkModule.cpp
+=======
+	splash = gtk_image_new_from_pixbuf(
+		gdk_pixbuf_new_from_file (splash_image_path, nullptr)
+	);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 
 	label = gtk_label_new(nullptr);
 	gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
@@ -74,10 +85,14 @@ extern "C" const char *Init( int *argc, char ***argv )
 	gtk_progress_bar_set_fraction( GTK_PROGRESS_BAR(progressBar), 0.0 );
 
 <<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Gtk.cpp
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Gtk.cpp
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 =======
 	vbox = gtk_vbox_new(FALSE,0);
 >>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow_GtkModule.cpp
+=======
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 	gtk_container_add(GTK_CONTAINER(window),vbox);
 	gtk_box_pack_start(GTK_BOX(vbox),splash,FALSE,FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),progressBar,FALSE,FALSE,0);

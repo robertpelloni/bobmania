@@ -12,7 +12,11 @@ class InputHandler_SextetStream: public InputHandler
 public:
 	InputHandler_SextetStream();
 	~InputHandler_SextetStream();
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_SextetStream.h
 	void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
+=======
+	void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_SextetStream.h
 
 public:
 	class Impl;

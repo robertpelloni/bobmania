@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenUnlockBrowse.cpp
+<<<<<<< HEAD:itgmania/src/ScreenUnlockBrowse.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenUnlockBrowse.cpp
 #include "global.h"
 #include "ScreenUnlockBrowse.h"
 #include "UnlockManager.h"
@@ -94,6 +97,7 @@ void ScreenUnlockBrowse::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenUnlockBrowse.cpp
 =======
 #include "global.h"
 #include "ScreenUnlockBrowse.h"
@@ -191,3 +195,5 @@ void ScreenUnlockBrowse::HandleMessage( const Message &msg )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/ScreenUnlockBrowse.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenUnlockBrowse.cpp

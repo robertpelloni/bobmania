@@ -295,11 +295,19 @@ in the main StepMania folder is no longer the correct thing to do.
 
 The correct place to install content on ITGmania is the User Data folder.
 The exact location is different for each platform.
+<<<<<<< HEAD:itgmania/Docs/Userdocs/beginner.txt
 Windows:  %APPDATA%/ITGmania/
 Linux:  ~/.itgmania/
 macOS:  ~/Library/Application Support/ITGmania/
 Wherever you see the name "User Data folder", this is the folder it refers to.
 macOS additionally has ~/Library/Preferences/ITGmania/ for storing preferences.
+=======
+Windows:  %APPDATA%/StepMania 5.1/
+Linux:  ~/.stepmania-5.1/
+OS X:  ~/Library/Application Support/StepMania 5.1/
+Wherever you see the name "User Data folder", this is the folder it refers to.
+OS X additionally has ~/Library/Preferences/StepMania 5.1/ for storing preferences.
+>>>>>>> origin/unified-ui-features-13937230807013224518:Docs/Userdocs/sm5_beginner.txt
 
 Inside the User Data folder you can install content by placing it in the following folders:
  * Songs

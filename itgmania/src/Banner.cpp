@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/Banner.cpp
+<<<<<<< HEAD:itgmania/src/Banner.cpp
 #include "global.h"
 #include "Banner.h"
 #include "ImageCache.h"
@@ -374,9 +375,11 @@ LUA_REGISTER_DERIVED_CLASS( Banner, Sprite )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Banner.cpp
 #include "global.h"
 #include "Banner.h"
-#include "BannerCache.h"
+#include "ImageCache.h"
 #include "SongManager.h"
 #include "RageUtil.h"
 #include "Song.h"
@@ -433,7 +436,7 @@ void Banner::LoadFromCachedBanner( const RString &sPath )
 	}
 
 	RageTextureID ID;
-	bool bLowRes = (PREFSMAN->m_BannerCache != BNCACHE_FULL);
+	bool bLowRes = (PREFSMAN->m_ImageCache != IMGCACHE_FULL);
 	if( !bLowRes )
 	{
 		ID = Sprite::SongBannerTexture( sPath );
@@ -441,7 +444,7 @@ void Banner::LoadFromCachedBanner( const RString &sPath )
 	else
 	{
 		// Try to load the low quality version.
-		ID = BANNERCACHE->LoadCachedBanner( sPath );
+		ID = IMAGECACHE->LoadCachedImage( "Banner", sPath );
 	}
 
 	if( TEXTUREMAN->IsTextureRegistered(ID) )
@@ -483,7 +486,7 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 	Update(0);
 }
 
-void Banner::LoadFromSong( Song* pSong ) // NULL means no song
+void Banner::LoadFromSong( Song* pSong ) // nullptr means no song
 {
 	if( pSong == nullptr )	LoadFallback();
 	else if( pSong->HasBanner() ) Load( pSong->GetBannerPath() );
@@ -506,7 +509,7 @@ void Banner::LoadFromSongGroup( RString sSongGroup )
 	m_bScrolling = false;
 }
 
-void Banner::LoadFromCourse( const Course *pCourse )		// NULL means no course
+void Banner::LoadFromCourse( const Course *pCourse )		// nullptr means no course
 {
 	if( pCourse == nullptr )				LoadFallback();
 	else if( pCourse->GetBannerPath() != "" )	Load( pCourse->GetBannerPath() );
@@ -600,7 +603,7 @@ void Banner::LoadRandom()
 
 void Banner::LoadFromSortOrder( SortOrder so )
 {
-	// TODO: See if the check for NULL/PREFERRED(?) is needed.
+	// TODO: See if the check for nullptr/PREFERRED(?) is needed.
 	if( so == SortOrder_Invalid )
 	{
 		LoadFallback();
@@ -729,4 +732,7 @@ LUA_REGISTER_DERIVED_CLASS( Banner, Sprite )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Banner.cpp
 >>>>>>> origin/c++11:src/Banner.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Banner.cpp

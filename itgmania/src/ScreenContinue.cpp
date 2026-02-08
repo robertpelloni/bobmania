@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenContinue.cpp
+<<<<<<< HEAD:itgmania/src/ScreenContinue.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenContinue.cpp
 #include "global.h"
 #include "ScreenContinue.h"
 #include "ScreenManager.h"
@@ -291,4 +294,7 @@ void ScreenContinue::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenContinue.cpp
 >>>>>>> origin/c++11:src/ScreenContinue.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenContinue.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/XmlFileUtil.cpp
+<<<<<<< HEAD:itgmania/src/XmlFileUtil.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFileUtil.cpp
 #include "global.h"
 #include "XmlFileUtil.h"
 #include "XmlFile.h"
@@ -1268,7 +1271,11 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		WRITE( "'" );
 	}
 
+<<<<<<< HEAD:itgmania/src/XmlFileUtil.cpp
 	if( pNode->m_childs.empty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr )
+=======
+	if( pNode->ChildrenEmpty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == nullptr )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFileUtil.cpp
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		WRITE( "/>" );
@@ -1662,4 +1669,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/XmlFileUtil.cpp
 >>>>>>> origin/c++11:src/XmlFileUtil.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/XmlFileUtil.cpp

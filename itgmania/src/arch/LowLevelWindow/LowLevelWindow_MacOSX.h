@@ -24,7 +24,11 @@ public:
 	LowLevelWindow_MacOSX();
 	~LowLevelWindow_MacOSX();
 	void *GetProcAddress( RString s );
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.h
 	RString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );
+=======
+	RString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.h
 	void GetDisplaySpecs( DisplaySpecs &specs ) const;
 
 	void SwapBuffers();

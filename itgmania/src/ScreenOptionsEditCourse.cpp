@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
+<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsEditCourse.cpp
 #include "global.h"
 
 #include "ScreenOptionsEditCourse.h"
@@ -61,6 +64,7 @@ public:
 		{
 			m_Def.m_vsChoices.push_back( "n/a" );
 			m_vpSteps.push_back(nullptr);
+<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
 			m_Def.m_vEnabledForPlayers.clear();
 		}
 
@@ -590,6 +594,8 @@ public:
 		{
 			m_Def.m_vsChoices.push_back( "n/a" );
 			m_vpSteps.push_back(nullptr);
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsEditCourse.cpp
 			m_Def.m_vEnabledForPlayers.clear();
 		}
 
@@ -844,7 +850,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 			GAMESTATE->m_pCurCourse->m_fGoalSeconds = 0;
 			int mins;
 			if( sscanf( sValue, "%d", &mins ) == 1 )
-				GAMESTATE->m_pCurCourse->m_fGoalSeconds = mins * 60;
+				GAMESTATE->m_pCurCourse->m_fGoalSeconds = float(mins * 60);
 			break;
 		}
 	}
@@ -1059,4 +1065,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
 >>>>>>> origin/c++11:src/ScreenOptionsEditCourse.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsEditCourse.cpp

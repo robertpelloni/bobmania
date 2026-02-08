@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/WheelItemBase.cpp
+<<<<<<< HEAD:itgmania/src/WheelItemBase.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/WheelItemBase.cpp
 #include "global.h"
 #include "WheelItemBase.h"
 #include "LuaManager.h"
@@ -156,6 +159,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelItemBase, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/WheelItemBase.cpp
 =======
 #include "global.h"
 #include "WheelItemBase.h"
@@ -289,3 +293,5 @@ LUA_REGISTER_DERIVED_CLASS( WheelItemBase, ActorFrame )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/WheelItemBase.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/WheelItemBase.cpp

@@ -5,8 +5,12 @@ namespace GameLoop
 {
 	void RunGameLoop();
 	void UpdateAllButDraw( bool bRunningFromVBLANK);
+<<<<<<< HEAD:itgmania/src/GameLoop.h
 	void SetUpdateRate(float fUpdateRate);
 	float GetUpdateRate();
+=======
+	void SetUpdateRate( float fUpdateRate );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.h
 	void ChangeTheme(const RString &sNewTheme);
 	void ChangeGame(const RString& new_game, const RString& new_theme= "");
 	void StartConcurrentRendering();

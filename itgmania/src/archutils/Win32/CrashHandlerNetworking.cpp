@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/archutils/Win32/CrashHandlerNetworking.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Win32/CrashHandlerNetworking.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/CrashHandlerNetworking.cpp
 #include "global.h"
 #include "CrashHandlerNetworking.h"
 #include "RageThreads.h"
@@ -7,8 +10,11 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/CrashHandlerNetworking.cpp
 #include <cstddef>
 #include <cstdint>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/CrashHandlerNetworking.cpp
 
 #if defined(WINDOWS)
 #include <windows.h>
@@ -359,6 +365,7 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 
 	// Look up the hostname.
 	hostent *pHost = nullptr;
+<<<<<<< HEAD:itgmania/src/archutils/Win32/CrashHandlerNetworking.cpp
 	char pBuf[MAXGETHOSTSTRUCT];
 	{
 		pHost = (hostent *) pBuf;
@@ -1130,6 +1137,8 @@ void NetworkStream_Win32::Open( const RString &sHost, int iPort, ConnectionType 
 
 	// Look up the hostname.
 	hostent *pHost = nullptr;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/CrashHandlerNetworking.cpp
 	char pBuf[MAXGETHOSTSTRUCT];
 	{
 		pHost = (hostent *) pBuf;
@@ -1538,4 +1547,7 @@ void NetworkPostData::SetData( const RString &sKey, const RString &sData )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/archutils/Win32/CrashHandlerNetworking.cpp
 >>>>>>> origin/c++11:src/archutils/Win32/CrashHandlerNetworking.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/CrashHandlerNetworking.cpp

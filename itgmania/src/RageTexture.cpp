@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageTexture.cpp
+<<<<<<< HEAD:itgmania/src/RageTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTexture.cpp
 #include "global.h"
 
 #include "RageTexture.h"
@@ -171,6 +174,7 @@ LUA_REGISTER_CLASS( RageTexture )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageTexture.cpp
 =======
 #include "global.h"
 
@@ -291,3 +295,5 @@ LUA_REGISTER_CLASS( RageTexture )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/RageTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTexture.cpp

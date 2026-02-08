@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ProfileManager.cpp
+<<<<<<< HEAD:itgmania/src/ProfileManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ProfileManager.cpp
 #include "global.h"
 #include "ProfileManager.h"
 #include "Profile.h"
@@ -1223,6 +1226,7 @@ LUA_REGISTER_CLASS( ProfileManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ProfileManager.cpp
 =======
 #include "global.h"
 #include "ProfileManager.h"
@@ -2155,3 +2159,5 @@ LUA_REGISTER_CLASS( ProfileManager )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/ProfileManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ProfileManager.cpp

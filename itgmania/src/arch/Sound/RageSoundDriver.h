@@ -53,6 +53,7 @@ public:
 	 * RageSound::CommitPlayingPosition. */
 	int64_t GetHardwareFrame( RageTimer *pTimer ) const;
 	virtual int64_t GetPosition() const = 0;
+	void low_sample_count_workaround();
 
 	/* When a sound is finished playing (GetDataToPlay returns 0) and the sound has
 	 * been completely flushed (so GetPosition is no longer meaningful), call
@@ -205,6 +206,10 @@ private:
 	int64_t ClampHardwareFrame( int64_t iHardwareFrame ) const;
 	mutable int64_t m_iMaxHardwareFrame;
 	mutable int64_t m_iVMaxHardwareFrame;
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver.h
+=======
+	mutable int32_t soundDriverMaxSamples = 0;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver.h
 
 	bool m_bShutdownDecodeThread;
 

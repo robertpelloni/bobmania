@@ -670,9 +670,12 @@ int RageSoundReader_Resample_Good::Read( float *pBuf, int iFrames )
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
 		float *pTmpBuf = (float *) alloca( iFramesNeeded * sizeof(float) * iChannels );
 <<<<<<< HEAD:itgmania/src/RageSoundReader_Resample_Good.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Resample_Good.cpp
 =======
 		ASSERT( pTmpBuf != nullptr );
 >>>>>>> origin/c++11:src/RageSoundReader_Resample_Good.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_Resample_Good.cpp
 		int iFramesIn = m_pSource->Read( pTmpBuf, iFramesNeeded );
 		if( iFramesIn < 0 )
 			return iFramesIn;

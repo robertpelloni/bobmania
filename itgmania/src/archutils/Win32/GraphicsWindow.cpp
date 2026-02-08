@@ -13,7 +13,10 @@
 #include "archutils/Win32/GetFileInformation.h"
 #include "CommandLineActions.h"
 #include "DirectXHelpers.h"
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 #include "PrefsManager.h"
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 
 #include <windows.h>
 #include <string>
@@ -41,10 +44,14 @@ static RString GetNewWindow()
 	HWND h = GetForegroundWindow();
 	if( h == nullptr )
 <<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 		return "(NULL)";
 =======
 		return "(nullptr)";
 >>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
+=======
+		return "(NULL)";
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
@@ -100,7 +107,11 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 				}
 				else if( !g_bHasFocus && bHadFocus )
 				{
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 					ChangeDisplaySettingsEx(g_CurrentParams.sDisplayId.c_str(), nullptr, nullptr, 0, nullptr);
+=======
+					ChangeDisplaySettings( nullptr, 0 );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 				}
 			}
 
@@ -207,7 +218,11 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 	DEVMODE dm;
 	ZERO( dm );
 	dm.dmSize = sizeof(dm);
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 	if (!EnumDisplaySettings(p.sDisplayId.c_str(), ENUM_CURRENT_SETTINGS, &dm))
+=======
+	if( !EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm) )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 	{
 		p.rate = 60;
 		LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
@@ -245,7 +260,11 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 	if( p.windowed )
 	{
 		// We're going windowed. If we were previously fullscreen, reset.
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 		ChangeDisplaySettingsEx( p.sDisplayId.c_str(), nullptr, nullptr, displaySettingsFlag, nullptr );
+=======
+		ChangeDisplaySettings( nullptr, 0 );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 
 		return RString();
 	}
@@ -271,6 +290,10 @@ RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 		DevMode.dmDisplayFrequency = p.rate;
 		DevMode.dmFields |= DM_DISPLAYFREQUENCY;
 	}
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
+=======
+	ChangeDisplaySettings( nullptr, 0 );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 
 	int ret = ChangeDisplaySettingsEx( p.sDisplayId.c_str(), &DevMode, nullptr, displaySettingsFlag, nullptr );
 	if( ret != DISP_CHANGE_SUCCESSFUL && (DevMode.dmFields & DM_DISPLAYFREQUENCY) )
@@ -393,10 +416,14 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	g_hIcon = IconFromFile( p.sIconFile );
 	if( g_hIcon != nullptr )
 <<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 		SetClassLongPtrA( g_hWndMain, GCLP_HICON, reinterpret_cast<LONG_PTR>(g_hIcon) );
 =======
 		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
 >>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
+=======
+		SetClassLongPtrA( g_hWndMain, GCLP_HICON, reinterpret_cast<LONG_PTR>(g_hIcon) );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 
 	/* The window style may change as a result of switching to or from fullscreen;
 	 * apply it. Don't change the WS_VISIBLE bit. */
@@ -509,6 +536,19 @@ void GraphicsWindow::Initialize( bool bD3D )
 	// A few things need to be handled differently for D3D.
 	g_bD3D = bD3D;
 
+	//keeping xp on life support -- check for vista+ for dwm
+	if (at_least_vista())
+	{
+		hInstanceDwmapi = LoadLibraryA("dwmapi.dll");
+	}
+
+	//if we have dwm, get function pointers to the dll functions
+	if( hInstanceDwmapi != nullptr )
+	{
+		PFN_DwmFlush =					(HRESULT (WINAPI *)(VOID))GetProcAddress( hInstanceDwmapi, "DwmFlush" );
+		PFN_DwmIsCompositionEnabled =	(HRESULT (WINAPI *)(BOOL*))GetProcAddress( hInstanceDwmapi, "DwmIsCompositionEnabled" );
+	}
+
 	AppInstance inst;
 	do
 	{
@@ -542,7 +582,11 @@ void GraphicsWindow::Initialize( bool bD3D )
 			LoadCursor( nullptr, IDC_ARROW ),	/* default cursor */
 			nullptr,			/* hbrBackground */
 			nullptr,			/* lpszMenuName */
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 			g_sClassName.c_str()	/* lpszClassName */
+=======
+			g_sClassName	/* lpszClassName */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 		}; 
 
 		m_bWideWindowClass = false;
@@ -557,6 +601,15 @@ void GraphicsWindow::Shutdown()
 {
 	DestroyGraphicsWindow();
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
+=======
+	/* Return to the desktop resolution, if needed.
+	 * It'd be nice to not do this: Windows will do it when we quit, and if
+	 * we're shutting down OpenGL to try D3D, this will cause extra mode
+	 * switches. However, we need to do this before displaying dialogs. */
+	ChangeDisplaySettings( nullptr, 0 );
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 	AppInstance inst;
 	UnregisterClass( g_sClassName.c_str(), inst );
 }
@@ -583,6 +636,20 @@ void GraphicsWindow::Update()
 
 	HOOKS->SetHasFocus( g_bHasFocus );
 
+	if (g_CurrentParams.vsync)
+	{
+		//if we can use DWM
+		if( hInstanceDwmapi != nullptr )
+		{
+			BOOL compositeEnabled = true;
+			PFN_DwmIsCompositionEnabled(&compositeEnabled);
+			if (compositeEnabled)
+			{
+				PFN_DwmFlush();
+			}
+		}
+	}
+
 	if( g_bResolutionChanged && DISPLAY != nullptr )
 	{
 		//LOG->Warn( "Changing resolution" );
@@ -601,6 +668,7 @@ HWND GraphicsWindow::GetHwnd()
 
 void GraphicsWindow::GetDisplaySpecs( DisplaySpecs &out )
 {
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 	auto resetDeviceMode = [=]( DEVMODE& mode ) {
 		ZeroMemory( &mode, sizeof( DEVMODE ) );
 		mode.dmSize = sizeof(DEVMODE);
@@ -662,7 +730,53 @@ void GraphicsWindow::GetDisplaySpecs( DisplaySpecs &out )
 		{
 			LOG->Warn("Could not retrieve valid current display mode");
 			out.insert(DisplaySpec(sDeviceName, modeName, *dispModes.begin()));
+=======
+	const size_t DM_DRIVER_EXTRA_BYTES = 4096;
+	const size_t DMSIZE = sizeof( DEVMODE ) + DM_DRIVER_EXTRA_BYTES;
+	auto reset = [=]( std::unique_ptr<DEVMODE> &p ) {
+		::memset( p.get(), 0, DMSIZE );
+		p->dmSize = sizeof( DEVMODE );
+		p->dmDriverExtra = static_cast<WORD> (DM_DRIVER_EXTRA_BYTES);
+	};
+	auto isvalid = []( std::unique_ptr<DEVMODE> &dm ) {
+		// Windows 8 and later don't support less than 32bpp, so don't even test
+		// for them.  GetDisplaySpecs only tracks resolution/refresh rate anyway. -Kyz, drewbarbs
+		return (dm->dmFields & DM_PELSWIDTH) && (dm->dmFields & DM_PELSHEIGHT) && (dm->dmFields & DM_DISPLAYFREQUENCY)
+			&& (dm->dmBitsPerPel >= 32 || !(dm->dmFields & DM_BITSPERPEL));
+	};
+
+	std::unique_ptr<DEVMODE> dm( static_cast<DEVMODE*> (operator new(DMSIZE)) );
+	reset( dm );
+
+	int i = 0;
+	std::set<DisplayMode> modes;
+	while ( EnumDisplaySettingsEx( nullptr, i++, dm.get(), 0 ) )
+	{
+		if ( isvalid( dm ) && ChangeDisplaySettingsEx( nullptr, dm.get(), nullptr, CDS_TEST, nullptr ) == DISP_CHANGE_SUCCESSFUL )
+		{
+			DisplayMode m = { dm->dmPelsWidth, dm->dmPelsHeight, static_cast<double> (dm->dmDisplayFrequency) };
+			modes.insert(m);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/GraphicsWindow.cpp
 		}
+		reset( dm );
+	}
+
+	reset( dm );
+	// Get the current display mode
+	if ( EnumDisplaySettingsEx( nullptr, ENUM_CURRENT_SETTINGS, dm.get(), 0 ) && isvalid( dm ) )
+	{
+		DisplayMode m = { dm->dmPelsWidth, dm->dmPelsHeight, static_cast<double> (dm->dmDisplayFrequency) };
+		RectI bounds = { 0, 0, static_cast<int> (m.width), static_cast<int> (m.height) };
+		out.insert( DisplaySpec( "", "Fullscreen", modes, m, bounds ) );
+	}
+	else if ( !modes.empty() )
+	{
+		LOG->Warn( "Could not retrieve valid current display mode" );
+		out.insert( DisplaySpec( "", "Fullscreen", *modes.begin() ) );
+	}
+	else
+	{
+		LOG->Warn( "Could not retrieve *any* DisplaySpec's!" );
 	}
 	if (out.size() == 0)
 		LOG->Warn("Could not retrieve *any* DisplaySpec's!");

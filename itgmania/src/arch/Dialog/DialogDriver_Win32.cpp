@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
 #include "global.h"
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
@@ -303,6 +304,8 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_Win32.cpp
 #include "global.h"
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
@@ -334,7 +337,7 @@ static RString g_sMessage;
 static bool g_bAllowHush;
 
 #if !defined(SMPACKAGE)
-static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+static INT_PTR CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	switch( msg )
 	{
@@ -425,7 +428,7 @@ Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
 
 #if !defined(SMPACKAGE)
 	//DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
-	int result = ::MessageBox( NULL, sMessage, GetWindowTitle(), MB_OKCANCEL );
+	int result = ::MessageBox( nullptr, sMessage, GetWindowTitle(), MB_OKCANCEL );
 #else
 	int result = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_OKCANCEL, 0 );
 #endif
@@ -444,7 +447,7 @@ Dialog::Result DialogDriver_Win32::OKCancel( RString sMessage, RString sID )
 #if !defined(SMPACKAGE)
 static RString g_sErrorString;
 
-static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	switch( msg )
 	{
@@ -470,14 +473,21 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 				RString sAppDataDir = SpecialDirs::GetAppDataDir();
 				RString sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
 				CreateProcess(
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
 					NULL,		// pointer to name of executable module
 					sCommand.GetBuffer(),	// pointer to command line string
 					NULL,  // process security attributes
 					NULL,   // thread security attributes
+=======
+					nullptr,		// pointer to name of executable module
+					const_cast<char *>(sCommand.c_str()),	// pointer to command line string
+					nullptr,  // process security attributes
+					nullptr,   // thread security attributes
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_Win32.cpp
 					false,  // handle inheritance flag
 					0, // creation flags
-					NULL,  // pointer to new environment block
-					NULL,   // pointer to current directory name
+					nullptr,  // pointer to new environment block
+					nullptr,   // pointer to current directory name
 					&si,  // pointer to STARTUPINFO
 					&pi  // pointer to PROCESS_INFORMATION
 				);
@@ -513,7 +523,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			}
 
 			// TODO:  Return a different brush if the default is not desired
-			return (BOOL)hbr;
+			return reinterpret_cast<INT_PTR>(hbr);
 		}
 	}
 	return FALSE;
@@ -609,4 +619,7 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
 >>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_Win32.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_Win32.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
+<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load.cpp
 #include "global.h"
 #include "ActorUtil.h"
 #include "RageSurface_Load.h"
@@ -36,6 +39,7 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	if( result == RageSurfaceUtils::OPEN_OK )
 	{
 		ASSERT( ret != nullptr );
+<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
 		return ret;
 	}
 
@@ -182,6 +186,8 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	if( result == RageSurfaceUtils::OPEN_OK )
 	{
 		ASSERT( ret != nullptr );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load.cpp
 		return ret;
 	}
 
@@ -292,4 +298,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
 >>>>>>> origin/c++11:src/RageSurface_Load.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load.cpp

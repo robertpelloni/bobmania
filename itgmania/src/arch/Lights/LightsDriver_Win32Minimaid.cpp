@@ -51,10 +51,17 @@ void setup_driver()
 LightsDriver_Win32Minimaid::LightsDriver_Win32Minimaid()
 {
 	_mmmagic_loaded=false;
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Minimaid.cpp
 	hMMMAGICDLL = LoadLibraryW(L"mmmagic64.dll");
 	if(hMMMAGICDLL == nullptr)
 	{
 		MessageBox(nullptr, "Could not LoadLibrary( mmmagic64.dll ).", "ERROR", MB_OK );
+=======
+	hMMMAGICDLL = LoadLibraryW(L"mmmagic.dll");
+	if(hMMMAGICDLL == nullptr)
+	{
+		MessageBox(nullptr, "Could not LoadLibrary( mmmagic.dll ).", "ERROR", MB_OK );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Minimaid.cpp
 		return;
 	}
 	setup_driver();

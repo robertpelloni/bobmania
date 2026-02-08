@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/EditMenu.cpp
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.cpp
 #include "global.h"
 #include "EditMenu.h"
 #include "RageLog.h"
@@ -9,8 +12,13 @@
 #include "Steps.h"
 #include "Song.h"
 #include "StepsUtil.h"
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 #include "CommonMetrics.h"
 <<<<<<< HEAD:itgmania/src/EditMenu.cpp
+=======
+
+#include "CommonMetrics.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.cpp
 #include "ImageCache.h"
 #include "UnlockManager.h"
 =======
@@ -473,12 +481,20 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				m_StepsTypes.clear();
 
 				// Only show StepsTypes for which we have valid Steps.
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 				std::vector<StepsType> vSts = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
+=======
+				vector<StepsType> vSts = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.cpp
 				for (StepsType &st : vSts)
 				{
 					if(SongUtil::GetStepsByDifficulty( GetSelectedSong(), st, Difficulty_Invalid, false) != nullptr)
 					m_StepsTypes.push_back(st);
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 
+=======
+					
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.cpp
 					// Try to preserve the user's StepsType selection.
 					if(st == orgSel)
 					m_iSelection[ROW_STEPS_TYPE] = m_StepsTypes.size() - 1;
@@ -548,8 +564,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 <<<<<<< HEAD:itgmania/src/EditMenu.cpp
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
 						pSteps = nullptr;
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 =======
 >>>>>>> origin/broken:src/EditMenu.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.cpp
 
 					switch( mode )
 					{
@@ -1343,4 +1362,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 >>>>>>> origin/c++11:src/EditMenu.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.cpp

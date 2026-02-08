@@ -47,6 +47,32 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+<<<<<<< HEAD
+=======
+	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
+	// they need to be used twice so that the notefield board can rendered
+	// underneath the combo and judgment.  They're not embedded in
+	// PlayerMatrixPusher so that some nutjob can later decide to expose them
+	// to lua. -Kyz
+	void PushPlayerMatrix(float x, float skew, float center_y, float fov, float vanish_y);
+	void PopPlayerMatrix();
+
+	// This exists so that the board can be drawn underneath combo/judge. -Kyz
+	void DrawNoteFieldBoard();
+
+	// Here's a fun construct for people that haven't seen it before:
+	// This object does some task when it's created, then cleans up when it's
+	// destroyed.  That way, you stick it inside a block, and can't forget the
+	// cleanup. -Kyz
+	struct PlayerNoteFieldPositioner
+	{
+		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse, float fov, float vanish_y);
+		~PlayerNoteFieldPositioner();
+		Player* player;
+		float original_y;
+		float y_offset;
+	};
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 	struct TrackRowTapNote
 	{
@@ -116,7 +142,7 @@ public:
 	 * @brief Retrieve the latest reference to the Player's NoteData.
 	 * @return the NoteData reference in question. */
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasVisibleParts() const { return m_pNoteField != NULL; }
+	bool HasVisibleParts() const { return m_pNoteField != nullptr; }
 
 	void SetActorWithJudgmentPosition( Actor *pActor ) { m_pActorWithJudgmentPosition = pActor; }
 	void SetActorWithComboPosition( Actor *pActor ) { m_pActorWithComboPosition = pActor; }

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/CourseUtil.cpp
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp
 #include "global.h"
 #include "CourseUtil.h"
 #include "Course.h"
@@ -10,6 +13,7 @@
 #include "GameState.h"
 #include "Style.h"
 
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
 #include "GameState.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -642,6 +646,8 @@ bool CourseID::IsValid() const
 #include "GameState.h"
 #include "Style.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp
 #include "GameState.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -1081,8 +1087,13 @@ bool EditCourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sE
 
 void EditCourseUtil::UpdateAndSetTrail()
 {
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
 	ASSERT( GAMESTATE->m_pCurStyle != nullptr );
 	StepsType st = GAMESTATE->m_pCurStyle->m_StepsType;
+=======
+	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr );
+	StepsType st = GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp
 	Trail *pTrail = nullptr;
 	if( GAMESTATE->m_pCurCourse )
 		pTrail = GAMESTATE->m_pCurCourse->GetTrailForceRegenCache( st );
@@ -1091,7 +1102,11 @@ void EditCourseUtil::UpdateAndSetTrail()
 
 void EditCourseUtil::PrepareForPlay()
 {
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
 	GAMESTATE->m_pCurSong.Set(nullptr);	// CurSong will be set if we back out.  Set it back to NULL so that ScreenStage won't show the last song.
+=======
+	GAMESTATE->m_pCurSong.Set(nullptr);	// CurSong will be set if we back out.  Set it back to nullptr so that ScreenStage won't show the last song.
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 	GAMESTATE->m_bSideIsJoined[0] = true;
 
@@ -1176,6 +1191,7 @@ void CourseID::FromCourse( const Course *p )
 
 Course *CourseID::ToCourse() const
 {
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
 	// HACK for backwards compatibility:
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
 	RString sPath2 = sPath;
@@ -1184,11 +1200,27 @@ Course *CourseID::ToCourse() const
 
 	Course *pCourse = nullptr;
 	if( m_Cache.Get(&pCourse) )
+=======
+	Course *pCourse = nullptr;
+	if(m_Cache.Get(&pCourse))
+	{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp
 		return pCourse;
 	if( pCourse == nullptr && !sPath2.empty() )
 		pCourse = SONGMAN->GetCourseFromPath( sPath2 );
 
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
 	if( pCourse == nullptr && !sFullTitle.empty() )
+=======
+		if(pCourse == nullptr)
+		{
+			pCourse = SONGMAN->GetCourseFromPath(slash_path);
+		}
+	}
+
+	if( pCourse == nullptr && !sFullTitle.empty() )
+	{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp
 		pCourse = SONGMAN->GetCourseFromName( sFullTitle );
 	m_Cache.Set( pCourse );
 
@@ -1255,4 +1287,7 @@ bool CourseID::IsValid() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/CourseUtil.cpp
 >>>>>>> origin/c++11:src/CourseUtil.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseUtil.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/LifeMeterBar.cpp
+<<<<<<< HEAD:itgmania/src/LifeMeterBar.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LifeMeterBar.cpp
 #include "global.h"
 #include "LifeMeterBar.h"
 #include "PrefsManager.h"
@@ -859,4 +862,7 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/LifeMeterBar.cpp
 >>>>>>> origin/c++11:src/LifeMeterBar.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LifeMeterBar.cpp

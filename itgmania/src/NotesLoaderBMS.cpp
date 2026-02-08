@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/NotesLoaderBMS.cpp
+<<<<<<< HEAD:itgmania/src/NotesLoaderBMS.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderBMS.cpp
 #include "global.h"
 #include "NotesLoaderBMS.h"
 #include "NoteData.h"
@@ -185,6 +188,312 @@ bool BMSChart::GetHeader( const RString &header, RString &out )
 	return true;
 }
 
+<<<<<<< HEAD:itgmania/src/NotesLoaderBMS.cpp
+=======
+// az: Implement #RANDOM, #IF, #ELSE, #ELSEIF and #ENDIF.
+struct bmsCommandTree
+{
+
+	struct bmsNodeS { // Each of these imply one branching level.
+		unsigned int branchHeight;
+		enum {
+			CT_NULL,
+			CT_CONDITIONALCHAIN,
+			CT_IF,
+			CT_ELSEIF,
+			CT_ELSE
+		} conditionType; // #IF or #ELSE?
+
+		union {
+			int conditionValue; // value which we got for this #random
+			int conditionTriggerValue; // value which triggers this branch. does not apply to #ELSE
+		};
+
+		BMSHeaders Commands;
+		vector<RString> ChannelCommands;
+		vector<bmsNodeS*> branches;
+		bmsNodeS* parent;
+
+		bmsNodeS()
+		{
+			parent = nullptr;
+			conditionValue = 0;
+			conditionType = CT_NULL;
+		}
+
+		~bmsNodeS()
+		{
+			for (bmsNodeS *b : branches)
+			{
+				delete b;
+			}
+		}
+	};
+
+	bmsNodeS *currentNode;
+	bmsNodeS root;
+	vector<unsigned int> randomStack;
+
+	int line;
+	RString path;
+
+	bmsCommandTree()
+	{
+		line = 0;
+		root.branchHeight = 0;
+		root.conditionValue = 0;
+		root.conditionTriggerValue = -1;
+		root.parent = nullptr;
+		root.conditionType = bmsNodeS::CT_NULL;
+
+		currentNode = &root;
+	}
+
+	~bmsCommandTree()
+	{
+	}
+
+	bmsNodeS *addConditionalChain()
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[currentNode->branchHeight];
+		newNode->parent = currentNode;
+		newNode->branchHeight = currentNode->branchHeight;
+		newNode->conditionType = bmsNodeS::CT_CONDITIONALCHAIN;
+
+		currentNode->branches.push_back(newNode);
+		return newNode;
+	}
+
+	bmsNodeS* createIfNode(bmsNodeS *Chain, int value)
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[currentNode->branchHeight];
+		newNode->parent = Chain;
+		newNode->branchHeight = Chain->branchHeight + 1;
+		newNode->conditionTriggerValue = value;
+		newNode->conditionType = bmsNodeS::CT_IF;
+		Chain->branches.push_back(newNode);
+
+		return newNode;
+	}
+
+	bmsNodeS* createElseIfNode(bmsNodeS *Chain, int value)
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[Chain->branchHeight];
+		newNode->parent = Chain;
+		newNode->branchHeight = Chain->branchHeight + 1;
+		newNode->conditionTriggerValue = value;
+		newNode->conditionType = bmsNodeS::CT_ELSEIF;
+		Chain->branches.push_back(newNode);
+
+		return newNode;
+	}
+
+	bmsNodeS* createElseNode(bmsNodeS *Chain)
+	{
+		bmsNodeS *newNode = new bmsNodeS;
+
+		newNode->conditionValue = randomStack[Chain->branchHeight];
+		newNode->parent = Chain;
+		newNode->branchHeight = Chain->branchHeight + 1;
+		newNode->conditionType = bmsNodeS::CT_ELSE;
+		Chain->branches.push_back(newNode);
+
+		return newNode;
+	}
+
+	/*
+		A condition chain can't ever be the current node.
+		A conditional chain will never have more than one #IF.
+		The current node is always an #IF/#ELSE/#ELSEIF node or the root node.
+		All #IFs must be parented by a condition chain for interpreting #ELSE and #ELSEIF founds on that chain.
+		Likewise, all #ELSE and #ELSEIF commands must be parented by a condition chain node.
+		Therefore, the root node will only have conditional chains as branches
+		and all commands that must be evaluated without question.
+		-az
+	*/
+
+	void appendNodeElements(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		for (BMSHeaders::iterator i = node->Commands.begin(); i != node->Commands.end(); ++i)
+		{
+			headersOut[i->first] = i->second;
+		}
+
+		for (vector<RString>::iterator i = node->ChannelCommands.begin(); i != node->ChannelCommands.end(); ++i)
+		{
+			linesOut.push_back(*i);
+		}
+	}
+
+	bool triggerBranches(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		for (bmsNodeS *b : node->branches)
+			if (evaluateNode(b, headersOut, linesOut))
+			{
+				return true;
+			}
+
+		return false;
+	}
+
+	bool evaluateNode(bmsNodeS* node, BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		switch (node->conditionType)
+		{
+		case bmsNodeS::CT_CONDITIONALCHAIN:
+			triggerBranches(node, headersOut, linesOut);
+			break;
+		case bmsNodeS::CT_IF:
+		case bmsNodeS::CT_ELSEIF: // Their differences are solved at node creation time.
+			if (node->parent->conditionValue == node->conditionTriggerValue)
+			{
+				appendNodeElements(node, headersOut, linesOut);
+				triggerBranches(node, headersOut, linesOut);
+				return true; // returning true means to stop trying to triggering branches
+			}
+			break;
+		case bmsNodeS::CT_ELSE:
+				appendNodeElements(node, headersOut, linesOut);
+				triggerBranches(node, headersOut, linesOut);
+				return true;
+			break;
+		case bmsNodeS::CT_NULL:
+			appendNodeElements(node, headersOut, linesOut);
+			triggerBranches(node, headersOut, linesOut);
+		default:
+			break;
+		}
+
+		// returning false means to execute any other branches.
+		return false;
+	}
+
+	void evaluateBMSTree(BMSHeaders &headersOut, vector<RString> &linesOut)
+	{
+		evaluateNode(&root, headersOut, linesOut);
+	}
+
+	void doStatement(RString statement, map<int, bool> &referencedTracks)
+	{
+		line++;
+
+		if (statement.length() == 0) // Skip.
+			return;
+
+		// LTrim the statement to allow indentation
+		size_t hash = statement.find('#');
+
+		if (hash == RString::npos)
+			return;
+
+		statement = statement.substr(hash);
+
+		size_t space = statement.find(' ');
+		RString name = statement.substr(0, space);
+		RString value = "";
+
+		if (space != statement.npos)
+			value = statement.substr(space + 1);
+		name.MakeLower();
+
+		if (name == "#if")
+		{
+			if (randomStack.size() < currentNode->branchHeight + 1)
+			{
+				LOG->UserLog("Song file", path, "Line %d: Missing #RANDOM. Warning: Branch will be considered false!", line);
+
+				while (randomStack.size() < currentNode->branchHeight + 1)
+					randomStack.push_back(0);
+			}
+
+			bmsNodeS *chain = addConditionalChain();
+			currentNode = createIfNode(chain, atoi(value.c_str()));
+		}
+		else if (name == "#else")
+		{
+			if (currentNode->parent != nullptr) // Not the root node.
+			{
+				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
+				{
+					currentNode = createElseNode(currentNode->parent);
+					return;
+				}
+				else
+					LOG->UserLog("Song file", path, "Line %d: #else without matching #if chain.\n", line);
+			} else
+				LOG->UserLog("Song file", path, "Line %d: #else used at root level.\n", line);
+		}
+		else if (name == "#elseif")
+		{
+			if (currentNode->parent != nullptr) // Not the root node.
+			{
+				if (currentNode->parent->conditionType == bmsNodeS::CT_CONDITIONALCHAIN)
+				{
+					currentNode = createElseIfNode(currentNode->parent, atoi(value.c_str()));
+				}else
+					LOG->UserLog("Song file", path, "Line %d: #elseif without matching #if chain.\n", line);
+			}else
+				LOG->UserLog("Song file", path, "Line %d: #elseif used at root level.\n", line);
+		}
+		else if (name == "#endif" || name == "#end")
+		{
+			if (currentNode->parent != nullptr) // not the root node
+			{
+				currentNode = currentNode->parent;
+			}
+
+			if (currentNode->conditionType != bmsNodeS::CT_CONDITIONALCHAIN)
+			{
+				LOG->UserLog("Song file", path, "Line %d: #endif without a matching #if!", line);
+				return;
+			}
+
+			// We're in a conditional chain, so that means we can go one level up to our *real* parent.
+			currentNode = currentNode->parent;
+		}
+		else if (name == "#random")
+		{
+			while (randomStack.size() < currentNode->branchHeight + 1) // if we're on branch level N we need N+1 values.
+				randomStack.push_back(0);
+
+			randomStack[currentNode->branchHeight] = rand() % StringToInt(value) + 1;
+		}
+		else
+		{
+			if (statement.size() >= 7 &&
+				('0' <= statement[1] && statement[1] <= '9') &&
+				('0' <= statement[2] && statement[2] <= '9') &&
+				('0' <= statement[3] && statement[3] <= '9') &&
+				('0' <= statement[4] && statement[4] <= '9') &&
+				('0' <= statement[5] && statement[5] <= '9') &&
+				statement[6] == ':')
+			{
+				int channel = atoi(statement.substr(4, 2).c_str());
+				currentNode->ChannelCommands.push_back(statement);
+
+				if ((11 <= channel && channel <= 19) || (21 <= channel && channel <= 29))
+				{
+					referencedTracks[channel] = true;
+				}
+
+			}
+			else
+			{
+				currentNode->Commands[name] = value;
+			}
+		}
+
+		// we're done.
+	}
+};
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderBMS.cpp
 bool BMSChart::Load( const RString &chartPath )
 {
 	path = chartPath;
@@ -2614,4 +2923,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/NotesLoaderBMS.cpp
 >>>>>>> origin/c++11:src/NotesLoaderBMS.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderBMS.cpp

@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/GrooveRadar.cpp
+<<<<<<< HEAD:itgmania/src/GrooveRadar.cpp
 #include "global.h"
 #include "GrooveRadar.h"
 #include "RageUtil.h"
@@ -283,6 +284,8 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GrooveRadar.cpp
 #include "global.h"
 #include "GrooveRadar.h"
 #include "RageUtil.h"
@@ -351,7 +354,7 @@ void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
 	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
 }
 
-void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // NULL means no Song
+void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps ) // nullptr means no Song
 {
 	if( pSteps == nullptr )
 	{
@@ -563,4 +566,7 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/GrooveRadar.cpp
 >>>>>>> origin/c++11:src/GrooveRadar.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GrooveRadar.cpp

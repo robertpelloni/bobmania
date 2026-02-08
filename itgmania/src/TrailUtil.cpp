@@ -135,10 +135,14 @@ namespace
 		LIST_METHOD( GetNumSongs ),
 		LIST_METHOD( GetTotalSeconds ),
 <<<<<<< HEAD:itgmania/src/TrailUtil.cpp
+<<<<<<< HEAD:itgmania/src/TrailUtil.cpp
 		{ nullptr, nullptr }
 =======
 		{ NULL, nullptr }
 >>>>>>> origin/c++11:src/TrailUtil.cpp
+=======
+		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TrailUtil.cpp
 	};
 }
 

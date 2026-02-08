@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_DirectInputHelper.cpp
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_DirectInputHelper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_DirectInputHelper.cpp
 #include "global.h"
 #include "InputHandler_DirectInputHelper.h"
 #include "RageUtil.h"
@@ -428,6 +431,7 @@ XIDevice::XIDevice()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_DirectInputHelper.cpp
 =======
 #include "global.h"
 #include "InputHandler_DirectInputHelper.h"
@@ -807,3 +811,5 @@ static BOOL CALLBACK DIMouse_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, L
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/arch/InputHandler/InputHandler_DirectInputHelper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_DirectInputHelper.cpp

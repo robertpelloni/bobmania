@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScoreKeeperRave.cpp
+<<<<<<< HEAD:itgmania/src/ScoreKeeperRave.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperRave.cpp
 #include "global.h"
 #include "ScoreKeeperRave.h"
 #include "ThemeManager.h"
@@ -469,4 +472,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScoreKeeperRave.cpp
 >>>>>>> origin/c++11:src/ScoreKeeperRave.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperRave.cpp

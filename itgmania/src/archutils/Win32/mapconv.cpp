@@ -3,12 +3,20 @@
 #include <vector>
 #include <algorithm>
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/mapconv.cpp
 #include <cstddef>
 #include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+=======
+#include <inttypes.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/mapconv.cpp
 #include <ctype.h>
 
 #define MAX_FNAMBUF		(0x0FFFFFFF)
@@ -247,7 +255,11 @@ int main(int argc, char **argv) {
 /*
 		printf("Raw statistics:\n");
 		printf("\tRVA bytes:        %zu\n", rvabuf.size() * 4);
+<<<<<<< HEAD:itgmania/src/archutils/Win32/mapconv.cpp
 		printf("\tFunc name bytes:  %" PRIdPTR "\n", static_cast<std::ptrdiff_t>(fnamptr - fnambuf));
+=======
+		printf("\tFunc name bytes:  %" PRIdPTR "\n", static_cast<ptrdiff_t>(fnamptr - fnambuf));
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/mapconv.cpp
 
 		printf("\nPacking RVA data..."); fflush(stdout);
 */
@@ -257,7 +269,11 @@ int main(int argc, char **argv) {
 		uintptr_t lastrva = firstrva;
 
 		for(; itRVA != itRVAEnd; ++itRVA) {
+<<<<<<< HEAD:itgmania/src/archutils/Win32/mapconv.cpp
 			std::ptrdiff_t rvadiff = (*itRVA).rva - lastrva;
+=======
+			ptrdiff_t rvadiff = (*itRVA).rva - lastrva;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/mapconv.cpp
 
 			lastrva += rvadiff;
 
@@ -309,7 +325,11 @@ int main(int argc, char **argv) {
 
 		if (fclose(fo))
 			throw "output file close failed";
+<<<<<<< HEAD:itgmania/src/archutils/Win32/mapconv.cpp
 
+=======
+		
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/mapconv.cpp
 	} catch (const char *s) {
 		fprintf(stderr, "%s: %s\n", argv[1], s);
 	}

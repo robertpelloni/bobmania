@@ -15,8 +15,13 @@ namespace NotesWriterSM
 	 * @param sPath the path to write the file.
 	 * @param out the Song to be written out.
 	 * @return its success or failure. */
+<<<<<<< HEAD:itgmania/src/NotesWriterSM.h
 	bool Write( RageFileBasic &file, Song &out, const std::vector<Steps*>& vpStepsToSave );
 	bool Write( RString sPath, Song &out, const std::vector<Steps*>& vpStepsToSave );
+=======
+	bool Write( RageFileBasic &file, Song &out, const vector<Steps*>& vpStepsToSave );
+	bool Write( RString sPath, Song &out, const vector<Steps*>& vpStepsToSave );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.h
 	/**
 	 * @brief Get some contents about the edit file first.
 	 * @param pSong the Song in question.

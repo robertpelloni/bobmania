@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/RageSoundReader_ChannelSplit.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ChannelSplit.cpp
 /*
  * Output a sound from the channels of another sound.
  *
@@ -274,6 +275,8 @@ RageSoundReader_Split *RageSoundSplitter::CreateSound()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ChannelSplit.cpp
 /*
  * Output a sound from the channels of another sound.
  *
@@ -546,4 +549,7 @@ RageSoundReader_Split *RageSoundSplitter::CreateSound()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ChannelSplit.cpp
 >>>>>>> origin/c++11:src/RageSoundReader_ChannelSplit.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ChannelSplit.cpp

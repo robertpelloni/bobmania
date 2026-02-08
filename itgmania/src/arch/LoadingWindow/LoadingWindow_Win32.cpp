@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Win32.cpp
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Win32.cpp
 #include "global.h"
 #include "RageUtil.h"
 
@@ -254,6 +255,8 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_Win32.cpp
 #include "global.h"
 #include "RageUtil.h"
 
@@ -319,7 +322,7 @@ static HBITMAP LoadWin32Surface( const RageSurface *pSplash, HWND hWnd )
 	SelectObject( BitmapDC, nullptr );
 	DeleteObject( BitmapDC );
 
-	ReleaseDC( NULL, hScreen );
+	ReleaseDC( nullptr, hScreen );
 
 	delete s;
 	return bitmap;
@@ -337,7 +340,7 @@ static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
         return ret;
 }
 
-BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	switch( msg )
 	{
@@ -374,7 +377,11 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 
 	m_hIcon = IconFromSurface( pIcon );
 	if( m_hIcon != nullptr )
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Win32.cpp
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
+=======
+ 		SetClassLongPtrA( hwnd, GCLP_HICON, reinterpret_cast<LONG_PTR>(m_hIcon) );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_Win32.cpp
 }
 
 void LoadingWindow_Win32::SetSplash( const RageSurface *pSplash )
@@ -401,6 +408,10 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 {
 	m_hIcon = nullptr;
 	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), nullptr, WndProc );
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Win32.cpp
+=======
+	ASSERT( hwnd != nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_Win32.cpp
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "" );
@@ -502,4 +513,7 @@ void LoadingWindow_Win32::SetIndeterminate(bool indeterminate)
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow_Win32.cpp
 >>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow_Win32.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow_Win32.cpp

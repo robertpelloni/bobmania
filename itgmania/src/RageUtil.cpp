@@ -3,11 +3,17 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 #include "Foreach.h"
+=======
+#include "RageSoundReader_FileReader.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
 #include <float.h>
+
+#include <json/json.h>
 
 #include <numeric>
 #include <ctime>
@@ -16,6 +22,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <math.h>
+
+const RString CUSTOM_SONG_PATH= "/@mem/";
 
 bool HexToBinary(const RString&, RString&);
 void utf8_sanitize(RString &);
@@ -149,7 +157,11 @@ namespace
 	{
 		LIST_METHOD( Seed ),
 		LIST_METHOD( Random ),
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 		{ NULL, NULL }
+=======
+		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 	};
 }
 
@@ -205,18 +217,18 @@ bool IsHexVal( const RString &s )
 		return false;
 
 	for( size_t i=0; i < s.size(); ++i )
-		if( !(s[i] >= '0' && s[i] <= '9') && 
+		if( !(s[i] >= '0' && s[i] <= '9') &&
 			!(toupper(s[i]) >= 'A' && toupper(s[i]) <= 'F'))
 			return false;
 
 	return true;
 }
 
-RString BinaryToHex( const void *pData_, int iNumBytes )
+RString BinaryToHex( const void *pData_, size_t iNumBytes )
 {
 	const unsigned char *pData = (const unsigned char *) pData_;
 	RString s;
-	for( int i=0; i<iNumBytes; i++ )
+	for( size_t i=0; i<iNumBytes; i++ )
 	{
 		unsigned val = pData[i];
 		s += ssprintf( "%02x", val );
@@ -326,7 +338,7 @@ RString PrettyPercent( float fNumerator, float fDenominator)
 	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
 }
 
-RString Commify( int iNum ) 
+RString Commify( int iNum )
 {
 	RString sNum = ssprintf("%d",iNum);
 	return Commify( sNum );
@@ -389,8 +401,13 @@ RString vssprintf( const char *szFormat, va_list argList )
 {
 	RString sStr;
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 #if defined(WIN32) && !defined(__MINGW32__)
 	char *pBuf = NULL;
+=======
+#if defined(WIN32)
+	char *pBuf = nullptr;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 	int iChars = 1;
 	int iUsed = 0;
 	int iTry = 0;
@@ -443,10 +460,25 @@ RString vssprintf( const char *szFormat, va_list argList )
 
 		if( iUsed == -1 )
 		{
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
 			sStr.ReleaseBuffer();
 			++iTry;
 			continue;
+=======
+			iChars += ( ++iTry * FMT_BLOCK_SIZE );
+		}
+		else
+		{
+			/* OK */
+			sStr.assign(buf, used);
+		}
+
+		delete [] buf;
+		if (used != -1)
+		{
+			break;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 		}
 
 		/* OK */
@@ -499,7 +531,6 @@ RString ConvertI64FormatString( const RString &sStr ) { return sStr; }
 #endif
 
 /* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/php/code_list.php
- * native forms: http://people.w3.org/rishida/names/languages.html
  * We don't use 3-letter codes, so we don't bother supporting them. */
 static const LanguageInfo g_langs[] =
 {
@@ -640,7 +671,8 @@ static const LanguageInfo g_langs[] =
 	{"xh", "Xhosa"},
 	{"yi", "Yiddish"},
 	{"yo", "Yoruba"},
-	{"zh", "Chinese"},
+	{"zh-Hans", "Chinese (Simplified)"},
+	{"zh-Hant", "Chinese (Traditional)"},
 	{"zu", "Zulu"},
 };
 
@@ -888,9 +920,9 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 	vector<RString> asMatches;
 
 	/*
-	 * One level of escapes for the regex, one for C. Ew. 
+	 * One level of escapes for the regex, one for C. Ew.
 	 * This is really:
-	 * ^(.*[\\/])?(.*)$ 
+	 * ^(.*[\\/])?(.*)$
 	 */
 	static Regex sep("^(.*[\\\\/])?(.*)$");
 	bool bCheck = sep.Compare( sPath, asMatches );
@@ -910,6 +942,17 @@ void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString
 	{
 		sFilename = sBase;
 	}
+}
+
+RString custom_songify_path(RString const& path)
+{
+	vector<RString> parts;
+	split(path, "/", parts, false);
+	if(parts.size() < 2)
+	{
+		return CUSTOM_SONG_PATH + path;
+	}
+	return CUSTOM_SONG_PATH + parts[parts.size()-2] + "/" + parts[parts.size()-1];
 }
 
 /* "foo.bar", "baz" -> "foo.baz"
@@ -989,7 +1032,7 @@ void GetCommandLineArguments( int &argc, char **&argv )
  * option "--test".  All commandline arguments are getopt_long style: --foo;
  * short arguments (-x) are not supported.  (These are not intended for
  * common, general use, so having short options isn't currently needed.)
- * If argument is non-NULL, accept an argument. */
+ * If argument is non-nullptr, accept an argument. */
 bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
 	const RString optstr = "--" + option;
@@ -1128,10 +1171,10 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
                        float &fSlope, float &fIntercept, float &fError )
 {
-	if( vCoordinates.empty() ) 
+	if( vCoordinates.empty() )
 		return false;
 	float fSumXX = 0.0f, fSumXY = 0.0f, fSumX = 0.0f, fSumY = 0.0f;
-	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
+	for( unsigned i = 0; i < vCoordinates.size(); ++i )
 	{
 		fSumXX += vCoordinates[i].first * vCoordinates[i].first;
 		fSumXY += vCoordinates[i].first * vCoordinates[i].second;
@@ -1143,7 +1186,7 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 	fIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
 
 	fError = 0.0f;
-	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
+	for( unsigned i = 0; i < vCoordinates.size(); ++i )
 	{
 		const float fOneError = fIntercept + fSlope * vCoordinates[i].first - vCoordinates[i].second;
 		fError += fOneError * fOneError;
@@ -1764,19 +1807,35 @@ RString IntToString( const int &iNum )
 
 float StringToFloat( const RString &sString )
 {
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 	float ret = strtof( sString, NULL );
 
 	if( !isfinite(ret) )
 		ret = 0.0f;
 	return ret;
+=======
+	float fOut = std::strtof(sString, nullptr);
+	if (!isfinite(fOut))
+	{
+		fOut = 0.0f;
+	}
+	return fOut;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 }
 
 bool StringToFloat( const RString &sString, float &fOut )
 {
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 	char *endPtr;
 
 	fOut = strtof( sString, &endPtr );
 	return sString.size() && *endPtr == '\0' && isfinite( fOut );
+=======
+	char *endPtr = nullptr;
+
+	fOut = std::strtof(sString, &endPtr);
+	return sString.size() && *endPtr == '\0' && isfinite(fOut);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 }
 
 RString FloatToString( const float &num )
@@ -1786,6 +1845,7 @@ RString FloatToString( const float &num )
 	return ss.str();
 }
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 RString VectorIntToString(const vector<int> &nums, const RString delim)
 {
 	if (nums.size() == 0)
@@ -1799,6 +1859,51 @@ RString VectorIntToString(const vector<int> &nums, const RString delim)
 		ss << delim << nums[i];
 	}
 	return ss.str();
+=======
+int StringToInt( const std::string& str, std::size_t* pos, int base, int exceptVal )
+{
+  try
+  {
+    return std::stoi(str, pos, base);
+  }
+  catch (const std::invalid_argument & e) {
+    LOG->Warn( "stoi(%s): %s", str.c_str(), e.what() );
+  }
+  catch (const std::out_of_range & e) {
+    LOG->Warn( "stoi(%s): %s", str.c_str(), e.what() );
+  }
+  return exceptVal;
+}
+
+long StringToLong( const std::string& str, std::size_t* pos, int base, long exceptVal )
+{
+  try
+  {
+    return std::stol(str, pos, base);
+  }
+  catch (const std::invalid_argument & e) {
+    LOG->Warn( "stol(%s): %s", str.c_str(), e.what() );
+  }
+  catch (const std::out_of_range & e) {
+    LOG->Warn( "stol(%s): %s", str.c_str(), e.what() );
+  }
+  return exceptVal;
+}
+
+long long StringToLLong( const std::string& str, std::size_t* pos, int base, long long exceptVal )
+{
+  try
+  {
+    return std::stoll(str, pos, base);
+  }
+  catch (const std::invalid_argument & e) {
+    LOG->Warn( "stoll(%s): %s", str.c_str(), e.what() );
+  }
+  catch (const std::out_of_range & e) {
+    LOG->Warn( "stoll(%s): %s", str.c_str(), e.what() );
+  }
+  return exceptVal;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 }
 
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
@@ -1817,7 +1922,7 @@ wstring RStringToWstring( const RString &s )
 			++start;
 			continue;
 		}
-		
+
 		wchar_t ch = L'\0';
 		if( !utf8_to_wchar( s.data(), s.size(), start, ch ) )
 			ch = INVALID_CHAR;
@@ -2050,15 +2155,21 @@ RString Dirname( const RString &dir )
 	return dir.substr(0, pos+1);
 }
 
-RString Capitalize( const RString &s )	
+RString Capitalize( const RString &s )
 {
 	if( s.empty() )
 		return RString();
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 	RString s2 = s;
 	char *pBuf = s2.GetBuffer();
 	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
 	s2.ReleaseBuffer();
+=======
+	char *buf = const_cast<char *>(s.c_str());
+
+	UnicodeDoUpper( buf, s.size(), g_UpperCase );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 
 	return s2;
 }
@@ -2187,7 +2298,7 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 
 		sOut.append( sPath, iPos, iNext-iPos );
 	}
-	
+
 	sOut.swap( sPath );
 }
 
@@ -2226,7 +2337,11 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 		out = (StringToInt(sValue) != 0);
+=======
+		out = StringToInt(sValue) != 0;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 		return true;
 	}
 
@@ -2286,7 +2401,12 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 			if( bReadError != NULL )
+=======
+			if( bReadError != nullptr )
+			{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 				*bReadError = true;
 			return false;
 		}
@@ -2296,7 +2416,12 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		if( i == -1 )
 		{
 			sError = ssprintf( "write error: %s", out.GetError().c_str() );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 			if( bReadError != NULL )
+=======
+			if( bReadError != nullptr )
+			{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 				*bReadError = false;
 			return false;
 		}
@@ -2305,7 +2430,12 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 	if( out.Flush() == -1 )
 	{
 		sError = ssprintf( "write error: %s", out.GetError().c_str() );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 		if( bReadError != NULL )
+=======
+		if( bReadError != nullptr )
+		{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 			*bReadError = false;
 		return false;
 	}
@@ -2329,8 +2459,337 @@ LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
 LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
+=======
+LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
+
+int LuaFunc_BinaryToHex(lua_State* L);
+int LuaFunc_BinaryToHex(lua_State* L)
+{
+	size_t l;
+	const char *s = luaL_checklstring(L, 1, &l);
+
+	RString hex = BinaryToHex(s, l);
+
+	LuaHelpers::Push(L, hex);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(BinaryToHex);
+
+int LuaFunc_commify(lua_State* L);
+int LuaFunc_commify(lua_State* L)
+{
+	RString num= SArg(1);
+	RString sep= ",";
+	RString dot= ".";
+	if(!lua_isnoneornil(L, 2))
+	{
+		sep= lua_tostring(L, 2);
+	}
+	if(!lua_isnoneornil(L, 3))
+	{
+		dot= lua_tostring(L, 3);
+	}
+	RString ret= Commify(num, sep, dot);
+	LuaHelpers::Push(L, ret);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(commify);
+
+int LuaFunc_JsonEncode(lua_State* L);
+int LuaFunc_JsonEncode(lua_State* L)
+{
+	int argc = lua_gettop(L);
+	bool minified = false;
+
+	if (argc < 1 || argc > 2)
+	{
+		luaL_error(L, "JsonEncode must be called with one or two arguments");
+	}
+
+	if (argc == 2)
+	{
+		minified = lua_toboolean(L, 2);
+	}
+
+	std::function<Json::Value(int)> convert = [&L, &convert](int index) -> Json::Value
+	{
+		if (lua_isboolean(L, index))
+		{
+			return Json::Value(static_cast<bool>(lua_toboolean(L, index)));
+		}
+		else if (lua_isnil(L, index))
+		{
+			return Json::Value(Json::nullValue);
+		}
+		else if (lua_isnumber(L, index))
+		{
+			double val = lua_tonumber(L, index);
+
+			if (val == static_cast<Json::UInt>(val))
+			{
+				return Json::Value(static_cast<Json::UInt>(val));
+			}
+			else if (val == static_cast<Json::Int>(val))
+			{
+				return Json::Value(static_cast<Json::Int>(val));
+			}
+			return Json::Value(val);
+		}
+		else if (lua_isstring(L, index))
+		{
+			size_t len;
+			const char *s = lua_tolstring(L, index, &len);
+
+			return Json::Value(std::string(s, len));
+		}
+		else if (lua_istable(L, index))
+		{
+			// if the index is relative to the top of the stack,
+			// then calculate the absolute index, so we have a
+			// stable reference
+			if (index < 0)
+			{
+				index = lua_gettop(L) + index + 1;
+			}
+
+			size_t len = lua_objlen(L, index);
+
+			if (len > 0)
+			{
+				// array
+				Json::Value array(Json::arrayValue);
+				array.resize(len);
+
+				for (int i = 0; i < len; i++)
+				{
+					lua_rawgeti(L, index, i + 1);
+					array[i] = convert(-1);
+					lua_pop(L, 1);
+				}
+
+				return array;
+			}
+			else
+			{
+				// object
+				Json::Value obj(Json::objectValue);
+
+				lua_pushnil(L);
+				while (lua_next(L, index) != 0)
+				{
+					if (!lua_isstring(L, -2))
+					{
+						luaL_error(L, "object keys must be strings");
+					}
+
+					size_t keylen;
+					const char *key = lua_tolstring(L, -2, &keylen);
+					obj[std::string(key, keylen)] = convert(-1);
+					lua_pop(L, 1);
+				}
+
+				if (obj.size() < 1)
+				{
+					return Json::Value(Json::arrayValue);
+				}
+				return obj;
+			}
+
+		}
+
+		int tp = lua_type(L, index);
+		luaL_error(L, "%s is not JSON serializable", lua_typename(L, tp));
+		return Json::Value(Json::nullValue);	/* not reached */
+	};
+
+	Json::Value root = convert(1);
+
+	std::string data;
+	if(!minified)
+	{
+		Json::StyledWriter writer;
+		data = writer.write(root);
+	}
+	else
+	{
+		Json::FastWriter writer;
+		data = writer.write(root);
+	}
+
+	lua_pushlstring(L, data.c_str(), data.length());
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(JsonEncode);
+
+int LuaFunc_JsonDecode(lua_State* L);
+int LuaFunc_JsonDecode(lua_State* L)
+{
+	int argc = lua_gettop(L);
+
+	if (argc < 1)
+	{
+		luaL_error(L, "JsonDecode requires an argument");
+	}
+
+	size_t datalen;
+	const char *data = lua_tolstring(L, 1, &datalen);
+
+	Json::Reader reader;
+	Json::Value root;
+
+	bool ok = reader.parse(std::string(data, datalen), root, true);
+	if (!ok)
+	{
+		std::string error = reader.getFormattedErrorMessages();
+		luaL_error(L, "failed to parse JSON: %s", error.c_str());
+	}
+
+	std::function<void(const Json::Value&)> convert = [&L, &convert](const Json::Value& val)
+	{
+		if (val.isNull())
+		{
+			lua_pushnil(L);
+		}
+		else if (val.isInt() || val.isUInt() || val.isDouble())
+		{
+			lua_pushnumber(L, val.asDouble());
+		}
+		else if (val.isString())
+		{
+			std::string s = val.asString();
+			lua_pushlstring(L, s.c_str(), s.length());
+		}
+		else if (val.isBool())
+		{
+			lua_pushboolean(L, val.asBool());
+		}
+		else if (val.isArray())
+		{
+			lua_createtable(L, val.size(), 0);
+			for (int i = 0; i < val.size(); i++)
+			{
+				convert(val[i]);
+				lua_rawseti(L, -2, i + 1);
+			}
+		}
+		else if (val.isObject())
+		{
+			lua_createtable(L, 0, val.size());
+			for (const std::string& member : val.getMemberNames())
+			{
+				lua_pushlstring(L, member.c_str(), member.length());
+				convert(val[member]);
+				lua_rawset(L, -3);
+			}
+		}
+		else
+		{
+			luaL_error(L, "failed to parse JSON: invalid type");
+		}
+	};
+
+	convert(root);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(JsonDecode);
+
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult, int process_index);
+void luafunc_approach_internal(lua_State* L, int valind, int goalind, int speedind, const float mult, int process_index)
+{
+#define TONUMBER_NICE(dest, num_name, index) \
+	if(!lua_isnumber(L, index)) \
+	{ \
+		luaL_error(L, "approach: " #num_name " for approach %d is not a number.", process_index); \
+	} \
+	dest= lua_tonumber(L, index);
+	float val= 0;
+	float goal= 0;
+	float speed= 0;
+	TONUMBER_NICE(val, current, valind);
+	TONUMBER_NICE(goal, goal, goalind);
+	TONUMBER_NICE(speed, speed, speedind);
+#undef TONUMBER_NICE
+	if(speed < 0)
+	{
+		luaL_error(L, "approach: speed %d is negative.", process_index);
+	}
+	fapproach(val, goal, speed*mult);
+	lua_pushnumber(L, val);
+}
+
+int LuaFunc_approach(lua_State* L);
+int LuaFunc_approach(lua_State* L)
+{
+	// Args:  current, goal, speed
+	// Returns:  new_current
+	luafunc_approach_internal(L, 1, 2, 3, 1.0f, 1);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(approach);
+
+int LuaFunc_multiapproach(lua_State* L);
+int LuaFunc_multiapproach(lua_State* L)
+{
+	// Args:  {currents}, {goals}, {speeds}, speed_multiplier
+	// speed_multiplier is optional, and is intended to be the delta time for
+	// the frame, so that this can be used every frame and have the current
+	// approach the goal at a framerate independent speed.
+	// Returns:  {currents}
+	// Modifies the values in {currents} in place.
+	if(lua_gettop(L) < 3)
+	{
+		luaL_error(L, "multiapproach:  A table of current values, a table of goal values, and a table of speeds must be passed.");
+	}
+	size_t currents_len= lua_objlen(L, 1);
+	size_t goals_len= lua_objlen(L, 2);
+	size_t speeds_len= lua_objlen(L, 3);
+	float mult= 1.0f;
+	if(lua_isnumber(L, 4))
+	{
+		mult= lua_tonumber(L, 4);
+	}
+	if(currents_len != goals_len || currents_len != speeds_len)
+	{
+		luaL_error(L, "multiapproach:  There must be the same number of current values, goal values, and speeds.");
+	}
+	if(!lua_istable(L, 1) || !lua_istable(L, 2) || !lua_istable(L, 3))
+	{
+		luaL_error(L, "multiapproach:  current, goal, and speed must all be tables.");
+	}
+	for(size_t i= 1; i <= currents_len; ++i)
+	{
+		lua_rawgeti(L, 1, i);
+		lua_rawgeti(L, 2, i);
+		lua_rawgeti(L, 3, i);
+		luafunc_approach_internal(L, -3, -2, -1, mult, i);
+		lua_rawseti(L, 1, i);
+		lua_pop(L, 3);
+	}
+	lua_pushvalue(L, 1);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(multiapproach);
+
+int LuaFunc_get_music_file_length(lua_State* L);
+int LuaFunc_get_music_file_length(lua_State* L)
+{
+	// Args:  file_path
+	// Returns:  The length of the music in seconds.
+	RString path= SArg(1);
+	RString error;
+	RageSoundReader* sample= RageSoundReader_FileReader::OpenFile(path, error);
+	if(sample == nullptr)
+	{
+		luaL_error(L, "The music file '%s' does not exist.", path.c_str());
+	}
+	lua_pushnumber(L, sample->GetLength() / 1000.0f);
+	return 1;
+}
+LUAFUNC_REGISTER_COMMON(get_music_file_length);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
 #include "global.h"
 #include "MovieTexture_FFMpeg.h"
 
@@ -138,7 +141,7 @@ static void FixLilEndian()
 #if defined(ENDIAN_LITTLE)
 	static bool Initialized = false;
 	if( Initialized )
-		return; 
+		return;
 	Initialized = true;
 
 	for( int i = 0; i < AVPixelFormats[i].bpp; ++i )
@@ -223,7 +226,7 @@ RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int 
 				break;
 		ASSERT( AVPixelFormats[iAVTexfmtIndex].bpp != 0 );
 	}
-	
+
 	const AVPixelFormat_t *pfd = &AVPixelFormats[iAVTexfmtIndex];
 	iAVTexfmt = pfd->pf;
 	fmtout = pfd->YUV;
@@ -295,8 +298,11 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
 	FixLilEndian();
 
-	m_fctx = NULL;
-	m_pStream = NULL;
+	m_swsctx = NULL;
+	m_avioContext = NULL;
+	m_buffer = NULL;
+	m_fctx = nullptr;
+	m_pStream = nullptr;
 	m_iCurrentPacketOffset = -1;
 
 	m_fLastFrame = 0;
@@ -306,31 +312,17 @@ MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 
 MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 {
+	Init();
+}
+
+void MovieDecoder_FFMpeg::Init()
+{
 	if( m_iCurrentPacketOffset != -1 )
 	{
 		avcodec::av_free_packet( &m_Packet );
 		m_iCurrentPacketOffset = -1;
 	}
-	if (m_swsctx)
-	{
-		avcodec::sws_freeContext(m_swsctx);
-		m_swsctx = NULL;
-	}
-    if (m_avioContext != NULL )
-    {
-        RageFile *file = (RageFile *)m_avioContext->opaque;
-        file->Close();
-        delete file;
-        avcodec::av_free(m_avioContext);
-    }
-    if ( m_buffer != NULL )
-    {
-        avcodec::av_free(m_buffer);
-    }
-}
 
-void MovieDecoder_FFMpeg::Init()
-{
 	m_iEOF = 0;
 	m_bGetNextTimestamp = true;
 	m_fTimestamp = 0;
@@ -338,15 +330,43 @@ void MovieDecoder_FFMpeg::Init()
 	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
 	m_fTimestampOffset = 0;
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
 	m_swsctx = NULL;
     m_avioContext = NULL;
     m_buffer = NULL;
 
 	if( m_iCurrentPacketOffset != -1 )
+=======
+	m_fLastFrame = 0;
+	if (m_swsctx)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
 	{
-		avcodec::av_free_packet( &m_Packet );
-		m_iCurrentPacketOffset = -1;
+		avcodec::sws_freeContext(m_swsctx);
+		m_swsctx = nullptr;
 	}
+	m_swsctx = NULL;
+	// Note: m_avioContext->buffer refers to m_buffer, but ffmpeg sometimes
+	// reallocates the buffer to change the size, and in that case our m_buffer
+	// pointer is freed already, so we instead check m_avioContext->buffer
+	// to free m_buffer
+	if (m_avioContext && m_avioContext->buffer != NULL) {
+		avcodec::av_free(m_avioContext->buffer);
+	}
+	m_buffer = NULL;
+    if (m_avioContext != nullptr )
+    {
+        RageFile *file = (RageFile *)m_avioContext->opaque;
+        file->Close();
+        delete file;
+        avcodec::av_free(m_avioContext);
+    }
+	m_avioContext = NULL;
+#if LIBAVCODEC_VERSION_MAJOR >= 58
+	if ( m_pStreamCodec != nullptr)
+	{
+		avcodec::avcodec_free_context(&m_pStreamCodec);
+	}
+#endif
 }
 
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
@@ -413,7 +433,7 @@ int MovieDecoder_FFMpeg::ReadPacket()
 			/* EOF. */
 			m_iEOF = 1;
 			m_Packet.size = 0;
-			
+
 			return 0;
 		}
 
@@ -460,8 +480,9 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 		if( m_Packet.size == 0 && m_iFrameNumber == -1 )
 			return 0; /* eof */
 
-		bool bSkipThisFrame = 
+		bool bSkipThisFrame =
 			fTargetTime != -1 &&
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
 			GetTimestamp() + GetFrameDuration() <= fTargetTime &&
 			(m_pStream->codec->frame_number % 2) == 0;
 
@@ -475,6 +496,26 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 				&m_Frame, &iGotFrame,
 				&m_Packet );
 		CHECKPOINT;
+=======
+			GetTimestamp() + GetFrameDuration() < fTargetTime &&
+			(m_pStreamCodec->frame_number % 2) == 0;
+
+		int iGotFrame;
+		int len;
+		/* Hack: we need to send size = 0 to flush frames at the end, but we have
+		 * to give it a buffer to read from since it tries to read anyway. */
+		m_Packet.data = m_Packet.size ? m_Packet.data : nullptr;
+#if LIBAVCODEC_VERSION_MAJOR < 58
+		len = avcodec::avcodec_decode_video2(
+				m_pStreamCodec,
+				m_Frame, &iGotFrame,
+				&m_Packet );
+#else
+		len = m_Packet.size;
+		avcodec::avcodec_send_packet(m_pStreamCodec, &m_Packet);
+		iGotFrame = !avcodec::avcodec_receive_frame(m_pStreamCodec, m_Frame);
+#endif
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
 
 		if( len < 0 )
 		{
@@ -535,23 +576,29 @@ int MovieDecoder_FFMpeg::DecodePacket( float fTargetTime )
 
 void MovieDecoder_FFMpeg::GetFrame( RageSurface *pSurface )
 {
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	avcodec::AVPicture pict;
 	pict.data[0] = (unsigned char *) pSurface->pixels;
 	pict.linesize[0] = pSurface->pitch;
+#else
+	avcodec::AVFrame pict;
+	pict.data[0] = (unsigned char *) pSurface->pixels;
+	pict.linesize[0] = pSurface->pitch;
+#endif
 
 	/* XXX 1: Do this in one of the Open() methods instead?
 	 * XXX 2: The problem of doing this in Open() is that m_AVTexfmt is not
 	 * already initialized with its correct value.
 	 */
-	if( m_swsctx == NULL )
+	if( m_swsctx == nullptr )
 	{
 		m_swsctx = avcodec::sws_getCachedContext( m_swsctx,
-				GetWidth(), GetHeight(), m_pStream->codec->pix_fmt,
+				GetWidth(), GetHeight(), m_pStreamCodec->pix_fmt,
 				GetWidth(), GetHeight(), m_AVTexfmt,
-				sws_flags, NULL, NULL, NULL );
-		if( m_swsctx == NULL )
+				sws_flags, nullptr, nullptr, nullptr );
+		if( m_swsctx == nullptr )
 		{
-			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStream->codec->pix_fmt, m_AVTexfmt);
+			LOG->Warn("Cannot initialize sws conversion context for (%d,%d) %d->%d", GetWidth(), GetHeight(), m_pStreamCodec->pix_fmt, m_AVTexfmt);
 			return;
 		}
 	}
@@ -568,7 +615,7 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	va_list     va;
 	va_start(va, fmt);
 	RString s = vssprintf( fmt, va );
-	va_end(va); 
+	va_end(va);
 
 	size_t errbuf_size = 512;
 	char* errbuf = new char[errbuf_size];
@@ -586,8 +633,10 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 		return;
 	Done = true;
 
+#if !FF_API_NEXT
 	avcodec::avcodec_register_all();
 	avcodec::av_register_all();
+#endif
 }
 
 #define STEPMANIA_FFMPEG_BUFFER_SIZE 4096
@@ -600,27 +649,29 @@ static int AVIORageFile_ReadPacket( void *opaque, uint8_t *buf, int buf_size )
 
 static int64_t AVIORageFile_Seek( void *opaque, int64_t offset, int whence )
 {
-    RageFile *f = (RageFile *)opaque;   
+    RageFile *f = (RageFile *)opaque;
     if( whence == AVSEEK_SIZE )
 		return f->GetFileSize();
-    
+
 	if( whence != SEEK_SET && whence != SEEK_CUR && whence != SEEK_END )
 	{
 		LOG->Trace("Error: unsupported seek whence: %d", whence);
 		return -1;
 	}
-    
+
 	return f->Seek( (int) offset, whence );
 }
 
 RString MovieDecoder_FFMpeg::Open( RString sFile )
 {
 	MovieTexture_FFMpeg::RegisterProtocols();
-    
+
+	Close();
+
 	m_fctx = avcodec::avformat_alloc_context();
 	if( !m_fctx )
 		return "AVCodec: Couldn't allocate context";
-    
+
 	RageFile *f = new RageFile;
 
 	if( !f->Open(sFile, RageFile::READ) )
@@ -632,77 +683,96 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	}
 
 	m_buffer = (unsigned char *)avcodec::av_malloc(STEPMANIA_FFMPEG_BUFFER_SIZE);
-	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, NULL, AVIORageFile_Seek);
+	m_avioContext = avcodec::avio_alloc_context(m_buffer, STEPMANIA_FFMPEG_BUFFER_SIZE, 0, f, AVIORageFile_ReadPacket, nullptr, AVIORageFile_Seek);
 	m_fctx->pb = m_avioContext;
-	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), NULL, NULL );
+	int ret = avcodec::avformat_open_input( &m_fctx, sFile.c_str(), nullptr, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
-	ret = avcodec::avformat_find_stream_info( m_fctx, NULL );
+	ret = avcodec::avformat_find_stream_info( m_fctx, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0 );
+	int stream_idx = avcodec::av_find_best_stream( m_fctx, avcodec::AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0 );
 	if ( stream_idx < 0 ||
 		static_cast<unsigned int>(stream_idx) >= m_fctx->nb_streams ||
-		m_fctx->streams[stream_idx] == NULL )
+		m_fctx->streams[stream_idx] == nullptr )
 		return "Couldn't find any video streams";
 	m_pStream = m_fctx->streams[stream_idx];
+#if LIBAVCODEC_VERSION_MAJOR >= 58
+	m_pStreamCodec = avcodec::avcodec_alloc_context3(nullptr);
+	if (avcodec::avcodec_parameters_to_context(m_pStreamCodec, m_pStream->codecpar) < 0)
+		return ssprintf("Could not get context from parameters");
+#else
+	m_pStreamCodec = m_pStream->codec;
+#endif
 
-	if( m_pStream->codec->codec_id == avcodec::CODEC_ID_NONE )
-		return ssprintf( "Unsupported codec %08x", m_pStream->codec->codec_tag );
+	if( m_pStreamCodec->codec_id == avcodec::CODEC_ID_NONE )
+		return ssprintf( "Unsupported codec %08x", m_pStreamCodec->codec_tag );
 
 	RString sError = OpenCodec();
 	if( !sError.empty() )
 		return ssprintf( "AVCodec (%s): %s", sFile.c_str(), sError.c_str() );
 
-	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
+	LOG->Trace( "Bitrate: %i", static_cast<int>(m_pStreamCodec->bit_rate) );
+	LOG->Trace( "Codec pixel format: %s", avcodec::av_get_pix_fmt_name(m_pStreamCodec->pix_fmt) );
 
 	return RString();
 }
 
 RString MovieDecoder_FFMpeg::OpenCodec()
 {
-	Init();
+	if (m_iCurrentPacketOffset != -1) {
+		avcodec::av_free_packet(&m_Packet);
+		m_iCurrentPacketOffset = -1;
+	}
 
-	ASSERT( m_pStream != NULL );
-	if( m_pStream->codec->codec )
-		avcodec::avcodec_close( m_pStream->codec );
+	m_iEOF = 0;
+	m_fTimestamp = 0;
+	m_fLastFrameDelay = 0;
+	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
+	m_fTimestampOffset = 0;
+	m_fLastFrame = 0;
 
-	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStream->codec->codec_id );
-	if( pCodec == NULL )
-		return ssprintf( "Couldn't find decoder %i", m_pStream->codec->codec_id );
+	ASSERT( m_pStream != nullptr );
+	if( m_pStreamCodec->codec )
+		avcodec::avcodec_close( m_pStreamCodec );
 
-	m_pStream->codec->workaround_bugs   = 1;
-	m_pStream->codec->idct_algo         = FF_IDCT_AUTO;
-	m_pStream->codec->error_concealment = 3;
+	avcodec::AVCodec *pCodec = avcodec::avcodec_find_decoder( m_pStreamCodec->codec_id );
+	if( pCodec == nullptr )
+		return ssprintf( "Couldn't find decoder %i", m_pStreamCodec->codec_id );
 
+	m_pStreamCodec->workaround_bugs   = 1;
+	m_pStreamCodec->idct_algo         = FF_IDCT_AUTO;
+	m_pStreamCodec->error_concealment = 3;
+
+#if LIBAVCODEC_VERSION_MAJOR < 58
 	if( pCodec->capabilities & CODEC_CAP_DR1 )
-		m_pStream->codec->flags |= CODEC_FLAG_EMU_EDGE;
+		m_pStreamCodec->flags |= CODEC_FLAG_EMU_EDGE;
+#endif
 
 	LOG->Trace("Opening codec %s", pCodec->name );
 
-	int ret = avcodec::avcodec_open2( m_pStream->codec, pCodec, NULL );
+	int ret = avcodec::avcodec_open2( m_pStreamCodec, pCodec, nullptr );
 	if( ret < 0 )
 		return RString( averr_ssprintf(ret, "Couldn't open codec \"%s\"", pCodec->name) );
-	ASSERT( m_pStream->codec->codec != NULL );
+	ASSERT( m_pStreamCodec->codec != nullptr );
 
 	return RString();
 }
 
 void MovieDecoder_FFMpeg::Close()
 {
-	if( m_pStream && m_pStream->codec->codec )
+	if( m_pStream && m_pStreamCodec->codec )
 	{
-		avcodec::avcodec_close( m_pStream->codec );
-		m_pStream = NULL;
+		avcodec::avcodec_close( m_pStreamCodec );
+		m_pStream = nullptr;
 	}
 
 	if( m_fctx )
 	{
 		avcodec::avformat_close_input( &m_fctx );
-		m_fctx = NULL;
+		m_fctx = nullptr;
 	}
 
 	Init();
@@ -738,7 +808,7 @@ REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
 /*
  * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -748,7 +818,7 @@ REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -759,6 +829,7 @@ REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
 =======
 #include "global.h"
 #include "MovieTexture_FFMpeg.h"
@@ -1521,3 +1592,5 @@ REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/arch/MovieTexture/MovieTexture_FFMpeg.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MovieTexture/MovieTexture_FFMpeg.cpp

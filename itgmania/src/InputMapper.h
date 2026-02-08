@@ -183,7 +183,11 @@ public:
 
 	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
 	bool IsBeingPressed( GameButton MenuI, PlayerNumber pn ) const;
+<<<<<<< HEAD:itgmania/src/InputMapper.h
 	bool IsBeingPressed(const std::vector<GameInput>& GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
+=======
+	bool IsBeingPressed(const vector<GameInput>& GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = nullptr ) const;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputMapper.h
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( GameButton MenuI, PlayerNumber pn );

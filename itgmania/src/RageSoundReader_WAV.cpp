@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/RageSoundReader_WAV.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundReader_WAV.cpp
 /*
  * Straightforward WAV reading.  This only supports 8-bit and 16-bit PCM,
  * 4-bit ADPCM with one or two channels.  No other decompressors are planned:
@@ -652,6 +653,8 @@ RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_WAV.cpp
 /*
  * Straightforward WAV reading.  This only supports 8-bit and 16-bit PCM,
  * 4-bit ADPCM with one or two channels.  No other decompressors are planned:
@@ -1300,4 +1303,7 @@ RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSoundReader_WAV.cpp
 >>>>>>> origin/c++11:src/RageSoundReader_WAV.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_WAV.cpp

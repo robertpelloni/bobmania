@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.cpp
 #include "global.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "PrefsManager.h"
@@ -1653,12 +1656,62 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
+=======
+static void EditRecordModeLeadIn(int &sel, bool to_sel, const ConfOption* conf_option)
+{
+	float mapping[32];
+	for(int i= 0; i < 32; ++i)
+	{
+		mapping[i]= static_cast<float>(i);
+	}
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void EditClearPromptThreshold(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {-1, 10, 50, 100, 1000, 1000000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsCount(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 1000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsLoadTimeout(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 1000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsMaxSeconds(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {60, 90, 120, 150, 180, 210, 240, 10000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+
+static void CustomSongsMaxMegabytes(int& sel, bool to_sel, const ConfOption* conf_option)
+{
+	int mapping[]= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 1000};
+	MoveMap(sel, conf_option, to_sel, mapping, ARRAYLEN(mapping));
+}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.cpp
 static vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
 	if( !g_ConfOptions.empty() )
 		return;
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
+=======
+	// Clear the display_specs so that we don't get problems from
+	// caching it.  If the DisplayResolution option row is on the screen, it'll
+	// recache the list. -Kyz
+	display_specs.clear();
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.cpp
 	// There are a couple ways of getting the current preference column or turning
 	// a new choice in the interface into a new preference. The easiest is when
 	// the interface choices are an exact mapping to the values the preference
@@ -1682,8 +1735,11 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "DefaultNoteSkin",		DefaultNoteSkin,	DefaultNoteSkinChoices ) );
 	ADD( ConfOption( "ShowInstructions",		MovePref<bool>,		"Skip","Show") );
 	ADD( ConfOption( "ShowCaution",			MovePref<bool>,		"Skip","Show") );
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
 	ADD( ConfOption( "DancePointsForOni",		MovePref<bool>,		"Percent","Dance Points") );
 	ADD( ConfOption( "ShowSelectGroup",		MovePref<bool>,		"All Music","Choose") );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.cpp
 	ADD( ConfOption( "MusicWheelUsesSections",	MovePref<MusicWheelUsesSections>, "Never","Always","Title Only") );
 	ADD( ConfOption( "CourseSortOrder",		MovePref<CourseSortOrders>, "Num Songs","Average Feet","Total Feet","Ranking") );
 	ADD( ConfOption( "MoveRandomToEnd",		MovePref<bool>,		"No","Yes") );
@@ -1730,6 +1786,15 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AllowExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "PickExtraStage",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "UseUnlockSystem",		MovePref<bool>,		"Off","On" ) );
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
+=======
+	ADD( ConfOption( "AllowSongDeletion",   MovePref<bool>,     "Off","On" ) );
+	ADD(ConfOption("CustomSongsEnable", MovePref<bool>, "Off", "On"));
+	ADD(ConfOption("CustomSongsMaxCount", CustomSongsCount, "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "1000"));
+	ADD(ConfOption("CustomSongsLoadTimeout", CustomSongsLoadTimeout, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
+	ADD(ConfOption("CustomSongsMaxSeconds", CustomSongsMaxSeconds, "60", "90", "120", "150", "180", "210", "240", "10000"));
+	ADD(ConfOption("CustomSongsMaxMegabytes", CustomSongsLoadTimeout, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "30", "1000"));
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.cpp
 
 	// Machine options
 	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
@@ -1845,6 +1910,19 @@ void ConfOption::MakeOptionsList( vector<RString> &out ) const
 	out = names;
 }
 
+static const char *OptEffectNames[] = {
+	"SavePreferences",
+	"ApplyGraphics",
+	"ApplyTheme",
+	"ChangeGame",
+	"ApplySound",
+	"ApplySong",
+	"ApplyAspectRatio"
+};
+XToString( OptEffect );
+StringToX( OptEffect );
+LuaXType( OptEffect );
+
 /**
  * @file
  * @author Glenn Maynard (c) 2003-2004
@@ -1871,4 +1949,7 @@ void ConfOption::MakeOptionsList( vector<RString> &out ) const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.cpp
 >>>>>>> origin/c++11:src/ScreenOptionsMasterPrefs.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.cpp

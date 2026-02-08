@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/HighScore.cpp
+<<<<<<< HEAD:itgmania/src/HighScore.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/HighScore.cpp
 #include "global.h"
 #include "HighScore.h"
 #include "PrefsManager.h"
@@ -617,6 +620,7 @@ LUA_REGISTER_CLASS( HighScoreList )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/HighScore.cpp
 =======
 #include "global.h"
 #include "HighScore.h"
@@ -1154,3 +1158,5 @@ LUA_REGISTER_CLASS( HighScoreList )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/HighScore.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/HighScore.cpp

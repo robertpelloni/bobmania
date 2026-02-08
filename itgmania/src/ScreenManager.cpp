@@ -70,10 +70,13 @@
 #include "FontManager.h"
 #include "Screen.h"
 #include "ScreenDimensions.h"
-
 #include "ActorUtil.h"
 
+<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 ScreenManager*	SCREENMAN = nullptr;	// global and accessable from anywhere in our program
+=======
+ScreenManager*	SCREENMAN = nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
@@ -244,6 +247,7 @@ ScreenManager::ScreenManager()
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
 	m_OnDonePreparingScreen = SM_Invalid;
+
 }
 
 
@@ -424,7 +428,7 @@ void ScreenManager::Update( float fDeltaTime )
 	 * So, let's just zero the first update for every screen. */
 	ASSERT( !g_ScreenStack.empty() || m_sDelayedScreen != "" );	// Why play the game if there is nothing showing?
 
-	Screen* pScreen = g_ScreenStack.empty() ? NULL : GetTopScreen();
+	Screen* pScreen = g_ScreenStack.empty() ? nullptr : GetTopScreen();
 
 	bool bFirstUpdate = pScreen && pScreen->IsFirstUpdate();
 
@@ -529,7 +533,14 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
+<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 		RageException::Throw( "Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str() );
+=======
+	{
+		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str());
+		return nullptr;
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 
 	this->ZeroNextUpdate();
 
@@ -548,6 +559,13 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		return;
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
+<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
+=======
+	if(pNewScreen == nullptr)
+	{
+		return;
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 
 	{
 		LoadedScreen ls;
@@ -579,8 +597,16 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		{
 			LOG->Trace( "Loading screen background \"%s\"", sNewBGA.c_str() );
 			Actor *pActor = ActorUtil::MakeActor( sNewBGA );
+<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 			pActor->SetName( sNewBGA );
 			g_vPreparedBackgrounds.push_back( pActor );
+=======
+			if( pActor != nullptr )
+			{
+				pActor->SetName( sNewBGA );
+				g_vPreparedBackgrounds.push_back( pActor );
+			}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 		}
 	}
 
@@ -866,8 +892,19 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int SystemMessageNoAnimate( T* p, lua_State *L )	{ p->SystemMessageNoAnimate( SArg(1) ); return 0; }
+=======
+	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); COMMON_RETURN_SELF; }
+	static int ToastMessage( T* p, lua_State *L )
+	{
+		Message msg( "ToastMessage" );
+		msg.SetParam( "Message", SArg(1) );
+		MESSAGEMAN->Broadcast( msg );
+		COMMON_RETURN_SELF;
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
 	static int AddNewScreenToTop( T* p, lua_State *L )
@@ -890,7 +927,11 @@ public:
 		ADD_METHOD( SetNewScreen );
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );
+<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 		ADD_METHOD( SystemMessageNoAnimate );
+=======
+		ADD_METHOD( ToastMessage );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 		ADD_METHOD( ScreenIsPrepped );
 		ADD_METHOD( ScreenClassExists );
 		ADD_METHOD( AddNewScreenToTop );

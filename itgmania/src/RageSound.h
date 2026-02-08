@@ -125,12 +125,17 @@ public:
 	RString GetError() const { return m_sError; }
 
 <<<<<<< HEAD:itgmania/src/RageSound.h
+<<<<<<< HEAD:itgmania/src/RageSound.h
 	void Play(bool is_action, const RageSoundParams *params=nullptr);
 	void PlayCopy(bool is_action, const RageSoundParams *pParams = nullptr) const;
 =======
 	void Play( const RageSoundParams *params=NULL );
 	void PlayCopy( const RageSoundParams *pParams = nullptr ) const;
 >>>>>>> origin/c++11:src/RageSound.h
+=======
+	void Play(bool is_action, const RageSoundParams *params=nullptr);
+	void PlayCopy(bool is_action, const RageSoundParams *pParams = nullptr) const;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.h
 	void Stop();
 
 	/* Cleanly pause or unpause the sound. If the sound wasn't already playing,
@@ -138,7 +143,11 @@ public:
 	bool Pause( bool bPause );
 
 	float GetLengthSeconds();
+<<<<<<< HEAD:itgmania/src/RageSound.h
 	float GetPositionSeconds( RageTimer *Timestamp=nullptr ) const;
+=======
+	float GetPositionSeconds( bool *approximate=nullptr, RageTimer *Timestamp=nullptr ) const;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.h
 	RString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return m_bPlaying; }
 

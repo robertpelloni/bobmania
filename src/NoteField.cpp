@@ -2076,6 +2076,7 @@ NoteField::NoteField()
 	 m_steps_type(StepsType_Invalid), m_gameplay_zoom(1.0),
 	 defective_render_y(0.0), original_y(0.0)
 {
+<<<<<<< HEAD
 	DeleteChildrenWhenDone(true);
 	std::vector<Actor*> layers;
 	ActorUtil::MakeActorSet(THEME->GetPathG("NoteField", "layers", true), layers);
@@ -2087,28 +2088,361 @@ NoteField::NoteField()
 	m_field_text.LoadFromFont(THEME->GetPathF("NoteField","MeasureNumber"));
 	add_draw_entry(beat_bars_column_index, beat_bars_child_index, beat_bars_draw_order);
 	MESSAGEMAN->Subscribe(this, "defective_field");
+=======
+	m_pNoteData = nullptr;
+	m_pCurDisplay = nullptr;
+	m_drawing_board_primitive= false;
+
+	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("NoteField","MeasureNumber") );
+	m_textMeasureNumber.SetZoom( 1.0f );
+	m_textMeasureNumber.SetShadowLength( 2 );
+	m_textMeasureNumber.SetWrapWidthPixels( 300 );
+
+	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
+
+	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
+	m_sprBoard->SetName("Board");
+	m_sprBoard->PlayCommand( "On" );
+	this->AddChild( m_sprBoard );
+
+	m_fBoardOffsetPixels = 0;
+	m_fCurrentBeatLastUpdate = -1;
+	m_fYPosCurrentBeatLastUpdate = -1;
+	this->SubscribeToMessage( Message_CurrentSongChanged );
+
+	m_sprBeatBars.Load( THEME->GetPathG("NoteField","bars") );
+	m_sprBeatBars.StopAnimating();
+
+	// I decided to do it this way because I don't want to dig through
+	// ScreenEdit to change all the places it touches the markers. -Kyz
+	m_FieldRenderArgs.selection_begin_marker= &m_iBeginMarker;
+	m_FieldRenderArgs.selection_end_marker= &m_iEndMarker;
+	m_iBeginMarker = m_iEndMarker = -1;
+
+	m_FieldRenderArgs.fail_fade = -1;
+
+	m_StepCallback.SetFromNil();
+	m_SetPressedCallback.SetFromNil();
+	m_DidTapNoteCallback.SetFromNil();
+	m_DidHoldNoteCallback.SetFromNil();
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 NoteField::~NoteField()
 {
+<<<<<<< HEAD
 	MESSAGEMAN->Unsubscribe(this, "defective_field");
 	if(m_own_note_data && m_note_data != nullptr)
+=======
+	Unload();
+}
+
+void NoteField::Unload()
+{
+	for( map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.begin();
+		it != m_NoteDisplays.end(); ++it )
+		delete it->second;
+	m_NoteDisplays.clear();
+	m_pCurDisplay = nullptr;
+	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
+}
+
+void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
+{
+	RString sNoteSkinLower = sNoteSkin_;
+	sNoteSkinLower.MakeLower();
+
+	if( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end() )
+		return;
+
+	LockNoteSkin l( sNoteSkinLower );
+
+	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkinLower.c_str() );
+	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer );
+
+	for( int c=0; c<GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer; c++ )
+		nd->display[c].Load( c, m_pPlayerState, m_fYReverseOffsetPixels );
+	nd->m_ReceptorArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
+	nd->m_GhostArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
+
+	m_NoteDisplays[ sNoteSkinLower ] = nd;
+}
+
+void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
+{
+	RString sNoteSkinLower = sNoteSkin_;
+	sNoteSkinLower.MakeLower();
+
+	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkinLower.c_str() );
+	ASSERT_M( m_NoteDisplays.find(sNoteSkinLower) != m_NoteDisplays.end(), sNoteSkinLower );
+	delete m_NoteDisplays[sNoteSkinLower];
+	m_NoteDisplays.erase( sNoteSkinLower );
+}
+
+void NoteField::CacheAllUsedNoteSkins()
+{
+	// If we're in Routine mode, apply our per-player noteskins.
+	if( GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType == StyleType_TwoPlayersSharedSides )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		Rage::safe_delete(m_note_data);
 	}
+<<<<<<< HEAD
+=======
+
+	/* Cache all note skins that we might need for the whole song, course or battle
+	 * play, so we don't have to load them later (such as between course songs). */
+	vector<RString> asSkinsLower;
+	GAMESTATE->GetAllUsedNoteSkins( asSkinsLower );
+	asSkinsLower.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
+	for (RString &s : asSkinsLower)
+	{
+		NOTESKIN->ValidateNoteSkinName(s);
+		s.MakeLower();
+	}
+
+	for( unsigned i=0; i < asSkinsLower.size(); ++i )
+		CacheNoteSkin( asSkinsLower[i] );
+
+	/* If we're changing note skins in the editor, we can have old note skins lying
+	 * around.  Remove them so they don't accumulate. */
+	set<RString> setNoteSkinsToUnload;
+	for (std::pair<RString const &, NoteDisplayCols *> d : m_NoteDisplays)
+	{
+		bool unused = find(asSkinsLower.begin(), asSkinsLower.end(), d.first) == asSkinsLower.end();
+		if( unused )
+			setNoteSkinsToUnload.insert( d.first );
+	}
+	for (RString const & skin : setNoteSkinsToUnload)
+		UncacheNoteSkin( skin );
+
+	RString sCurrentNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	NOTESKIN->ValidateNoteSkinName(sCurrentNoteSkinLower);
+	sCurrentNoteSkinLower.MakeLower();
+
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sCurrentNoteSkinLower );
+	ASSERT_M( it != m_NoteDisplays.end(), sCurrentNoteSkinLower );
+	m_pCurDisplay = it->second;
+	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
+
+	FOREACH_EnabledPlayer( pn )
+	{
+		RString sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+		NOTESKIN->ValidateNoteSkinName(sNoteSkinLower);
+		sNoteSkinLower.MakeLower();
+		it = m_NoteDisplays.find( sNoteSkinLower );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
+		m_pDisplays[pn] = it->second;
+	}
+
+	InitColumnRenderers();
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void NoteField::HandleMessage(Message const& msg)
 {
 	if(msg.GetName() == "defective_field")
 	{
+<<<<<<< HEAD
 		PlayerNumber pn;
 		msg.GetParam("pn", pn);
 		if(m_pn == pn)
+=======
+		SetZoom(pPlayerState->m_NotefieldZoom);
+	}
+	// Pass the player state info down to children so that they can set
+	// per-player things.  For example, if a screen filter is in the notefield
+	// board, this tells it what player it's for. -Kyz
+	Message msg("PlayerStateSet");
+	msg.SetParam("PlayerNumber", pPlayerState->m_PlayerNumber);
+	HandleMessage(msg);
+}
+
+void NoteField::Load( 
+	const NoteData *pNoteData,
+	int iDrawDistanceAfterTargetsPixels,
+	int iDrawDistanceBeforeTargetsPixels )
+{
+	ASSERT( pNoteData != nullptr );
+	m_pNoteData = pNoteData;
+	m_iDrawDistanceAfterTargetsPixels = iDrawDistanceAfterTargetsPixels;
+	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
+	ASSERT( m_iDrawDistanceBeforeTargetsPixels >= m_iDrawDistanceAfterTargetsPixels );
+
+	m_FieldRenderArgs.fail_fade = -1;
+
+	//int i1 = m_pNoteData->GetNumTracks();
+	//int i2 = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer;
+	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer,
+		 ssprintf("NumTracks %d = ColsPerPlayer %d",m_pNoteData->GetNumTracks(),
+			  GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
+
+	// If we're in routine mode, the noteskin is forcibly set to the routine
+	// noteskin metrics (which is bad in its own way).  The noteskin set in the
+	// options is ignored and probably already set anyway. -Kyz
+	if(GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType != StyleType_TwoPlayersSharedSides)
+	{
+		ensure_note_displays_have_skin();
+	}
+	InitColumnRenderers();
+}
+
+void NoteField::ensure_note_displays_have_skin()
+{
+	// The NoteSkin may have changed at the beginning of a new course song.
+	RString sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+
+	/* XXX: Combination of good idea and bad idea to ensure courses load
+	 * regardless of noteskin content. This may take a while to fix. */
+	NoteDisplayCols *badIdea = m_pCurDisplay;
+
+	if(sNoteSkinLower.empty())
+	{
+		sNoteSkinLower = m_pPlayerState->m_PlayerOptions.GetPreferred().m_sNoteSkin;
+
+		if(sNoteSkinLower.empty())
+>>>>>>> origin/unified-ui-features-13937230807013224518
 		{
 			bool mode= msg.GetParam("mode", mode);
 			set_defective_mode(mode);
 		}
+<<<<<<< HEAD
+=======
+		m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+	}
+
+	sNoteSkinLower.MakeLower();
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( sNoteSkinLower );
+	ASSERT_M( it != m_NoteDisplays.end(), ssprintf("iterator != m_NoteDisplays.end() [sNoteSkinLower = %s]",sNoteSkinLower.c_str()) );
+	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
+	FOREACH_EnabledPlayer( pn )
+	{
+		sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+
+		// XXX: Re-setup sNoteSkinLower. Unsure if inserting the skin again is needed.
+		if(sNoteSkinLower.empty())
+		{
+			sNoteSkinLower = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().m_sNoteSkin;
+
+			if(sNoteSkinLower.empty())
+			{
+				sNoteSkinLower = "default";
+			}
+			m_NoteDisplays.insert(pair<RString, NoteDisplayCols *> (sNoteSkinLower, badIdea));
+		}
+
+		sNoteSkinLower.MakeLower();
+		it = m_NoteDisplays.find( sNoteSkinLower );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkinLower );
+		m_pDisplays[pn] = it->second;
+	}
+}
+
+void NoteField::InitColumnRenderers()
+{
+	m_FieldRenderArgs.player_state= m_pPlayerState;
+	m_FieldRenderArgs.reverse_offset_pixels= m_fYReverseOffsetPixels;
+	m_FieldRenderArgs.receptor_row= &(m_pCurDisplay->m_ReceptorArrowRow);
+	m_FieldRenderArgs.ghost_row= &(m_pCurDisplay->m_GhostArrowRow);
+	m_FieldRenderArgs.note_data= m_pNoteData;
+	m_ColumnRenderers.resize(GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer);
+	for(size_t ncr= 0; ncr < m_ColumnRenderers.size(); ++ncr)
+	{
+		FOREACH_EnabledPlayer(pn)
+		{
+			m_ColumnRenderers[ncr].m_displays[pn]= &(m_pDisplays[pn]->display[ncr]);
+		}
+		m_ColumnRenderers[ncr].m_displays[PLAYER_INVALID]= &(m_pCurDisplay->display[ncr]);
+		m_ColumnRenderers[ncr].m_column= ncr;
+		m_ColumnRenderers[ncr].m_column_render_args.column= ncr;
+		m_ColumnRenderers[ncr].m_field_render_args= &m_FieldRenderArgs;
+	}
+	m_pCurDisplay->m_ReceptorArrowRow.SetColumnRenderers(m_ColumnRenderers);
+	m_pCurDisplay->m_GhostArrowRow.SetColumnRenderers(m_ColumnRenderers);
+}
+
+void NoteField::Update( float fDeltaTime )
+{
+	if( m_bFirstUpdate )
+	{
+		m_pCurDisplay->m_ReceptorArrowRow.PlayCommand( "On" );
+	}
+
+	ActorFrame::Update( fDeltaTime );
+	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
+
+	for(size_t c= 0; c < m_ColumnRenderers.size(); ++c)
+	{
+		m_ColumnRenderers[c].Update(fDeltaTime);
+	}
+
+	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
+	const float fCurrentBeat = m_pPlayerState->GetDisplayedPosition().m_fSongBeat;
+	bool bTweeningOn = m_sprBoard->GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard->GetCurrentDiffuseAlpha() < 1.00;	// HACK
+	if( !bTweeningOn  &&  m_fCurrentBeatLastUpdate != -1 )
+	{
+		const float fYOffsetLast	= ArrowEffects::GetYOffset(m_pPlayerState, 0, m_fCurrentBeatLastUpdate);
+		const float fYPosLast= ArrowEffects::GetYPos(m_pPlayerState, 0, fYOffsetLast, m_fYReverseOffsetPixels);
+		const float fPixelDifference = fYPosLast - m_fYPosCurrentBeatLastUpdate;
+
+		//LOG->Trace( "speed = %f, %f, %f, %f, %f, %f", fSpeed, fYOffsetAtCurrent, fYOffsetAtNext, fSecondsAtCurrent, fSecondsAtNext, fPixelDifference, fSecondsDifference );
+
+		m_fBoardOffsetPixels += fPixelDifference;
+		wrap( m_fBoardOffsetPixels, m_sprBoard->GetUnzoomedHeight() );
+	}
+	m_fCurrentBeatLastUpdate = fCurrentBeat;
+	const float fYOffsetCurrent	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
+	m_fYPosCurrentBeatLastUpdate= ArrowEffects::GetYPos(m_pPlayerState, 0, fYOffsetCurrent, m_fYReverseOffsetPixels);
+
+	m_rectMarkerBar.Update( fDeltaTime );
+
+	NoteDisplayCols *cur = m_pCurDisplay;
+
+	cur->m_ReceptorArrowRow.Update( fDeltaTime );
+	cur->m_GhostArrowRow.Update( fDeltaTime );
+
+	if( m_FieldRenderArgs.fail_fade >= 0 )
+		m_FieldRenderArgs.fail_fade = min( m_FieldRenderArgs.fail_fade + fDeltaTime/FADE_FAIL_TIME, 1 );
+
+	// Update fade to failed
+	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_FieldRenderArgs.fail_fade );
+
+	NoteDisplay::Update( fDeltaTime );
+	/* Update all NoteDisplays. Hack: We need to call this once per frame, not
+	 * once per player. */
+	// TODO: Remove use of PlayerNumber.
+
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	if( pn == GAMESTATE->GetMasterPlayerNumber() )
+		NoteDisplay::Update( fDeltaTime );
+}
+
+float NoteField::GetWidth() const
+{
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+	float fMinX, fMaxX;
+	// TODO: Remove use of PlayerNumber.
+	pStyle->GetMinAndMaxColX( m_pPlayerState->m_PlayerNumber, fMinX, fMaxX );
+
+	const float fYZoom	= ArrowEffects::GetZoom( m_pPlayerState, 0, 0 );
+	return (fMaxX - fMinX + ARROW_SIZE) * fYZoom;
+}
+
+void NoteField::DrawBeatBar( const float fBeat, BeatBarType type, int iMeasureIndex )
+{
+	bool bIsMeasure = type == measure;
+
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos= ArrowEffects::GetYPos(m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels);
+
+	float fAlpha;
+	int iState;
+
+	if( bIsMeasure )
+	{
+		fAlpha = BAR_MEASURE_ALPHA;
+		iState = 0;
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 	else
 	{
@@ -2140,8 +2474,14 @@ void NoteField::RemoveChild(Actor* act)
 
 void NoteField::ChildChangedDrawOrder(Actor* child)
 {
+<<<<<<< HEAD
 	size_t index= FindChildID(child);
 	if(index < m_SubActors.size())
+=======
+	// todo: make this an AutoActor instead? -aj
+	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
+	if( pSprite == nullptr )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		change_draw_entry(field_layer_column_index, static_cast<int>(index),
 			child->GetDrawOrder());
@@ -2153,9 +2493,155 @@ void NoteField::UpdateInternal(float delta)
 {
 	for(auto&& col : m_columns)
 	{
+<<<<<<< HEAD
 		col.Update(delta);
 	}
 	if(m_in_edit_mode && get_selection_end() != -1.0)
+=======
+		// Draw the board centered on fYPosAt0 so that the board doesn't slide as
+		// the draw distance changes with modifiers.
+		const float fYPosAt0= ArrowEffects::GetYPos(m_pPlayerState, 0, 0, m_fYReverseOffsetPixels);
+
+		RectF rect = *pSprite->GetCurrentTextureCoordRect();
+		const float fBoardGraphicHeightPixels = pSprite->GetUnzoomedHeight();
+		float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
+
+		// top half
+		const float fHeight = iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels;
+		const float fY = fYPosAt0 - ((iDrawDistanceBeforeTargetsPixels + iDrawDistanceAfterTargetsPixels) / 2.0f);
+
+		pSprite->ZoomToHeight( fHeight );
+		pSprite->SetY( fY );
+
+		// handle tex coord offset and fade
+		rect.top = -fTexCoordOffset-(iDrawDistanceBeforeTargetsPixels/fBoardGraphicHeightPixels);
+		rect.bottom = -fTexCoordOffset+(-iDrawDistanceAfterTargetsPixels/fBoardGraphicHeightPixels);
+		pSprite->SetCustomTextureRect( rect );
+		float fFadeTop = FADE_BEFORE_TARGETS_PERCENT * iDrawDistanceBeforeTargetsPixels / (iDrawDistanceBeforeTargetsPixels-iDrawDistanceAfterTargetsPixels);
+		pSprite->SetFadeTop( fFadeTop );
+		pSprite->Draw();
+	}
+}
+
+void NoteField::DrawMarkerBar( int iBeat )
+{
+	float fBeat = NoteRowToBeat( iBeat );
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos	= ArrowEffects::GetYPos(m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels);
+
+	m_rectMarkerBar.StretchTo( RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
+	m_rectMarkerBar.Draw();
+}
+
+static ThemeMetric<RageColor> AREA_HIGHLIGHT_COLOR("NoteField", "AreaHighlightColor");
+void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
+{
+	float fStartBeat = NoteRowToBeat( iStartBeat );
+	float fEndBeat = NoteRowToBeat( iEndBeat );
+	float fDrawDistanceAfterTargetsPixels	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fStartBeat );
+	float fYStartPos	= ArrowEffects::GetYPos(m_pPlayerState, 0, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels);
+	float fDrawDistanceBeforeTargetsPixels	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
+	float fYEndPos= ArrowEffects::GetYPos(m_pPlayerState, 0, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels);
+
+	// The caller should have clamped these to reasonable values
+	ASSERT( fYStartPos > -1000 );
+	ASSERT( fYEndPos < +5000 );
+
+	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
+	m_rectAreaHighlight.SetDiffuse( AREA_HIGHLIGHT_COLOR );
+	m_rectAreaHighlight.Draw();
+}
+
+// todo: add DrawWarpAreaBG? -aj
+
+static ThemeMetric<RageColor> BPM_COLOR ( "NoteField", "BPMColor" );
+static ThemeMetric<RageColor> STOP_COLOR ( "NoteField", "StopColor" );
+static ThemeMetric<RageColor> DELAY_COLOR ( "NoteField", "DelayColor" );
+static ThemeMetric<RageColor> WARP_COLOR ( "NoteField", "WarpColor" );
+static ThemeMetric<RageColor> TIME_SIG_COLOR ( "NoteField", "TimeSignatureColor" );
+static ThemeMetric<RageColor> TICKCOUNT_COLOR ( "NoteField", "TickcountColor" );
+static ThemeMetric<RageColor> COMBO_COLOR ( "NoteField", "ComboColor" );
+static ThemeMetric<RageColor> LABEL_COLOR ( "NoteField", "LabelColor" );
+static ThemeMetric<RageColor> SPEED_COLOR ( "NoteField", "SpeedColor" );
+static ThemeMetric<RageColor> SCROLL_COLOR ( "NoteField", "ScrollColor" );
+static ThemeMetric<RageColor> FAKE_COLOR ("NoteField", "FakeColor" );
+static ThemeMetric<bool> BPM_IS_LEFT_SIDE ( "NoteField", "BPMIsLeftSide" );
+static ThemeMetric<bool> STOP_IS_LEFT_SIDE ( "NoteField", "StopIsLeftSide" );
+static ThemeMetric<bool> DELAY_IS_LEFT_SIDE ( "NoteField", "DelayIsLeftSide" );
+static ThemeMetric<bool> WARP_IS_LEFT_SIDE ( "NoteField", "WarpIsLeftSide" );
+static ThemeMetric<bool> TIME_SIG_IS_LEFT_SIDE ( "NoteField", "TimeSignatureIsLeftSide" );
+static ThemeMetric<bool> TICKCOUNT_IS_LEFT_SIDE ( "NoteField", "TickcountIsLeftSide" );
+static ThemeMetric<bool> COMBO_IS_LEFT_SIDE ( "NoteField", "ComboIsLeftSide" );
+static ThemeMetric<bool> LABEL_IS_LEFT_SIDE ( "NoteField", "LabelIsLeftSide" );
+static ThemeMetric<bool> SPEED_IS_LEFT_SIDE ( "NoteField", "SpeedIsLeftSide" );
+static ThemeMetric<bool> SCROLL_IS_LEFT_SIDE ( "NoteField", "ScrollIsLeftSide" );
+static ThemeMetric<bool> FAKE_IS_LEFT_SIDE ( "NoteField", "FakeIsLeftSide" );
+static ThemeMetric<float> BPM_OFFSETX ( "NoteField", "BPMOffsetX" );
+static ThemeMetric<float> STOP_OFFSETX ( "NoteField", "StopOffsetX" );
+static ThemeMetric<float> DELAY_OFFSETX ( "NoteField", "DelayOffsetX" );
+static ThemeMetric<float> WARP_OFFSETX ( "NoteField", "WarpOffsetX" );
+static ThemeMetric<float> TIME_SIG_OFFSETX ( "NoteField", "TimeSignatureOffsetX" );
+static ThemeMetric<float> TICKCOUNT_OFFSETX ( "NoteField", "TickcountOffsetX" );
+static ThemeMetric<float> COMBO_OFFSETX ( "NoteField", "ComboOffsetX" );
+static ThemeMetric<float> LABEL_OFFSETX ( "NoteField", "LabelOffsetX" );
+static ThemeMetric<float> SPEED_OFFSETX ( "NoteField", "SpeedOffsetX" );
+static ThemeMetric<float> SCROLL_OFFSETX ( "NoteField", "ScrollOffsetX" );
+static ThemeMetric<float> FAKE_OFFSETX ( "NoteField", "FakeOffsetX" );
+
+void NoteField::set_text_measure_number_for_draw(
+	const float beat, const float side_sign, float x_offset,
+	const float horiz_align, const RageColor& color, const RageColor& glow)
+{
+	const float y_offset= ArrowEffects::GetYOffset(m_pPlayerState, 0, beat);
+	const float y_pos= ArrowEffects::GetYPos(m_pPlayerState, 0, y_offset, m_fYReverseOffsetPixels);
+	const float zoom= ArrowEffects::GetZoom(m_pPlayerState, y_offset, 0);
+	const float x_base= GetWidth() * .5f;
+	x_offset*= zoom;
+
+	m_textMeasureNumber.SetZoom(zoom);
+	m_textMeasureNumber.SetHorizAlign(horiz_align);
+	m_textMeasureNumber.SetDiffuse(color);
+	m_textMeasureNumber.SetGlow(glow);
+	m_textMeasureNumber.SetXY((x_offset + x_base) * side_sign, y_pos);
+}
+
+void NoteField::draw_timing_segment_text(const RString& text,
+	const float beat, const float side_sign, float x_offset,
+	const float horiz_align, const RageColor& color, const RageColor& glow)
+{
+	set_text_measure_number_for_draw(beat, side_sign, x_offset, horiz_align,
+		color, glow);
+	m_textMeasureNumber.SetText(text);
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawAttackText(const float beat, const Attack &attack,
+	const RageColor& glow)
+{
+	set_text_measure_number_for_draw(beat, 1, 10, align_left,
+		RageColor(0,0.8f,0.8f,1), glow);
+	m_textMeasureNumber.SetText( attack.GetTextDescription() );
+	m_textMeasureNumber.Draw();
+}
+
+void NoteField::DrawBGChangeText(const float beat, const RString new_bg_name,
+	const RageColor& glow)
+{
+	set_text_measure_number_for_draw(beat, 1, 0, align_left, RageColor(0,1,0,1),
+		glow);
+	m_textMeasureNumber.SetText(new_bg_name);
+	m_textMeasureNumber.Draw();
+}
+
+static CacheNoteStat GetNumNotesFromBeginning( const PlayerState *pPlayerState, float beat )
+{
+	// XXX: I realized that I have copied and pasted my binary search code 3 times already.
+	//      how can we abstract this?
+	const vector<CacheNoteStat> &data = pPlayerState->m_CacheNoteStat;
+	int max = data.size() - 1;
+	int l = 0, r = max;
+	while( l <= r )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		selection_glow= Rage::scale(Rage::FastCos(
 				RageTimer::GetTimeSinceStartFast()*2), -1.f, 1.f, 0.1f, 0.3f);
@@ -2191,22 +2677,68 @@ void NoteField::PostDraw()
 
 void NoteField::draw_board()
 {
+<<<<<<< HEAD
 	m_first_undrawn_entry= 0;
 	m_curr_draw_limit= non_board_draw_order;
 	Draw();
+=======
+	// IMPORTANT:  Do not modify this function without also modifying the
+	// version that is in NoteDisplay.cpp or coming up with a good way to
+	// merge them. -Kyz
+	
+	// If NotePath is active, disable culling to ensure notes are visible.
+	if( m_pPlayerState->m_NotePathFunction.IsSet() )
+		return true;
+
+	// TRICKY: If boomerang is on, then ones in the range 
+	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
+	// Test to see if this beat is visible before drawing.
+	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
+	if( fYOffset > iDrawDistanceBeforeTargetsPixels )	// off screen
+		return false;
+	if( fYOffset < iDrawDistanceAfterTargetsPixels )	// off screen
+		return false;
+
+	return true;
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void NoteField::draw_up_to_draw_order(int order)
 {
+<<<<<<< HEAD
 	m_curr_draw_limit= order;
 	if(m_first_undrawn_entry < m_draw_entries.size())
 	{
 		Draw();
 	}
+=======
+	const PlayerOptions& curr_options= m_pPlayerState->m_PlayerOptions.GetCurrent();
+	// Adjust draw range depending on some effects
+	m_FieldRenderArgs.draw_pixels_after_targets= m_iDrawDistanceAfterTargetsPixels * (1.f + curr_options.m_fDrawSizeBack);
+	// HACK: If boomerang and centered are on, then we want to draw much 
+	// earlier so that the notes don't pop on screen.
+	float centered_times_boomerang=
+		curr_options.m_fScrolls[PlayerOptions::SCROLL_CENTERED] *
+		curr_options.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
+	m_FieldRenderArgs.draw_pixels_after_targets +=
+		int(SCALE(centered_times_boomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2));
+	m_FieldRenderArgs.draw_pixels_before_targets =
+		m_iDrawDistanceBeforeTargetsPixels * (1.f + curr_options.m_fDrawSize);
+
+	float draw_scale= 1;
+	draw_scale*= 1 + 0.5f * fabsf(curr_options.m_fPerspectiveTilt);
+	draw_scale*= 1 + fabsf(curr_options.m_fEffects[PlayerOptions::EFFECT_MINI]);
+
+	m_FieldRenderArgs.draw_pixels_after_targets=
+		(int)(m_FieldRenderArgs.draw_pixels_after_targets * draw_scale);
+	m_FieldRenderArgs.draw_pixels_before_targets=
+		(int)(m_FieldRenderArgs.draw_pixels_before_targets * draw_scale);
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void NoteField::DrawPrimitives()
 {
+<<<<<<< HEAD
 	if(!m_being_drawn_by_player || m_being_drawn_by_proxy)
 	{
 		m_first_undrawn_entry= 0;
@@ -2230,25 +2762,74 @@ void NoteField::position_actor_at_column_head(Actor* act,
 	FieldLayerRenderInfo& info, size_t col)
 {
 	if(col >= m_columns.size())
+=======
+	//LOG->Trace( "NoteField::DrawPrimitives()" );
+
+	// This should be filled in on the first update.
+	ASSERT( m_pCurDisplay != nullptr );
+
+	// ArrowEffects::Update call moved because having it happen once per
+	// NoteField (which means twice in two player) seemed wasteful. -Kyz
+
+	if(m_drawing_board_primitive)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		return;
 	}
+<<<<<<< HEAD
 	m_columns[col].position_actor_at_column_head(act, info);
 }
 
 double NoteField::get_receptor_y()
 {
 	if(m_columns.empty())
+=======
+	// Some might prefer an else block, instead of returning from the if, but I
+	// don't want to bump the indent on the entire remaining section. -Kyz
+	ArrowEffects::SetCurrentOptions(&m_pPlayerState->m_PlayerOptions.GetCurrent());
+
+	CalcPixelsBeforeAndAfterTargets();
+	NoteDisplayCols *cur = m_pCurDisplay;
+	// Probe for first and last notes on the screen
+	float first_beat_to_draw= FindFirstDisplayedBeat(
+		m_pPlayerState, m_FieldRenderArgs.draw_pixels_after_targets);
+	float last_beat_to_draw= FindLastDisplayedBeat(
+		m_pPlayerState, m_FieldRenderArgs.draw_pixels_before_targets);
+
+	m_pPlayerState->m_fLastDrawnBeat = last_beat_to_draw;
+
+	m_FieldRenderArgs.first_row  = BeatToNoteRow(first_beat_to_draw);
+	m_FieldRenderArgs.last_row   = BeatToNoteRow(last_beat_to_draw);
+
+	//LOG->Trace( "start = %f.1, end = %f.1", first_beat_to_draw-fSongBeat, last_beat_to_draw-fSongBeat );
+	//LOG->Trace( "Drawing elements %d through %d", m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
+
+#define IS_ON_SCREEN(fBeat)  (first_beat_to_draw <= (fBeat) && (fBeat) <= last_beat_to_draw && IsOnScreen(fBeat, 0, m_FieldRenderArgs.draw_pixels_after_targets, m_FieldRenderArgs.draw_pixels_before_targets))
+
+	// Draw Receptors
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		return 0.0;
 	}
 	return m_columns[0].apply_reverse_shift(m_columns[0].head_y_offset());
 }
 
+<<<<<<< HEAD
 void NoteField::push_columns_to_lua(lua_State* L)
 {
 	lua_createtable(L, m_columns.size(), 0);
 	for(size_t c= 0; c < m_columns.size(); ++c)
+=======
+	const TimingData *pTiming = &m_pPlayerState->GetDisplayedTiming();
+	const vector<TimingSegment*>* segs[NUM_TimingSegmentType];
+
+	FOREACH_TimingSegmentType( tst )
+		segs[tst] = &(pTiming->GetTimingSegments(tst));
+
+	unsigned i = 0;
+	// Draw beat bars
+	if( ( GAMESTATE->IsEditing() || SHOW_BEAT_BARS ) && pTiming != nullptr )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		m_columns[c].PushSelf(L);
 		lua_rawseti(L, -2, c+1);
@@ -2560,6 +3141,7 @@ void NoteField::draw_beat_bars_internal()
 		}
 	}
 
+<<<<<<< HEAD
 	const Rage::Color text_glow= Rage::Color(1,1,1,Rage::FastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f);
 	float horiz_align= align_right;
 	float side_sign= 1;
@@ -2568,6 +3150,11 @@ void NoteField::draw_beat_bars_internal()
 	{
 		segs[tst] = &(m_timing_data->GetTimingSegments(tst));
 	}
+=======
+	if( GAMESTATE->IsEditing() && pTiming != nullptr )
+	{
+		ASSERT(GAMESTATE->m_pCurSong != nullptr);
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 #define draw_all_segments(str_exp, name, caps_name) \
 	horiz_align= caps_name##_IS_LEFT_SIDE ? align_right : align_left; \
@@ -2586,6 +3173,7 @@ void NoteField::draw_beat_bars_internal()
 			horiz_align, caps_name##_COLOR, text_glow); \
 	}
 
+<<<<<<< HEAD
 	draw_all_segments(FloatToString(seg->GetRatio()), Scroll, SCROLL);
 	draw_all_segments(FloatToString(seg->GetBPM()), BPM, BPM);
 	draw_all_segments(FloatToString(seg->GetPause()), Stop, STOP);
@@ -2606,6 +3194,195 @@ void NoteField::draw_beat_bars_internal()
 
 	Song* curr_song= GAMESTATE->get_curr_song();
 	if(curr_song != nullptr)
+=======
+		float horiz_align= align_right;
+		float side_sign= 1;
+#define draw_all_segments(str_exp, name, caps_name)	\
+		horiz_align= caps_name##_IS_LEFT_SIDE ? align_right : align_left; \
+		side_sign= caps_name##_IS_LEFT_SIDE ? -1 : 1; \
+		for(unsigned int i= 0; i < segs[SEGMENT_##caps_name]->size(); ++i) \
+		{ \
+			const name##Segment* seg= To##name((*segs[SEGMENT_##caps_name])[i]); \
+			if(seg->GetRow() >= m_FieldRenderArgs.first_row && \
+				seg->GetRow() <= m_FieldRenderArgs.last_row && \
+				IS_ON_SCREEN(seg->GetBeat())) \
+			{ \
+				draw_timing_segment_text(str_exp, seg->GetBeat(), side_sign, \
+					caps_name##_OFFSETX, horiz_align, caps_name##_COLOR, text_glow); \
+			} \
+		}
+
+		draw_all_segments(std::to_string(seg->GetRatio()), Scroll, SCROLL);
+		draw_all_segments(std::to_string(seg->GetBPM()), BPM, BPM);
+		draw_all_segments(std::to_string(seg->GetPause()), Stop, STOP);
+		draw_all_segments(std::to_string(seg->GetPause()), Delay, DELAY);
+		draw_all_segments(std::to_string(seg->GetLength()), Warp, WARP);
+		draw_all_segments(ssprintf("%d\n--\n%d", seg->GetNum(), seg->GetDen()),
+			TimeSignature, TIME_SIG);
+		draw_all_segments(ssprintf("%d", seg->GetTicks()), Tickcount, TICKCOUNT);
+		draw_all_segments(
+			ssprintf("%d/%d", seg->GetCombo(), seg->GetMissCombo()), Combo, COMBO);
+		draw_all_segments(seg->GetLabel(), Label, LABEL);
+		draw_all_segments(ssprintf("%s\n%s\n%s",
+				std::to_string(seg->GetRatio()).c_str(),
+				(seg->GetUnit() == 1 ? "S" : "B"),
+				std::to_string(seg->GetDelay()).c_str()), Speed, SPEED);
+		draw_all_segments(std::to_string(seg->GetLength()), Fake, FAKE);
+#undef draw_all_segments
+
+		// Course mods text
+		const Course *pCourse = GAMESTATE->m_pCurCourse;
+		if( pCourse )
+		{
+			ASSERT_M( GAMESTATE->m_iEditCourseEntryIndex >= 0  &&  GAMESTATE->m_iEditCourseEntryIndex < (int)pCourse->m_vEntries.size(), 
+				ssprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
+			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
+			for (Attack const &a : ce.attacks)
+			{
+				float fSecond = a.fStartSecond;
+				float fBeat = timing.GetBeatFromElapsedTime( fSecond );
+
+				if( BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
+					BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
+					IS_ON_SCREEN(fBeat))
+				{
+					DrawAttackText(fBeat, a, text_glow);
+				}
+			}
+		}
+		else
+		{
+			AttackArray &attacks = GAMESTATE->m_bIsUsingStepTiming ?
+				GAMESTATE->m_pCurSteps[PLAYER_1]->m_Attacks :
+				GAMESTATE->m_pCurSong->m_Attacks;
+			// XXX: We're somehow getting here when attacks is null. Find the actual cause later.
+			if (&attacks)
+			{
+				for (Attack const &a : attacks)
+				{
+					float fBeat = timing.GetBeatFromElapsedTime(a.fStartSecond);
+					if (BeatToNoteRow(fBeat) >= m_FieldRenderArgs.first_row &&
+						BeatToNoteRow(fBeat) <= m_FieldRenderArgs.last_row &&
+						IS_ON_SCREEN(fBeat))
+					{
+						this->DrawAttackText(fBeat, a, text_glow);
+					}
+				}
+			}
+		}
+
+		if( !GAMESTATE->m_bIsUsingStepTiming )
+		{
+			// BGChange text
+			EditMode mode = GAMESTATE->m_EditMode;
+			switch( mode )
+			{
+				case EditMode_Home:
+				case EditMode_CourseMods:
+				case EditMode_Practice:
+					break;
+				case EditMode_Full:
+					{
+						vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
+						FOREACH_BackgroundLayer( j )
+							iter[j] = GAMESTATE->m_pCurSong->GetBackgroundChanges(j).begin();
+
+						for(;;)
+						{
+							float fLowestBeat = FLT_MAX;
+							vector<BackgroundLayer> viLowestIndex;
+
+							FOREACH_BackgroundLayer( j )
+							{
+								if( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() )
+								{
+									continue;
+								}
+								float fBeat = iter[j]->m_fStartBeat;
+								if( fBeat < fLowestBeat )
+								{
+									fLowestBeat = fBeat;
+									viLowestIndex.clear();
+									viLowestIndex.push_back( j );
+								}
+								else if( fBeat == fLowestBeat )
+								{
+									viLowestIndex.push_back( j );
+								}
+							}
+		
+							if( viLowestIndex.empty() )
+							{
+								FOREACH_BackgroundLayer( j )
+								{
+									ASSERT( iter[j] == GAMESTATE->m_pCurSong->GetBackgroundChanges(j).end() );
+								}
+								break;
+							}
+	
+							if( IS_ON_SCREEN(fLowestBeat) )
+							{
+								vector<RString> vsBGChanges;
+								for (BackgroundLayer const &bl : viLowestIndex)
+								{
+									ASSERT( iter[bl] != GAMESTATE->m_pCurSong->GetBackgroundChanges(bl).end() );
+									const BackgroundChange& change = *iter[bl];
+									RString s = change.GetTextDescription();
+									if( bl!=0 )
+									{
+										s = ssprintf("%d: ",bl) + s;
+									}
+									vsBGChanges.push_back( s );
+								}
+								DrawBGChangeText(fLowestBeat, join("\n",vsBGChanges), text_glow);
+							}
+							for (BackgroundLayer const &bl : viLowestIndex)
+							{
+								iter[bl]++;
+							}
+						}
+					}
+					break;
+				default:
+					FAIL_M(ssprintf("Invalid edit mode: %i", mode));
+			}
+		}
+
+		// Draw marker bars
+		if( m_iBeginMarker != -1  &&  m_iEndMarker != -1 )
+		{
+			int iBegin = m_iBeginMarker;
+			int iEnd = m_iEndMarker;
+			CLAMP( iBegin, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
+			CLAMP( iEnd, m_FieldRenderArgs.first_row, m_FieldRenderArgs.last_row );
+			DrawAreaHighlight( iBegin, iEnd );
+		}
+		else if( m_iBeginMarker != -1 )
+		{
+			if( m_iBeginMarker >= m_FieldRenderArgs.first_row &&
+				m_iBeginMarker <= m_FieldRenderArgs.last_row )
+				DrawMarkerBar( m_iBeginMarker );
+		}
+		else if( m_iEndMarker != -1 )
+		{
+			if( m_iEndMarker >= m_FieldRenderArgs.first_row &&
+				m_iEndMarker <= m_FieldRenderArgs.last_row )
+			DrawMarkerBar( m_iEndMarker );
+		}
+	}
+
+	// Optimization is very important here because there are so many arrows to draw.
+	// Draw the arrows in order of column. This minimizes texture switches and
+	// lets us draw in big batches.
+
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+	ASSERT_M(m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer, 
+		ssprintf("NumTracks %d != ColsPerPlayer %d",m_pNoteData->GetNumTracks(), 
+			GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_iColsPerPlayer));
+
+	if(*m_FieldRenderArgs.selection_begin_marker != -1 &&
+		*m_FieldRenderArgs.selection_end_marker != -1)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		BackgroundLayer const fg_layer_number= BACKGROUND_LAYER_Invalid;
 		switch(m_visible_bg_change_layer)
@@ -3358,6 +4135,7 @@ struct LunaNoteFieldColumn : Luna<NoteFieldColumn>
 };
 LUA_REGISTER_DERIVED_CLASS(NoteFieldColumn, ActorFrame);
 
+<<<<<<< HEAD
 struct LunaNoteField : Luna<NoteField>
 {
 	static int set_skin(T* p, lua_State* L)
@@ -3481,3 +4259,32 @@ struct LunaNoteField : Luna<NoteField>
 	}
 };
 LUA_REGISTER_DERIVED_CLASS(NoteField, ActorFrame);
+=======
+LUA_REGISTER_DERIVED_CLASS(NoteField, ActorFrame)
+// lua end
+
+/*
+ * (c) 2001-2004 Chris Danford
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+>>>>>>> origin/unified-ui-features-13937230807013224518

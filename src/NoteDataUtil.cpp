@@ -8,7 +8,11 @@
 #include "Style.h"
 #include "GameState.h"
 #include "RadarValues.h"
+<<<<<<< HEAD
 #include "Foreach.h"
+=======
+#include "TimingData.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518
 #include <utility>
 
 // TODO: Remove these constants that aren't time signature-aware
@@ -345,18 +349,19 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 
 	SplitCompositeNoteData( in, parts );
 
-	FOREACH( NoteData, parts, nd )
+	for (NoteData &nd : parts)
 	{
-		InsertHoldTails( *nd );
-		fLastBeat = max( fLastBeat, nd->GetLastBeat() );
+		InsertHoldTails( nd );
+		fLastBeat = max( fLastBeat, nd.GetLastBeat() );
 	}
 
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
 	sRet = "";
-	FOREACH( NoteData, parts, nd )
+	int partNum = 0;
+	for (NoteData const &nd : parts)
 	{
-		if( nd != parts.begin() )
+		if( partNum++ != 0 )
 			sRet.append( "&\n" );
 		for( int m = 0; m <= iLastMeasure; ++m ) // foreach measure
 		{
@@ -364,7 +369,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 				sRet.append( 1, ',' );
 			sRet += ssprintf("  // measure %d\n", m);
 
-			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
+			NoteType nt = GetSmallestNoteTypeForMeasure( nd, m );
 			int iRowSpacing;
 			if( nt == NoteType_Invalid )
 				iRowSpacing = 1;
@@ -378,9 +383,9 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 
 			for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 			{
-				for( int t = 0; t < nd->GetNumTracks(); ++t )
+				for( int t = 0; t < nd.GetNumTracks(); ++t )
 				{
-					const TapNote &tn = nd->GetTapNote(t, r);
+					const TapNote &tn = nd.GetTapNote(t, r);
 					char c;
 					switch( tn.type )
 					{
@@ -449,8 +454,13 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			 occuring to begin with, but at this time, I am unsure how to deal with it.
 			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
 			 */
+<<<<<<< HEAD
 			const Style *curStyle = GAMESTATE->GetCurrentStyle();
 			if( (curStyle == NULL || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
+=======
+			const Style *curStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
+			if( (curStyle == nullptr || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 				&& int( tn.pn ) > NUM_PlayerNumber )
 			{
 				tn.pn = PLAYER_1;
@@ -466,13 +476,13 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 
 void NoteDataUtil::CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in )
 {
-	FOREACH_CONST( NoteData, in, nd )
+	for (NoteData const &nd : in)
 	{
-		const int iMaxTracks = min( out.GetNumTracks(), nd->GetNumTracks() );
+		const int iMaxTracks = min( out.GetNumTracks(), nd.GetNumTracks() );
 
 		for( int track = 0; track < iMaxTracks; ++track )
 		{
-			for( NoteData::const_iterator i = nd->begin(track); i != nd->end(track); ++i )
+			for( NoteData::const_iterator i = nd.begin(track); i != nd.end(track); ++i )
 			{
 				int row = i->first;
 				if( out.IsHoldNoteAtRow(track, i->first) )
@@ -1019,8 +1029,8 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 		vector<NoteData> vParts;
 		
 		SplitCompositeNoteData( in, vParts );
-		FOREACH( NoteData, vParts, nd )
-			RemoveSimultaneousNotes( *nd, iMaxSimultaneous, iStartIndex, iEndIndex );
+		for (NoteData &nd : vParts)
+			RemoveSimultaneousNotes( nd, iMaxSimultaneous, iStartIndex, iEndIndex );
 		in.Init();
 		in.SetNumTracks( vParts.front().GetNumTracks() );
 		CombineCompositeNoteData( in, vParts );
@@ -2273,14 +2283,14 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &inout )
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong )
 {
-	FOREACH_CONST( Attack, aa, a )
+	for (Attack const &a : aa)
 	{
 		PlayerOptions po;
-		po.FromString( a->sModifiers );
+		po.FromString( a.sModifiers );
 		if( po.ContainsTransformOrTurn() )
 		{
 			float fStartBeat, fEndBeat;
-			a->GetAttackBeats( pSong, fStartBeat, fEndBeat );
+			a.GetAttackBeats( pSong, fStartBeat, fEndBeat );
 
 			NoteDataUtil::TransformNoteData( nd, po, st, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 		}

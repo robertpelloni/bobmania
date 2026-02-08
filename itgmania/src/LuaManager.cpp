@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"
@@ -44,6 +43,7 @@ namespace LuaHelpers
 	template<> bool FromStack<bool>( Lua *L, bool &Object, int iOffset );
 	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset );
 	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset );
+	template<> bool FromStack<unsigned int>( Lua *L, unsigned int &Object, int iOffset );
 	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset );
 }
 
@@ -76,12 +76,20 @@ namespace LuaHelpers
 {
 	template<> void Push<bool>( lua_State *L, const bool &Object ) { lua_pushboolean( L, Object ); }
 	template<> void Push<float>( lua_State *L, const float &Object ) { lua_pushnumber( L, Object ); }
+	template<> void Push<double>( lua_State *L, const double &Object ) { lua_pushnumber( L, Object ); }
 	template<> void Push<int>( lua_State *L, const int &Object ) { lua_pushinteger( L, Object ); }
+<<<<<<< HEAD:itgmania/src/LuaManager.cpp
+=======
+	template<> void Push<unsigned int>( lua_State *L, const unsigned int &Object ) { lua_pushnumber( L, double(Object) ); }
+	template<> void Push<unsigned long long>( lua_State *L, const unsigned long long &Object ) { lua_pushnumber( L, double(Object) ); }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LuaManager.cpp
 	template<> void Push<RString>( lua_State *L, const RString &Object ) { lua_pushlstring( L, Object.data(), Object.size() ); }
+	template<> void Push<std::string>( lua_State *L, std::string const& object ) { lua_pushlstring( L, object.data(), object.size() ); }
 
 	template<> bool FromStack<bool>( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
 	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
 	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset ) { Object = lua_tointeger( L, iOffset ); return true; }
+	template<> bool FromStack<unsigned int>( Lua *L, unsigned int &Object, int iOffset ) { Object = lua_tointeger( L, iOffset ); return true; }
 	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset )
 	{
 		size_t iLen;
@@ -866,10 +874,34 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 		s << "return function(self)\n";
 
+<<<<<<< HEAD:itgmania/src/LuaManager.cpp
 		for (Command const &cmd : cmds.v)
 		{
 			RString local_sName = cmd.GetName();
 			s << "\tself:" << local_sName << "(";
+=======
+		if( bLegacy )
+			s << "\tparent = self:GetParent();\n";
+
+		for (Command const &cmd : cmds.v)
+		{
+			RString sCmdName = cmd.GetName();
+			if( bLegacy )
+				sCmdName.MakeLower();
+			s << "\tself:" << sCmdName << "(";
+
+			bool bFirstParamIsString = bLegacy && (
+					sCmdName == "horizalign" ||
+					sCmdName == "vertalign" ||
+					sCmdName == "effectclock" ||
+					sCmdName == "blend" ||
+					sCmdName == "ztestmode" ||
+					sCmdName == "cullmode" ||
+					sCmdName == "playcommand" ||
+					sCmdName == "queuecommand" ||
+					sCmdName == "queuemessage" ||
+					sCmdName == "settext");
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LuaManager.cpp
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
@@ -1081,7 +1113,12 @@ namespace
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
+<<<<<<< HEAD:itgmania/src/LuaManager.cpp
 		{ NULL, nullptr }
+=======
+		LIST_METHOD( ReportScriptError ),
+		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LuaManager.cpp
 	};
 }
 

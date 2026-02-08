@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/WorkoutGraph.cpp
+<<<<<<< HEAD:itgmania/src/WorkoutGraph.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/WorkoutGraph.cpp
 #include "global.h"
 #include "WorkoutGraph.h"
 #include "RageUtil.h"
@@ -62,6 +65,7 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 
 	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 	if( pTrail == nullptr )
+<<<<<<< HEAD:itgmania/src/WorkoutGraph.cpp
 		return;
 
 	std::vector<int> viMeters;
@@ -226,6 +230,8 @@ void WorkoutGraph::SetInternal( int iMinSongsPlayed )
 
 	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 	if( pTrail == nullptr )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/WorkoutGraph.cpp
 		return;
 
 	vector<int> viMeters;
@@ -328,4 +334,7 @@ LUA_REGISTER_DERIVED_CLASS( WorkoutGraph, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/WorkoutGraph.cpp
 >>>>>>> origin/c++11:src/WorkoutGraph.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/WorkoutGraph.cpp

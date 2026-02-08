@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/StepMania.cpp
+<<<<<<< HEAD:itgmania/src/StepMania.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StepMania.cpp
 #include "global.h"
 
 #include "StepMania.h"
@@ -57,6 +60,9 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 <<<<<<< HEAD:itgmania/src/StepMania.cpp
+<<<<<<< HEAD:itgmania/src/StepMania.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StepMania.cpp
 #include "ImageCache.h"
 #include "UnlockManager.h"
 =======
@@ -1720,6 +1726,7 @@ LUAFUNC_REGISTER_COMMON(update_centering);
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/StepMania.cpp
 =======
 #include "global.h"
 
@@ -3245,3 +3252,5 @@ void HandleInputEvents(float fDeltaTime)
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/StepMania.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StepMania.cpp

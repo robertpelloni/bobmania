@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSoundReader_FileReader.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundReader_FileReader.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_FileReader.cpp
 #include "global.h"
 #include "RageSoundReader_FileReader.h"
 #include "RageFile.h"
@@ -102,6 +105,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 			{
 				delete pMem;
 				return nullptr;
+<<<<<<< HEAD:itgmania/src/RageSoundReader_FileReader.cpp
 			}
 
 			pFile = pMem;
@@ -287,6 +291,8 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
 			{
 				delete pMem;
 				return nullptr;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_FileReader.cpp
 			}
 
 			pFile = pMem;
@@ -357,4 +363,7 @@ RageSoundReader_FileReader *RageSoundReader_FileReader::OpenFile( RString filena
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSoundReader_FileReader.cpp
 >>>>>>> origin/c++11:src/RageSoundReader_FileReader.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_FileReader.cpp

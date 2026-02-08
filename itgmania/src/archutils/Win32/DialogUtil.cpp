@@ -33,8 +33,12 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 =======
 	logFont.lfHeight = -abs(pt.y - ptOrg.y);
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
 	ReleaseDC(NULL, hDC);
 >>>>>>> origin/c++11:src/archutils/Win32/DialogUtil.cpp
+=======
+	ReleaseDC(nullptr, hDC);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/DialogUtil.cpp
 
 	return ::CreateFontIndirect(&logFont);
 }

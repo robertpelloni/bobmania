@@ -36,7 +36,12 @@ namespace SpecialFiles
 	/** @brief The default noteskins directory. */
 	extern const RString NOTESKINS_DIR;
 
+<<<<<<< HEAD:itgmania/src/SpecialFiles.h
 	extern const RString LUADRIVER_MODULES_DIR;
+=======
+	extern const RString COINS_INI;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SpecialFiles.h
 }
 
 #endif

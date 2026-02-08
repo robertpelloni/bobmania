@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 #include "global.h"
 #include "ScreenSelectMaster.h"
 #include "ScreenManager.h"
@@ -1142,6 +1143,8 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMaster, ScreenWithMenuElements )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 #include "global.h"
 #include "ScreenSelectMaster.h"
 #include "ScreenManager.h"
@@ -1154,7 +1157,10 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMaster, ScreenWithMenuElements )
 #include "ActorUtil.h"
 #include "RageLog.h"
 #include <set>
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 #include "InputEventPlus.h"
 
 static const char *MenuDirNames[] = {
@@ -1247,6 +1253,71 @@ void ScreenSelectMaster::Init()
 	m_vsprIcon.resize( m_aGameCommands.size() );
 	for (PlayerNumber const &p : vpns)
 		m_vsprScroll[p].resize( m_aGameCommands.size() );
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
+=======
+
+	vector<RageVector3> positions;
+	bool positions_set_by_lua= false;
+	if(THEME->HasMetric(m_sName, "IconChoicePosFunction"))
+	{
+		positions_set_by_lua= true;
+		LuaReference command= THEME->GetMetricR(m_sName, "IconChoicePosFunction");
+		if(command.GetLuaType() != LUA_TFUNCTION)
+		{
+			LuaHelpers::ReportScriptError(m_sName+"::IconChoicePosFunction must be a function.");
+			positions_set_by_lua= false;
+		}
+		else
+		{
+			Lua* L= LUA->Get();
+			command.PushSelf(L);
+			lua_pushnumber(L, m_aGameCommands.size());
+			RString err= m_sName + "::IconChoicePosFunction: ";
+			if(!LuaHelpers::RunScriptOnStack(L, err, 1, 1, true))
+			{
+				positions_set_by_lua= false;
+			}
+			else
+			{
+				if(!lua_istable(L, -1))
+				{
+					LuaHelpers::ReportScriptError(m_sName+"::IconChoicePosFunction did not return a table of positions.");
+					positions_set_by_lua= false;
+				}
+				else
+				{
+					size_t poses= lua_objlen(L, -1);
+					for(size_t p= 1; p <= poses; ++p)
+					{
+						lua_rawgeti(L, -1, p);
+						RageVector3 pos(0.0f, 0.0f, 0.0f);
+						if(!lua_istable(L, -1))
+						{
+							LuaHelpers::ReportScriptErrorFmt("Position %zu is not a table.", p);
+						}
+						else
+						{
+#define SET_POS_PART(i, part) \
+							lua_rawgeti(L, -1, i); \
+							pos.part= lua_tonumber(L, -1); \
+							lua_pop(L, 1);
+							// If part of the position is not provided, we want it to
+							// default to zero, which lua_tonumber does. -Kyz
+							SET_POS_PART(1, x);
+							SET_POS_PART(2, y);
+							SET_POS_PART(3, z);
+#undef SET_POS_PART
+						}
+						lua_pop(L, 1);
+						positions.push_back(pos);
+					}
+				}
+			}
+			lua_settop(L, 0);
+			LUA->Release(L);
+		}
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
@@ -1503,11 +1574,32 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 		if( SHOW_ICON )
 			m_vsprIcon[c]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
 
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 		for (PlayerNumber const &p : vpns)
 		{
 			auto & actor = m_vsprScroll[p][c];
 			if( actor.IsLoaded() )
 				actor->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+=======
+		for ( PlayerNumber &p : vpns)
+		{
+			if(disabled && m_iChoice[p] == c)
+			{
+				on_unplayable[p]= true;
+			}
+			if( m_vsprScroll[p][c].IsLoaded() )
+			{
+				m_vsprScroll[p][c]->PlayCommand(command);
+			}
+		}
+	}
+	for (PlayerNumber &pn : vpns)
+	{
+		if(on_unplayable[pn] && first_playable != -1)
+		{
+			ChangeSelection(pn, first_playable < m_iChoice[pn] ? MenuDir_Left :
+				MenuDir_Right, first_playable);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 		}
 	}
 
@@ -1715,7 +1807,11 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 	for (PlayerNumber const &p : vpns)
 	{
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 		if( GAMESTATE->IsHumanPlayer(p) )
+=======
+		if( GAMESTATE->IsHumanPlayer(p) || SHARED_SELECTION )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 		{
 			if( SHOW_CURSOR )
 			{
@@ -1818,8 +1914,16 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 		{
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 				m_sprCursor[p]->PlayCommand( "Change" );
 				m_sprCursor[p]->SetXY( GetCursorX(p), GetCursorY(p) );
+=======
+				PlayerNumber ep = p;
+				if( SHARED_SELECTION )
+					ep = PLAYER_1;
+				m_sprCursor[ep]->PlayCommand( "Change" );
+				m_sprCursor[ep]->SetXY( GetCursorX(p), GetCursorY(p) );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 			}
 		}
 
@@ -2064,7 +2168,11 @@ void ScreenSelectMaster::TweenOnScreen()
 	{
 		for (PlayerNumber const &p : vpns)
 		{
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 			if( GAMESTATE->IsHumanPlayer(p) )
+=======
+			if( GAMESTATE->IsHumanPlayer(p) || SHARED_SELECTION )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp
 				m_sprCursor[p]->SetXY( GetCursorX(p), GetCursorY(p) );
 		}
 	}
@@ -2160,4 +2268,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenSelectMaster, ScreenWithMenuElements )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenSelectMaster.cpp
 >>>>>>> origin/c++11:src/ScreenSelectMaster.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMaster.cpp

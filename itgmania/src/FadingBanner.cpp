@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/FadingBanner.cpp
+<<<<<<< HEAD:itgmania/src/FadingBanner.cpp
 #include "global.h"
 #include "FadingBanner.h"
 #include "RageTextureManager.h"
@@ -353,10 +354,12 @@ LUA_REGISTER_DERIVED_CLASS( FadingBanner, ActorFrame )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/FadingBanner.cpp
 #include "global.h"
 #include "FadingBanner.h"
 #include "RageTextureManager.h"
-#include "BannerCache.h"
+#include "ImageCache.h"
 #include "Song.h"
 #include "RageLog.h"
 #include "Course.h"
@@ -484,7 +487,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 	 * which will cause the fade-in to be further delayed. */
 
 	RageTextureID ID;
-	bool bLowRes = (PREFSMAN->m_BannerCache != BNCACHE_FULL);
+	bool bLowRes = (PREFSMAN->m_ImageCache != IMGCACHE_FULL);
 	if( !bLowRes )
 	{
 		ID = Sprite::SongBannerTexture( path );
@@ -492,7 +495,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 	else
 	{
 		// Try to load the low quality version.
-		ID = BANNERCACHE->LoadCachedBanner( path );
+		ID = IMAGECACHE->LoadCachedImage( "Banner", path );
 	}
 
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
@@ -712,4 +715,7 @@ LUA_REGISTER_DERIVED_CLASS( FadingBanner, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/FadingBanner.cpp
 >>>>>>> origin/c++11:src/FadingBanner.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/FadingBanner.cpp

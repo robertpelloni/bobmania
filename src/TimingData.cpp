@@ -7,8 +7,12 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "NoteTypes.h"
+<<<<<<< HEAD
 
 using std::vector;
+=======
+#include <float.h>
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 static void EraseSegment(vector<TimingSegment*> &vSegs, int index, TimingSegment *cur);
 static const int INVALID_INDEX = -1;
@@ -100,10 +104,9 @@ bool TimingData::IsSafeFullTiming()
 		needed_segments.push_back(SEGMENT_SPEED);
 		needed_segments.push_back(SEGMENT_SCROLL);
 	}
-	vector<TimingSegment *> *segs = m_avpTimingSegments;
 	for(size_t s= 0; s < needed_segments.size(); ++s)
 	{
-		if(segs[needed_segments[s]].empty())
+		if(m_avpTimingSegments[needed_segments[s]].empty())
 		{
 			return false;
 		}
@@ -550,6 +553,7 @@ void TimingData::RequestLookup()
 
 void TimingData::PrepareLookup()
 {
+<<<<<<< HEAD
 	// If by some mistake the old lookup table is still hanging around, adding
 	// more entries would probably cause problems.  Release the lookups. -Kyz
 	ReleaseLookupInternal();
@@ -561,6 +565,24 @@ void TimingData::PrepareLookup()
 	float last_real_beat= 0.0f;
 	float last_ratio= 1.0f;
 	for(auto&& scr : scrolls)
+=======
+	// If multiple players have the same timing data, then adding to the
+	// lookups would probably cause FindEntryInLookup to return the wrong
+	// thing.  So release the lookups. -Kyz
+	ReleaseLookup();
+	const unsigned int segments_per_lookup= 16;
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
+
+	unsigned int total_segments= bpms.size() + warps.size() + stops.size() + delays.size();
+	unsigned int lookup_entries= total_segments / segments_per_lookup;
+	m_beat_start_lookup.reserve(lookup_entries);
+	m_time_start_lookup.reserve(lookup_entries);
+	for(unsigned int curr_segment= segments_per_lookup;
+			curr_segment < total_segments; curr_segment+= segments_per_lookup)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		ScrollSegment* scroll= ToScroll(scr);
 		float scroll_beat= scroll->GetBeat();
@@ -602,7 +624,36 @@ std::string SegInfoStr(const vector<TimingSegment*>& segs, unsigned int index, c
 {
 	if(index < segs.size())
 	{
+<<<<<<< HEAD
 		return fmt::sprintf("%s: %d at %d", name.c_str(), index, segs[index]->GetRow());
+=======
+		return ssprintf("%s: %d at %d", name.c_str(), index, segs[index]->GetRow());
+	}
+	return ssprintf("%s: %d at end", name.c_str(), index);
+}
+
+void TimingData::DumpOneTable(const beat_start_lookup_t& lookup, const RString& name)
+{
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
+	LOG->Trace("%s lookup table:", name.c_str());
+	for(size_t lit= 0; lit < lookup.size(); ++lit)
+	{
+		const lookup_item_t& item= lookup[lit];
+		const GetBeatStarts& starts= item.second;
+		LOG->Trace("%zu: %f", lit, item.first);
+		RString str= ssprintf("  %s, %s, %s, %s,\n"
+			"  last_row: %d, last_time: %.3f,\n"
+			"  warp_destination: %.3f, is_warping: %d",
+			SegInfoStr(bpms, starts.bpm, "bpm").c_str(),
+			SegInfoStr(warps, starts.warp, "warp").c_str(),
+			SegInfoStr(stops, starts.stop, "stop").c_str(),
+			SegInfoStr(delays, starts.delay, "delay").c_str(),
+			starts.last_row, starts.last_time, starts.warp_destination, starts.is_warping);
+		LOG->Trace("%s", str.c_str());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 	return fmt::sprintf("%s: %d at end", name.c_str(), index);
 }
@@ -1158,17 +1209,84 @@ void TimingData::GetDetailedInfoForSecond(DetailedTimeInfo& args) const
 
 float TimingData::GetBeatFromElapsedTime(float second) const
 {
+<<<<<<< HEAD
 	float globoff= GAMESTATE->get_hasted_music_rate() * PREFSMAN->m_fGlobalOffsetSeconds;
 	if(!m_line_segments.empty())
+=======
+	FOUND_WARP,
+	FOUND_WARP_DESTINATION,
+	FOUND_BPM_CHANGE,
+	FOUND_STOP,
+	FOUND_DELAY,
+	FOUND_STOP_DELAY, // we have these two on the same row.
+	FOUND_MARKER,
+	NOT_FOUND
+};
+
+void FindEvent(int& event_row, int& event_type,
+	TimingData::GetBeatStarts& start, float beat, bool find_marker,
+	const vector<TimingSegment*>& bpms, const vector<TimingSegment*>& warps,
+	const vector<TimingSegment*>& stops, const vector<TimingSegment*>& delays)
+{
+	if(start.is_warping && BeatToNoteRow(start.warp_destination) < event_row)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		return GetLineBeatFromSecond(second + globoff);
 	}
 	else
 	{
+<<<<<<< HEAD
 		LineSegment segment;
 		const_cast<TimingData*>(this)->PrepareLineLookup(SEARCH_SECOND,
 			second + globoff, &segment);
 		if(segment.start_second == segment.end_second)
+=======
+		event_row= bpms[start.bpm]->GetRow();
+		event_type= FOUND_BPM_CHANGE;
+	}
+	if(start.delay < delays.size() && delays[start.delay]->GetRow() < event_row)
+	{
+		event_row= delays[start.delay]->GetRow();
+		event_type= FOUND_DELAY;
+	}
+	if(find_marker && BeatToNoteRow(beat) < event_row)
+	{
+		event_row= BeatToNoteRow(beat);
+		event_type= FOUND_MARKER;
+	}
+	if(start.stop < stops.size() && stops[start.stop]->GetRow() < event_row)
+	{
+		int tmp_row= event_row;
+		event_row= stops[start.stop]->GetRow();
+		event_type= (tmp_row == event_row) ? FOUND_STOP_DELAY : FOUND_STOP;
+	}
+	if(start.warp < warps.size() && warps[start.warp]->GetRow() < event_row)
+	{
+		event_row= warps[start.warp]->GetRow();
+		event_type= FOUND_WARP;
+	}
+}
+
+void TimingData::GetBeatInternal(GetBeatStarts& start, GetBeatArgs& args,
+	unsigned int max_segment) const
+{
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
+	unsigned int curr_segment= start.bpm+start.warp+start.stop+start.delay;
+
+	float bps= GetBPMAtRow(start.last_row) / 60.0f;
+#define INC_INDEX(index) ++curr_segment; ++index;
+
+	while(curr_segment < max_segment)
+	{
+		int event_row= INT_MAX;
+		int event_type= NOT_FOUND;
+		FindEvent(event_row, event_type, start, 0, false, bpms, warps, stops,
+			delays);
+		if(event_type == NOT_FOUND)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 		{
 			return segment.end_beat;
 		}
@@ -1268,7 +1386,21 @@ static float beat_relative_to_displayed_beat_entry(float beat, TimingData::displ
 
 float TimingData::GetDisplayedBeat(float beat) const
 {
+<<<<<<< HEAD
 	if(!m_displayed_beat_lookup.empty())
+=======
+	const vector<TimingSegment*>& bpms= m_avpTimingSegments[SEGMENT_BPM];
+	const vector<TimingSegment*>& warps= m_avpTimingSegments[SEGMENT_WARP];
+	const vector<TimingSegment*>& stops= m_avpTimingSegments[SEGMENT_STOP];
+	const vector<TimingSegment*>& delays= m_avpTimingSegments[SEGMENT_DELAY];
+	unsigned int curr_segment= start.bpm+start.warp+start.stop+start.delay;
+
+	float bps= GetBPMAtRow(start.last_row) / 60.0f;
+#define INC_INDEX(index) ++curr_segment; ++index;
+	bool find_marker= beat < FLT_MAX;
+
+	while(curr_segment < max_segment)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		auto entry= m_displayed_beat_lookup.lower_bound(beat);
 		if(entry != m_displayed_beat_lookup.begin() &&
@@ -1280,6 +1412,31 @@ float TimingData::GetDisplayedBeat(float beat) const
 		return beat_relative_to_displayed_beat_entry(beat, entry->second);
 	}
 
+<<<<<<< HEAD
+=======
+float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
+{
+	return TimingData::GetElapsedTimeFromBeatNoOffset( fBeat )
+		- GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * PREFSMAN->m_fGlobalOffsetSeconds;
+}
+
+float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
+{
+	GetBeatStarts start;
+	start.last_time= -m_fBeat0OffsetInSeconds;
+	beat_start_lookup_t::const_iterator looked_up_start=
+		FindEntryInLookup(m_time_start_lookup, fBeat);
+	if(looked_up_start != m_time_start_lookup.end())
+	{
+		start= looked_up_start->second;
+	}
+	GetElapsedTimeInternal(start, fBeat, INT_MAX);
+	return start.last_time;
+}
+
+float TimingData::GetDisplayedBeat( float fBeat ) const
+{
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	float fOutBeat = 0;
 	unsigned i;
 	const vector<TimingSegment *> &scrolls = m_avpTimingSegments[SEGMENT_SCROLL];

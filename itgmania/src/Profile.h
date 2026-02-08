@@ -13,12 +13,15 @@
 #include "StyleUtil.h"	// for StyleID
 #include "LuaReference.h"
 #include "PlayerNumber.h"
+<<<<<<< HEAD:itgmania/src/Profile.h
 
 #include <deque>
 #include <map>
 #include <set>
 #include <vector>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Profile.h
 
 class XNode;
 struct lua_State;
@@ -205,7 +208,10 @@ public:
 	std::map<RString,RString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;
 	std::vector<Song*> m_songs;
+<<<<<<< HEAD:itgmania/src/Profile.h
 	Group* m_group;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Profile.h
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
 	StepsType m_LastStepsType;
@@ -380,12 +386,21 @@ public:
 	// Init'ing
 	void InitAll()
 	{
+<<<<<<< HEAD:itgmania/src/Profile.h
 		InitEditableData();
 		InitGeneralData();
 		InitSongScores();
 		InitCourseScores();
 		InitCategoryScores();
 		InitScreenshotData();
+=======
+		InitEditableData(); 
+		InitGeneralData(); 
+		InitSongScores(); 
+		InitCourseScores(); 
+		InitCategoryScores(); 
+		InitScreenshotData(); 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Profile.h
 		InitCalorieData();
 		ClearSongs();
 	}
@@ -404,7 +419,11 @@ public:
 	void HandleStatsPrefixChange(RString dir, bool require_signature);
 	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
 	ProfileLoadResult LoadStatsFromDir(RString dir, bool require_signature);
+<<<<<<< HEAD:itgmania/src/Profile.h
 	void LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot, bool isMemoryCard = true);
+=======
+	void LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Profile.h
 	void LoadTypeFromDir(RString dir);
 	void LoadCustomFunction(RString sDir, PlayerNumber pn);
 	bool SaveAllToDir( RString sDir, bool bSignData ) const;

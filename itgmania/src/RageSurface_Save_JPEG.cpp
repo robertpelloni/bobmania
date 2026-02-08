@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
+<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_JPEG.cpp
 #include "global.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -19,6 +22,13 @@ namespace jpeg
 #include "jpeglib.h"
 	}
 }
+
+// Newer versions of jpeglib and jpeglib-turbo define TRUE/FALSE in a
+// typedef enum {}
+#if defined(SYSTEM_JPEGLIB) && JPEG_LIB_VERSION > 80
+#define TRUE jpeg::TRUE
+#define FALSE jpeg::FALSE
+#endif
 
 #define OUTPUT_BUFFER_SIZE	4096
 typedef struct
@@ -75,6 +85,7 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
 static void jpeg_RageFile_dest( jpeg::j_compress_ptr cinfo, RageFile &f )
 {
 	ASSERT( cinfo->dest == nullptr );
+<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
 
 	cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
 		(*cinfo->mem->alloc_small) ( (jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
@@ -257,6 +268,8 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
 static void jpeg_RageFile_dest( jpeg::j_compress_ptr cinfo, RageFile &f )
 {
 	ASSERT( cinfo->dest == nullptr );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_JPEG.cpp
 
 	cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
 		(*cinfo->mem->alloc_small) ( (jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
@@ -335,7 +348,7 @@ bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQu
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -345,7 +358,7 @@ bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQu
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -356,4 +369,7 @@ bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQu
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
 >>>>>>> origin/c++11:src/RageSurface_Save_JPEG.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_JPEG.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/MeterDisplay.cpp
+<<<<<<< HEAD:itgmania/src/MeterDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MeterDisplay.cpp
 #include "global.h"
 #include "MeterDisplay.h"
 #include "RageUtil.h"
@@ -133,6 +136,7 @@ LUA_REGISTER_DERIVED_CLASS( MeterDisplay, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/MeterDisplay.cpp
 =======
 #include "global.h"
 #include "MeterDisplay.h"
@@ -262,3 +266,5 @@ LUA_REGISTER_DERIVED_CLASS( MeterDisplay, ActorFrame )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/MeterDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MeterDisplay.cpp

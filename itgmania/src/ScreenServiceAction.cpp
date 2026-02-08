@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
+<<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenServiceAction.cpp
 #include "global.h"
 #include "ScreenServiceAction.h"
 #include "ThemeManager.h"
@@ -41,7 +44,11 @@ RString ClearMachineStats()
 static LocalizedString MACHINE_EDITS_CLEARED( "ScreenServiceAction", "%d edits cleared, %d errors." );
 static RString ClearMachineEdits()
 {
+<<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
 	std::vector<RString> vsEditFiles;
+=======
+	vector<RString> vsEditFiles;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenServiceAction.cpp
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
 
@@ -51,9 +58,15 @@ static RString ClearMachineEdits()
 	// reload the machine profile
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
+<<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
 
 	int errorCount = editCount - removedCount;
 	return ssprintf(MACHINE_EDITS_CLEARED.GetValue().c_str(), editCount, errorCount);
+=======
+	
+	int errorCount = editCount - removedCount;
+	return ssprintf(MACHINE_EDITS_CLEARED.GetValue(), editCount, errorCount);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenServiceAction.cpp
 }
 
 static PlayerNumber GetFirstReadyMemoryCard()
@@ -79,6 +92,7 @@ static RString ClearMemoryCardEdits()
 	if( pn == PLAYER_INVALID )
 		return MEMORY_CARD_EDITS_NOT_CLEARED.GetValue();
 
+<<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
@@ -518,6 +532,8 @@ static RString ClearMemoryCardEdits()
 	if( pn == PLAYER_INVALID )
 		return MEMORY_CARD_EDITS_NOT_CLEARED.GetValue();
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenServiceAction.cpp
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
@@ -842,7 +858,12 @@ void ScreenServiceAction::BeginScreen()
 	{
 		RString (*pfn)() = nullptr;
 
+<<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
 		if( s == "ClearMachineStats" )			pfn = ClearMachineStats;
+=======
+		if(	 s == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
+		else if( s == "ClearMachineStats" )			pfn = ClearMachineStats;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenServiceAction.cpp
 		else if( s == "ClearMachineEdits" )			pfn = ClearMachineEdits;
 		else if( s == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
 		else if( s == "TransferStatsMachineToMemoryCard" )	pfn = TransferStatsMachineToMemoryCard;
@@ -887,4 +908,7 @@ void ScreenServiceAction::BeginScreen()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenServiceAction.cpp
 >>>>>>> origin/c++11:src/ScreenServiceAction.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenServiceAction.cpp

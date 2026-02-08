@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 #include "global.h"
 #include "StatsManager.h"
 #include "RageFileManager.h"
 #include "GameState.h"
 
+=======
+﻿#include "global.h"
+#include "StatsManager.h"
+#include "RageFileManager.h"
+#include "GameState.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
@@ -13,11 +20,22 @@
 #include "XmlFile.h"
 #include "CryptManager.h"
 #include "XmlFileUtil.h"
+#include "Song.h"
+#include "RageFileDriverMemory.h"
+#include "NotesWriterSM.h"
+#include "PlayerOptions.h"
+#include "PlayerState.h"
+#include "Player.h"
 
+<<<<<<< HEAD
 StatsManager*	STATSMAN = nullptr;	// global object accessable from anywhere in the program
+=======
+StatsManager*	STATSMAN = nullptr;	// global object accessible from anywhere in the program
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp );
+Preference<bool> g_PadmissEnabled("MemoryCardPadmissEnabled", false);
 
 StatsManager::StatsManager()
 {
@@ -42,7 +60,7 @@ void StatsManager::Reset()
 	m_CurStageStats.Init();
 	m_vPlayedStageStats.clear();
 	m_AccumPlayedStageStats.Init();
-	
+
 	CalcAccumPlayedStageStats();
 }
 
@@ -66,7 +84,7 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 
 	/* Scale radar percentages back down to roughly 0..1.  Don't scale RadarCategory_TapsAndHolds
 	 * and the rest, which are counters. */
-	// FIXME: Weight each song by the number of stages it took to account for 
+	// FIXME: Weight each song by the number of stages it took to account for
 	// long, marathon.
 	FOREACH_EnabledPlayer( p )
 	{
@@ -143,7 +161,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 		int iMeter = clamp( pSteps->GetMeter(), 0, MAX_METER );
 		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
 	}
-	
+
 	pProfile->m_iTotalDancePoints += ss.m_player[pn].m_iActualDancePoints;
 
 	if( ss.m_Stage == Stage_Extra1 || ss.m_Stage == Stage_Extra2 )
@@ -251,6 +269,7 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 				AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
 			}
 
+<<<<<<< HEAD
 			CHECKPOINT;
 		}
 	}
@@ -267,41 +286,238 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			recent = xml->AppendChild( new XNode("RecentSongScores") );
 
 		if(!GAMESTATE->m_bMultiplayer)
-		{
-			FOREACH_HumanPlayer( p )
-			{
-				if( pSS->m_player[p].m_HighScore.IsEmpty() )
-					continue;
-				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[p], pSS->m_player[p], MultiPlayer_Invalid ) );
-			}
-		}
-		else
-		{
-			FOREACH_EnabledMultiPlayer( mp )
-			{
-				if( pSS->m_multiPlayer[mp].m_HighScore.IsEmpty() )
-					continue;
-				recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()], pSS->m_multiPlayer[mp], mp ) );
-			}
-		}
-
-		RString sDate = DateTime::GetNowDate().GetString();
-		sDate.Replace(":","-");
-
-		const RString UPLOAD_DIR = "/Save/Upload/";
-		RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
-		RString fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
-		
-		bool bSaved = XmlFileUtil::SaveToFile( xml.get(), fn, "", false );
-		
-		if( bSaved )
-		{
-			RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
-			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
+=======
+			// No marathons etc for now...
+			if ( g_PadmissEnabled.Get() && pSS->m_playMode == PLAY_MODE_REGULAR )
+				SavePadmissScore( pSS, pn );
 		}
 	}
 
+	// Not sure what the Save/Upload folder was originally for, but the files
+	// in it just accumulate uselessly, wasting several seconds when finishing
+	// a song.  So this pref disables it. -Kyz
+	if(!PREFSMAN->m_DisableUploadDir)
+		SaveUploadFile( pSS );
+
 	//FileCopy( "Data/TempTestGroups.xml", "Save/Upload/data.xml" );
+}
+
+void StatsManager::SaveUploadFile( const StageStats *pSS )
+{
+	// Save recent scores
+	unique_ptr<XNode> xml( new XNode("Stats") );
+	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
+
+	XNode *recent = nullptr;
+	if( GAMESTATE->IsCourseMode() )
+		recent = xml->AppendChild( new XNode("RecentCourseScores") );
+	else
+		recent = xml->AppendChild( new XNode("RecentSongScores") );
+
+	if(!GAMESTATE->m_bMultiplayer)
+	{
+		FOREACH_HumanPlayer( p )
+>>>>>>> origin/unified-ui-features-13937230807013224518
+		{
+			if( pSS->m_player[p].m_HighScore.IsEmpty() )
+				continue;
+			recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[p], pSS->m_player[p], MultiPlayer_Invalid ) );
+		}
+	}
+	else
+	{
+		FOREACH_EnabledMultiPlayer( mp )
+		{
+			if( pSS->m_multiPlayer[mp].m_HighScore.IsEmpty() )
+				continue;
+			recent->AppendChild( MakeRecentScoreNode( *pSS, GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()], pSS->m_multiPlayer[mp], mp ) );
+		}
+	}
+
+	RString sDate = DateTime::GetNowDate().GetString();
+	sDate.Replace(":","-");
+
+	const RString UPLOAD_DIR = "/Save/Upload/";
+	RString sFileNameNoExtension = Profile::MakeUniqueFileNameNoExtension(UPLOAD_DIR, sDate + " " );
+	RString fn = UPLOAD_DIR + sFileNameNoExtension + ".xml";
+
+	bool bSaved = XmlFileUtil::SaveToFile( xml.get(), fn, "", false );
+
+	if( bSaved )
+	{
+		RString sStatsXmlSigFile = fn + SIGNATURE_APPEND;
+		CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
+	}
+}
+
+void StatsManager::SavePadmissScore( const StageStats *pSS, PlayerNumber pn )
+{
+	const PlayerStageStats *playerStats = &pSS->m_player[ pn ];
+
+	std::unique_ptr<XNode> xml( new XNode("SongScore") );
+
+	RString sDate = DateTime::GetNowDate().GetString();
+	sDate.Replace(":","-");
+
+	XNode *taps = xml->AppendChild( "TapNoteScores" );
+	FOREACH_ENUM( TapNoteScore, tns )
+		if ( tns != TNS_None )
+			taps->AppendChild( TapNoteScoreToString( tns ), playerStats->m_iTapNoteScores[ tns ] );
+
+	XNode *radar_actual = xml->AppendChild( "RadarActual" );
+	radar_actual->AppendChild( playerStats->m_radarActual.CreateNode( true, false) );
+
+	XNode *radar_possible = xml->AppendChild( "RadarPossible" );
+	radar_possible->AppendChild( playerStats->m_radarPossible.CreateNode( true, false ) );
+
+	Profile *pp = PROFILEMAN->GetProfile( playerStats->m_player_number );
+	xml->AppendChild( "ScoreValue", playerStats->GetPercentDancePoints() );
+	xml->AppendChild( "PlayerNumber", playerStats->m_player_number );
+	xml->AppendChild( "PlayerName", pp->m_sDisplayName );
+	xml->AppendChild( "PlayerGuid", pp->m_sGuid );
+
+	Steps *steps = playerStats->m_vpPossibleSteps[0]; // XXX Courses and such
+	Song *song = steps->m_pSong;
+	steps->Decompress(); // Hashing won't work unless the steps are decompressed
+	XNode *stepdata = xml->AppendChild( "Steps" );
+	stepdata->AppendChild( "Hash", steps->GetHash() );
+	stepdata->AppendChild( "Meter", steps->GetMeter() );
+	stepdata->AppendChild( "StepArtist", steps->GetCredit() );
+	stepdata->AppendChild( "StepsType", steps->m_StepsTypeStr );
+	RageFileObjMem f;
+	vector<Steps*> stepv;
+	stepv.push_back(steps);
+	NotesWriterSM::Write( f, *song, stepv );
+	stepdata->AppendChild( "StepData", f.GetString() );
+
+	XNode *songdata = xml->AppendChild( "SongData" );
+	songdata->AppendChild( "Title", song->m_sMainTitle );
+	songdata->AppendChild( "TitleTranslit", song->m_sMainTitleTranslit );
+	songdata->AppendChild( "SubTitle", song->m_sSubTitle );
+	songdata->AppendChild( "SubTitleTranslit", song->m_sSubTitleTranslit );
+	songdata->AppendChild( "Artist", song->m_sArtist );
+	songdata->AppendChild( "ArtistTranslit", song->m_sArtistTranslit );
+	songdata->AppendChild( "Duration", song->m_fMusicLengthSeconds );
+
+	const PlayerOptions &opts = GAMESTATE->m_pPlayerState[ pn ]->m_PlayerOptions.Get( ModsLevel_Preferred );
+	XNode *mods = xml->AppendChild( "Mods" );
+	mods->AppendChild( "MusicRate", pSS->m_fMusicRate );
+#define ADD_BOOLEAN_OPTION( parent, name, opts ) \
+	if ( opts[ PlayerOptions::name ] ) \
+		parent->AppendChild( #name )
+
+	XNode *turns = mods->AppendChild( "Turns" );
+	ADD_BOOLEAN_OPTION( turns, TURN_MIRROR, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_BACKWARDS, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_LEFT, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_RIGHT, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_SHUFFLE, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_SOFT_SHUFFLE, opts.m_bTurns );
+	ADD_BOOLEAN_OPTION( turns, TURN_SUPER_SHUFFLE, opts.m_bTurns );
+
+	XNode *transforms = mods->AppendChild( "Transforms" );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOHOLDS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOROLLS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOMINES, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_LITTLE, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_WIDE, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_BIG, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_QUICK, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_BMRIZE, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_SKIPPY, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_MINES, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_ATTACKMINES, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_ECHO, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_STOMP, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_PLANTED, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_FLOORED, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_TWISTER, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_HOLDROLLS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOJUMPS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOHANDS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOLIFTS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOFAKES, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOQUADS, opts.m_bTransforms );
+	ADD_BOOLEAN_OPTION( transforms, TRANSFORM_NOSTRETCH, opts.m_bTransforms );
+
+#define ADD_FLOAT_OPTION( parent, name, opts ) \
+	do { \
+		float val = opts[ PlayerOptions::name ]; \
+		if ( val != 0.0f ) \
+			parent->AppendChild( #name, val ); \
+	} while (0)
+
+	XNode *accels = mods->AppendChild( "Accels" );
+	ADD_FLOAT_OPTION( accels, ACCEL_BOOST, opts.m_fAccels );
+	ADD_FLOAT_OPTION( accels, ACCEL_BRAKE, opts.m_fAccels );
+	ADD_FLOAT_OPTION( accels, ACCEL_WAVE, opts.m_fAccels );
+	ADD_FLOAT_OPTION( accels, ACCEL_EXPAND, opts.m_fAccels );
+	ADD_FLOAT_OPTION( accels, ACCEL_BOOMERANG, opts.m_fAccels );
+
+	XNode *effects = mods->AppendChild( "Effects" );
+	ADD_FLOAT_OPTION( effects, EFFECT_DRUNK, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_DIZZY, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_CONFUSION, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_MINI, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_TINY, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_FLIP, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_INVERT, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_TORNADO, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_TIPSY, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_BUMPY, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_BEAT, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_XMODE, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_TWIRL, opts.m_fEffects );
+	ADD_FLOAT_OPTION( effects, EFFECT_ROLL, opts.m_fEffects );
+
+	XNode *appearances = mods->AppendChild( "Appearances" );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_HIDDEN, opts.m_fAppearances );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_HIDDEN_OFFSET, opts.m_fAppearances );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_SUDDEN, opts.m_fAppearances );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_SUDDEN_OFFSET, opts.m_fAppearances );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_STEALTH, opts.m_fAppearances );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_BLINK, opts.m_fAppearances );
+	ADD_FLOAT_OPTION( appearances, APPEARANCE_RANDOMVANISH, opts.m_fAppearances );
+
+	XNode *scrolls = mods->AppendChild( "Scrolls" );
+	ADD_FLOAT_OPTION( scrolls, SCROLL_REVERSE, opts.m_fScrolls );
+	ADD_FLOAT_OPTION( scrolls, SCROLL_SPLIT, opts.m_fScrolls );
+	ADD_FLOAT_OPTION( scrolls, SCROLL_ALTERNATE, opts.m_fScrolls );
+	ADD_FLOAT_OPTION( scrolls, SCROLL_CROSS, opts.m_fScrolls );
+	ADD_FLOAT_OPTION( scrolls, SCROLL_CENTERED, opts.m_fScrolls );
+
+	mods->AppendChild( "NoteSkin", opts.m_sNoteSkin );
+
+	XNode *perspectives = mods->AppendChild( "Perspectives" );
+	perspectives->AppendChild( "Tilt", opts.m_fPerspectiveTilt );
+	perspectives->AppendChild( "Skew", opts.m_fSkew );
+
+	RString speedModType;
+	float speedModValue;
+	if ( opts.m_fTimeSpacing )
+	{
+		speedModType = "ConstantBPM";
+		speedModValue = opts.m_fScrollBPM;
+	}
+	else if ( opts.m_fMaxScrollBPM )
+	{
+		speedModType = "MaxBPM";
+		speedModValue = opts.m_fMaxScrollBPM;
+	}
+	else
+	{
+		speedModType = "Multiplier";
+		speedModValue = opts.m_fScrollSpeed;
+	}
+	mods->AppendChild( "ScrollSpeed", speedModValue )->AppendAttr( "Type", speedModType );
+
+	XNode *timingWindows = xml->AppendChild( "TimingWindows" );
+	FOREACH_ENUM( TimingWindow, tw )
+		timingWindows->AppendChild( TimingWindowToString( tw ), Player::GetWindowSeconds( tw ) );
+
+	RString dir = "/Save/Padmiss/";
+	RString fn = dir + Profile::MakeUniqueFileNameNoExtension( dir, sDate + " " ) + ".xml";
+	XmlFileUtil::SaveToFile( xml.get(), fn, "", true );
 }
 
 void StatsManager::UnjoinPlayer( PlayerNumber pn )
@@ -351,7 +567,7 @@ void StatsManager::GetStepsInUse( set<Steps*> &apInUseOut ) const
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the StatsManager. */ 
+/** @brief Allow Lua to have access to the StatsManager. */
 class LunaStatsManager: public Luna<StatsManager>
 {
 public:
@@ -442,7 +658,7 @@ LUA_REGISTER_CLASS( StatsManager )
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -452,7 +668,7 @@ LUA_REGISTER_CLASS( StatsManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

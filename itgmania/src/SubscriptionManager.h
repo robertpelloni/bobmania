@@ -26,7 +26,11 @@ public:
 
 	// Use this to access m_pSubscribers, so you don't have to worry about
 	// it being nullptr.
+<<<<<<< HEAD:itgmania/src/SubscriptionManager.h
 	std::set<T*> &Get()
+=======
+	set<T*> &Get()
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SubscriptionManager.h
 	{
 		if( m_pSubscribers == nullptr )
 <<<<<<< HEAD:itgmania/src/SubscriptionManager.h

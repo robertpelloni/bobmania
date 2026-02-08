@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/TitleSubstitution.cpp
+<<<<<<< HEAD:itgmania/src/TitleSubstitution.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TitleSubstitution.cpp
 #include "global.h"
 #include "TitleSubstitution.h"
 
@@ -187,6 +190,7 @@ TitleSubst::~TitleSubst()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/TitleSubstitution.cpp
 =======
 #include "global.h"
 #include "TitleSubstitution.h"
@@ -377,3 +381,5 @@ TitleSubst::~TitleSubst()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/TitleSubstitution.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TitleSubstitution.cpp

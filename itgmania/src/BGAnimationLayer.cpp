@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/BGAnimationLayer.cpp
+<<<<<<< HEAD:itgmania/src/BGAnimationLayer.cpp
 #include "global.h"
 #include "BGAnimationLayer.h"
 #include "GameState.h"
@@ -675,6 +676,8 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BGAnimationLayer.cpp
 #include "global.h"
 #include "BGAnimationLayer.h"
 #include "GameState.h"
@@ -1197,6 +1200,11 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
 				Actor* pSprite = ActorUtil::MakeActor( sFile, this );
+<<<<<<< HEAD:itgmania/src/BGAnimationLayer.cpp
+=======
+				if( pSprite == nullptr )
+					continue;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BGAnimationLayer.cpp
 				this->AddChild( pSprite );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
 				pSprite->SetZoom( randomf(fZoomMin,fZoomMax) );
@@ -1346,4 +1354,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/BGAnimationLayer.cpp
 >>>>>>> origin/c++11:src/BGAnimationLayer.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BGAnimationLayer.cpp

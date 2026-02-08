@@ -151,7 +151,11 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( std::vector<UsbStora
 	// First, get all device paths
 	struct statfs *fs;
 	int num = getfsstat( nullptr, 0, MNT_NOWAIT );
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 
+=======
+	
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 	fs = new struct statfs[num];
 
 	num = getfsstat( fs, num * sizeof(struct statfs), MNT_NOWAIT );

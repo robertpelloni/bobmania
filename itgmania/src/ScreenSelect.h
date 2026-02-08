@@ -5,7 +5,31 @@
 #include "GameCommand.h"
 #include "ThemeMetric.h"
 
+<<<<<<< HEAD:itgmania/src/ScreenSelect.h
 #include <vector>
+=======
+// With the addition of Attributes to BitmapText, this class may very well be
+// redundant. (Leave it in for now, though.) -aj
+class ColorBitmapText : public BitmapText
+{
+public:
+	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
+	void DrawPrimitives();
+	int lines = 0;
+	void ResetText();
+	void SetMaxLines(int iNumLines, int iDirection, unsigned int &scroll);
+	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
+	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
+	void SetMaxLines( int iNumLines, int iDirection );
+protected:
+	struct ColorChange
+	{
+		RageColor c;	// Color to change to
+		int l;			// Change Location
+	};
+	vector<ColorChange> m_vColors;
+};
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenNetSelectBase.h
 
 
 /** @brief Base class for Style, Difficulty, and Mode selection screens. */
@@ -21,7 +45,41 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const Message &msg );
 
+<<<<<<< HEAD:itgmania/src/ScreenSelect.h
 	virtual bool MenuBack( const InputEventPlus &input );
+=======
+	void UpdateUsers();
+	void UpdateTextInput();
+
+
+	bool usersVisible = true;
+	bool enableChatboxInput = true;
+	void SetChatboxVisible(bool visibility);
+	void SetUsersVisible(bool visibility);
+	vector<BitmapText>* ToUsers();
+	void Scroll(int movescroll);
+	RString GetPreviousMsg();
+	RString GetNextMsg();
+	void SetInputText(RString text);
+	void ShowPreviousMsg();
+	void ShowNextMsg();
+	unsigned int GetScroll() { return scroll; }
+	unsigned int GetLines() { return m_textChatOutput.lines; }
+	// Lua
+	virtual void PushSelf(lua_State *L);
+
+private:
+	//Chatting
+	ColorBitmapText		m_textChatInput;
+	ColorBitmapText		m_textChatOutput;
+	AutoActor			m_sprChatInputBox;
+	AutoActor			m_sprChatOutputBox;
+	RString				m_sTextInput;
+	unsigned int m_sTextLastestInputsIndex;
+	vector<RString>		m_sTextLastestInputs;
+	unsigned int	    scroll;
+	RString				m_actualText;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenNetSelectBase.h
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;

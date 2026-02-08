@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/RageDisplay.h
+<<<<<<< HEAD:itgmania/src/RageDisplay.h
 /* RageDisplay - Renderer base class. */
 
 #ifndef RAGEDISPLAY_H
@@ -506,6 +507,8 @@ extern RageDisplay*		DISPLAY;	// global and accessible from anywhere in our prog
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h
 /* RageDisplay - Renderer base class. */
 
 #ifndef RAGEDISPLAY_H
@@ -515,8 +518,8 @@ extern RageDisplay*		DISPLAY;	// global and accessible from anywhere in our prog
 #include "ModelTypes.h"
 #include <set>
 
-class DisplayResolution;
-typedef set<DisplayResolution> DisplayResolutions;
+class DisplaySpec;
+typedef std::set<DisplaySpec> DisplaySpecs;
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;
@@ -587,6 +590,7 @@ public:
 	// are filled (in case new params are added).
 	VideoModeParams( 
 		bool windowed_,
+		RString sDisplayId_,
 		int width_,
 		int height_,
 		int bpp_,
@@ -596,12 +600,14 @@ public:
 		bool bSmoothLines_,
 		bool bTrilinearFiltering_,
 		bool bAnisotropicFiltering_,
+		bool bWindowIsFullscreenBorderless_,
 		RString sWindowTitle_,
 		RString sIconFile_,
 		bool PAL_,
 		float fDisplayAspectRatio_
 	):
 		windowed(windowed_),
+		sDisplayId(sDisplayId_),
 		width(width_),
 		height(height_),
 		bpp(bpp_),
@@ -611,18 +617,36 @@ public:
 		bSmoothLines(bSmoothLines_),
 		bTrilinearFiltering(bTrilinearFiltering_),
 		bAnisotropicFiltering(bAnisotropicFiltering_),
+		bWindowIsFullscreenBorderless(bWindowIsFullscreenBorderless_),
 		sWindowTitle(sWindowTitle_),
 		sIconFile(sIconFile_),
 		PAL(PAL_),
 		fDisplayAspectRatio(fDisplayAspectRatio_) {}
 
+	VideoModeParams(const VideoModeParams &other):
+	windowed(other.windowed), sDisplayId(other.sDisplayId),
+	width(other.width), height(other.height),
+	bpp(other.bpp), rate(other.rate),
+	vsync(other.vsync), interlaced(other.interlaced),
+	bSmoothLines(other.bSmoothLines), bTrilinearFiltering(other.bTrilinearFiltering),
+	bAnisotropicFiltering(other.bAnisotropicFiltering), bWindowIsFullscreenBorderless(other.bWindowIsFullscreenBorderless),
+	sWindowTitle(other.sWindowTitle), sIconFile(other.sIconFile),
+	PAL(other.PAL), fDisplayAspectRatio(other.fDisplayAspectRatio)
+	{}
+
 	VideoModeParams(): windowed(false), width(0), height(0),
-		bpp(0), rate(0), vsync(false), interlaced(false),
-		bSmoothLines(false), bTrilinearFiltering(false),
-		bAnisotropicFiltering(false), sWindowTitle(RString()),
-		sIconFile(RString()), PAL(false), fDisplayAspectRatio(0.0f) {}
+					   bpp(0), rate(0), vsync(false), interlaced(false),
+					   bSmoothLines(false), bTrilinearFiltering(false),
+					   bAnisotropicFiltering(false), bWindowIsFullscreenBorderless(false),
+					   sWindowTitle(RString()), sIconFile(RString()),
+					   PAL(false), fDisplayAspectRatio(0.0f) {}
+
+	// Subclassing VideoModeParams in ActualVideoModeParams. Make destructor virtual just in case
+	// someone tries to delete one of those through a pointer to base...
+	virtual ~VideoModeParams() {}
 
 	bool windowed;
+	RString sDisplayId;
 	int width;
 	int height;
 	int bpp;
@@ -632,10 +656,39 @@ public:
 	bool bSmoothLines;
 	bool bTrilinearFiltering;
 	bool bAnisotropicFiltering;
+	bool bWindowIsFullscreenBorderless;
 	RString sWindowTitle;
 	RString sIconFile;
 	bool PAL;
 	float fDisplayAspectRatio;
+};
+
+/**
+ * @brief The _actual_ VideoModeParams determined by the LowLevelWindow implementation.
+ * Contains all the attributes of VideoModeParams, plus the actual window width/height determined by
+ * LLW
+ */
+class ActualVideoModeParams: public VideoModeParams
+{
+public:
+	ActualVideoModeParams(): VideoModeParams(), windowWidth(0), windowHeight(0), renderOffscreen(false) {}
+	ActualVideoModeParams( const VideoModeParams &params ) : VideoModeParams( params ),
+															 windowWidth( params.width ),
+															 windowHeight( params.height ),
+															 renderOffscreen( false )
+	{ }
+	ActualVideoModeParams( const VideoModeParams &params, int windowWidth, int windowHeight, bool renderOffscreen ) :
+		VideoModeParams( params ), windowWidth( windowWidth ), windowHeight( windowHeight ),
+		renderOffscreen( renderOffscreen )
+	{ }
+	ActualVideoModeParams (const ActualVideoModeParams &other) = default;
+
+	// If bWindowIsFullscreenBorderless is true,
+	// then these properties will differ from width/height (which describe the
+	// render size)
+	int windowWidth;
+	int windowHeight;
+	bool renderOffscreen;
 };
 
 struct RenderTargetParam
@@ -663,7 +716,7 @@ struct RageTextureLock
 
 	/* Given a surface with a format and no pixel data, lock the texture into the
 	 * surface. The data is write-only. */
-	virtual void Lock( unsigned iTexHandle, RageSurface *pSurface ) = 0;
+	virtual void Lock( uintptr_t iTexHandle, RageSurface *pSurface ) = 0;
 
 	/* Unlock and update the texture. If bChanged is false, the texture update
 	 * may be omitted. */
@@ -689,7 +742,7 @@ public:
 	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
 
 	virtual RString GetApiDescription() const = 0;
-	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
+	virtual void GetDisplaySpecs(DisplaySpecs &out) const = 0;
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
@@ -701,7 +754,7 @@ public:
 
 	virtual bool BeginFrame();
 	virtual void EndFrame();
-	virtual VideoModeParams GetActualVideoModeParams() const = 0;
+	virtual ActualVideoModeParams GetActualVideoModeParams() const = 0;
 	bool IsWindowed() const { return this->GetActualVideoModeParams().windowed; }
 
 	virtual void SetBlendMode( BlendMode mode ) = 0;
@@ -719,23 +772,23 @@ public:
 
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
-	virtual unsigned CreateTexture( 
+	virtual uintptr_t CreateTexture( 
 		RagePixelFormat pixfmt,		// format of img and of texture in video mem
 		RageSurface* img,		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
 	virtual void UpdateTexture( 
-		unsigned iTexHandle, 
+		uintptr_t iTexHandle, 
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
-	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
-	/* Return an object to lock pixels for streaming. If not supported, returns NULL.
+	virtual void DeleteTexture( uintptr_t iTexHandle ) = 0;
+	/* Return an object to lock pixels for streaming. If not supported, returns nullptr.
 	 * Delete the object normally. */
 	virtual RageTextureLock *CreateTextureLock() { return nullptr; }
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
-	virtual void SetTexture( TextureUnit, unsigned /* iTexture */ ) = 0;
+	virtual void SetTexture( TextureUnit, uintptr_t /* iTexture */ ) = 0;
 	virtual void SetTextureMode( TextureUnit, TextureMode ) = 0;
 	virtual void SetTextureWrapping( TextureUnit, bool ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
@@ -743,22 +796,32 @@ public:
 	virtual void SetEffectMode( EffectMode ) { }
 	virtual bool IsEffectModeSupported( EffectMode effect ) { return effect == EffectMode_Normal; }
 
-	bool SupportsRenderToTexture() const { return false; }
+	virtual bool SupportsRenderToTexture() const { return false; }
+	virtual bool SupportsFullscreenBorderlessWindow() const { return false; }
+
+	virtual void SetWindowPosition( int x, int y ) { }
+	virtual void SetWindowSize( int w, int h ) { }
+	virtual void SetWindowTitle( const RString &sTitle ) { }
 
 	/* Create a render target, returning a texture handle. In addition to normal
 	 * texture functions, this can be passed to SetRenderTarget. Delete with
 	 * DeleteTexture. (UpdateTexture is not permitted.) Returns 0 if render-to-
 	 * texture is unsupported.
 	 */
-	virtual unsigned CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
+	virtual uintptr_t CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
 
+<<<<<<< HEAD:itgmania/src/RageDisplay.h
+=======
+	virtual uintptr_t GetRenderTarget()	{ return 0; }
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h
 	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
 	 * target may not be used as a texture. If bPreserveTexture is true, the contents
 	 * of the texture will be preserved from the previous call; otherwise, cleared.  If
 	 * bPreserveTexture is true the first time a render target is used, behave as if
 	 * bPreserveTexture was false.
 	 */
-	virtual void SetRenderTarget( unsigned /* iHandle */, bool /* bPreserveTexture */ = true ) { }
+	virtual void SetRenderTarget( uintptr_t /* iHandle */, bool /* bPreserveTexture */ = true ) { }
 
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
@@ -791,6 +854,18 @@ public:
 	virtual void SetSphereEnvironmentMapping( TextureUnit tu, bool b ) = 0;
 	virtual void SetCelShaded( int stage ) = 0;
 
+	virtual uintptr_t LoadShaderFromFile( RString sVertexShaderFile, RString sFragmentShaderFile ) { return 0; }
+	virtual void DeleteShader( uintptr_t iShader ) { }
+	virtual void SetShader( uintptr_t iShader ) { }
+	virtual uintptr_t GetShader() const { return 0; }
+	virtual int GetUniformLocation( uintptr_t iShader, const RString &sName ) { return -1; }
+	virtual void SetUniform1f( int iLoc, float v0 ) { }
+	virtual void SetUniform2f( int iLoc, float v0, float v1 ) { }
+	virtual void SetUniform3f( int iLoc, float v0, float v1, float v2 ) { }
+	virtual void SetUniform4f( int iLoc, float v0, float v1, float v2, float v3 ) { }
+	virtual void SetUniform1i( int iLoc, int v0 ) { }
+	virtual void SetUniformMatrix4( int iLoc, const RageMatrix &mat ) { }
+
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;
 
@@ -819,9 +894,13 @@ public:
 	};
 	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
 
-	virtual RString GetTextureDiagnostics( unsigned /* id */ ) const { return RString(); }
+	virtual RString GetTextureDiagnostics( uintptr_t /* id */ ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
+<<<<<<< HEAD:itgmania/src/RageDisplay.h
 	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
+=======
+	virtual RageSurface *GetTexture( uintptr_t /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
@@ -945,4 +1024,7 @@ extern RageDisplay*		DISPLAY;	// global and accessable from anywhere in our prog
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageDisplay.h
 >>>>>>> origin/c++11:src/RageDisplay.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h

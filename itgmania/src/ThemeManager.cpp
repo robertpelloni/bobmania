@@ -17,10 +17,14 @@
 #include "ActorUtil.h"
 #endif
 <<<<<<< HEAD:itgmania/src/ThemeManager.cpp
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 #include "GameLoop.h" // For ChangeTheme
 =======
 
 >>>>>>> origin/c++11:src/ThemeManager.cpp
+=======
+#include "GameLoop.h" // For ChangeTheme
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ThemeManager.cpp
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
 #include "LuaManager.h"
@@ -32,6 +36,7 @@
 #include "XmlFileUtil.h"
 
 <<<<<<< HEAD:itgmania/src/ThemeManager.cpp
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 #include <cstddef>
 #include <deque>
 #include <vector>
@@ -41,6 +46,9 @@ ThemeManager*	THEME = nullptr;	// global object accessible from anywhere in the 
 =======
 ThemeManager*	THEME = nullptr;	// global object accessable from anywhere in the program
 >>>>>>> origin/c++11:src/ThemeManager.cpp
+=======
+ThemeManager*	THEME = nullptr;	// global object accessible from anywhere in the program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ThemeManager.cpp
 
 static const RString THEME_INFO_INI = "ThemeInfo.ini";
 
@@ -656,6 +664,7 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 		{
 			// BGAnimations, Fonts, Graphics, Sounds, Other
 <<<<<<< HEAD:itgmania/src/ThemeManager.cpp
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 			const RString ext = GetExtension(asPaths[p]);
 			bool matches= category == EC_OTHER || ext == "redir";
 			if(!matches)
@@ -673,6 +682,11 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 
 			for( int i = 0; asset_masks[i]; ++i )
 >>>>>>> origin/c++11:src/ThemeManager.cpp
+=======
+			const RString ext = GetExtension(asPaths[p]);
+			bool matches= category == EC_OTHER || ext == "redir";
+			if(!matches)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ThemeManager.cpp
 			{
 				FileType ft= ActorUtil::GetFileType(asPaths[p]);
 				switch(ft)

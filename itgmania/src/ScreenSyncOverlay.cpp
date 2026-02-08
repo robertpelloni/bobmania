@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenSyncOverlay.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSyncOverlay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSyncOverlay.cpp
 #include "global.h"
 #include "ScreenSyncOverlay.h"
 #include "ScreenDimensions.h"
@@ -228,7 +231,11 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 				TimingData &sTiming = GAMESTATE->m_pCurSong->m_SongTiming;
 				BPMSegment * seg = sTiming.GetBPMSegmentAtBeat( GAMESTATE->m_Position.m_fSongBeat );
 				seg->SetBPS( seg->GetBPS() + fDelta );
+<<<<<<< HEAD:itgmania/src/ScreenSyncOverlay.cpp
 				const std::vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+=======
+				const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSyncOverlay.cpp
 				for (Steps *s : vpSteps)
 				{
 					TimingData &pTiming = s->m_Timing;
@@ -278,7 +285,11 @@ bool ScreenSyncOverlay::Input( const InputEventPlus &input )
 					if( GAMESTATE->m_pCurSong != nullptr )
 					{
 						GAMESTATE->m_pCurSong->m_SongTiming.m_fBeat0OffsetInSeconds += fDelta;
+<<<<<<< HEAD:itgmania/src/ScreenSyncOverlay.cpp
 						const std::vector<Steps*>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+=======
+						const vector<Steps *>& vpSteps = GAMESTATE->m_pCurSong->GetAllSteps();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSyncOverlay.cpp
 						for (Steps *s : vpSteps)
 						{
 							// Empty means it inherits song timing,
@@ -695,4 +706,7 @@ void ScreenSyncOverlay::HideHelp()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenSyncOverlay.cpp
 >>>>>>> origin/c++11:src/ScreenSyncOverlay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSyncOverlay.cpp

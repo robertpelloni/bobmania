@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ReceptorArrowRow.cpp
+<<<<<<< HEAD:itgmania/src/ReceptorArrowRow.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ReceptorArrowRow.cpp
 #include "global.h"
 #include "ReceptorArrowRow.h"
 #include "RageUtil.h"
@@ -265,4 +268,7 @@ void ReceptorArrowRow::SetNoteUpcoming( int iCol, bool b )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ReceptorArrowRow.cpp
 >>>>>>> origin/c++11:src/ReceptorArrowRow.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ReceptorArrowRow.cpp

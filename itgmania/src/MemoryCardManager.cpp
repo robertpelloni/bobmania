@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/MemoryCardManager.cpp
+<<<<<<< HEAD:itgmania/src/MemoryCardManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MemoryCardManager.cpp
 #include "global.h"
 #include "MemoryCardManager.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"	// for UsbStorageDevice
@@ -13,6 +16,7 @@
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"
 
+<<<<<<< HEAD:itgmania/src/MemoryCardManager.cpp
 #include <cstddef>
 #include <vector>
 
@@ -788,6 +792,9 @@ LUA_REGISTER_CLASS( MemoryCardManager )
 #include "LuaManager.h"
 
 MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessable from anywhere in our program
+=======
+MemoryCardManager*	MEMCARDMAN = nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MemoryCardManager.cpp
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, RString &sNameOut, RString &defaultValueOut )
 {
@@ -1062,7 +1069,7 @@ MemoryCardManager::MemoryCardManager()
 	 * until it's mounted, anyway. */
 	FOREACH_PlayerNumber( pn )
 	{
-		FILEMAN->Mount( "dir", "/", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+		FILEMAN->Mount( "dir", "(empty)", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
 	}
 }
@@ -1541,4 +1548,7 @@ LUA_REGISTER_CLASS( MemoryCardManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/MemoryCardManager.cpp
 >>>>>>> origin/c++11:src/MemoryCardManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MemoryCardManager.cpp

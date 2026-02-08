@@ -123,9 +123,15 @@ void FakeSegment::DebugPrint() const
 
 std::string FakeSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	std::string str = "%.0" + std::to_string(dec)
 	+ "f=%.0" + std::to_string(dec) + "f";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetLength());
+=======
+	RString str = "%.0" + std::to_string(dec)
+		+ "f=%.0" + std::to_string(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetLength());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void FakeSegment::Scale( int start, int length, int newLength )
@@ -140,9 +146,15 @@ void FakeSegment::Scale( int start, int length, int newLength )
 
 std::string WarpSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	std::string str = "%.0" + std::to_string(dec)
 	+ "f=%.0" + std::to_string(dec) + "f";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetLength());
+=======
+	RString str = "%.0" + std::to_string(dec)
+		+ "f=%.0" + std::to_string(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetLength());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void WarpSegment::Scale( int start, int length, int newLength )
@@ -158,12 +170,21 @@ void WarpSegment::Scale( int start, int length, int newLength )
 
 std::string TickcountSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec) + "f=%i";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetTicks());
+=======
+	const RString str = "%.0" + std::to_string(dec) + "f=%i";
+	return ssprintf(str.c_str(), GetBeat(), GetTicks());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 std::string ComboSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	std::string str = "%.0" + std::to_string(dec) + "f=%i";
+=======
+	RString str = "%.0" + std::to_string(dec) + "f=%i";
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	if (GetCombo() == GetMissCombo())
 	{
 		return fmt::sprintf(str.c_str(), GetBeat(), GetCombo());
@@ -182,21 +203,37 @@ vector<float> ComboSegment::GetValues() const
 
 std::string LabelSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec) + "f=%s";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetLabel().c_str());
+=======
+	const RString str = "%.0" + std::to_string(dec) + "f=%s";
+	return ssprintf(str.c_str(), GetBeat(), GetLabel().c_str());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 std::string BPMSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec)
 	+ "f=%.0" + std::to_string(dec) + "f";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetBPM());
+=======
+	const RString str = "%.0" + std::to_string(dec)
+	+ "f=%.0" + std::to_string(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetBPM());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 std::string TimeSignatureSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec) + "f=%i=%i";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetNum(), GetDen());
+=======
+	const RString str = "%.0" + std::to_string(dec) + "f=%i=%i";
+	return ssprintf(str.c_str(), GetBeat(), GetNum(), GetDen());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 vector<float> TimeSignatureSegment::GetValues() const
@@ -209,6 +246,7 @@ vector<float> TimeSignatureSegment::GetValues() const
 
 std::string TimeSignatureSegment::to_frac_string() const
 {
+<<<<<<< HEAD
 	return fmt::sprintf("%i/%i", GetNum(), GetDen());
 }
 
@@ -218,6 +256,12 @@ std::string SpeedSegment::ToString(int dec) const
 		+ "f=%.0" + std::to_string(dec) + "f=%.0"
 		+ std::to_string(dec) + "f=%u";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetRatio(),
+=======
+	const RString str = "%.0" + std::to_string(dec)
+		+ "f=%.0" + std::to_string(dec) + "f=%.0"
+		+ std::to_string(dec) + "f=%u";
+	return ssprintf(str.c_str(), GetBeat(), GetRatio(),
+>>>>>>> origin/unified-ui-features-13937230807013224518
 		GetDelay(), static_cast<unsigned int>(GetUnit()));
 }
 
@@ -252,23 +296,41 @@ void SpeedSegment::Scale( int start, int oldLength, int newLength )
 
 std::string ScrollSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec)
 		+ "f=%.0" + std::to_string(dec) + "f";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetRatio());
+=======
+	const RString str = "%.0" + std::to_string(dec)
+		+ "f=%.0" + std::to_string(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetRatio());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 std::string StopSegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec)
 	+ "f=%.0" + std::to_string(dec) + "f";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetPause());
+=======
+	const RString str = "%.0" + std::to_string(dec)
+		+ "f=%.0" + std::to_string(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetPause());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 std::string DelaySegment::ToString(int dec) const
 {
+<<<<<<< HEAD
 	const std::string str = "%.0" + std::to_string(dec)
 	+ "f=%.0" + std::to_string(dec) + "f";
 	return fmt::sprintf(str.c_str(), GetBeat(), GetPause());
+=======
+	const RString str = "%.0" + std::to_string(dec)
+		+ "f=%.0" + std::to_string(dec) + "f";
+	return ssprintf(str.c_str(), GetBeat(), GetPause());
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 /**

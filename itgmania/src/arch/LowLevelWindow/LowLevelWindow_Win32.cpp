@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 #include "global.h"
 #include "LowLevelWindow_Win32.h"
 #include "archutils/Win32/DirectXHelpers.h"
@@ -453,11 +454,14 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 #include "global.h"
 #include "LowLevelWindow_Win32.h"
 #include "archutils/Win32/DirectXHelpers.h"
 #include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/GraphicsWindow.h"
+#include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
@@ -470,12 +474,20 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
 static HGLRC g_HGLRC = nullptr;
 static HGLRC g_HGLRC_Background = nullptr;
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
+=======
+static HMODULE g_HGL_Module = nullptr;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 
 static void DestroyGraphicsWindowAndOpenGLContext()
 {
 	if( g_HGLRC != nullptr )
 	{
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 		wglMakeCurrent( NULL, nullptr );
+=======
+		wglMakeCurrent( nullptr, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 		wglDeleteContext( g_HGLRC );
 		g_HGLRC = nullptr;
 	}
@@ -493,17 +505,37 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 
 void *LowLevelWindow_Win32::GetProcAddress( RString s )
 {
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 	void *pRet = wglGetProcAddress( s );
 	if( pRet != nullptr )
 		return pRet;
 
 	return ::GetProcAddress( GetModuleHandle(nullptr), s );
+=======
+	void *pRet = (void*) wglGetProcAddress( s );
+	if( pRet != nullptr )
+		return pRet;
+
+	if (g_HGL_Module != nullptr)
+	{
+		pRet = (void *) ::GetProcAddress( g_HGL_Module, s );
+
+		if (pRet != nullptr)
+			return pRet;
+	}
+
+	return (void*) ::GetProcAddress( GetModuleHandle(nullptr), s );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 }
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
 	ASSERT( g_HGLRC == nullptr );
 	ASSERT( g_HGLRC_Background == nullptr );
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
+=======
+	ASSERT( g_HGL_Module == nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 
 	GraphicsWindow::Initialize( false );
 }
@@ -514,9 +546,9 @@ LowLevelWindow_Win32::~LowLevelWindow_Win32()
 	GraphicsWindow::Shutdown();
 }
 
-void LowLevelWindow_Win32::GetDisplayResolutions( DisplayResolutions &out ) const
+void LowLevelWindow_Win32::GetDisplaySpecs( DisplaySpecs &out ) const
 {
-	GraphicsWindow::GetDisplayResolutions( out );
+	GraphicsWindow::GetDisplaySpecs( out );
 }
 
 int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *pixfmt )
@@ -639,7 +671,11 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
 		if( g_HGLRC != nullptr )
 		{
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 			wglMakeCurrent( NULL, nullptr );
+=======
+			wglMakeCurrent( nullptr, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 			wglDeleteContext( g_HGLRC );
 			g_HGLRC = nullptr;
 			wglDeleteContext( g_HGLRC_Background );
@@ -658,10 +694,11 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		/* Set the pixel format. */
 		if( !SetPixelFormat(GraphicsWindow::GetHDC(), iPixelFormat, &pixfmt) )
 		{
+			DWORD err = GetLastError();
 			/* Destroy the window. */
 			DestroyGraphicsWindowAndOpenGLContext();
 
-			return werr_ssprintf( GetLastError(), "Pixel format failed" );
+			return werr_ssprintf( err, "Pixel format failed" );
 		}
 
 		DescribePixelFormat( GraphicsWindow::GetHDC(), iPixelFormat, sizeof(g_CurrentPixelFormat), &g_CurrentPixelFormat );
@@ -671,18 +708,22 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 	if( g_HGLRC == nullptr )
 	{
+		g_HGL_Module = LoadLibraryA("opengl32.dll");
+
 		g_HGLRC = wglCreateContext( GraphicsWindow::GetHDC() );
 		if ( g_HGLRC == nullptr )
 		{
+			DWORD err = GetLastError();
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_ssprintf( err, "wglCreateContext" );
 		}
 
 		g_HGLRC_Background = wglCreateContext( GraphicsWindow::GetHDC() );
 		if( g_HGLRC_Background == nullptr )
 		{
+			DWORD err = GetLastError();
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_ssprintf( err, "wglCreateContext" );
 		}
 
 		if( !wglShareLists(g_HGLRC, g_HGLRC_Background) )
@@ -694,8 +735,9 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 		if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC ) )
 		{
+			DWORD err = GetLastError();
 			DestroyGraphicsWindowAndOpenGLContext();
-			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+			return hr_ssprintf( err, "wglCreateContext" );
 		}
 	}
 	return RString();	// we set the video mode successfully
@@ -710,14 +752,19 @@ void LowLevelWindow_Win32::BeginConcurrentRendering()
 {
 	if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC_Background ) )
 	{
-		LOG->Warn( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
-		FAIL_M( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
+		DWORD err = GetLastError();
+		LOG->Warn( hr_ssprintf(err, "wglMakeCurrent") );
+		FAIL_M( hr_ssprintf(err, "wglMakeCurrent") );
 	}
 }
 
 void LowLevelWindow_Win32::EndConcurrentRendering()
 {
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 	wglMakeCurrent( NULL, nullptr );
+=======
+	wglMakeCurrent( nullptr, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 }
 
 static LocalizedString OPENGL_NOT_AVAILABLE( "LowLevelWindow_Win32", "OpenGL hardware acceleration is not available." );
@@ -744,10 +791,11 @@ void LowLevelWindow_Win32::SwapBuffers()
 
 void LowLevelWindow_Win32::Update()
 {
+	::ShowCursor(PREFSMAN->m_bShowMouseCursor);
 	GraphicsWindow::Update();
 }
 
-const VideoModeParams &LowLevelWindow_Win32::GetActualVideoModeParams() const
+const ActualVideoModeParams LowLevelWindow_Win32::GetActualVideoModeParams() const
 {
 	return GraphicsWindow::GetParams();
 }
@@ -759,7 +807,7 @@ public:
 	virtual ~RenderTarget_Win32();
 
 	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
-	unsigned int GetTexture() const { return m_texHandle; }
+	uintptr_t GetTexture() const { return static_cast<uintptr_t>(m_texHandle); }
 	void StartRenderingTo();
 	void FinishRenderingTo();
 	
@@ -885,4 +933,7 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 >>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp

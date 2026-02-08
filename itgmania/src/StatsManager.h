@@ -20,7 +20,11 @@ public:
      *
      * This is not necessarily passed stage stats if this is an Extra Stage. */
     StageStats		m_CurStageStats;
+<<<<<<< HEAD:itgmania/src/StatsManager.h
     std::vector<StageStats>	m_vPlayedStageStats;
+=======
+    vector<StageStats>	m_vPlayedStageStats;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StatsManager.h
 
     // Only the latest 3 normal songs + passed extra stages.
     void GetFinalEvalStageStats( StageStats& statsOut ) const;
@@ -33,7 +37,11 @@ public:
     static void CommitStatsToProfiles( const StageStats *pSS );
 
     void UnjoinPlayer( PlayerNumber pn );
+<<<<<<< HEAD:itgmania/src/StatsManager.h
     void GetStepsInUse( std::set<Steps*> &apInUseOut ) const;
+=======
+    void GetStepsInUse( set<Steps*> &apInUseOut ) const;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StatsManager.h
 
     // Lua
     void PushSelf( lua_State *L );

@@ -44,13 +44,13 @@ bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out )
 {
 	const RString &sGroupName = soc.m_sGroupName.empty()? GROUP_ALL:soc.m_sGroupName;
-        const vector<Song*> &songs = SONGMAN->GetSongs( sGroupName );
+    const vector<Song*> &songs = SONGMAN->GetSongs( sGroupName );
 
-	FOREACH_CONST( Song*, songs, so )
+	for (Song *so : songs)
 	{
-		if( !soc.Matches(*so) )
+		if( !soc.Matches(so) )
 			continue;
-		GetAllMatching( *so, stc, out );
+		GetAllMatching( so, stc, out ); // TODO: Look into why this can't be const.
 	}
 }
 
@@ -59,34 +59,66 @@ void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<So
 	const vector<Steps*> &vSteps = ( stc.m_st == StepsType_Invalid ?  pSong->GetAllSteps() :
 					 pSong->GetStepsByStepsType(stc.m_st) );
 	
-	FOREACH_CONST( Steps*, vSteps, st )
-		if( stc.Matches(pSong, *st) )
-			out.push_back( SongAndSteps(pSong, *st) );
+	for (Steps *st : vSteps)
+		if( stc.Matches(pSong, st) )
+			out.push_back( SongAndSteps(pSong, st) );
 }
 
+<<<<<<< HEAD
+=======
+void StepsUtil::GetAllMatchingEndless( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out )
+{
+	const vector<Steps*> &vSteps = ( stc.m_st == StepsType_Invalid ? pSong->GetAllSteps() :
+		pSong->GetStepsByStepsType( stc.m_st ) );
+	int previousSize = out.size();
+	int successful = false;
+
+	GetAllMatching( pSong, stc, out );
+	if( out.size() != previousSize )
+	{
+		successful = true;
+	}
+
+	if( !successful && vSteps.size() > 0 )
+	{
+		Difficulty difficulty = ( *( vSteps.begin() ) )->GetDifficulty();
+		Difficulty previousDifficulty = difficulty;
+		int lowestDifficultyIndex = 0;
+		vector<Difficulty> difficulties;
+		for (auto st = vSteps.begin(); st != vSteps.end(); ++st)
+		{
+			previousDifficulty = difficulty;
+			difficulty = ( *st )->GetDifficulty();
+			if( ( st - vSteps.begin() ) == 0 )
+			{
+				continue;
+			}
+			if( difficulty < previousDifficulty )
+			{
+				lowestDifficultyIndex = st - vSteps.begin();
+			}
+		}
+		out.push_back( SongAndSteps( pSong, vSteps.at( lowestDifficultyIndex ) ) );
+	}
+}
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 bool StepsUtil::HasMatching( const SongCriteria &soc, const StepsCriteria &stc )
 {
 	const RString &sGroupName = soc.m_sGroupName.empty()? GROUP_ALL:soc.m_sGroupName;
-        const vector<Song*> &songs = SONGMAN->GetSongs( sGroupName );
+    const vector<Song*> &songs = SONGMAN->GetSongs( sGroupName );
 
-	FOREACH_CONST( Song*, songs, so )
-	{
-		if( soc.Matches(*so) && HasMatching(*so, stc) )
-		        return true;
-	}
-	return false;
+	return std::any_of(songs.begin(), songs.end(), [&](Song const *so) {
+		return soc.Matches(so) && HasMatching(so, stc);
+	});
 }
 
 bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 {
 	const vector<Steps*> &vSteps = stc.m_st == StepsType_Invalid? pSong->GetAllSteps():pSong->GetStepsByStepsType( stc.m_st );
-	
-	FOREACH_CONST( Steps*, vSteps, st )
-	{
-		if( stc.Matches(pSong, *st) )
-	  	        return true;
-	}
-	return false;
+	return std::any_of(vSteps.begin(), vSteps.end(), [&](Steps const *st) {
+		return stc.Matches(pSong, st);
+	});
 }
 
 void CalculateTrueRadarValue(const Steps *in,
@@ -438,7 +470,11 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 		}
 	}
 
+<<<<<<< HEAD
 	ASSERT( pProfile );
+=======
+	ASSERT( pProfile != nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 	{
 		Steps* pSteps = vStepsPointers[i];
@@ -520,7 +556,7 @@ void StepsUtil::RemoveLockedSteps( const Song *pSong, vector<Steps*> &vpSteps )
 
 void StepsID::FromSteps( const Steps *p )
 {
-	if( p == NULL )
+	if( p == nullptr )
 	{
 		st = StepsType_Invalid;
 		dc = Difficulty_Invalid;
@@ -558,12 +594,12 @@ void StepsID::FromSteps( const Steps *p )
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 {
 	if( st == StepsType_Invalid || dc == Difficulty_Invalid )
-		return NULL;
+		return nullptr;
 
 	SongID songID;
 	songID.FromSong( p );
 
-	Steps *pRet = NULL;
+	Steps *pRet = nullptr;
 	if( dc == Difficulty_Edit )
 	{
 		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, "", uHash, true );
@@ -573,7 +609,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 		pRet = SongUtil::GetOneSteps( p, st, dc, -1, -1, "", "", 0, true );
 	}
 	
-	if( !bAllowNull && pRet == NULL )
+	if( !bAllowNull && pRet == nullptr )
 		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	m_Cache.Set( pRet );

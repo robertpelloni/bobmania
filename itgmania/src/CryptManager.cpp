@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/CryptManager.cpp
+<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 #include "global.h"
 
 // tomcrypt_cfg.h redefines malloc, realloc, calloc
@@ -581,7 +582,12 @@ LUA_REGISTER_CLASS( CryptManager )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp
 #include "global.h"
+
+#include <tomcrypt.h>
+
 #include "CryptManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -592,9 +598,13 @@ LUA_REGISTER_CLASS( CryptManager )
 #include "LuaReference.h"
 #include "LuaManager.h"
 
+<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 #include "libtomcrypt/src/headers/tomcrypt.h"
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
+=======
+CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp
 
 static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
@@ -657,13 +667,17 @@ static const int KEY_LENGTH = 1024;
  openssl genrsa -out testing -outform DER
  openssl rsa -in testing -out testing2 -outform DER
  openssl rsa -in testing -out testing2 -pubout -outform DER
- 
+
  openssl pkcs8 -inform DER -outform DER -nocrypt -in private.rsa -out private.der
- * 
+ *
  */
 
 static PRNGWrapper *g_pPRNG = nullptr;
+<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 
+=======
+ltc_math_descriptor ltc_mp = ltm_desc;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp
 
 CryptManager::CryptManager()
 {
@@ -675,8 +689,6 @@ CryptManager::CryptManager()
 		lua_settable( L, LUA_GLOBALSINDEX );
 		LUA->Release( L );
 	}
-
-	ltc_mp = ltm_desc;
 
 	g_pPRNG = new PRNGWrapper( &yarrow_desc );
 }
@@ -727,7 +739,7 @@ static bool WriteFile( RString sFile, RString sBuf )
 		LOG->Warn( "WriteFile: opening %s failed: %s", sFile.c_str(), output.GetError().c_str() );
 		return false;
 	}
-	
+
 	if( output.Write(sBuf) == -1 || output.Flush() == -1 )
 	{
 		LOG->Warn( "WriteFile: writing %s failed: %s", sFile.c_str(), output.GetError().c_str() );
@@ -1004,6 +1016,37 @@ RString CryptManager::GetSHA1ForFile( RString fn )
 	return RString( (const char *) digest, sizeof(digest) );
 }
 
+RString CryptManager::GetSHA256ForString( RString sData )
+{
+	unsigned char digest[32];
+
+	int iHash = register_hash( &sha256_desc );
+
+	hash_state hash;
+	hash_descriptor[iHash].init( &hash );
+	hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
+	hash_descriptor[iHash].done( &hash, digest );
+
+	return RString( (const char *) digest, sizeof(digest) );
+}
+
+RString CryptManager::GetSHA256ForFile( RString fn )
+{
+	RageFile file;
+	if( !file.Open( fn, RageFile::READ ) )
+	{
+		LOG->Warn( "GetSHA256: Failed to open file '%s'", fn.c_str() );
+		return RString();
+	}
+	int iHash = register_hash( &sha256_desc );
+	ASSERT( iHash >= 0 );
+
+	unsigned char digest[32];
+	HashFile( file, digest, iHash );
+
+	return RString( (const char *) digest, sizeof(digest) );
+}
+
 RString CryptManager::GetPublicKeyFileName()
 {
 	return PUBLIC_KEY_PATH;
@@ -1030,7 +1073,7 @@ RString CryptManager::GenerateRandomUUID()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the CryptManager. */ 
+/** @brief Allow Lua to have access to the CryptManager. */
 class LunaCryptManager: public Luna<CryptManager>
 {
 public:
@@ -1062,6 +1105,20 @@ public:
 		lua_pushstring( L, sha1fout );
 		return 1;
 	}
+	static int SHA256String( T* p, lua_State *L )
+	{
+		RString sha256out;
+		sha256out = p->GetSHA256ForString(SArg(1));
+		lua_pushlstring(L, sha256out, sha256out.size());
+		return 1;
+	}
+	static int SHA256File( T* p, lua_State *L )
+	{
+		RString sha256fout;
+		sha256fout = p->GetSHA256ForFile(SArg(1));
+		lua_pushlstring(L, sha256fout, sha256fout.size());
+		return 1;
+	}
 	static int GenerateRandomUUID( T* p, lua_State *L )
 	{
 		RString uuidOut;
@@ -1076,6 +1133,8 @@ public:
 		ADD_METHOD( MD5File );
 		ADD_METHOD( SHA1String );
 		ADD_METHOD( SHA1File );
+		ADD_METHOD( SHA256String );
+		ADD_METHOD( SHA256File );
 		ADD_METHOD( GenerateRandomUUID );
 	}
 };
@@ -1087,7 +1146,7 @@ LUA_REGISTER_CLASS( CryptManager )
 /*
  * (c) 2004-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1097,7 +1156,7 @@ LUA_REGISTER_CLASS( CryptManager )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -1108,4 +1167,7 @@ LUA_REGISTER_CLASS( CryptManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 >>>>>>> origin/c++11:src/CryptManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp

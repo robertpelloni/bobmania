@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenSelectLanguage.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSelectLanguage.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectLanguage.cpp
 #include "global.h"
 #include "ScreenSelectLanguage.h"
 #include "PrefsManager.h"
@@ -177,4 +180,7 @@ bool ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenSelectLanguage.cpp
 >>>>>>> origin/c++11:src/ScreenSelectLanguage.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectLanguage.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenOptionsExportPackage.cpp
+<<<<<<< HEAD:itgmania/src/ScreenOptionsExportPackage.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsExportPackage.cpp
 #include "global.h"
 #include "ScreenOptionsExportPackage.h"
 #include "ScreenManager.h"
@@ -617,4 +620,7 @@ void ScreenOptionsExportPackageSubPage::ExportOptions( int iRow, const vector<Pl
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsExportPackage.cpp
 >>>>>>> origin/c++11:src/ScreenOptionsExportPackage.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsExportPackage.cpp

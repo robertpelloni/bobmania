@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 #include "global.h"
 #include "ArchHooks_MacOSX.h"
 #include "RageLog.h"
@@ -136,10 +139,19 @@ void ArchHooks_MacOSX::Init()
 
 RString ArchHooks_MacOSX::GetArchName() const
 {
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 #if defined(__x86_64__)
 	return "macOS (x86_64)";
 #elif defined(__aarch64__) || defined(__arm64__)
 	return "macOS (arm64)";
+=======
+#if defined(__i386__)
+	return "Mac OS X (i386)";
+#elif defined(__x86_64__)
+	return "Mac OS X (x86_64)";
+#elif defined(__aarch64__) || defined(__arm64__)
+	return "macOS (ARM64)";
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 #else
 #error What arch?
 #endif
@@ -158,6 +170,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 
 	size_t size;
 #define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nil, 0) )
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 	// Get memory
 	float fRam;
 	char ramPower;
@@ -650,6 +663,8 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 
 	size_t size;
 #define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nullptr, 0) )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 	// Get memory
 	float fRam;
 	char ramPower;
@@ -699,6 +714,7 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 			break;
 		}
 		sModel = szModel;
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nullptr, nullptr );
 
 		if( urlRef == nullptr )
@@ -713,13 +729,29 @@ void ArchHooks_MacOSX::DumpDebugInfo()
 		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, nullptr );
 		CFRelease( dataRef );
 		if( plRef == nullptr )
+=======
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nil, nil);
+
+		if( urlRef == nil)
+			break;
+		CFDataRef dataRef = nil;
+		SInt32 error;
+		CFURLCreateDataAndPropertiesFromResource( nil, urlRef, &dataRef, nil, nil, &error );
+		CFRelease( urlRef );
+		if( dataRef == nil)
+			break;
+		// This also works with binary property lists for some reason.
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( nil, dataRef, kCFPropertyListImmutable, nil);
+		CFRelease( dataRef );
+		if( plRef == nil)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 			break;
 		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
 		{
 			CFRelease( plRef );
 			break;
 		}
-		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( NULL, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
+		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( nil, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
 		CFStringRef modelRef = (CFStringRef)CFDictionaryGetValue( (CFDictionaryRef)plRef, keyRef );
 		if( modelRef )
 			sModel = CFStringGetCStringPtr( modelRef, kCFStringEncodingMacRoman );
@@ -741,7 +773,11 @@ RString ArchHooks::GetPreferredLanguage()
 	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
 	RString ret = "en";
 
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 	if( t == nullptr )
+=======
+	if( t == nil)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 		return ret;
 	if( CFGetTypeID(t) != CFArrayGetTypeID() )
 	{
@@ -753,12 +789,27 @@ RString ArchHooks::GetPreferredLanguage()
 	CFStringRef lang;
 
 	if( CFArrayGetCount(languages) > 0 &&
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nullptr )
+=======
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nil)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
 		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
 		if( str )
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 			ret = str;
+=======
+		{
+			ret = RString( str, 2 );
+			if (ret == "zh")
+			{
+				ret = RString(str, 7);
+				ret[2] = '-';
+			}
+		}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 		else
 			LOG->Warn( "Unable to determine system language. Using English." );
 
@@ -772,8 +823,13 @@ RString ArchHooks::GetPreferredLanguage()
 bool ArchHooks_MacOSX::GoToURL( RString sUrl )
 {
 	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 						 sUrl.length(), kCFStringEncodingUTF8, nullptr );
 	OSStatus result = LSOpenCFURLRef( url, nullptr );
+=======
+						 sUrl.length(), kCFStringEncodingUTF8, nil);
+	OSStatus result = LSOpenCFURLRef( url, nil);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 
 	CFRelease( url );
 	return result == 0;
@@ -809,7 +865,11 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	char dir[PATH_MAX];
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nullptr );
+=======
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nil);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
 
 	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
 
@@ -848,6 +908,25 @@ void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
 	// /Logs -> ~/Library/Logs/PRODUCT_ID
 	PathForFolderType( dir, kDomainLibraryFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
+    
+    NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
+    if( resourcePath )
+    {
+        const char* resourcePathUTF8String = [resourcePath UTF8String];
+        FILEMAN->Mount( "dir", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String), "/BackgroundTransitions" );
+        FILEMAN->Mount( "dir", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses" );
+        FILEMAN->Mount( "dir", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Packages", resourcePathUTF8String), "/" + SpecialFiles::USER_PACKAGES_DIR );
+        FILEMAN->Mount( "dir", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs" );
+        FILEMAN->Mount( "dir", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Data", resourcePathUTF8String), "/Data" );
+    }
 
 	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
 	PathForFolderType( dir, kDesktopFolderType );
@@ -902,4 +981,7 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
 >>>>>>> origin/c++11:src/arch/ArchHooks/ArchHooks_MacOSX.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm

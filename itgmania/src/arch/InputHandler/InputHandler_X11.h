@@ -14,7 +14,11 @@ public:
 	InputHandler_X11();
 	~InputHandler_X11();
 	void Update();
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_X11.h
 	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
+=======
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_X11.h
 private:
     // timestamp is unsigned long to match X11 Time type
 	void RegisterKeyEvent( unsigned long timestamp, bool keyDown, DeviceButton button );

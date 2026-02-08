@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageTextureManager.cpp
+<<<<<<< HEAD:itgmania/src/RageTextureManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTextureManager.cpp
 /*
  * Texture garbage collection policies:
  *
@@ -51,7 +54,11 @@ RageTextureManager::~RageTextureManager()
 		RageTexture* pTexture = i.second;
 		if( pTexture->m_iRefCount )
 			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i.first.filename.c_str(), pTexture->m_iRefCount );
+<<<<<<< HEAD:itgmania/src/RageTextureManager.cpp
 		RageUtil::SafeDelete( pTexture );
+=======
+		SAFE_DELETE( pTexture );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTextureManager.cpp
 	}
 	m_textures_to_update.clear();
 	m_texture_ids_by_pointer.clear();
@@ -615,9 +622,41 @@ void RageTextureManager::DeleteTexture( RageTexture *t )
 	{
 		if( iter->second == t )
 		{
+<<<<<<< HEAD:itgmania/src/RageTextureManager.cpp
 			m_mapPathToTexture.erase( iter );	// remove map entry
 			SAFE_DELETE( t );	// free the texture
 			return;
+=======
+			m_mapPathToTexture.erase(tex_entry);
+			SAFE_DELETE(t);
+		}
+		map<RageTextureID, RageTexture*>::iterator tex_update_entry=
+			m_textures_to_update.find(id_entry->second);
+		if(tex_update_entry != m_textures_to_update.end())
+		{
+			m_textures_to_update.erase(tex_update_entry);
+		}
+		m_texture_ids_by_pointer.erase(id_entry);
+		return;
+	}
+	else
+	{
+		FAIL_M("Tried to delete a texture that wasn't in the ids by pointer list.");
+		for (map<RageTextureID, RageTexture *>::iterator iter = m_mapPathToTexture.begin(); iter != m_mapPathToTexture.end(); ++iter)
+		{
+			if( iter->second == t )
+			{
+				m_mapPathToTexture.erase( iter );	// remove map entry
+				SAFE_DELETE( t );	// free the texture
+				map<RageTextureID, RageTexture*>::iterator tex_update_entry=
+					m_textures_to_update.find(iter->first);
+				if(tex_update_entry != m_textures_to_update.end())
+				{
+					m_textures_to_update.erase(tex_update_entry);
+				}
+				return;
+			}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTextureManager.cpp
 		}
 	}
 
@@ -764,4 +803,7 @@ void RageTextureManager::DiagnosticOutput() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageTextureManager.cpp
 >>>>>>> origin/c++11:src/RageTextureManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTextureManager.cpp

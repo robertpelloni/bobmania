@@ -1,10 +1,14 @@
 <<<<<<< HEAD:itgmania/src/RageLog.cpp
+<<<<<<< HEAD:itgmania/src/RageLog.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageLog.cpp
 #include "global.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
+<<<<<<< HEAD:itgmania/src/RageLog.cpp
 
 #include <ctime>
 #include <cstdarg>
@@ -485,6 +489,8 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
 #include "RageFile.h"
 #include "RageThreads.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageLog.cpp
 
 #include <ctime>
 #if defined(_WINDOWS)
@@ -927,4 +933,7 @@ void ShowWarningOrTrace( const char *file, int line, const char *message, bool b
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageLog.cpp
 >>>>>>> origin/c++11:src/RageLog.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageLog.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/EnumHelper.cpp
+<<<<<<< HEAD:itgmania/src/EnumHelper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.cpp
 #include "global.h"
 #include "EnumHelper.h"
 #include "LuaManager.h"
@@ -81,18 +84,31 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 }
 
 // szNameArray is of size iMax; pNameCache is of size iMax+2.
+<<<<<<< HEAD:itgmania/src/EnumHelper.cpp
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache )
+=======
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, unique_ptr<RString> *pNameCache )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.cpp
 {
 	if( unlikely(pNameCache[0].get() == nullptr) )
 	{
 		for( int i = 0; i < iMax; ++i )
 		{
+<<<<<<< HEAD:itgmania/src/EnumHelper.cpp
 			std::unique_ptr<RString> ap( new RString( szNameArray[i] ) );
 			pNameCache[i] = std::move(ap);
 		}
 
 		std::unique_ptr<RString> ap( new RString );
 		pNameCache[iMax+1] = std::move(ap);
+=======
+			unique_ptr<RString> ap( new RString( szNameArray[i] ) );
+			pNameCache[i] = move(ap);
+		}
+
+		unique_ptr<RString> ap( new RString );
+		pNameCache[iMax+1] = move(ap);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.cpp
 	}
 
 	// iMax+1 is "Invalid".  iMax+0 is the NUM_ size value, which can not be converted
@@ -196,6 +212,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/EnumHelper.cpp
 =======
 #include "global.h"
 #include "EnumHelper.h"
@@ -366,3 +383,5 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/EnumHelper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.cpp

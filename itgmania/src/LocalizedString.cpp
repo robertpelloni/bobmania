@@ -52,8 +52,11 @@ LocalizedString::LocalizedString(LocalizedString const& other)
 	m_sGroup = other.m_sGroup;
 	m_sName = other.m_sName;
 	m_pImpl = nullptr;
+<<<<<<< HEAD:itgmania/src/LocalizedString.cpp
 =======
 >>>>>>> origin/c++11:src/LocalizedString.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LocalizedString.cpp
 
 	CreateImpl();
 }

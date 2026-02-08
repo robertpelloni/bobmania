@@ -33,6 +33,9 @@
 /* register DisplayBPM with StringConversion */
 #include "EnumHelper.h"
 
+// For hashing hart keys - Mina
+#include "CryptManager.h"
+
 static const char *DisplayBPMNames[] =
 {
 	"Actual",
@@ -42,8 +45,13 @@ static const char *DisplayBPMNames[] =
 XToString( DisplayBPM );
 LuaXType( DisplayBPM );
 
+<<<<<<< HEAD
 Steps::Steps(): m_StepsType(StepsType_Invalid), 
 	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
+=======
+Steps::Steps(Song *song): m_StepsType(StepsType_Invalid), m_pSong(song),
+	parent(nullptr), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
@@ -248,7 +256,7 @@ void Steps::TidyUpData()
 void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 {
 	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
-	if( parent != NULL )
+	if( parent != nullptr )
 		return;
 
 	if( m_bAreCachedRadarValuesJustLoaded )
@@ -267,7 +275,50 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
+<<<<<<< HEAD
 	StepsUtil::CalculateRadarValues(this, fMusicLengthSeconds);
+=======
+	GAMESTATE->SetProcessedTimingData(this->GetTimingData());
+	if( tempNoteData.IsComposite() )
+	{
+		vector<NoteData> vParts;
+
+		NoteDataUtil::SplitCompositeNoteData( tempNoteData, vParts );
+		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
+			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
+	}
+	else if (GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Couple)
+	{
+		NoteData p1 = tempNoteData;
+		// XXX: Assumption that couple will always have an even number of notes.
+		const int tracks = tempNoteData.GetNumTracks() / 2;
+		p1.SetNumTracks(tracks);
+		NoteDataUtil::CalculateRadarValues(p1,
+										   fMusicLengthSeconds,
+										   m_CachedRadarValues[PLAYER_1]);
+		// at this point, p2 is tempNoteData.
+		NoteDataUtil::ShiftTracks(tempNoteData, tracks);
+		tempNoteData.SetNumTracks(tracks);
+		NoteDataUtil::CalculateRadarValues(tempNoteData,
+										   fMusicLengthSeconds,
+										   m_CachedRadarValues[PLAYER_2]);
+	}
+	else
+	{
+		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
+		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
+	}
+	GAMESTATE->SetProcessedTimingData(nullptr);
+}
+
+void Steps::ChangeFilenamesForCustomSong()
+{
+	m_sFilename= custom_songify_path(m_sFilename);
+	if(!m_MusicFile.empty())
+	{
+		m_MusicFile= custom_songify_path(m_MusicFile);
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void Steps::Decompress() const
@@ -390,7 +441,7 @@ void Steps::DeAutogen( bool bCopyNoteData )
 	m_iMeter		= Real()->m_iMeter;
 	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
 	m_sCredit		= Real()->m_sCredit;
-	parent = NULL;
+	parent = nullptr;
 
 	if( bCopyNoteData )
 		Compress();
@@ -409,7 +460,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
-	parent = NULL;
+	parent = nullptr;
 	m_Timing = pSource->m_Timing;
 	this->m_Attacks = pSource->m_Attacks;
 	this->m_sAttackString = pSource->m_sAttackString;
@@ -475,7 +526,15 @@ bool Steps::HasSignificantTimingChanges() const
 	
 	else if( m_Timing.HasBpmChanges() || m_Timing.HasWarps() || m_Timing.HasSpeedChanges() )
 	{
+<<<<<<< HEAD
 		return true;
+=======
+		// check to see if these changes are significant.
+		DisplayBpms bpms;
+		m_pSong->GetDisplayBpms(bpms);
+		if (bpms.GetMax() - bpms.GetMin() > 3.000f)
+			return true;
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 	return false;
 }
@@ -487,6 +546,7 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
 
+<<<<<<< HEAD
 bool Steps::UsesSplitTiming() const
 {
 	Song *song = SONGMAN->GetSongFromSteps(const_cast<Steps *>(this));
@@ -880,6 +940,76 @@ vector<int> Steps::GetNumLifts(int start, int end) const
 vector<int> Steps::GetNumFakes(int start, int end) const
 {
 	return this->GetNumTapsOfType(start, end, &NoteData::GetNumFakes, &NoteData::IsFake);
+=======
+RString Steps::GenerateChartKey()
+{
+	ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+	return ChartKey;
+}
+RString Steps::GetChartKey()
+{
+	if (ChartKey.empty()) {
+		this->Decompress();
+		ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
+		this->Compress();
+	}
+	return ChartKey;
+}
+RString Steps::GenerateChartKey(NoteData &nd, TimingData *td)
+{
+	RString k = "";
+	RString o = "";
+	float bpm;
+	nd.LogNonEmptyRows();
+	std::vector<int>& nerv = nd.GetNonEmptyRowVector();
+
+
+	RString firstHalf = "";
+	RString secondHalf = "";
+
+#pragma omp parallel sections
+	{
+#pragma omp section
+		{
+			for (size_t r = 0; r < nerv.size() / 2; r++) {
+				int row = nerv[r];
+				for (int t = 0; t < nd.GetNumTracks(); ++t) {
+					const TapNote &tn = nd.GetTapNote(t, row);
+					std::ostringstream os;
+					os << tn.type;
+					firstHalf.append(os.str());
+				}
+				bpm = td->GetBPMAtRow(row);
+				std::ostringstream os;
+				os << static_cast<int>(bpm + 0.374643f);
+				firstHalf.append(os.str());
+			}
+		}
+
+#pragma omp section
+		{
+			for (size_t r = nerv.size() / 2; r < nerv.size(); r++) {
+				int row = nerv[r];
+				for (int t = 0; t < nd.GetNumTracks(); ++t) {
+					const TapNote &tn = nd.GetTapNote(t, row);
+					std::ostringstream os;
+					os << tn.type;
+					secondHalf.append(os.str());
+				}
+				bpm = td->GetBPMAtRow(row);
+				std::ostringstream os;
+				os << static_cast<int>(bpm + 0.374643f);
+				firstHalf.append(os.str());
+			}
+		}
+	}
+	k = firstHalf + secondHalf;
+
+	//ChartKeyRecord = k;
+	o.append("X");	// I was thinking of using "C" to indicate chart.. however.. X is cooler... - Mina
+	o.append(BinaryToHex(CryptManager::GetSHA1ForString(k)));
+	return o;
+>>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 

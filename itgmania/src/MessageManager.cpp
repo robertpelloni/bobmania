@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/MessageManager.cpp
+<<<<<<< HEAD:itgmania/src/MessageManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MessageManager.cpp
 #include "global.h"
 #include "MessageManager.h"
 #include "RageUtil.h"
@@ -348,6 +351,7 @@ LUA_REGISTER_CLASS( MessageManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/MessageManager.cpp
 =======
 #include "global.h"
 #include "MessageManager.h"
@@ -679,3 +683,5 @@ LUA_REGISTER_CLASS( MessageManager )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/MessageManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MessageManager.cpp

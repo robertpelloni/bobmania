@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/GameLoop.cpp
+<<<<<<< HEAD:itgmania/src/GameLoop.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.cpp
 #include "global.h"
 #include "GameLoop.h"
 #include "RageLog.h"
@@ -22,7 +25,12 @@
 #include "NetworkSyncManager.h"
 #include "RageTimer.h"
 #include "RageInput.h"
+<<<<<<< HEAD:itgmania/src/GameLoop.cpp
 #include "arch/LuaDriver/LuaDriver.h"
+=======
+#include "Discord/DiscordManager.h"
+#include "GrooveStats/GrooveStatsManager.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.cpp
 
 static RageTimer g_GameplayTimer;
 
@@ -78,13 +86,12 @@ static bool ChangeAppPri()
 		if( INPUTMAN )
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices);
-			FOREACH_CONST( InputDeviceInfo, vDevices, d )
+			if (std::any_of(vDevices.begin(), vDevices.end(), [](InputDeviceInfo const &d) {
+				return d.sDesc.find("NTPAD") != string::npos;
+			}))
 			{
-				if( d->sDesc.find("NTPAD") != string::npos )
-				{
-					LOG->Trace( "Using NTPAD.  Don't boost priority." );
-					return false;
-				}
+				LOG->Trace( "Using NTPAD.  Don't boost priority." );
+				return false;
 			}
 		}
 	}
@@ -153,7 +160,130 @@ namespace
 		g_sNewScreen = RString();
 	}
 
+<<<<<<< HEAD:itgmania/src/GameLoop.cpp
+=======
+	void DoChangeGame()
+	{
+		const Game* g= GAMEMAN->StringToGame(g_NewGame);
+		ASSERT(g != nullptr);
+		GAMESTATE->SetCurGame(g);
+
+		bool theme_changing= false;
+		// The prefs allow specifying a different default theme to use for each
+		// game type.  So if a theme name isn't passed in, fetch from the prefs.
+		if(g_NewTheme.empty())
+		{
+			g_NewTheme= PREFSMAN->m_sTheme;
+		}
+		if(g_NewTheme != THEME->GetCurThemeName() && THEME->IsThemeSelectable(g_NewTheme))
+		{
+			theme_changing= true;
+		}
+
+		if(theme_changing)
+		{
+			SAFE_DELETE(SCREENMAN);
+			TEXTUREMAN->DoDelayedDelete();
+			LUA->RegisterTypes();
+			THEME->SwitchThemeAndLanguage(g_NewTheme, THEME->GetCurLanguage(),
+				PREFSMAN->m_bPseudoLocalize);
+			PREFSMAN->m_sTheme.Set(g_NewTheme);
+			StepMania::ApplyGraphicOptions();
+			SCREENMAN= new ScreenManager();
+		}
+		StepMania::ResetGame();
+		RString new_screen= THEME->GetMetric("Common", "InitialScreen");
+		RString after_screen;
+		if(theme_changing)
+		{
+			SCREENMAN->ThemeChanged();
+			if(THEME->HasMetric("Common", "AfterGameAndThemeChangeScreen"))
+			{
+				after_screen= THEME->GetMetric("Common", "AfterGameAndThemeChangeScreen");
+			}
+		}
+		else
+		{
+			if(THEME->HasMetric("Common", "AfterGameChangeScreen"))
+			{
+				after_screen= THEME->GetMetric("Common", "AfterGameChangeScreen");
+			}
+		}
+		if(SCREENMAN->IsScreenNameValid(after_screen))
+		{
+			new_screen= after_screen;
+		}
+		SCREENMAN->SetNewScreen(new_screen);
+
+		// Set the input scheme for the new game, and load keymaps.
+		if( INPUTMAPPER )
+		{
+			INPUTMAPPER->SetInputScheme(&g->m_InputScheme);
+			INPUTMAPPER->ReadMappingsFromDisk();
+		}
+		// aj's comment transplanted from ScreenOptionsMasterPrefs.cpp:GameSel. -Kyz
+		/* Reload metrics to force a refresh of CommonMetrics::DIFFICULTIES_TO_SHOW,
+		 * mainly if we're not switching themes. I'm not sure if this was the
+		 * case going from theme to theme, but if it was, it should be fixed
+		 * now. There's probably be a better way to do it, but I'm not sure
+		 * what it'd be. -aj */
+		THEME->UpdateLuaGlobals();
+		THEME->ReloadMetrics();
+		g_NewGame= RString();
+		g_NewTheme= RString();
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.cpp
 }
+static bool m_bUpdatedDuringVBLANK = false;
+void GameLoop::UpdateAllButDraw(bool bRunningFromVBLANK)
+{
+	//if we are running our once per frame routine and we were already run from VBLANK, we did the work already
+	if (!bRunningFromVBLANK && m_bUpdatedDuringVBLANK)
+	{
+		m_bUpdatedDuringVBLANK = false;
+		return; //would it kill us to run it again or do we want to draw asap?
+	}
+	
+	//if vblank called us, we will tell the game loop we received an update for the frame it wants to process
+	if (bRunningFromVBLANK)	m_bUpdatedDuringVBLANK = true;
+	else m_bUpdatedDuringVBLANK = false;
+
+	// Update our stuff
+	float fDeltaTime = g_GameplayTimer.GetDeltaTime();
+
+	if (g_fConstantUpdateDeltaSeconds > 0)
+		fDeltaTime = g_fConstantUpdateDeltaSeconds;
+
+	CheckGameLoopTimerSkips(fDeltaTime);
+
+	fDeltaTime *= g_fUpdateRate;
+	
+	// Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data.
+	SOUNDMAN->Update();
+
+	/* Update song beat information -before- calling update on all the classes that
+	* depend on it. If you don't do this first, the classes are all acting on old
+	* information and will lag. (but no longer fatally, due to timestamping -glenn) */
+	SOUND->Update(fDeltaTime);
+	TEXTUREMAN->Update(fDeltaTime);
+	GAMESTATE->Update(fDeltaTime);
+	SCREENMAN->Update(fDeltaTime);
+	MEMCARDMAN->Update();
+	NSMAN->Update(fDeltaTime);
+	DISCORD->Update(fDeltaTime);
+	GROOVESTATSMAN->Update(fDeltaTime);
+
+	/* Important: Process input AFTER updating game logic, or input will be
+	* acting on song beat from last frame */
+	HandleInputEvents(fDeltaTime);
+
+	//bandaid for low max audio sample counter
+	SOUNDMAN->low_sample_count_workaround();
+	LIGHTSMAN->Update(fDeltaTime);
+	
+}
+
+
 
 void GameLoop::RunGameLoop()
 {
@@ -167,6 +297,7 @@ void GameLoop::RunGameLoop()
 		if( !g_sNewTheme.empty() )
 			DoChangeTheme();
 
+<<<<<<< HEAD:itgmania/src/GameLoop.cpp
 		// Update
 		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
 
@@ -177,38 +308,28 @@ void GameLoop::RunGameLoop()
 
 		fDeltaTime *= g_fUpdateRate;
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.cpp
 		CheckFocus();
 
-		// Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data.
-		SOUNDMAN->Update();
-
-		/* Update song beat information -before- calling update on all the classes that
-		 * depend on it. If you don't do this first, the classes are all acting on old 
-		 * information and will lag. (but no longer fatally, due to timestamping -glenn) */
-		SOUND->Update( fDeltaTime );
-		TEXTUREMAN->Update( fDeltaTime );
-		GAMESTATE->Update( fDeltaTime );
-		SCREENMAN->Update( fDeltaTime );
-		MEMCARDMAN->Update();
-		NSMAN->Update( fDeltaTime );
-
-		/* Important: Process input AFTER updating game logic, or input will be
-		 * acting on song beat from last frame */
-		HandleInputEvents( fDeltaTime );
+		UpdateAllButDraw(false);
 
 		if( INPUTMAN->DevicesChanged() )
 		{
-			INPUTFILTER->Reset();	// fix "buttons stuck" if button held while unplugged
+			INPUTFILTER->Reset();	// fix "buttons stuck" once per frame if button held while unplugged
 			INPUTMAN->LoadDrivers();
 			RString sMessage;
 			if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
 				SCREENMAN->SystemMessage( sMessage );
 		}
 
+<<<<<<< HEAD:itgmania/src/GameLoop.cpp
 		LIGHTSMAN->Update( fDeltaTime );
 		LuaDriver::Update( fDeltaTime );
 
 		// Render
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.cpp
 		SCREENMAN->Draw();
 	}
 
@@ -238,7 +359,7 @@ private:
 	enum State { RENDERING_IDLE, RENDERING_START, RENDERING_ACTIVE, RENDERING_END };
 	State m_State;
 };
-static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
+static ConcurrentRenderer *g_pConcurrentRenderer = nullptr;
 
 ConcurrentRenderer::ConcurrentRenderer():
 	m_Event("ConcurrentRenderer")
@@ -285,7 +406,7 @@ void ConcurrentRenderer::Stop()
 
 void ConcurrentRenderer::RenderThread()
 {
-	ASSERT( SCREENMAN != NULL );
+	ASSERT( SCREENMAN != nullptr );
 
 	while( !m_bShutdown )
 	{
@@ -342,7 +463,7 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 
 void GameLoop::StartConcurrentRendering()
 {
-	if( g_pConcurrentRenderer == NULL )
+	if( g_pConcurrentRenderer == nullptr )
 		g_pConcurrentRenderer = new ConcurrentRenderer;
 	g_pConcurrentRenderer->Start();
 }
@@ -376,6 +497,7 @@ void GameLoop::FinishConcurrentRendering()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/GameLoop.cpp
 =======
 #include "global.h"
 #include "GameLoop.h"
@@ -752,3 +874,5 @@ void GameLoop::FinishConcurrentRendering()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/GameLoop.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameLoop.cpp

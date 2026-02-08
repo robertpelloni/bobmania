@@ -216,6 +216,7 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 	HKEY hKey;
 	DWORD dwDisposition = 0;
 	if( ::RegCreateKeyEx(
+<<<<<<< HEAD:itgmania/src/archutils/Win32/RegistryAccess.cpp
 		hType,
 		sSubkey.c_str(),
 		0,
@@ -223,6 +224,15 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 		REG_OPTION_NON_VOLATILE,
 		KEY_ALL_ACCESS,
 		nullptr,
+=======
+		hType, 
+		sSubkey, 
+		0, 
+		nullptr,
+		REG_OPTION_NON_VOLATILE, 
+		KEY_ALL_ACCESS, 
+		nullptr, 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/RegistryAccess.cpp
 		&hKey,
 		&dwDisposition ) != ERROR_SUCCESS )
 	{

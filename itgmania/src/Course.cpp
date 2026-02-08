@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/Course.cpp
+<<<<<<< HEAD:itgmania/src/Course.cpp
 #include "global.h"
 #include "Course.h"
 #include "CourseLoaderCRS.h"
@@ -1477,6 +1478,8 @@ LUA_REGISTER_CLASS( Course )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Course.cpp
 #include <limits.h>
 #include "global.h"
 #include "Course.h"
@@ -1953,11 +1956,20 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	// Resolve each entry to a Song and Steps.
 	for (std::vector<CourseEntry>::const_iterator e = entries.begin(); e != entries.end(); ++e)
 	{
+<<<<<<< HEAD:itgmania/src/Course.cpp
 		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
 
 		Song *pSong = e->songID.ToSong();
 		if( pSong )
+=======
+		GetTrailUnsortedEndless(entries, trail, st, cd, rnd, bCourseDifficultyIsSignificant);
+	}
+	else
+	{
+		vector<SongAndSteps> vSongAndSteps;
+		for (auto e = entries.begin(); e != entries.end(); ++e)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Course.cpp
 		{
 			soc.m_bUseSongAllowedList = true;
 			soc.m_vpSongAllowedList.push_back( pSong );
@@ -2038,6 +2050,89 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			Difficulty new_dc;
 			if( INCLUDE_BEGINNER_STEPS )
 			{
+<<<<<<< HEAD:itgmania/src/Course.cpp
+=======
+				soc.m_bUseSongAllowedList = true;
+				soc.m_vpSongAllowedList.push_back( pSong );
+			}
+			soc.m_Tutorial = SongCriteria::Tutorial_No;
+			soc.m_Locked = SongCriteria::Locked_Unlocked;
+			if( !soc.m_bUseSongAllowedList )
+				soc.m_iMaxStagesForSong = 1;
+
+			StepsCriteria stc = e->stepsCriteria;
+			stc.m_st = st;
+			stc.m_Locked = StepsCriteria::Locked_Unlocked;
+
+			const bool bSameSongCriteria = e != entries.begin() && ( e - 1 )->songCriteria == soc;
+			const bool bSameStepsCriteria = e != entries.begin() && ( e - 1 )->stepsCriteria == stc;
+
+			if( pSong )
+			{
+				vSongAndSteps.clear();
+				StepsUtil::GetAllMatching( pSong, stc, vSongAndSteps );
+			}
+			else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
+			{
+				vSongAndSteps.clear();
+				StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+			}
+
+			// It looks bad to have the same song 2x in a row in a randomly generated course.
+			// Don't allow the same song to be played 2x in a row, unless there's only
+			// one song in vpPossibleSongs.
+			if( trail.m_vEntries.size() > 0 && vSongAndSteps.size() > 1 )
+			{
+				const TrailEntry &teLast = trail.m_vEntries.back();
+				RemoveIf( vSongAndSteps, SongIsEqual( teLast.pSong ) );
+			}
+
+			// if there are no songs to choose from, abort this CourseEntry
+			if( vSongAndSteps.empty() )
+				continue;
+
+			vector<Song*> vpSongs;
+			typedef vector<Steps*> StepsVector;
+			map<Song*, StepsVector> mapSongToSteps;
+			for (std::vector<SongAndSteps>::const_iterator sas = vSongAndSteps.begin(); sas != vSongAndSteps.end(); ++sas)
+			{
+				StepsVector &v = mapSongToSteps[ sas->pSong ];
+
+				v.push_back( sas->pSteps );
+				if( v.size() == 1 )
+					vpSongs.push_back( sas->pSong );
+			}
+
+			CourseSortSongs( e->songSort, vpSongs, rnd );
+
+			ASSERT( e->iChooseIndex >= 0 );
+			if( e->iChooseIndex < int( vSongAndSteps.size() ) )
+			{
+				resolved.pSong = vpSongs[ e->iChooseIndex ];
+				const vector<Steps*> &mappedSongs = mapSongToSteps[ resolved.pSong ];
+				resolved.pSteps = mappedSongs[ RandomInt( mappedSongs.size() ) ];
+			}
+			else
+			{
+				continue;
+			}
+
+			/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are
+			* either easier or harder than the base difficulty.  If no such steps exist, then
+			* just use the one we already have. */
+			Difficulty dc = resolved.pSteps->GetDifficulty();
+			int iLowMeter = e->stepsCriteria.m_iLowMeter;
+			int iHighMeter = e->stepsCriteria.m_iHighMeter;
+			if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
+			{
+				Difficulty new_dc = ( Difficulty )( dc + cd - Difficulty_Medium );
+				new_dc = clamp( new_dc, ( Difficulty )0, ( Difficulty )( Difficulty_Edit - 1 ) );
+				/*
+				// re-edit this code to work using the metric.
+				Difficulty new_dc;
+				if( INCLUDE_BEGINNER_STEPS )
+				{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Course.cpp
 				// don't factor in the course difficulty if we're including
 				// beginner steps -aj
 				new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
@@ -2140,7 +2235,222 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	/* If the course difficulty never actually changed anything, then this difficulty
 	 * is equivalent to Difficulty_Medium; it doesn't exist. */
+<<<<<<< HEAD:itgmania/src/Course.cpp
 	return bCourseDifficultyIsSignificant;
+=======
+	return bCourseDifficultyIsSignificant && trail.m_vEntries.size() > 0;
+}
+
+void Course::GetTrailUnsortedEndless( const vector<CourseEntry> &entries, Trail &trail, StepsType &st, 
+	CourseDifficulty &cd, RandomGen &rnd, bool &bCourseDifficultyIsSignificant ) const
+{
+	typedef vector<Steps*> StepsVector;
+
+	std::set<Song*> alreadySelected;
+	Song* lastSongSelected;
+	vector<SongAndSteps> vSongAndSteps;
+	for (auto e = entries.begin(); e != entries.end(); ++e)
+	{
+
+		SongAndSteps resolved;	// fill this in
+		SongCriteria soc = e->songCriteria;
+
+
+		Song *pSong = e->songID.ToSong();
+		if( pSong )
+		{
+			soc.m_bUseSongAllowedList = true;
+			soc.m_vpSongAllowedList.push_back( pSong );
+		}
+		soc.m_Tutorial = SongCriteria::Tutorial_No;
+		soc.m_Locked = SongCriteria::Locked_Unlocked;
+		if( !soc.m_bUseSongAllowedList )
+			soc.m_iMaxStagesForSong = 1;
+
+		StepsCriteria stc = e->stepsCriteria;
+		stc.m_st = st;
+		stc.m_Locked = StepsCriteria::Locked_Unlocked;
+
+		const bool bSameSongCriteria = e != entries.begin() && ( e - 1 )->songCriteria == soc;
+		const bool bSameStepsCriteria = e != entries.begin() && ( e - 1 )->stepsCriteria == stc;
+
+		// If we're doing the same wildcard search as last entry,
+		// we can just reuse the vSongAndSteps vector.
+		if( pSong )
+		{
+			vSongAndSteps.clear();
+			StepsUtil::GetAllMatchingEndless( pSong, stc, vSongAndSteps );
+		}
+		else if( vSongAndSteps.empty() || !( bSameSongCriteria && bSameStepsCriteria ) )
+		{
+			vSongAndSteps.clear();
+			StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+		}
+
+		// if there are no songs to choose from, abort this CourseEntry
+		if( vSongAndSteps.empty() )
+			continue;
+
+		// if we're doing a RANDOM wildcard search, try to avoid repetition
+		if (vSongAndSteps.size() > 1 && e->songSort == SongSort::SongSort_Randomize)
+		{
+			// Make a backup of the steplist so we can revert if we overfilter
+			std::vector<SongAndSteps> revertList = vSongAndSteps;
+			// Filter candidate list via blacklist
+			RemoveIf(vSongAndSteps, [&](const SongAndSteps& ss) {
+				return std::find(alreadySelected.begin(), alreadySelected.end(), ss.pSong) != alreadySelected.end();
+			});
+			// If every candidate is in the blacklist, pick random song that wasn't played last
+			// (Repeat songs may still occur if song after this is fixed; this algorithm doesn't look ahead)
+			if (vSongAndSteps.empty())
+			{
+				vSongAndSteps = revertList;
+				RemoveIf(vSongAndSteps, SongIsEqual(lastSongSelected));
+
+				// If the song that was played last was the only candidate, give up pick randomly
+				if (vSongAndSteps.empty())
+				{
+					vSongAndSteps = revertList;
+				}
+			}
+		}
+
+		std::vector<Song*> vpSongs;
+		std::map<Song*, StepsVector> songStepMap;
+		// Build list of songs for sorting, and mapping of songs to steps simultaneously
+		for (auto& ss : vSongAndSteps)
+		{
+			StepsVector& stepsForSong = songStepMap[ss.pSong];
+			// If we haven't noted this song yet, add it to the song list
+			if (stepsForSong.size() == 0)
+			{
+				vpSongs.push_back(ss.pSong);
+			}
+
+			stepsForSong.push_back(ss.pSteps);
+		}
+
+		ASSERT(e->iChooseIndex >= 0);
+		// If we're trying to pick BEST100 when only 99 songs exist,
+		// we have a problem, so bail out
+		if (e->iChooseIndex >= vpSongs.size()) {
+			continue;
+		}
+
+
+		// Otherwise, pick random steps corresponding to the selected song
+		CourseSortSongs(e->songSort, vpSongs, rnd);
+		resolved.pSong = vpSongs[e->iChooseIndex];
+		const vector<Steps*>& songSteps = songStepMap[resolved.pSong];
+		resolved.pSteps = songSteps[RandomInt(songSteps.size())];
+
+		lastSongSelected = resolved.pSong;
+		alreadySelected.emplace(resolved.pSong);
+
+		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are
+		 * either easier or harder than the base difficulty.  If no such steps exist, then
+		 * just use the one we already have. */
+		Difficulty dc = resolved.pSteps->GetDifficulty();
+		int iLowMeter = e->stepsCriteria.m_iLowMeter;
+		int iHighMeter = e->stepsCriteria.m_iHighMeter;
+		if( cd != Difficulty_Medium  &&  !e->bNoDifficult )
+		{
+			Difficulty new_dc = ( Difficulty )( dc + cd - Difficulty_Medium );
+			if( dc != Difficulty_Medium )
+			{
+				new_dc = cd;
+			}
+			new_dc = clamp( new_dc, ( Difficulty )0, ( Difficulty )( Difficulty_Edit - 1 ) );
+			/*
+			// re-edit this code to work using the metric.
+			Difficulty new_dc;
+			if( INCLUDE_BEGINNER_STEPS )
+			{
+				// don't factor in the course difficulty if we're including
+				// beginner steps -aj
+				new_dc = clamp( dc, Difficulty_Beginner, (Difficulty)(Difficulty_Edit-1) );
+			}
+			else
+			{
+				new_dc = (Difficulty)(dc + cd - Difficulty_Medium);
+				new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(Difficulty_Edit-1) );
+			}
+			*/
+
+			bool bChangedDifficulty = false;
+			if( new_dc != dc )
+			{
+				Steps* pNewSteps = SongUtil::GetStepsByDifficulty( resolved.pSong, st, new_dc );
+				if( pNewSteps )
+				{
+					dc = new_dc;
+					resolved.pSteps = pNewSteps;
+					bChangedDifficulty = true;
+					bCourseDifficultyIsSignificant = true;
+				}
+			}
+
+			/* Hack: We used to adjust low_meter/high_meter above while searching for
+			 * songs.  However, that results in a different song being chosen for
+			 * difficult courses, which is bad when LockCourseDifficulties is disabled;
+			 * each player can end up with a different song.  Instead, choose based
+			 * on the original range, bump the steps based on course difficulty, and
+			 * then retroactively tweak the low_meter/high_meter so course displays
+			 * line up. */
+			if( e->stepsCriteria.m_difficulty == Difficulty_Invalid && bChangedDifficulty )
+			{
+				/* Minimum and maximum to add to make the meter range contain the actual
+				 * meter: */
+				int iMinDist = resolved.pSteps->GetMeter() - iHighMeter;
+				int iMaxDist = resolved.pSteps->GetMeter() - iLowMeter;
+
+				/* Clamp the possible adjustments to try to avoid going under 1 or over
+				 * MAX_BOTTOM_RANGE. */
+				iMinDist = min( max( iMinDist, -iLowMeter + 1 ), iMaxDist );
+				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE - iHighMeter ), iMinDist );
+
+				int iAdd;
+				if( iMaxDist == iMinDist )
+					iAdd = iMaxDist;
+				else
+					iAdd = rnd( iMaxDist - iMinDist ) + iMinDist;
+				iLowMeter += iAdd;
+				iHighMeter += iAdd;
+			}
+		}
+
+		TrailEntry te;
+		te.pSong = resolved.pSong;
+		te.pSteps = resolved.pSteps;
+		te.Modifiers = e->sModifiers;
+		te.Attacks = e->attacks;
+		te.bSecret = e->bSecret;
+		te.iLowMeter = iLowMeter;
+		te.iHighMeter = iHighMeter;
+
+		/* If we chose based on meter (not difficulty), then store Difficulty_Invalid, so
+		 * other classes can tell that we used meter. */
+		if( e->stepsCriteria.m_difficulty == Difficulty_Invalid )
+		{
+			te.dc = Difficulty_Invalid;
+		}
+		else
+		{
+			/* Otherwise, store the actual difficulty we got (post-course-difficulty).
+			 * This may or may not be the same as e.difficulty. */
+			te.dc = dc;
+		}
+
+		trail.m_vEntries.push_back( te );
+		// LOG->Trace( "Chose: %s, %d", te.pSong->GetSongDir().c_str(), te.pSteps->GetMeter() );
+
+		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
+			int( trail.m_vEntries.size() ) >= MAX_SONGS_IN_EDIT_COURSE )
+		{
+			break;
+		}
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Course.cpp
 }
 
 void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
@@ -2327,9 +2637,15 @@ bool Course::CourseHasBestOrWorst() const
 {
 	for (CourseEntry const &e : m_vEntries)
 	{
+<<<<<<< HEAD:itgmania/src/Course.cpp
 		if( e.iChooseIndex == SongSort_MostPlays  &&  e.iChooseIndex != -1 )
 			return true;
 		if( e.iChooseIndex == SongSort_FewestPlays  &&  e.iChooseIndex != -1 )
+=======
+		if( e.songSort == SongSort_MostPlays  &&  e.iChooseIndex != -1 )
+			return true;
+		if( e.songSort == SongSort_FewestPlays  &&  e.iChooseIndex != -1 )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Course.cpp
 			return true;
 	}
 
@@ -2534,7 +2850,19 @@ public:
 	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int HasTimedMods( T* p, lua_State *L )		{ lua_pushboolean( L, p->HasTimedMods() ); return 1; }
 	DEFINE_METHOD( GetCourseType, GetCourseType() )
-	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
+	static int GetCourseEntry(T* p, lua_State* L)
+	{
+		size_t id= static_cast<size_t>(IArg(1));
+		if(id >= p->m_vEntries.size())
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			p->m_vEntries[id].PushSelf(L);
+		}
+		return 1;
+	}
 	static int GetCourseEntries( T* p, lua_State *L )
 	{
 		vector<CourseEntry*> v;
@@ -2543,6 +2871,11 @@ public:
 			v.push_back(&p->m_vEntries[i]);
 		}
 		LuaHelpers::CreateTableFromArray<CourseEntry*>( v, L );
+		return 1;
+	}
+	static int GetNumCourseEntries(T* p, lua_State* L)
+	{
+		lua_pushnumber(L, p->m_vEntries.size());
 		return 1;
 	}
 	static int GetAllTrails( T* p, lua_State *L )
@@ -2596,6 +2929,7 @@ public:
 		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetCourseEntries );
+		ADD_METHOD(GetNumCourseEntries);
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetBannerPath );
 		ADD_METHOD( GetBackgroundPath );
@@ -2647,4 +2981,7 @@ LUA_REGISTER_CLASS( Course )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Course.cpp
 >>>>>>> origin/c++11:src/Course.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Course.cpp

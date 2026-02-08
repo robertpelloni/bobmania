@@ -11,12 +11,18 @@
 #include "IniFile.h"
 #include "LuaManager.h"
 <<<<<<< HEAD:itgmania/src/ActorUtil.cpp
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 #include "Song.h"
 #include "Course.h"
 #include "GameState.h"
 =======
 
 >>>>>>> origin/c++11:src/ActorUtil.cpp
+=======
+#include "Song.h"
+#include "Course.h"
+#include "GameState.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.cpp
 
 #include "arch/Dialog/Dialog.h"
 
@@ -129,6 +135,9 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 namespace
 {
 <<<<<<< HEAD:itgmania/src/ActorUtil.cpp
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.cpp
 	RString GetLegacyActorClass(XNode *pActor)
 	{
 		DEBUG_ASSERT(PREFSMAN->m_bQuirksMode);
@@ -189,9 +198,12 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	ASSERT( _pNode != nullptr );
 
 	XNode node = *_pNode;
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 =======
 	ASSERT( pNode != nullptr );
 >>>>>>> origin/c++11:src/ActorUtil.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.cpp
 
 	// Remove this in favor of using conditionals in Lua. -Chris
 	// There are a number of themes out there that depend on this (including
@@ -199,10 +211,14 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	{
 		bool bCond;
 <<<<<<< HEAD:itgmania/src/ActorUtil.cpp
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 		if( node.GetAttrValue("Condition", bCond) && !bCond )
 =======
 		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
 >>>>>>> origin/c++11:src/ActorUtil.cpp
+=======
+		if( node.GetAttrValue("Condition", bCond) && !bCond )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.cpp
 			return nullptr;
 	}
 
@@ -272,10 +288,14 @@ namespace
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 <<<<<<< HEAD:itgmania/src/ActorUtil.cpp
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 			LuaHelpers::ReportScriptError(sError);
 =======
 			Dialog::OK( sError, "LUA_ERROR" );
 >>>>>>> origin/c++11:src/ActorUtil.cpp
+=======
+			LuaHelpers::ReportScriptError(sError);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.cpp
 			return nullptr;
 		}
 
@@ -713,10 +733,14 @@ namespace
 		LIST_METHOD( LoadAllCommandsFromName ),
 		LIST_METHOD( LoadAllCommandsAndSetXY ),
 <<<<<<< HEAD:itgmania/src/ActorUtil.cpp
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 		{ nullptr, nullptr }
 =======
 		{ NULL, nullptr }
 >>>>>>> origin/c++11:src/ActorUtil.cpp
+=======
+		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorUtil.cpp
 	};
 }
 

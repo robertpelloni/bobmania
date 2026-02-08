@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
+<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp
 #include "global.h"
 #include "ActorFrameTexture.h"
 #include "RageTextureRenderTarget.h"
@@ -76,6 +79,7 @@ void ActorFrameTexture::Create()
 void ActorFrameTexture::DrawPrimitives()
 {
 	if( m_pRenderTarget == nullptr )
+<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
 		return;
 
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
@@ -209,6 +213,8 @@ void ActorFrameTexture::Create()
 void ActorFrameTexture::DrawPrimitives()
 {
 	if( m_pRenderTarget == nullptr )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp
 		return;
 
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
@@ -235,8 +241,18 @@ public:
 	{
 		RageTexture *pTexture = p->GetTexture();
 		if( pTexture == nullptr )
+<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
 			return 0;
 		pTexture->PushSelf(L);
+=======
+		{
+			lua_pushnil(L);
+		}
+		else
+		{
+			pTexture->PushSelf(L);
+		}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp
 		return 1;
 	}
 	
@@ -279,4 +295,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrameTexture, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
 >>>>>>> origin/c++11:src/ActorFrameTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp

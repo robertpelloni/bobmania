@@ -4,10 +4,13 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_JACK.cpp
 
 #include <cstdint>
 #include <vector>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_JACK.cpp
 
 REGISTER_SOUND_DRIVER_CLASS( JACK );
 
@@ -149,7 +152,11 @@ RString RageSoundDriver_JACK::ConnectPorts()
 		// "aliases" in the docs.)
 		for ( RString const &portName : portNames )
 		{
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_JACK.cpp
 			jack_port_t *out = jack_port_by_name( client, portName.c_str() );
+=======
+			jack_port_t *out = jack_port_by_name( client, portName );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_JACK.cpp
 			// Make sure the port is a sink.
 			if( ! ( jack_port_flags( out ) & JackPortIsInput ) )
 				continue;
@@ -167,7 +174,11 @@ RString RageSoundDriver_JACK::ConnectPorts()
 		}
 		if( port_out_l == nullptr )
 			return "All specified sinks are invalid.";
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_JACK.cpp
 
+=======
+		
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_JACK.cpp
 		if( port_out_r == nullptr )
 			// Only found one valid sink. Going mono!
 			port_out_r = port_out_l;

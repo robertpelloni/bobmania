@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenSystemLayer.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSystemLayer.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSystemLayer.cpp
 #include "global.h"
 #include "ScreenSystemLayer.h"
 #include "ScreenManager.h"
@@ -212,6 +215,7 @@ void ScreenSystemLayer::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenSystemLayer.cpp
 =======
 #include "global.h"
 #include "ScreenSystemLayer.h"
@@ -391,3 +395,5 @@ void ScreenSystemLayer::Init()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/ScreenSystemLayer.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSystemLayer.cpp

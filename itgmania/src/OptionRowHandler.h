@@ -117,6 +117,7 @@ struct OptionRowDefinition
 		m_bShowChoicesListOnSelect = false;
 	}
 
+<<<<<<< HEAD:itgmania/src/OptionRowHandler.h
 	OptionRowDefinition( const char *n, bool b, const char *c0=nullptr,
 			    const char *c1=nullptr, const char *c2=nullptr,
 			    const char *c3=nullptr, const char *c4=nullptr,
@@ -127,6 +128,18 @@ struct OptionRowDefinition
 			    const char *c13=nullptr, const char *c14=nullptr,
 			    const char *c15=nullptr, const char *c16=nullptr,
 			    const char *c17=nullptr, const char *c18=nullptr,
+=======
+	OptionRowDefinition( const char *n, bool b, const char *c0=nullptr, 
+			    const char *c1=nullptr, const char *c2=nullptr, 
+			    const char *c3=nullptr, const char *c4=nullptr, 
+			    const char *c5=nullptr, const char *c6=nullptr, 
+			    const char *c7=nullptr, const char *c8=nullptr, 
+			    const char *c9=nullptr, const char *c10=nullptr, 
+			    const char *c11=nullptr, const char *c12=nullptr, 
+			    const char *c13=nullptr, const char *c14=nullptr, 
+			    const char *c15=nullptr, const char *c16=nullptr, 
+			    const char *c17=nullptr, const char *c18=nullptr, 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.h
 			    const char *c19=nullptr ): m_sName(n),
 		m_sExplanationName(""), m_bOneChoiceForAllPlayers(b),
 		m_selectType(SELECT_ONE),

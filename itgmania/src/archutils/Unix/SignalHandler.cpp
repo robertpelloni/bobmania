@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
+#include <memory>
 
 #if defined(HAVE_LIBPTHREAD)
 #include "archutils/Common/PthreadHelpers.h"
@@ -34,8 +35,13 @@ extern "C" int sigaltstack(const stack_t * __restrict, stack_t * __restrict);
 static int find_stack_direction2( char *p ) NOINLINE;
 static int find_stack_direction() NOINLINE;
 
+<<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
 static std::vector<SignalHandler::handler> handlers;
 std::unique_ptr<SaveSignals> saved_sigs;
+=======
+static vector<SignalHandler::handler> handlers;
+unique_ptr<SaveSignals> saved_sigs;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/SignalHandler.cpp
 
 static int signals[] =
 {
@@ -123,10 +129,14 @@ static void *CreateStack( int size )
 	 * a fallback, but we'd have to put a barrier page on both sides to guarantee that. */
 	char *p = nullptr;
 <<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
 	p = (char *) mmap( nullptr, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 =======
 	p = (char *) mmap( NULL, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
 >>>>>>> origin/c++11:src/archutils/Unix/SignalHandler.cpp
+=======
+	p = (char *) mmap( nullptr, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/SignalHandler.cpp
 
 	if( p == (void *) -1 )
 		return nullptr;
@@ -152,11 +162,16 @@ static void *CreateStack( int size )
 void SignalHandler::OnClose( handler h )
 {
 <<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
 	//if the unique_ptr has not been set, then enter.
 	if( !saved_sigs )
 =======
 	if( saved_sigs == nullptr )
 >>>>>>> origin/c++11:src/archutils/Unix/SignalHandler.cpp
+=======
+	//if the unique_ptr has not been set, then enter.
+	if( !saved_sigs )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/SignalHandler.cpp
 	{
 		saved_sigs.reset(new SaveSignals());
 		bool bUseAltSigStack = true;

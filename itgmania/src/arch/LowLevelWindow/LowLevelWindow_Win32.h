@@ -20,8 +20,11 @@ public:
 	virtual bool SupportsRenderToTexture() const { return true; }
 	virtual RenderTarget *CreateRenderTarget();
 
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.h
 	bool SupportsFullscreenBorderlessWindow() const { return true; }
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.h
 	const ActualVideoModeParams GetActualVideoModeParams() const;
 };
 

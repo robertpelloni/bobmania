@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/BeginnerHelper.cpp
+<<<<<<< HEAD:itgmania/src/BeginnerHelper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.cpp
 #include "global.h"
 
 #include "ActorUtil.h"
@@ -390,6 +393,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 /*
  * (c) 2003 Kevin Slaughter, Tracy Ward
+<<<<<<< HEAD:itgmania/src/BeginnerHelper.cpp
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -797,6 +801,8 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 /*
  * (c) 2003 Kevin Slaughter, Thad Ward
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.cpp
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -819,4 +825,7 @@ void BeginnerHelper::Update( float fDeltaTime )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/BeginnerHelper.cpp
 >>>>>>> origin/c++11:src/BeginnerHelper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenWithMenuElements.cpp
+<<<<<<< HEAD:itgmania/src/ScreenWithMenuElements.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenWithMenuElements.cpp
 #include "global.h"
 #include "ScreenWithMenuElements.h"
 #include "MenuTimer.h"
@@ -166,7 +169,11 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	FOREACH_PlayerNumber( p )
 	{
 		if( m_MemoryCardDisplay[p] != nullptr )
+<<<<<<< HEAD:itgmania/src/ScreenWithMenuElements.cpp
 			RageUtil::SafeDelete( m_MemoryCardDisplay[p] );
+=======
+			SAFE_DELETE( m_MemoryCardDisplay[p] );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenWithMenuElements.cpp
 	}
 	for (Actor *actor : m_vDecorations)
 		delete actor;
@@ -436,6 +443,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElementsSimple, ScreenWithMenuElements
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenWithMenuElements.cpp
 =======
 #include "global.h"
 #include "ScreenWithMenuElements.h"
@@ -854,3 +862,5 @@ LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElementsSimple, ScreenWithMenuElements
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/ScreenWithMenuElements.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenWithMenuElements.cpp

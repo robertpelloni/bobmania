@@ -1,11 +1,29 @@
+<<<<<<< HEAD:itgmania/src/arch/Lights/SextetUtils.h
+<<<<<<<< HEAD:itgmania/src/arch/Lights/SextetUtils.h
 #ifndef SextetUtils_H
 #define SextetUtils_H
+========
+#include "global.h"
+#include "LightsDriver_SextetStream.h"
+#include "PrefsManager.h"
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "SextetUtils.h"
+>>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_SextetStream.cpp
 
 #include "LightsDriver.h"
 
 #include <cstddef>
 #include <cstdint>
 
+<<<<<<<< HEAD:itgmania/src/arch/Lights/SextetUtils.h
+=======
+#ifndef SextetUtils_H
+#define SextetUtils_H
+
+#include "LightsDriver.h"
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/SextetUtils.h
 /*
  * Utility functions that both `LightsDriver_Win32Serial` and `LightsDriver_SextetStream`
  * take advantage of, in order to encode the lights data into a common format.
@@ -145,6 +163,132 @@ inline size_t packLine(uint8_t* buffer, const LightsState* ls)
 }
 
 #endif
+<<<<<<< HEAD:itgmania/src/arch/Lights/SextetUtils.h
+========
+
+// Private members/methods are kept out of the header using an opaque pointer `_impl`.
+// Google "pimpl idiom" for an explanation of what's going on and why it is (or might be) useful.
+
+
+// Implementation class
+
+namespace
+{
+	class Impl
+	{
+	protected:
+		uint8_t lastOutput[FULL_SEXTET_COUNT];
+		RageFile * out;
+
+	public:
+		Impl(RageFile * file) {
+			out = file;
+
+			// Ensure a non-match the first time
+			lastOutput[0] = 0;
+		}
+
+		virtual ~Impl() {
+			if(out != nullptr)
+			{
+				out->Flush();
+				out->Close();
+				SAFE_DELETE(out);
+			}
+		}
+
+		void Set(const LightsState * ls)
+		{
+			uint8_t buffer[FULL_SEXTET_COUNT];
+
+			packLine(buffer, ls);
+
+			// Only write if the message has changed since the last write.
+			if(memcmp(buffer, lastOutput, FULL_SEXTET_COUNT) != 0)
+			{
+				if(out != nullptr)
+				{
+					out->Write(buffer, FULL_SEXTET_COUNT);
+					out->Flush();
+				}
+
+				// Remember last message
+				memcpy(lastOutput, buffer, FULL_SEXTET_COUNT);
+			}
+		}
+	};
+}
+
+
+// LightsDriver_SextetStream interface
+// (Wrapper for Impl)
+
+#define IMPL ((Impl*)_impl)
+
+LightsDriver_SextetStream::LightsDriver_SextetStream()
+{
+	_impl = nullptr;
+}
+
+LightsDriver_SextetStream::~LightsDriver_SextetStream()
+{
+	if(IMPL != nullptr)
+	{
+		delete IMPL;
+	}
+}
+
+void LightsDriver_SextetStream::Set(const LightsState *ls)
+{
+	if(IMPL != nullptr)
+	{
+		IMPL->Set(ls);
+	}
+}
+
+
+// LightsDriver_SextetStreamToFile implementation
+
+REGISTER_LIGHTS_DRIVER_CLASS(SextetStreamToFile);
+
+#if defined(_WINDOWS)
+	#define DEFAULT_OUTPUT_FILENAME "\\\\.\\pipe\\StepMania-Lights-SextetStream"
+#else
+	#define DEFAULT_OUTPUT_FILENAME "Data/StepMania-Lights-SextetStream.out"
+#endif
+static Preference<RString> g_sSextetStreamOutputFilename("SextetStreamOutputFilename", DEFAULT_OUTPUT_FILENAME);
+
+inline RageFile * openOutputStream(const RString& filename)
+{
+	RageFile * file = new RageFile;
+
+	if(!file->Open(filename, RageFile::WRITE|RageFile::STREAMED))
+	{
+		LOG->Warn("Error opening file '%s' for output: %s", filename.c_str(), file->GetError().c_str());
+		SAFE_DELETE(file);
+		file = nullptr;
+	}
+
+	return file;
+}
+
+LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(RageFile * file)
+{
+	_impl = new Impl(file);
+}
+
+LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile(const RString& filename)
+{
+	_impl = new Impl(openOutputStream(filename));
+}
+
+LightsDriver_SextetStreamToFile::LightsDriver_SextetStreamToFile()
+{
+	_impl = new Impl(openOutputStream(g_sSextetStreamOutputFilename));
+}
+>>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_SextetStream.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/SextetUtils.h
 
 /*
  * Copyright © 2014 Peter S. May

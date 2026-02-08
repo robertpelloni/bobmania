@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD:itgmania/extern/lua-5.1/src/linit.c
 ** $Id: linit.c 23036 2006-09-25 07:35:34Z gmaynard $
+=======
+** $Id: linit.c,v 1.14.1.1 2007/12/27 13:02:25 roberto Exp $
+>>>>>>> origin/unified-ui-features-13937230807013224518:extern/lua-5.1/src/linit.c
 ** Initialization of libraries for lua.c
 ** See Copyright Notice in lua.h
 */
@@ -23,7 +27,10 @@ static const luaL_Reg lualibs[] = {
   {LUA_STRLIBNAME, luaopen_string},
   {LUA_MATHLIBNAME, luaopen_math},
   {LUA_DBLIBNAME, luaopen_debug},
+<<<<<<< HEAD:itgmania/extern/lua-5.1/src/linit.c
   {LUA_BITLIBNAME, luaopen_bit},
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:extern/lua-5.1/src/linit.c
   {NULL, NULL}
 };
 

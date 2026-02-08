@@ -6,6 +6,7 @@
     #include <unistd.h>
 #endif
 
+<<<<<<< HEAD:itgmania/src/global.cpp
 #if defined(_WIN32)
     #if defined(CRASH_HANDLER)
         #define WIN32_LEAN_AND_MEAN
@@ -15,6 +16,17 @@
     #if defined(_MSC_VER)
         #include <intrin.h>
     #endif
+=======
+#if defined(_WINDOWS)
+#  if defined(CRASH_HANDLER)
+#    define _WIN32_WINDOWS 0x0410 // include Win98 stuff
+#    include "windows.h"
+#    include "archutils/Win32/Crash.h"
+#  endif
+#  if defined(_MSC_VER)
+#    include <intrin.h>
+#  endif
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/global.cpp
 #elif defined(MACOSX)
     #include "archutils/Darwin/Crash.h"
     using CrashHandler::IsDebuggerPresent;
@@ -56,6 +68,11 @@ void sm_crash( const char *reason )
 	 * way, this function will appear in backtrace stack traces. */
 #if defined(_MSC_VER)
 	__nop();
+<<<<<<< HEAD:itgmania/src/global.cpp
+=======
+#elif defined(__GNUC__) // MinGW or similar
+	asm("nop");
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/global.cpp
 #endif
 #else
 	_exit( 1 );

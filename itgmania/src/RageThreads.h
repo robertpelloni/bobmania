@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageThreads.h
+<<<<<<< HEAD:itgmania/src/RageThreads.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageThreads.h
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
@@ -225,6 +228,7 @@ private:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageThreads.h
 =======
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
@@ -452,3 +456,5 @@ private:
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/RageThreads.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageThreads.h

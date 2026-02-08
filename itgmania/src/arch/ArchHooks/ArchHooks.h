@@ -1,7 +1,10 @@
 #ifndef ARCH_HOOKS_H
 #define ARCH_HOOKS_H
 
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.h
 #include <cstdint>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.h
 #include <ctime>
 
 struct lua_State;

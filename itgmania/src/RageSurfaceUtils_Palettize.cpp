@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/RageSurfaceUtils_Palettize.cpp
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils_Palettize.cpp
 /* from http://www.libpng.org/pub/png/apps/pngquant.html */
 
 #include "global.h"
@@ -622,6 +623,8 @@ static void pam_freeacolorhist( acolorhist_item *achv )
  * implied warranty.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurfaceUtils_Palettize.cpp
 /* from http://www.libpng.org/pub/png/apps/pngquant.html */
 
 #include "global.h"
@@ -727,7 +730,7 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 {
 	ASSERT( iColors != 0 );
 
-	acolorhist_item *acolormap=NULL;
+	acolorhist_item *acolormap=nullptr;
 	int newcolors = 0;
 
 	// "apixel", etc. make assumptions about byte order.
@@ -748,6 +751,10 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 		{
 			achv = pam_computeacolorhist( pImg, MAXCOLORS, &colors );
 			if( achv != nullptr )
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils_Palettize.cpp
+=======
+			{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurfaceUtils_Palettize.cpp
 				break;
 			pixval newmaxval = maxval / 2;
 
@@ -1236,4 +1243,7 @@ static void pam_freeacolorhist( acolorhist_item *achv )
  * documentation.  This software is provided "as is" without express or
  * implied warranty.
  */
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils_Palettize.cpp
 >>>>>>> origin/c++11:src/RageSurfaceUtils_Palettize.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurfaceUtils_Palettize.cpp

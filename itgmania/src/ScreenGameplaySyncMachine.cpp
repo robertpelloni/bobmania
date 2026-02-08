@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
+<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplaySyncMachine.cpp
 #include "global.h"
 #include "ScreenGameplaySyncMachine.h"
 #include "NotesLoaderSSC.h"
@@ -103,6 +106,7 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
 		GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
 		GAMESTATE->m_pCurSong.Set( nullptr );
+<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
 	}
 }
 
@@ -257,6 +261,8 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
 		GAMESTATE->SetCurrentStyle(nullptr);
 		GAMESTATE->m_pCurSong.Set(nullptr);
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplaySyncMachine.cpp
 	}
 }
 
@@ -313,4 +319,7 @@ void ScreenGameplaySyncMachine::RefreshText()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
 >>>>>>> origin/c++11:src/ScreenGameplaySyncMachine.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplaySyncMachine.cpp

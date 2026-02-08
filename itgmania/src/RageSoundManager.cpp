@@ -16,9 +16,12 @@
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
 <<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
 =======
 
 >>>>>>> origin/c++11:src/RageSoundManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundManager.cpp
 #include "LocalizedString.h"
 #include "Preference.h"
 #include "RageSoundReader_PostBuffering.h"
@@ -42,10 +45,14 @@ static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAU
 RageSoundManager *SOUNDMAN = nullptr;
 
 <<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
 RageSoundManager::RageSoundManager(): m_pDriver(nullptr),
 =======
 RageSoundManager::RageSoundManager(): m_pDriver(nullptr), m_fMixVolume(1.0f),
 >>>>>>> origin/c++11:src/RageSoundManager.cpp
+=======
+RageSoundManager::RageSoundManager(): m_pDriver(nullptr),
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundManager.cpp
 	m_fVolumeOfNonCriticalSounds(1.0f) {}
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
@@ -65,6 +72,20 @@ RageSoundManager::~RageSoundManager()
 	m_mapPreloadedSounds.clear();
 }
 
+<<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
+=======
+
+void RageSoundManager::low_sample_count_workaround()
+{
+	m_pDriver->low_sample_count_workaround();
+}
+
+void RageSoundManager::fix_bogus_sound_driver_pref(RString const& valid_setting)
+{
+	g_sSoundDrivers.Set(valid_setting);
+}
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundManager.cpp
 /*
  * Previously, we went to some lengths to shut down sounds before exiting threads.
  * The only other thread that actually starts sounds is SOUND.  Doing this was ugly;

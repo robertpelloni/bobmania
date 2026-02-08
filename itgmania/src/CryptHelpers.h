@@ -3,11 +3,15 @@
 
 #if !defined(DISABLE_CRYPTO)
 
+<<<<<<< HEAD:itgmania/src/CryptHelpers.h
 // tomcrypt_cfg.h redefines malloc, realloc, calloc
 #pragma warning( push )
 #pragma warning( disable : 4565 )
 #include <tomcrypt.h>
 #pragma warning ( pop )
+=======
+#include <tomcrypt.h>
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptHelpers.h
 
 class PRNGWrapper
 {

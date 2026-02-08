@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/AutoKeysounds.cpp
+<<<<<<< HEAD:itgmania/src/AutoKeysounds.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AutoKeysounds.cpp
 /*
  * This class handles two things: auto-play preload, and runtime auto-play sounds.
  *
@@ -32,8 +35,11 @@
 #include "RageLog.h"
 #include "RageSoundReader_FileReader.h"
 
+<<<<<<< HEAD:itgmania/src/AutoKeysounds.cpp
 #include <vector>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AutoKeysounds.cpp
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
@@ -129,7 +135,11 @@ void AutoKeysounds::LoadTracks( const Song *pSong, RageSoundReader *&pShared, Ra
 	}
 
 
+<<<<<<< HEAD:itgmania/src/AutoKeysounds.cpp
 	std::vector<RageSoundReader *> vpSounds;
+=======
+	vector<RageSoundReader *> vpSounds;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AutoKeysounds.cpp
 	for (RString const &s : vsMusicFile)
 	{
 		RString sError;
@@ -765,4 +775,7 @@ void AutoKeysounds::Update( float fDelta )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/AutoKeysounds.cpp
 >>>>>>> origin/c++11:src/AutoKeysounds.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AutoKeysounds.cpp

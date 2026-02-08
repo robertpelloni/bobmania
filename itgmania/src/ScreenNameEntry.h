@@ -19,6 +19,16 @@ public:
 	virtual bool Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+<<<<<<< HEAD:itgmania/src/ScreenNameEntry.h
+=======
+	RoomWheel* GetRoomWheel();
+	void SelectCurrent();
+
+	// Lua
+	void PushSelf(lua_State *L);
+
+protected:
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenNetRoom.h
 	virtual bool MenuStart( const InputEventPlus &input );
 private:
 	class ScrollingText : public Actor

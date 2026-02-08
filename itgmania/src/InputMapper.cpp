@@ -10,9 +10,12 @@
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
 <<<<<<< HEAD:itgmania/src/InputMapper.cpp
+<<<<<<< HEAD:itgmania/src/InputMapper.cpp
 =======
 
 >>>>>>> origin/c++11:src/InputMapper.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputMapper.cpp
 #include "arch/Dialog/Dialog.h"
 
 #include <cstddef>
@@ -34,10 +37,14 @@ namespace
 };
 
 <<<<<<< HEAD:itgmania/src/InputMapper.cpp
+<<<<<<< HEAD:itgmania/src/InputMapper.cpp
 InputMapper*	INPUTMAPPER = nullptr;	// global and accessible from anywhere in our program
 =======
 InputMapper*	INPUTMAPPER = nullptr;	// global and accessable from anywhere in our program
 >>>>>>> origin/c++11:src/InputMapper.cpp
+=======
+InputMapper*	INPUTMAPPER = nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputMapper.cpp
 
 InputMapper::InputMapper()
 {
@@ -758,7 +765,11 @@ void InputMapper::CheckButtonAndAddToReason(GameButton menu, std::vector<RString
 	GetInputScheme()->MenuButtonToGameInputs(menu, PLAYER_1, inputs);
 	if(!inputs.empty())
 	{
+<<<<<<< HEAD:itgmania/src/InputMapper.cpp
 		std::vector<DeviceInput> device_inputs;
+=======
+		vector<DeviceInput> device_inputs;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputMapper.cpp
 		for(GameInput &inp : inputs)
 		{
 			for(int slot= 0; slot < NUM_GAME_TO_DEVICE_SLOTS; ++slot)

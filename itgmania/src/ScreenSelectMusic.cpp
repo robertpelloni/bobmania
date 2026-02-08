@@ -22,9 +22,12 @@
 #include "StatsManager.h"
 #include "StepsUtil.h"
 <<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 =======
 
 >>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
@@ -244,6 +247,9 @@ void ScreenSelectMusic::BeginScreen()
 	}
 
 <<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 	if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
 	{
 		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
@@ -260,10 +266,13 @@ void ScreenSelectMusic::BeginScreen()
 		}
 		GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 	}
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 =======
 	if( GAMESTATE->GetCurrentStyle() == nullptr )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 >>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 	{
@@ -1500,10 +1509,14 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		}
 
 <<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 		// Now that Steps have been chosen, set a Style that can play them.
 		GAMESTATE->SetCompatibleStylesForPlayers();
 		GAMESTATE->ForceSharedSidesMatch();
 		GAMESTATE->prepare_song_for_gameplay();
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 =======
 		if( CommonMetrics::AUTO_SET_STYLE )
 		{
@@ -1531,6 +1544,8 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			GAMESTATE->SetCurrentStyle( pStyle );
 		}
 >>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 
 		/* If we're currently waiting on song assets, abort all except the music
 		 * and start the music, so if we make a choice quickly before background
@@ -2052,13 +2067,20 @@ void ScreenSelectMusic::AfterMusicChange()
 		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = nullptr;
 <<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 		if(CommonMetrics::AUTO_SET_STYLE)
 		{
 			pStyle = pCourse->GetCourseStyle(GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled());
 			if(pStyle == nullptr)
 			{
 				lCourse->GetAllTrails(m_vpTrails);
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 				std::vector<Trail*>::iterator tra= m_vpTrails.begin();
+=======
+				vector<Trail*>::iterator tra= m_vpTrails.begin();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 				Game const* cur_game= GAMESTATE->GetCurrentGame();
 				int num_players= GAMESTATE->GetNumPlayersEnabled();
 				while(tra != m_vpTrails.end())
@@ -2084,6 +2106,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 			lCourse->GetTrails(m_vpTrails, pStyle->m_StepsType);
 		}
+<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 =======
 		if( CommonMetrics::AUTO_SET_STYLE )
 			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
@@ -2091,6 +2114,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			pStyle = GAMESTATE->GetCurrentStyle();
 		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
 >>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;

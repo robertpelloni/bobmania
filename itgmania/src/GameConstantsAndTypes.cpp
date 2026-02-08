@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/GameConstantsAndTypes.cpp
+<<<<<<< HEAD:itgmania/src/GameConstantsAndTypes.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameConstantsAndTypes.cpp
 #include "global.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
@@ -390,7 +393,11 @@ float DisplayBpms::GetMin() const
 	for (float const &f : vfBpms)
 	{
 		if( f != -1 )
+<<<<<<< HEAD:itgmania/src/GameConstantsAndTypes.cpp
 			fMin = std::min( fMin, f );
+=======
+			fMin = min( fMin, f );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameConstantsAndTypes.cpp
 	}
 	if( fMin == FLT_MAX )
 		return 0;
@@ -409,7 +416,11 @@ float DisplayBpms::GetMaxWithin(float highest) const
 	for (float const &f : vfBpms)
 	{
 		if( f != -1 )
+<<<<<<< HEAD:itgmania/src/GameConstantsAndTypes.cpp
 			fMax = std::clamp(std::max( fMax, f ), 0.0f, highest);
+=======
+			fMax = clamp(max( fMax, f ), 0, highest);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameConstantsAndTypes.cpp
 	}
 	return fMax;
 }
@@ -1059,4 +1070,7 @@ LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString( Enum::Che
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/GameConstantsAndTypes.cpp
 >>>>>>> origin/c++11:src/GameConstantsAndTypes.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameConstantsAndTypes.cpp

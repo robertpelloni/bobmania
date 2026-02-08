@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/DifficultyList.cpp
+<<<<<<< HEAD:itgmania/src/DifficultyList.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/DifficultyList.cpp
 #include "global.h"
 #include "DifficultyList.h"
 #include "GameState.h"
@@ -8,6 +11,7 @@
 #include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
+<<<<<<< HEAD:itgmania/src/DifficultyList.cpp
 #include "SongUtil.h"
 #include "XmlFile.h"
 
@@ -438,6 +442,8 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
 #include "StepsDisplay.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/DifficultyList.cpp
 
 #include "SongUtil.h"
 #include "XmlFile.h"
@@ -482,8 +488,18 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
 		if( pChild == nullptr )
+<<<<<<< HEAD:itgmania/src/DifficultyList.cpp
 			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
 		m_Cursors[pn].LoadActorFromNode( pChild, this );
+=======
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
+		}
+		else
+		{
+			m_Cursors[pn].LoadActorFromNode( pChild, this );
+		}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/DifficultyList.cpp
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
 		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
@@ -493,10 +509,22 @@ void StepsDisplayList::LoadFromNode( const XNode* pNode )
 		 * colors; I think we do need a diffuse color stack ... */
 		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
 		if( pChild == nullptr )
+<<<<<<< HEAD:itgmania/src/DifficultyList.cpp
 			RageException::Throw( "%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
 		m_CursorFrames[pn].LoadFromNode( pChild );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
 		this->AddChild( &m_CursorFrames[pn] );
+=======
+		{
+			LuaHelpers::ReportScriptErrorFmt("%s: StepsDisplayList: missing the node \"CursorP%dFrame\"", ActorUtil::GetWhere(pNode).c_str(), pn+1);
+		}
+		else
+		{
+			m_CursorFrames[pn].LoadFromNode( pChild );
+			m_CursorFrames[pn].AddChild( m_Cursors[pn] );
+			this->AddChild( &m_CursorFrames[pn] );
+		}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/DifficultyList.cpp
 	}
 
 	for( unsigned m = 0; m < m_Lines.size(); ++m )
@@ -694,7 +722,11 @@ void StepsDisplayList::SetFromGameState()
 		for (Difficulty const &d : difficulties)
 		{
 			m_Rows[i].m_dc = d;
+<<<<<<< HEAD:itgmania/src/DifficultyList.cpp
 			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GAMESTATE->m_pCurStyle->m_StepsType, 0, d, CourseType_Invalid );
+=======
+			m_Lines[i].m_Meter.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, 0, d, CourseType_Invalid );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/DifficultyList.cpp
 			++i;
 		}
 	}
@@ -841,4 +873,7 @@ LUA_REGISTER_DERIVED_CLASS( StepsDisplayList, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/DifficultyList.cpp
 >>>>>>> origin/c++11:src/DifficultyList.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/DifficultyList.cpp

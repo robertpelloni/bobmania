@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/CharacterManager.h
+<<<<<<< HEAD:itgmania/src/CharacterManager.h
 #ifndef CHARACTER_MANAGER_H
 #define CHARACTER_MANAGER_H
 
@@ -67,6 +68,8 @@ extern CharacterManager*	CHARMAN;	// global and accessible from anywhere in our 
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CharacterManager.h
 #ifndef CHARACTER_MANAGER_H
 #define CHARACTER_MANAGER_H
 
@@ -131,4 +134,7 @@ extern CharacterManager*	CHARMAN;	// global and accessable from anywhere in our 
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/CharacterManager.h
 >>>>>>> origin/c++11:src/CharacterManager.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CharacterManager.h

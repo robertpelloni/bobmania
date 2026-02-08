@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/NoteSkinManager.cpp
+<<<<<<< HEAD:itgmania/src/NoteSkinManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NoteSkinManager.cpp
 #include "global.h"
 #include "NoteSkinManager.h"
 #include "RageFileManager.h"
@@ -498,7 +501,11 @@ Actor *NoteSkinManager::LoadActor( const RString &sButton, const RString &sEleme
 		return Sprite::NewBlankSprite();
 	}
 
+<<<<<<< HEAD:itgmania/src/NoteSkinManager.cpp
 	std::unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
+=======
+	unique_ptr<XNode> pNode( XmlFileUtil::XNodeFromTable(L) );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NoteSkinManager.cpp
 	if( pNode.get() == nullptr )
 	{
 		LUA->Release( L );
@@ -1206,4 +1213,7 @@ LUA_REGISTER_CLASS( NoteSkinManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/NoteSkinManager.cpp
 >>>>>>> origin/c++11:src/NoteSkinManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NoteSkinManager.cpp

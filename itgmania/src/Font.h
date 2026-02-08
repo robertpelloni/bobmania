@@ -29,6 +29,9 @@ struct FontPageTextures
 	/** @brief Set up the initial textures. */
 	FontPageTextures(): m_pTextureMain(nullptr), m_pTextureStroke(nullptr) {}
 <<<<<<< HEAD:itgmania/src/Font.h
+<<<<<<< HEAD:itgmania/src/Font.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.h
 
 	bool operator == (const struct FontPageTextures& other) const {
 		return m_pTextureMain == other.m_pTextureMain &&
@@ -38,8 +41,11 @@ struct FontPageTextures
 	bool operator != (const struct FontPageTextures& other) const {
 		return !operator==(other);
 	}
+<<<<<<< HEAD:itgmania/src/Font.h
 =======
 >>>>>>> origin/c++11:src/Font.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.h
 };
 
 /** @brief The components of a glyph (not technically a character). */
@@ -215,6 +221,8 @@ private:
 	 * This will also change the way glyphs from the default FontPage are rendered.
 	 * There may be a better way to handle this. */
 	bool m_bRightToLeft;
+	
+	bool m_bDistanceField;
 
 	bool m_bDistanceField;
 

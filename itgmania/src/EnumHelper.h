@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/EnumHelper.h
+<<<<<<< HEAD:itgmania/src/EnumHelper.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
 #ifndef ENUM_HELPER_H
 #define ENUM_HELPER_H
 
@@ -77,14 +80,22 @@ namespace Enum
 	}
 };
 
+<<<<<<< HEAD:itgmania/src/EnumHelper.h
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
+=======
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, unique_ptr<RString> *pNameCache ); // XToString helper
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
 
 #define XToString(X) \
 const RString& X##ToString(X x); \
 static_assert( NUM_##X == ARRAYLEN(X##Names) ); \
 const RString& X##ToString( X x ) \
 {	\
+<<<<<<< HEAD:itgmania/src/EnumHelper.h
 	static std::unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
+=======
+	static unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
 	return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 } \
 namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
@@ -93,6 +104,7 @@ namespace StringConversion { template<> RString ToString<X>( const X &value ) { 
 const RString &X##ToLocalizedString(X x); \
 const RString &X##ToLocalizedString( X x ) \
 {       \
+<<<<<<< HEAD:itgmania/src/EnumHelper.h
 	static std::unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
 	if( g_##X##Name[0].get() == nullptr ) { \
 		for( unsigned i = 0; i < NUM_##X; ++i ) \
@@ -295,6 +307,12 @@ const RString &X##ToLocalizedString( X x ) \
 	if( g_##X##Name[0].get() == nullptr ) { \
 		for( unsigned i = 0; i < NUM_##X; ++i ) \
 		{ \
+=======
+	static unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
+	if( g_##X##Name[0].get() == nullptr ) { \
+		for( unsigned i = 0; i < NUM_##X; ++i ) \
+		{ \
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
 			unique_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
 			g_##X##Name[i] = move(ap); \
 		} \
@@ -398,4 +416,7 @@ namespace LuaHelpers \
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/EnumHelper.h
 >>>>>>> origin/c++11:src/EnumHelper.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h

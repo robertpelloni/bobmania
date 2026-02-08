@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/ActorFrame.h
+<<<<<<< HEAD:itgmania/src/ActorFrame.h
 #ifndef ACTORFRAME_H
 #define ACTORFRAME_H
 
@@ -165,6 +166,8 @@ public:
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.h
 #ifndef ACTORFRAME_H
 #define ACTORFRAME_H
 
@@ -222,6 +225,10 @@ public:
 	// Commands
 	virtual void PushSelf( lua_State *L );
 	void PushChildrenTable( lua_State *L );
+<<<<<<< HEAD:itgmania/src/ActorFrame.h
+=======
+	void PushChildTable( lua_State *L, const RString &sName );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.h
 	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
 	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = nullptr );
 
@@ -329,4 +336,7 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorFrame.h
 >>>>>>> origin/c++11:src/ActorFrame.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrame.h

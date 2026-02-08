@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/Actor.h
+<<<<<<< HEAD:itgmania/src/Actor.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Actor.h
 #ifndef ACTOR_H
 #define ACTOR_H
 
@@ -781,6 +784,7 @@ private:
 
 	LuaReference m_LuaDrawFunction;
 	LuaReference m_LuaUpdateFunction;
+<<<<<<< HEAD:itgmania/src/Actor.h
 };
 
 #endif
@@ -1537,6 +1541,8 @@ protected:
 private:
 	// commands
 	map<RString, apActorCommands> m_mapNameToCommands;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Actor.h
 };
 
 #endif
@@ -1567,4 +1573,7 @@ private:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Actor.h
 >>>>>>> origin/c++11:src/Actor.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Actor.h

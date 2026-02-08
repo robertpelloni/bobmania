@@ -42,9 +42,12 @@ private:
 
 	bool m_bWasWindowed;
 	ActualVideoModeParams CurrentParams;
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_X11.h
 
 	float m_lastScreensaverInterrupt = 0.0f;
 	float m_screensaverInterruptInterval = 60.0f;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_X11.h
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

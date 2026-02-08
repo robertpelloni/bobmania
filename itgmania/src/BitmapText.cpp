@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/BitmapText.cpp
+<<<<<<< HEAD:itgmania/src/BitmapText.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp
 #include "global.h"
 #include "BitmapText.h"
 #include "XmlFile.h"
@@ -9,11 +12,14 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
+<<<<<<< HEAD:itgmania/src/BitmapText.cpp
 #include "RageTimer.h"
 
 #include <cmath>
 #include <cstddef>
 #include <vector>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp
 
 
 REGISTER_ACTOR_CLASS( BitmapText );
@@ -248,6 +254,7 @@ void BitmapText::BuildChars()
 {
 	// If we don't have a font yet, we'll do this when it loads.
 	if( m_pFont == nullptr )
+<<<<<<< HEAD:itgmania/src/BitmapText.cpp
 		return;
 
 	// calculate line lengths and widths
@@ -1336,6 +1343,8 @@ void BitmapText::BuildChars()
 {
 	// If we don't have a font yet, we'll do this when it loads.
 	if( m_pFont == nullptr )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp
 		return;
 
 	// calculate line lengths and widths
@@ -1487,11 +1496,15 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 				m_aVertices[i+j].c.a = (unsigned char)( m_aVertices[i+j].c.a * fAlpha );
 		}
 	}
+	
+	bool bDistanceField = m_pFont->IsDistanceField();
+	if( bDistanceField )
+		DISPLAY->SetEffectMode( EffectMode_DistanceField );
 
 	for( int start = iStartGlyph; start < iEndGlyph; )
 	{
 		int end = start;
-		while( end < iEndGlyph  &&  m_vpFontPageTextures[end] == m_vpFontPageTextures[start] )
+		while( end < iEndGlyph  &&  *m_vpFontPageTextures[end] == *m_vpFontPageTextures[start] )
 			end++;
 
 		bool bHaveATexture = !bUseStrokeTexture  ||  (bUseStrokeTexture && m_vpFontPageTextures[start]->m_pTextureStroke);
@@ -1516,6 +1529,8 @@ void BitmapText::DrawChars( bool bUseStrokeTexture )
 
 		start = end;
 	}
+	if( bDistanceField )
+		DISPLAY->SetEffectMode( EffectMode_Normal );
 }
 
 /* sText is UTF-8. If not all of the characters in sText are available in the
@@ -2050,4 +2065,7 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/BitmapText.cpp
 >>>>>>> origin/c++11:src/BitmapText.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp

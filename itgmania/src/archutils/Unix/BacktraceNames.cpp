@@ -343,6 +343,7 @@ void BacktraceNames::FromString( RString s )
     }
 }
 <<<<<<< HEAD:itgmania/src/archutils/Unix/BacktraceNames.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Unix/BacktraceNames.cpp
 =======
 #elif defined(BACKTRACE_LOOKUP_METHOD_ATOS)
 void BacktraceNames::FromAddr( const void *p )
@@ -456,6 +457,8 @@ void BacktraceNames::FromAddr( const void *p )
         File = mangledAndFile[2].substr(0, mangledAndFile[2].rfind(')'));
 }
 >>>>>>> origin/c++11:src/archutils/Unix/BacktraceNames.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/BacktraceNames.cpp
 #else
 #warning Undefined BACKTRACE_LOOKUP_METHOD_*
 void BacktraceNames::FromAddr( void * const p )

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp
 #include "global.h"
 #include "ScreenDimensions.h"
 #include "ScreenOptionsManageProfiles.h"
@@ -84,6 +87,7 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
 		return true; // unchanged
 
 	std::vector<RString> vsProfileNames;
@@ -596,6 +600,8 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp
 		return true; // unchanged
 
 	vector<RString> vsProfileNames;
@@ -648,7 +654,11 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
 		ASSERT( pProfile != nullptr );
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
 		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,dummy", s.c_str() );
+=======
+		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -986,4 +996,7 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
 >>>>>>> origin/c++11:src/ScreenOptionsManageProfiles.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp

@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/archutils/Win32/ErrorStrings.cpp
+<<<<<<< HEAD:itgmania/src/archutils/Win32/ErrorStrings.cpp
 #include "global.h"
 #include "ErrorStrings.h"
 #include "RageUtil.h"
@@ -95,6 +96,8 @@ RString ConvertACPToUTF8( const RString &s )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/ErrorStrings.cpp
 #include "global.h"
 #include "ErrorStrings.h"
 #include "RageUtil.h"
@@ -104,7 +107,11 @@ RString ConvertACPToUTF8( const RString &s )
 RString werr_ssprintf( int err, const char *fmt, ... )
 {
 	char buf[1024] = "";
+<<<<<<< HEAD:itgmania/src/archutils/Win32/ErrorStrings.cpp
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+=======
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/ErrorStrings.cpp
 		0, err, 0, buf, sizeof(buf), nullptr);
 
 	// Why is FormatMessage returning text ending with \r\n? (who? -aj)
@@ -128,14 +135,24 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 		return RString();
 
 	int iBytes = WideCharToMultiByte( iCodePage, 0, s.data(), s.size(), 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/ErrorStrings.cpp
 					NULL, 0, nullptr, FALSE );
+=======
+					nullptr, 0, nullptr, FALSE );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/ErrorStrings.cpp
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
 	RString ret;
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/ErrorStrings.cpp
 					ret.GetBuffer( iBytes ), iBytes, nullptr, FALSE );
 	ret.ReleaseBuffer( iBytes );
 
+=======
+					buf, iBytes, nullptr, FALSE );
+	RString ret( buf );
+	delete[] buf;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/ErrorStrings.cpp
 	return ret;
 }
 
@@ -189,4 +206,7 @@ RString ConvertACPToUTF8( const RString &s )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/archutils/Win32/ErrorStrings.cpp
 >>>>>>> origin/c++11:src/archutils/Win32/ErrorStrings.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/ErrorStrings.cpp

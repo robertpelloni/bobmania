@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518
 #include "global.h"
 #if !defined(WITHOUT_NETWORKING)
 #include "ScreenSMOnlineLogin.h"
@@ -137,7 +140,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				m_iPlayer++;
 				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
 				{
-					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, nullptr );
 				}
 				else
 				{
@@ -147,8 +150,13 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
+<<<<<<< HEAD
 				RString Response = NSMAN->m_SMOnlinePacket.ReadString();
 				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, NULL );
+=======
+				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
+				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518
 			}
 		}
 	}
@@ -178,7 +186,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 				++m_iPlayer;
 			sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
-			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, nullptr );
 		}
 		return;
 	}
@@ -504,4 +512,7 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD
 >>>>>>> origin/c++11
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518

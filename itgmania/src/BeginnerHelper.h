@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/BeginnerHelper.h
+<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.h
 #ifndef BEGINNER_HELPER_H
 #define BEGINNER_HELPER_H
 
@@ -40,6 +43,7 @@ protected:
 	Sprite	m_sFlash;
 	AutoActor	m_sBackground;
 	std::array<std::array<Sprite, 4>, NUM_PLAYERS> m_sStepCircle; // More memory, but much easier to manage.
+<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
 
 	int	m_iLastRowChecked;
 	int	m_iLastRowFlashed;
@@ -115,6 +119,8 @@ protected:
 	Sprite	m_sFlash;
 	AutoActor	m_sBackground;
 	std::array<std::array<Sprite, 4>, NUM_PLAYERS> m_sStepCircle; // More memory, but much easier to manage.
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.h
 
 	int	m_iLastRowChecked;
 	int	m_iLastRowFlashed;
@@ -126,7 +132,7 @@ protected:
 
 /**
  * @file
- * @author Kevin Slaughter, Thad Ward (c) 2003
+ * @author Kevin Slaughter, Tracy Ward (c) 2003
  * @section LICENSE
  * All rights reserved.
  * 
@@ -150,4 +156,7 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
 >>>>>>> origin/c++11:src/BeginnerHelper.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.h

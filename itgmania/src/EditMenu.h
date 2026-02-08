@@ -125,7 +125,11 @@ public:
 	{
 		RETURN_IF_INVALID(m_pSongs.empty() ||
 			m_iSelection[ROW_SONG] >= (int)m_pSongs.size(), nullptr);
+<<<<<<< HEAD:itgmania/src/EditMenu.h
 		return m_pSongs[m_iSelection[ROW_SONG]];
+=======
+		return m_pSongs[m_iSelection[ROW_SONG]]; 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.h
 	}
 	/** @brief Retrieve the currently selected steps type.
 	 * @return the current steps type. */
@@ -141,7 +145,11 @@ public:
 	{
 		RETURN_IF_INVALID(m_vpSteps.empty() ||
 			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), nullptr);
+<<<<<<< HEAD:itgmania/src/EditMenu.h
 		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps;
+=======
+		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.h
 	}
 	/** @brief Retrieve the currently selected difficulty.
 	 * @return the current difficulty. */
@@ -165,7 +173,11 @@ public:
 	{
 		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
 			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), nullptr);
+<<<<<<< HEAD:itgmania/src/EditMenu.h
 		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps;
+=======
+		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/EditMenu.h
 	}
 	/** @brief Retrieve the currently selected difficulty.
 	 * @return the current difficulty. */

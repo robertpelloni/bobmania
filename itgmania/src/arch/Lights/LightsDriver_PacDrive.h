@@ -1,8 +1,15 @@
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_PacDrive.h
 /* LightsDriver_PacDrive: Control lights for the PacDrive by Ultimarc using hidapi */
+=======
+/*
+ * LightsDriver_PacDrive
+ */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_PacDrive.h
 
 #ifndef LightsDriver_PacDrive_H
 #define LightsDriver_PacDrive_H
 
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_PacDrive.h
 /*
  * -------------------------- NOTE --------------------------
  *
@@ -92,10 +99,25 @@ public:
 	virtual ~LightsDriver_PacDrive();
 
 	virtual void Set(const LightsState *ls);
+=======
+#include "arch/Lights/LightsDriver.h"
+
+#define BIT(i) (1<<(i))
+
+
+class LightsDriver_PacDrive : public LightsDriver
+{
+	public:
+	LightsDriver_PacDrive();
+	virtual ~LightsDriver_PacDrive();
+	
+	virtual void Set( const LightsState *ls );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_PacDrive.h
 };
 
 #endif
 
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_PacDrive.h
 /*
  * (c) 2025 din
  * All rights reserved.
@@ -120,3 +142,10 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+=======
+/* Modified 2015 - Dave Barribeau for StepMania 5.09
+* 2014 - twistedsymphony
+* Created for use with Beware's StepMania  3.9 DDR Extreme Simulation
+* feel free to reuse and distribute this code
+*/
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_PacDrive.h

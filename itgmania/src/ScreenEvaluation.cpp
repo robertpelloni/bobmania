@@ -30,11 +30,14 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 #include "Economy/EconomyManager.h" // Added for betting logic
+<<<<<<< HEAD:itgmania/src/ScreenEvaluation.cpp
 #include "Scoring/ActorMsdGraph.h" // Added for MSD Graph
 
 #include <cmath>
 #include <cstddef>
 #include <vector>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenEvaluation.cpp
 
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
@@ -488,6 +491,7 @@ void ScreenEvaluation::Init()
 	}
 
 	// Betting Resolution Logic
+<<<<<<< HEAD:itgmania/src/ScreenEvaluation.cpp
 	// MSD Graph Integration (Etterna Style)
 	FOREACH_EnabledPlayer( p )
 	{
@@ -498,6 +502,8 @@ void ScreenEvaluation::Init()
 		this->AddChild( pGraph );
 	}
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenEvaluation.cpp
 	if ( EconomyManager::Instance()->IsBetActive() )
 	{
 		// Simple Rule: Grade Tier03 (A) or better wins against the house
@@ -751,7 +757,11 @@ void ScreenEvaluation::Init()
 
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
+<<<<<<< HEAD:itgmania/src/ScreenEvaluation.cpp
 		best_grade = std::min( best_grade, grade[p] );
+=======
+		best_grade = min( best_grade, grade[p] );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenEvaluation.cpp
 
 	if( m_pStageStats->m_EarnedExtraStage != EarnedExtraStage_No )
 	{

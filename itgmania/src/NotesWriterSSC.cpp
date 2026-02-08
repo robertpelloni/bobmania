@@ -1,9 +1,13 @@
 <<<<<<< HEAD:itgmania/src/NotesWriterSSC.cpp
+<<<<<<< HEAD:itgmania/src/NotesWriterSSC.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSSC.cpp
 #include "global.h"
 #include <cerrno>
 #include <cstring>
 #include "NotesWriterSSC.h"
 #include "BackgroundUtil.h"
+<<<<<<< HEAD:itgmania/src/NotesWriterSSC.cpp
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -646,6 +650,8 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
 #include "NotesWriterSSC.h"
 #include "BackgroundUtil.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSSC.cpp
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -1201,4 +1207,7 @@ bool NotesWriterSSC::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, R
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/NotesWriterSSC.cpp
 >>>>>>> origin/c++11:src/NotesWriterSSC.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSSC.cpp

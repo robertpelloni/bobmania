@@ -18,7 +18,11 @@ MessageWindow::MessageWindow( const RString &sClassName )
 		LoadCursor( nullptr, IDC_ARROW ),	/* default cursor */
 		nullptr,				/* hbrBackground */
 		nullptr,				/* lpszMenuName */
+<<<<<<< HEAD:itgmania/src/archutils/Win32/MessageWindow.cpp
 		sClassName.c_str()			/* lpszClassName */
+=======
+		sClassName			/* lpszClassName */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/MessageWindow.cpp
 	}; 
 
 	if( !RegisterClassA(&WindowClass) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS )

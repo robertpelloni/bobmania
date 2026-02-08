@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/Model.cpp
+<<<<<<< HEAD:itgmania/src/Model.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Model.cpp
 #include "global.h"
 #include "Model.h"
 #include "ModelTypes.h"
@@ -1576,12 +1579,23 @@ void Model::SetState( int iNewState )
 	}
 }
 
+<<<<<<< HEAD:itgmania/src/Model.cpp
 float Model::GetAnimationLengthSeconds() const
 {
 	float fSeconds = 0;
 	for (msMaterial const &m : m_Materials)
 		fSeconds = max( fSeconds, m.diffuse.GetAnimationLengthSeconds() );
 	return fSeconds;
+=======
+void Model::RecalcAnimationLengthSeconds() 
+{
+	m_animation_length_seconds= 0;
+	for (msMaterial const &m : m_Materials)
+	{
+		m_animation_length_seconds= max(m_animation_length_seconds,
+			m.diffuse.GetAnimationLengthSeconds());
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Model.cpp
 }
 
 void Model::SetSecondsIntoAnimation( float fSeconds )
@@ -1656,4 +1670,7 @@ LUA_REGISTER_DERIVED_CLASS( Model, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Model.cpp
 >>>>>>> origin/c++11:src/Model.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Model.cpp

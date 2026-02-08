@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenTextEntry.cpp
+<<<<<<< HEAD:itgmania/src/ScreenTextEntry.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenTextEntry.cpp
 #include "global.h"
 #include "ScreenTextEntry.h"
 #include "RageUtil.h"
@@ -1189,7 +1192,14 @@ void ScreenTextEntry::TextEntrySettings::FromStack( lua_State *L )
 	lua_getfield( L, iTab, "Question" );
 	pStr = lua_tostring( L, -1 );
 	if( pStr == nullptr )
+<<<<<<< HEAD:itgmania/src/ScreenTextEntry.cpp
 		RageException::Throw( "\"Question\" entry is not a string." );
+=======
+	{
+		LuaHelpers::ReportScriptError("ScreenTextEntry \"Question\" entry is not a string.");
+		pStr= "";
+	}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenTextEntry.cpp
 	sQuestion = pStr;
 	lua_settop( L, iTab );
 
@@ -1638,4 +1648,7 @@ bool ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenTextEntry.cpp
 >>>>>>> origin/c++11:src/ScreenTextEntry.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenTextEntry.cpp

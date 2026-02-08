@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSurface.cpp
+<<<<<<< HEAD:itgmania/src/RageSurface.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface.cpp
 #include "global.h"
 #include "RageSurface.h"
 #include "RageUtil.h"
@@ -561,4 +564,7 @@ RageSurface *CreateSurfaceFrom( int width, int height, int BitsPerPixel, uint32_
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/RageSurface.cpp
 >>>>>>> origin/c++11:src/RageSurface.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface.cpp

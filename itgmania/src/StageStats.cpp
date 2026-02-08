@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/StageStats.cpp
+<<<<<<< HEAD:itgmania/src/StageStats.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StageStats.cpp
 #include "global.h"
 #include "StageStats.h"
 #include "GameState.h"
@@ -810,6 +813,7 @@ public:
 		return 1;
 	}
 	DEFINE_METHOD( GetEarnedExtraStage,			m_EarnedExtraStage )
+	static int GaveUp( T* p, lua_State *L )		{ LuaHelpers::Push( L, p->m_bGaveUp ); return 1; }
 
 	LunaStageStats()
 	{
@@ -821,6 +825,7 @@ public:
 		ADD_METHOD( OnePassed );
 		ADD_METHOD( AllFailed );
 		ADD_METHOD( GetStage );
+		ADD_METHOD( GaveUp );
 		ADD_METHOD( GetStageIndex );
 		ADD_METHOD( PlayerHasHighScore );
 		ADD_METHOD( GetEarnedExtraStage );
@@ -855,4 +860,7 @@ LUA_REGISTER_CLASS( StageStats )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/StageStats.cpp
 >>>>>>> origin/c++11:src/StageStats.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/StageStats.cpp

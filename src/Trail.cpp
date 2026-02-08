@@ -1,6 +1,5 @@
 #include "global.h"
 #include "Trail.h"
-#include "Foreach.h"
 #include "GameState.h"
 #include "Steps.h"
 #include "Song.h"
@@ -9,6 +8,7 @@
 #include "NoteDataUtil.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
+#include <numeric>
 
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
@@ -106,12 +106,17 @@ const RadarValues &Trail::GetRadarValues() const
 		RadarValues rv;
 		rv.Zero();
 
-		FOREACH_CONST( TrailEntry, m_vEntries, e )
+		for (TrailEntry const &e : m_vEntries)
 		{
+<<<<<<< HEAD
 			const Steps *pSteps = e->pSteps;
 			ASSERT( pSteps );
+=======
+			const Steps *pSteps = e.pSteps;
+			ASSERT( pSteps != nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518
 			// Hack: don't calculate for autogen entries
-			if( !pSteps->IsAutogen() && e->ContainsTransformOrTurn() )
+			if( !pSteps->IsAutogen() && e.ContainsTransformOrTurn() )
 			{
 				/*
 				 * TODO: See if radar calculations can be done for all players and
@@ -120,19 +125,36 @@ const RadarValues &Trail::GetRadarValues() const
 				const float songLength = e->pSong->m_fMusicLengthSeconds;
 				NoteData nd;
 				pSteps->GetNoteData( nd );
+<<<<<<< HEAD
 				Steps radarSteps;
 				radarSteps.SetNoteData(nd);
 				radarSteps.m_StepsType = pSteps->m_StepsType;
 				StepsUtil::CalculateRadarValues(&radarSteps, songLength);
 				
+=======
+				RadarValues rv_orig;
+				GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(pSteps->GetTimingData()));
+				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, rv_orig );
+>>>>>>> origin/unified-ui-features-13937230807013224518
 				PlayerOptions po;
-				po.FromString( e->Modifiers );
+				po.FromString( e.Modifiers );
 				if( po.ContainsTransformOrTurn() )
+<<<<<<< HEAD
 					NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
 				NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
 				radarSteps.SetNoteData(nd);
 				StepsUtil::CalculateRadarValues(&radarSteps, songLength);
 				rv += radarSteps.GetRadarValues(PLAYER_1);
+=======
+				{
+					NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), po, pSteps->m_StepsType);
+				}
+				NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), e.Attacks, pSteps->m_StepsType, e.pSong);
+				RadarValues transformed_rv;
+				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, transformed_rv );
+				GAMESTATE->SetProcessedTimingData(nullptr);
+				rv += transformed_rv;
+>>>>>>> origin/unified-ui-features-13937230807013224518
 			}
 			else
 			{
@@ -164,37 +186,35 @@ int Trail::GetMeter() const
 
 int Trail::GetTotalMeter() const
 {
-	int iTotalMeter = 0;
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
-	{
-		iTotalMeter += e->pSteps->GetMeter();
-	}
-
-	return iTotalMeter;
+	return std::accumulate(m_vEntries.begin(), m_vEntries.end(), 0, [](int total, TrailEntry const &e) {
+		return total + e.pSteps->GetMeter();
+	});
 }
 
 float Trail::GetLengthSeconds() const
 {
-	float fSecs = 0;
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
-	{
-		fSecs += e->pSong->m_fMusicLengthSeconds;
-	}
-	return fSecs;
+	return std::accumulate(m_vEntries.begin(), m_vEntries.end(), 0.f, [](float total, TrailEntry const &e) {
+		return total + e.pSong->m_fMusicLengthSeconds;
+	});
 }
 
 void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
+	for (TrailEntry const &e : m_vEntries)
 	{
-		if( e->bSecret )
+		if( e.bSecret )
 		{
 			AddTo.Add( -1 );
 			continue;
 		}
 
+<<<<<<< HEAD
 		Song *pSong = e->pSong;
 		ASSERT( pSong );
+=======
+		Song *pSong = e.pSong;
+		ASSERT( pSong != nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518
 		switch( pSong->m_DisplayBPMType )
 		{
 		case DISPLAY_BPM_ACTUAL:
@@ -211,22 +231,16 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 
 bool Trail::IsSecret() const
 {
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
-	{
-		if( e->bSecret )
-			return true;
-	}
-	return false;
+	return std::any_of(m_vEntries.begin(), m_vEntries.end(), [](TrailEntry const &e) {
+		return e.bSecret;
+	});
 }
 
 bool Trail::ContainsSong( const Song *pSong ) const
 {
-	FOREACH_CONST( TrailEntry, m_vEntries, e )
-	{
-		if( e->pSong == pSong )
-			return true;
-	}
-	return false;
+	return std::any_of(m_vEntries.begin(), m_vEntries.end(), [&](TrailEntry const &e) {
+		return e.pSong == pSong;
+	});
 }
 
 // lua start
@@ -249,17 +263,17 @@ public:
 	static int GetArtists( T* p, lua_State *L )
 	{
 		vector<RString> asArtists, asAltArtists;
-		FOREACH_CONST( TrailEntry, p->m_vEntries, e )
+		for (TrailEntry const &e : p->m_vEntries)
 		{
-			if( e->bSecret )
+			if( e.bSecret )
 			{
 				asArtists.push_back( "???" );
 				asAltArtists.push_back( "???" );
 			}
 			else
 			{
-				asArtists.push_back( e->pSong->GetDisplayArtist() );
-				asAltArtists.push_back( e->pSong->GetTranslitArtist() );
+				asArtists.push_back( e.pSong->GetDisplayArtist() );
+				asAltArtists.push_back( e.pSong->GetTranslitArtist() );
 			}
 		}
 

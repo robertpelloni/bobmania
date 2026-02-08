@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSound.cpp
+<<<<<<< HEAD:itgmania/src/RageSound.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.cpp
 /* Handle loading and decoding of sounds.
  *
  * For small files, pre-decode the entire file into a regular buffer.  We
@@ -50,7 +53,11 @@ RageSoundLoadParams::RageSoundLoadParams():
 	m_bSupportRateChanging(false), m_bSupportPan(false) {}
 
 RageSound::RageSound():
+<<<<<<< HEAD:itgmania/src/RageSound.cpp
 	m_Mutex( "RageSound" ), m_pSource(nullptr),
+=======
+	m_Mutex( "RageSound" ), m_pSource(nullptr), 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.cpp
 	m_sFilePath(""), m_Param(), m_iStreamFrame(0),
 	m_iStoppedSourceFrame(0), m_bPlaying(false),
 	m_bDeleteWhenFinished(false), m_sError("")
@@ -69,6 +76,11 @@ RageSound::RageSound( const RageSound &cpy ):
 	m_pSource( nullptr )
 {
 	ASSERT(SOUNDMAN != nullptr);
+<<<<<<< HEAD:itgmania/src/RageSound.cpp
+=======
+
+	m_pSource = nullptr;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.cpp
 
 	*this = cpy;
 }
@@ -113,7 +125,11 @@ void RageSound::Unload()
 		delete m_pSource;
 	}
 	m_pSource = nullptr;
+<<<<<<< HEAD:itgmania/src/RageSound.cpp
 
+=======
+	
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.cpp
 	m_sFilePath = "";
 }
 
@@ -272,7 +288,11 @@ int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame
 	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);
 
+<<<<<<< HEAD:itgmania/src/RageSound.cpp
 	ASSERT_M( m_bPlaying, ssprintf("%p", static_cast<void*>(this)) );
+=======
+	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.cpp
 	ASSERT( m_pSource != nullptr );
 
 	iFramesStored = 0;
@@ -753,6 +773,7 @@ LUA_REGISTER_CLASS( RageSound )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/RageSound.cpp
 =======
 /* Handle loading and decoding of sounds.
  *
@@ -1489,3 +1510,5 @@ LUA_REGISTER_CLASS( RageSound )
  */
 
 >>>>>>> origin/c++11:src/RageSound.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSound.cpp

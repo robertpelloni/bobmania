@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518
 #include "global.h"
 
 #if !defined(WITHOUT_NETWORKING)
@@ -54,7 +57,7 @@ void ScreenNetSelectMusic::Init()
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 
 		m_StepsDisplays[p].SetName( ssprintf("StepsDisplayP%d",p+1) );
-		m_StepsDisplays[p].Load( "StepsDisplayNet", NULL );
+		m_StepsDisplays[p].Load( "StepsDisplayNet", nullptr );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_StepsDisplays[p] );
 		this->AddChild( &m_StepsDisplays[p] );
 	}
@@ -776,14 +779,37 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 		vector <Song *> AllSongs = SONGMAN->GetAllSongs();
 		unsigned i;
-		for( i=0; i < AllSongs.size(); i++ )
+		bool found = false;
+		if (NSMAN->GetServerVersion() >= 129)
 		{
-			m_cSong = AllSongs[i];
-			if( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-					( !m_cSong->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-					( !m_cSong->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
-					break;
+			//Dont earch by filehash if none was sent
+			if(!NSMAN->m_sFileHash.empty())
+				for (i = 0; i < AllSongs.size(); i++)
+				{
+					m_cSong = AllSongs[i];
+					if (NSMAN->m_sArtist == m_cSong->GetTranslitArtist() &&
+						NSMAN->m_sMainTitle == m_cSong->GetTranslitMainTitle() &&
+						NSMAN->m_sSubTitle == m_cSong->GetTranslitSubTitle() &&
+						NSMAN->m_sFileHash == m_cSong->GetFileHash())
+					{
+						found = true;
+						break;
+					}
+				}
+
 		}
+		//If we couldnt find it using file hash search for it without using it, if using SMSERVER < 129 it will go here
+		if(!found)
+			for (i = 0; i < AllSongs.size(); i++)
+			{
+				m_cSong = AllSongs[i];
+				if (NSMAN->m_sArtist == m_cSong->GetTranslitArtist() &&
+					NSMAN->m_sMainTitle == m_cSong->GetTranslitMainTitle() &&
+					NSMAN->m_sSubTitle == m_cSong->GetTranslitSubTitle())
+				{
+					break;
+				}
+			}
 
 		bool haveSong = i != AllSongs.size();
 
@@ -983,36 +1009,44 @@ bool ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	return true;
 }
 
-bool ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
+bool ScreenNetSelectMusic::MenuStart(const InputEventPlus &input)
 {
+	return SelectCurrent();
+}
+bool ScreenNetSelectMusic::SelectCurrent()
+{
+
 	bool bResult = m_MusicWheel.Select();
 
-	if( !bResult )
+	if (!bResult)
 		return true;
 
-	if( m_MusicWheel.GetSelectedType() != WheelItemDataType_Song )
+	if (m_MusicWheel.GetSelectedType() != WheelItemDataType_Song)
 		return true;
 
 	Song * pSong = m_MusicWheel.GetSelectedSong();
 
+<<<<<<< HEAD
 	if( pSong == nullptr )
+=======
+	if (pSong == nullptr)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 		return false;
 
-	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->m_pCurSong.Set(pSong);
 
-	if( NSMAN->useSMserver )
+	if (NSMAN->useSMserver)
 	{
 		NSMAN->m_sArtist = pSong->GetTranslitArtist();
 		NSMAN->m_sMainTitle = pSong->GetTranslitMainTitle();
 		NSMAN->m_sSubTitle = pSong->GetTranslitSubTitle();
 		NSMAN->m_iSelectMode = 2; // Command for user selecting song
-		NSMAN->SelectUserSong ();
+		NSMAN->SelectUserSong();
 	}
 	else
 		StartSelectedSong();
 	return true;
 }
-
 bool ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	SOUND->StopMusic();
@@ -1143,8 +1177,13 @@ void ScreenNetSelectMusic::MusicChanged()
 		{
 			SOUND->StopMusic();
 			SOUND->PlayMusic(
+<<<<<<< HEAD
 				GAMESTATE->m_pCurSong->GetMusicPath(), 
 				NULL,
+=======
+				GAMESTATE->m_pCurSong->GetPreviewMusicPath(),
+				nullptr,
+>>>>>>> origin/unified-ui-features-13937230807013224518
 				true,
 				GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds,
 				GAMESTATE->m_pCurSong->m_fMusicSampleLengthSeconds );
@@ -1161,6 +1200,37 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
 	}
 	ScreenNetSelectBase::Update( fDeltaTime );
 }
+
+MusicWheel* ScreenNetSelectMusic::GetMusicWheel()
+{
+	return &m_MusicWheel;
+}
+
+
+// lua start
+#include "LuaBinding.h"
+
+/** @brief Allow Lua to have access to the PlayerState. */
+class LunaScreenNetSelectMusic : public Luna<ScreenNetSelectMusic>
+{
+public:
+	static int GetMusicWheel(T* p, lua_State *L) {
+		p->GetMusicWheel()->PushSelf(L);
+		return 1;
+	}
+	static int SelectCurrent(T* p, lua_State *L) {
+		p->SelectCurrent();
+		return 1;
+	}
+	LunaScreenNetSelectMusic()
+	{
+		ADD_METHOD(GetMusicWheel);
+		ADD_METHOD(SelectCurrent);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(ScreenNetSelectMusic, ScreenNetSelectBase)
+// lua end
 
 #endif
 
@@ -1188,4 +1258,7 @@ void ScreenNetSelectMusic::Update( float fDeltaTime )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD
 >>>>>>> origin/c++11
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518

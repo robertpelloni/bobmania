@@ -27,13 +27,19 @@ void CourseContentsList::LoadFromNode( const XNode* pNode )
 	const XNode *pDisplayNode = pNode->GetChild( "Display" );
 	if( pDisplayNode == nullptr )
 <<<<<<< HEAD:itgmania/src/CourseContentsList.cpp
+<<<<<<< HEAD:itgmania/src/CourseContentsList.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseContentsList.cpp
 	{
 		LuaHelpers::ReportScriptErrorFmt("%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str());
 		return;
 	}
+<<<<<<< HEAD:itgmania/src/CourseContentsList.cpp
 =======
 		RageException::Throw( "%s: CourseContentsList: missing the Display child", ActorUtil::GetWhere(pNode).c_str() );
 >>>>>>> origin/c++11:src/CourseContentsList.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CourseContentsList.cpp
 
 	for( int i=0; i<iMaxSongs; i++ )
 	{

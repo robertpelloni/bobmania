@@ -43,17 +43,17 @@ ver.cpp:
 	$(MAKE) increment_version
 
 PNG = \
-../extern/libpng/include/png.c ../extern/libpng/include/.png.h \
-../extern/libpng/include/pngconf.h ../extern/libpng/include/pngdebug.h \
-../extern/libpng/include/pngerror.c ../extern/libpng/include/pngget.c \
-../extern/libpng/include/pnginfo.h ../extern/libpng/include/scripts/pnglibconf.h \
-../extern/libpng/include/pngmem.c ../extern/libpng/include/pngpread.c \
-../extern/libpng/include/pngpriv.h ../extern/libpng/include/pngread.c \
-../extern/libpng/include/pngrio.c ../extern/libpng/include/pngrtran.c \
-../extern/libpng/include/pngrutil.c ../extern/libpng/include/pngset.c \
-../extern/libpng/include/pngstruct.h ../extern/libpng/include/pngtrans.c \
-../extern/libpng/include/pngwio.c ../extern/libpng/include/pngwrite.c \
-../extern/libpng/include/pngwtran.c ../extern/libpng/include/pngwutil.c
+../extern/libpng/png.c ../extern/libpng/.png.h \
+../extern/libpng/pngconf.h ../extern/libpng/pngdebug.h \
+../extern/libpng/pngerror.c ../extern/libpng/pngget.c \
+../extern/libpng/pnginfo.h ../extern/libpng/scripts/pnglibconf.h \
+../extern/libpng/pngmem.c ../extern/libpng/pngpread.c \
+../extern/libpng/pngpriv.h ../extern/libpng/pngread.c \
+../extern/libpng/pngrio.c ../extern/libpng/pngrtran.c \
+../extern/libpng/pngrutil.c ../extern/libpng/pngset.c \
+../extern/libpng/pngstruct.h ../extern/libpng/pngtrans.c \
+../extern/libpng/pngwio.c ../extern/libpng/pngwrite.c \
+../extern/libpng/pngwtran.c ../extern/libpng/pngwutil.c
 
 Screens = \
 <<<<<<< HEAD:itgmania/src/Makefile.am
@@ -101,7 +101,7 @@ DataStructures = \
 Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h \
 AdjustSync.cpp AdjustSync.h \
 BackgroundUtil.cpp BackgroundUtil.h \
-BannerCache.cpp BannerCache.h \
+ImageCache.cpp ImageCache.h \
 Character.cpp Character.h \
 CodeDetector.cpp CodeDetector.h \
 CodeSet.cpp CodeSet.h \
@@ -114,7 +114,7 @@ CourseWriterCRS.cpp CourseWriterCRS.h \
 CryptHelpers.cpp CryptHelpers.h \
 DateTime.cpp DateTime.h \
 Difficulty.cpp Difficulty.h \
-DisplayResolutions.h \
+DisplaySpec.h \
 EnumHelper.cpp EnumHelper.h \
 FileDownload.cpp FileDownload.h \
 Font.cpp Font.h \
@@ -250,6 +250,57 @@ Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h 
 
 Threads = arch/Threads/Threads.h
 
+<<<<<<< HEAD:itgmania/src/Makefile.am
+=======
+# ===================================
+# (Potentially) multiplatform drivers
+# ===================================
+InputHandler += arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h \
+	arch/InputHandler/InputHandler_SextetStream.cpp arch/InputHandler/InputHandler_SextetStream.h
+
+Lights += arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
+	arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h \
+	arch/Lights/LightsDriver_SextetStream.cpp arch/Lights/LightsDriver_SextetStream.h \
+	arch/Lights/SextetUtils.h
+
+LoadingWindow += arch/LoadingWindow/LoadingWindow_Null.h
+
+MemoryCard += arch/MemoryCard/MemoryCardDriver_Null.h
+
+MovieTexture += arch/MovieTexture/MovieTexture_Generic.cpp arch/MovieTexture/MovieTexture_Generic.h \
+	arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
+
+Sound += arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h
+
+if HAVE_FFMPEG
+ MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
+endif
+
+if HAVE_GTK
+ # XXX We need a GTK DialogDriver for Linux
+ LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h \
+		arch/LoadingWindow/LoadingWindow_GtkModule.h
+endif
+
+if HAVE_JACK
+ Sound += arch/Sound/RageSoundDriver_JACK.cpp arch/Sound/RageSoundDriver_JACK.h
+endif
+
+if HAVE_OSS
+ Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
+endif
+
+if HAVE_PULSE
+ Sound += arch/Sound/RageSoundDriver_PulseAudio.cpp arch/Sound/RageSoundDriver_PulseAudio.h
+endif
+
+# Yes, really. MinGW provides pthread.
+if HAVE_PTHREAD
+ Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h \
+	archutils/Common/PthreadHelpers.cpp archutils/Common/PthreadHelpers.h
+endif
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Makefile.am
 if HAVE_X11
 # InputHandler_X11 depends on LowLevelWindow_X11
 InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
@@ -287,6 +338,64 @@ ArchUtils +=    archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
 		archutils/Unix/CrashHandlerInternal.cpp
 endif
 
+<<<<<<< HEAD:itgmania/src/Makefile.am
+=======
+ ArchUtils += archutils/Win32/arch_time.cpp \
+	archutils/Win32/AppInstance.cpp archutils/Win32/AppInstance.h \
+	archutils/Win32/Crash.cpp archutils/Win32/Crash.h \
+	archutils/Win32/CrashHandlerChild.cpp \
+	archutils/Win32/CrashHandlerInternal.h \
+	archutils/Win32/CrashHandlerNetworking.cpp archutils/Win32/CrashHandlerNetworking.h \
+	archutils/Win32/DebugInfoHunt.cpp archutils/Win32/DebugInfoHunt.h \
+	archutils/Win32/DialogUtil.cpp archutils/Win32/DialogUtil.h \
+	archutils/Win32/DirectXHelpers.cpp archutils/Win32/DirectXHelpers.h \
+	archutils/Win32/ErrorStrings.cpp archutils/Win32/ErrorStrings.h \
+	archutils/Win32/GetFileInformation.cpp archutils/Win32/GetFileInformation.h \
+	archutils/Win32/GoToURL.cpp archutils/Win32/GoToURL.h \
+	archutils/Win32/GraphicsWindow.cpp archutils/Win32/GraphicsWindow.h \
+	archutils/Win32/MessageWindow.cpp archutils/Win32/MessageWindow.h \
+	archutils/Win32/RegistryAccess.cpp archutils/Win32/RegistryAccess.h \
+	archutils/Win32/RestartProgram.cpp archutils/Win32/RestartProgram.h \
+	archutils/Win32/SpecialDirs.cpp archutils/Win32/SpecialDirs.h \
+	archutils/Win32/USB.cpp archutils/Win32/USB.h \
+	archutils/Win32/VideoDriverInfo.cpp archutils/Win32/VideoDriverInfo.h \
+	archutils/Win32/WindowIcon.cpp archutils/Win32/WindowIcon.h \
+	archutils/Win32/WindowsDialogBox.cpp archutils/Win32/WindowsDialogBox.h \
+	archutils/Win32/WindowsResources.rc archutils/Win32/WindowsResources.h
+
+ Dialog += arch/Dialog/DialogDriver_Win32.cpp arch/Dialog/DialogDriver_Win32.h
+
+ LoadingWindow += arch/LoadingWindow/LoadingWindow_Win32.cpp arch/LoadingWindow/LoadingWindow_Win32.h
+
+ LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_Win32.cpp arch/LowLevelWindow/LowLevelWindow_Win32.h
+
+ MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp arch/MemoryCard/MemoryCardDriverThreaded_Windows.h
+
+ # XXX We may want to ditch DirectShow in favor of using ffmpeg on all platforms.
+ # FIXME BROKEN
+ # MovieTexture += arch/MovieTexture/MovieTexture_DShow.cpp arch/MovieTexture/MovieTexture_DShow.h \
+ #	arch/MovieTexture/MovieTexture_DShowHelper.cpp arch/MovieTexture/MovieTexture_DShowHelper.h
+
+ # XXX: Do we want to detect DirectX SDK and selectively enable DirectX drivers?
+ InputHandler += arch/InputHandler/InputHandler_DirectInput.cpp arc/InputHandler/InputHandler_DirectInput.h \
+		arch/InputHandler/InputHandler_DirectInputHelper.cpp arch/InputHandler/InputHandler_DirectInputHelper.h \
+		arch/InputHandler/InputHandler_Win32_MIDI.cpp arch/InputHandler/InputHandler_Win32_MIDI.h \
+		arch/InputHandler/InputHandler_Win32_Para.cpp arch/InputHandler/InputHandler_Win32_Para.h \
+		arch/InputHandler/InputHandler_Win32_Pump.cpp arch/InputHandler/InputHandler_Win32_Pump.h \
+		arch/InputHandler/InputHandler_Win32_RTIO.cpp arch/InputHandler/InputHandler_Win32_RTIO.h \
+		arch/InputHandler/InputHandler_Win32_ddrio.cpp arch/InputHandler/InputHandler_Win32_ddrio.h
+
+ Lights += arch/Lights/LightsDriver_Win32Serial.cpp arch/Lights/LightsDriver_Win32Serial.h
+
+ Sound += arch/Sound/RageSoundDriver_DSound_Software.cpp arch/Sound/RageSoundDriver_DSound_Software.h \
+	arch/Sound/DSoundHelpers.cpp arch/Sound/DSoundHelpers.h \
+	arch/Sound/RageSoundDriver_WaveOut.cpp arch/Sound/RageSoundDriver_WaveOut.h
+# FIXME: BROKEN
+# 	arch/Sound/RageSoundDriver_WDMKS.cpp arch/Sound/RageSoundDriver_WDMKS.h
+
+if HAVE_PARALLEL_PORT
+  Lights += arch/Lights/LightsDriver_Win32Parallel.cpp arch/Lights/LightsDriver_Win32Parallel.h
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Makefile.am
 endif
 
 if LINUX
@@ -369,6 +478,7 @@ Lua = ../extern/lua-5.1/src/bit.c ../extern/lua-5.1/src/lapi.c ../extern/lua-5.1
 ../extern/lua-5.1/src/lstring.h ../extern/lua-5.1/src/ltable.h ../extern/lua-5.1/src/ltm.h ../extern/lua-5.1/src/luaconf.h ../extern/lua-5.1/src/lua.h ../extern/lua-5.1/src/lualib.h \
 ../extern/lua-5.1/src/lundump.h ../extern/lua-5.1/src/lvm.h ../extern/lua-5.1/src/lzio.h
 
+<<<<<<< HEAD:itgmania/src/Makefile.am
 jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
 ../extern/jsoncpp/src/lib_json/json_value.cpp \
 ../extern/jsoncpp/src/lib_json/json_writer.cpp \
@@ -380,6 +490,9 @@ jsoncpp = ../extern/jsoncpp/src/lib_json/json_reader.cpp \
 ../extern/jsoncpp/include/json/reader.h \
 ../extern/jsoncpp/include/json/value.h \
 ../extern/jsoncpp/include/json/writer.h 
+=======
+jsoncpp = ../extern/jsoncpp/jsoncpp.cpp
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Makefile.am
 
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
@@ -582,7 +695,13 @@ libtomcrypt_a_CPPFLAGS = -I$(srcdir)/libtomcrypt/src/headers $(AM_CPPFLAGS)
 
 noinst_LIBRARIES += libtomcrypt.a
 
+<<<<<<< HEAD:itgmania/src/Makefile.am
 main_CPPFLAGS = -I$(top_srcdir)/extern/jsoncpp/include
+=======
+main_CPPFLAGS = \
+	$(VIDEO_CFLAGS) \
+	-I$(top_srcdir)/extern/jsoncpp
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Makefile.am
 #-I$(top_srcdir)/extern/glew-1.5.8/include
 
 main_SOURCES = $(PNG) \

@@ -5,9 +5,12 @@
 
 #include "global.h"
 
+<<<<<<< HEAD:itgmania/src/RageFileBasic.h
 #include <cstddef>
 #include <cstdint>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileBasic.h
 /* This is a simple file I/O interface.  Although most of these operations
  * are straightforward, there are several of them; most of the time, you'll
  * only want to implement RageFileObj. */

@@ -34,6 +34,13 @@
   Name "@CPACK_NSIS_PACKAGE_NAME@"
   OutFile "@CPACK_TOPLEVEL_DIRECTORY@/@CPACK_OUTPUT_FILE_NAME@"
 
+<<<<<<< HEAD:itgmania/CMake/Modules/NSIS.template.in
+=======
+  ;Captions for the process.
+  Caption "@CPACK_NSIS_PACKAGE_NAME@ | install"
+  UninstallCaption "@CPACK_NSIS_PACKAGE_NAME@ | uninstall"
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:CMake/Modules/NSIS.template.in
   ;Set compression
   SetCompressor @CPACK_NSIS_COMPRESSOR@
 

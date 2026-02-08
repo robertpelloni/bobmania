@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/GameManager.cpp
+<<<<<<< HEAD:itgmania/src/GameManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameManager.cpp
 #include "global.h"
 #include "StepMania.h"
 #include "arch/Dialog/Dialog.h"
@@ -3692,6 +3695,7 @@ LUA_REGISTER_CLASS( GameManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/GameManager.cpp
 =======
 #include "global.h"
 #include "GameManager.h"
@@ -6878,3 +6882,5 @@ LUA_REGISTER_CLASS( GameManager )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/GameManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameManager.cpp

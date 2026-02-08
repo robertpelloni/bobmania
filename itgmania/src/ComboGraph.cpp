@@ -59,6 +59,9 @@ void ComboGraph::Load( RString sMetricsGroup )
 
 	pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ComboNumber") );
 <<<<<<< HEAD:itgmania/src/ComboGraph.cpp
+<<<<<<< HEAD:itgmania/src/ComboGraph.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ComboGraph.cpp
 	if( pActor != nullptr )
 	{
 		m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
@@ -67,12 +70,15 @@ void ComboGraph::Load( RString sMetricsGroup )
 		else
 			LuaHelpers::ReportScriptErrorFmt( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	}
+<<<<<<< HEAD:itgmania/src/ComboGraph.cpp
 =======
 	m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
 	if( m_pComboNumber == nullptr )
 		RageException::Throw( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	this->AddChild( m_pComboNumber );
 >>>>>>> origin/c++11:src/ComboGraph.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ComboGraph.cpp
 }	
 
 void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )

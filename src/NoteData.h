@@ -12,7 +12,7 @@
 /** @brief Act on each non empty row in the specified track within the specified range. */
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, track, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForTrack(track,row) && row < (last); )
-/** @brief Act on each non empty row in the specified track within the specified range, 
+/** @brief Act on each non empty row in the specified track within the specified range,
  going in reverse order. */
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( nd, track, row, start, last ) \
 	for( int row = last; (nd).GetPrevTapNoteRowForTrack(track,row) && row >= (start); )
@@ -32,7 +32,7 @@ public:
 	typedef map<int,TapNote>::const_iterator const_iterator;
 	typedef map<int,TapNote>::reverse_iterator reverse_iterator;
 	typedef map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
-	
+
 	NoteData(): m_TapNotes() {}
 
 	iterator begin( int iTrack )					{ return m_TapNotes[iTrack].begin(); }
@@ -57,7 +57,7 @@ public:
 		ND		*m_pNoteData;
 		vector<iter>	m_vBeginIters;
 
-		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator. 
+		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator.
 		* Use the "past the end" iterator in place of the "past the beginning" iterator when in reverse. */
 		vector<iter>	m_vCurrentIters;
 
@@ -91,35 +91,89 @@ private:
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
 
+<<<<<<< HEAD
 	int GetNumTapsOfType(int start, int end, bool (NoteData::*TapType)(const TapNote &) const) const;
 	
 public:
 	void Init();
 	
+=======
+	/**
+	 * @brief Determine whether this note is for Player 1 or Player 2.
+	 * @param track the track/column the note is in.
+	 * @param tn the note in question. Required for routine mode.
+	 * @return true if it's for player 1, false for player 2. */
+	bool IsPlayer1(const int track, const TapNote &tn) const;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a tap.
 	 * @param tn the note in question.
 	 * @return true if it's a tap, false otherwise. */
+<<<<<<< HEAD
 	bool IsTap(const TapNote &tn) const;
 	
+=======
+	bool IsTap(const TapNote &tn, const int row) const;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a mine.
 	 * @param tn the note in question.
 	 * @return true if it's a mine, false otherwise. */
+<<<<<<< HEAD
 	bool IsMine(const TapNote &tn) const;
 	
+=======
+	bool IsMine(const TapNote &tn, const int row) const;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a lift.
 	 * @param tn the note in question.
 	 * @return true if it's a lift, false otherwise. */
+<<<<<<< HEAD
 	bool IsLift(const TapNote &tn) const;
 	
+=======
+	bool IsLift(const TapNote &tn, const int row) const;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a fake.
 	 * @param tn the note in question.
 	 * @return true if it's a fake, false otherwise. */
+<<<<<<< HEAD
 	bool IsFake(const TapNote &tn) const;
 	
+=======
+	bool IsFake(const TapNote &tn, const int row) const;
+
+	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
+														   int startRow = 0,
+														   int endRow = MAX_NOTE_ROW) const;
+
+	// These exist so that they can be revalidated when something that transforms
+	// the NoteData occurs. -Kyz
+	mutable set<all_tracks_iterator*> m_atis;
+	mutable set<all_tracks_const_iterator*> m_const_atis;
+
+	void AddATIToList(all_tracks_iterator* iter) const;
+	void AddATIToList(all_tracks_const_iterator* iter) const;
+	void RemoveATIFromList(all_tracks_iterator* iter) const;
+	void RemoveATIFromList(all_tracks_const_iterator* iter) const;
+
+	// Mina stuf (Used for chartkey hashing)
+	std::vector<int> NonEmptyRowVector;
+
+public:
+	void Init();
+
+	// Mina stuf (Used for chartkey hashing)
+	void LogNonEmptyRows();
+	std::vector<int>& GetNonEmptyRowVector() { return NonEmptyRowVector; };
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
@@ -146,10 +200,10 @@ public:
 	/**
 	 * @brief Return an iterator range for [rowBegin,rowEnd).
 	 *
-	 * This can be used to efficiently iterate trackwise over a range of notes.  
-	 * It's like FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE, except it only requires 
+	 * This can be used to efficiently iterate trackwise over a range of notes.
+	 * It's like FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE, except it only requires
 	 * two map searches (iterating is constant time), but the iterators will
-	 * become invalid if the notes they represent disappear, so you need to 
+	 * become invalid if the notes they represent disappear, so you need to
 	 * pay attention to how you modify the data.
 	 * @param iTrack the column to use.
 	 * @param iStartRow the starting point.
@@ -242,7 +296,7 @@ public:
 	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
-	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = NULL ) const;
+	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = nullptr ) const;
 	bool IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const;
 
 	/**
@@ -274,6 +328,7 @@ public:
 	{
 		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
 	}
+<<<<<<< HEAD
 	
 	/** @brief Get the number of specific holds.
 	 * @param holdType the type of hold we are dealing with.
@@ -281,6 +336,10 @@ public:
 	 * @param end the ending row.
 	 * @return the number of specific holds. */
 	int GetNumHoldsOfType(const TapNote::SubType holdType, int start = 0, int end = MAX_NOTE_ROW) const;
+=======
+
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
@@ -300,7 +359,39 @@ public:
 	// and the other notetypes
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+<<<<<<< HEAD
 	
+=======
+
+	// the couple/routine style variants of the above.
+	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
+										   int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
+											int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
+										int endRow = MAX_NOTE_ROW) const;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	// Transformations
 	void LoadTransformed(const NoteData& original,
 						 int iNewNumTracks,
@@ -314,7 +405,13 @@ public:
 /** @brief Allow a quick way to swap notedata. */
 namespace std
 {
-	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 ) { nd1.swap( nd2 ); }
+	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 )
+#if !defined(_MSC_VER)
+	noexcept(is_nothrow_move_constructible<NoteData>::value && is_nothrow_move_assignable<NoteData>::value)
+#endif
+	{
+		nd1.swap( nd2 );
+	}
 }
 
 #endif
@@ -322,7 +419,7 @@ namespace std
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -332,7 +429,7 @@ namespace std
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

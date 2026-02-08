@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ThreadedBuffer.cpp
 #include "global.h"
 #include "RageSoundReader_ThreadedBuffer.h"
 #include "RageUtil.h"
@@ -51,6 +54,7 @@ RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader 
 
 RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy ):
 	RageSoundReader_Filter(nullptr), // don't touch m_pSource before DisableBuffering
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
 	m_Event( "ThreadedBuffer" )
 {
 	bool bWasEnabled = cpy.DisableBuffering();
@@ -429,6 +433,8 @@ RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader 
 
 RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy ):
 	RageSoundReader_Filter(nullptr), // don't touch m_pSource before DisableBuffering
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ThreadedBuffer.cpp
 	m_Event( "ThreadedBuffer" )
 {
 	bool bWasEnabled = cpy.DisableBuffering();
@@ -751,4 +757,7 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
 >>>>>>> origin/c++11:src/RageSoundReader_ThreadedBuffer.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ThreadedBuffer.cpp

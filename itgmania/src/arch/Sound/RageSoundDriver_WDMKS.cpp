@@ -174,10 +174,14 @@ static bool WdmSyncIoctl(
 	OVERLAPPED overlapped;
 	memset( &overlapped, 0, sizeof(overlapped) );
 <<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
 	overlapped.hEvent = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 =======
 	overlapped.hEvent = CreateEvent( NULL, FALSE, FALSE, nullptr );
 >>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_WDMKS.cpp
+=======
+	overlapped.hEvent = CreateEvent( nullptr, FALSE, FALSE, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_WDMKS.cpp
 	if( !overlapped.hEvent )
 	{
 		sError = werr_ssprintf( GetLastError(), "CreateEvent" );
@@ -553,10 +557,14 @@ KSPIN_CONNECT *WinWdmPin::MakeFormat( const WAVEFORMATEX *pFormat ) const
 	pPinConnect->Medium.Id			= KSMEDIUM_TYPE_ANYINSTANCE;
 	pPinConnect->Medium.Flags			= 0;
 <<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
 	pPinConnect->PinToHandle			= nullptr;
 =======
 	pPinConnect->PinToHandle			= NULL;
 >>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_WDMKS.cpp
+=======
+	pPinConnect->PinToHandle			= nullptr;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_WDMKS.cpp
 	pPinConnect->Priority.PriorityClass		= KSPRIORITY_NORMAL;
 	pPinConnect->Priority.PrioritySubClass	= 1;
 
@@ -662,10 +670,14 @@ bool WinWdmFilter::Use( RString &sError )
 		/* Open the filter */
 		m_hHandle = CreateFile( m_sFilterName, GENERIC_READ | GENERIC_WRITE, 0,
 <<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
 			nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr );
 =======
 			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr );
 >>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_WDMKS.cpp
+=======
+			nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_WDMKS.cpp
 
 		if( m_hHandle == nullptr )
 		{
@@ -1018,10 +1030,14 @@ struct WinWdmStream
 		memset( this, 0, sizeof(*this) );
 		for( int i = 0; i < MAX_CHUNKS; ++i )
 <<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
 			m_Signal[i].hEvent = CreateEvent( nullptr, FALSE, FALSE, nullptr );
 =======
 			m_Signal[i].hEvent = CreateEvent( NULL, FALSE, FALSE, nullptr );
 >>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_WDMKS.cpp
+=======
+			m_Signal[i].hEvent = CreateEvent( nullptr, FALSE, FALSE, nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_WDMKS.cpp
 		m_pPlaybackPin = nullptr;
 	}
 
@@ -1136,10 +1152,14 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 
 		/* Avoid any FileAlignment problems by using VirtualAlloc, which is always page aligned. */
 <<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
 		p->Data = (char *) VirtualAlloc( nullptr, m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE );
 =======
 		p->Data = (char *) VirtualAlloc( NULL, m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE );
 >>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_WDMKS.cpp
+=======
+		p->Data = (char *) VirtualAlloc( nullptr, m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_WDMKS.cpp
 		ASSERT( p->Data != nullptr );
 		p->FrameExtent = m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels;
 		p->DataUsed = m_iFramesPerChunk*m_iBytesPerOutputSample*m_iDeviceOutputChannels;
@@ -1412,10 +1432,14 @@ RageSoundDriver_WDMKS::RageSoundDriver_WDMKS()
 	m_bShutdown = false;
 	m_iLastCursorPos = 0;
 <<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_WDMKS.cpp
 	m_hSignal = CreateEvent( nullptr, FALSE, FALSE, nullptr ); /* abort event */
 =======
 	m_hSignal = CreateEvent( NULL, FALSE, FALSE, nullptr ); /* abort event */
 >>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_WDMKS.cpp
+=======
+	m_hSignal = CreateEvent( nullptr, FALSE, FALSE, nullptr ); /* abort event */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_WDMKS.cpp
 }
 
 RString RageSoundDriver_WDMKS::Init()

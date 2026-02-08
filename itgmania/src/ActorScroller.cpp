@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ActorScroller.cpp
+<<<<<<< HEAD:itgmania/src/ActorScroller.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorScroller.cpp
 #include "global.h"
 #include "ActorScroller.h"
 
@@ -812,4 +815,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorScroller, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorScroller.cpp
 >>>>>>> origin/c++11:src/ActorScroller.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorScroller.cpp

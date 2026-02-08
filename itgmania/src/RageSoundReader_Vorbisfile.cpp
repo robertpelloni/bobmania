@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageSoundReader_Vorbisfile.cpp
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Vorbisfile.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_Vorbisfile.cpp
 #include "global.h"
 
 #include "RageFile.h"
@@ -332,6 +335,7 @@ RageSoundReader_Vorbisfile *RageSoundReader_Vorbisfile::Copy() const
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Vorbisfile.cpp
 =======
 #include "global.h"
 
@@ -664,3 +668,5 @@ RageSoundReader_Vorbisfile *RageSoundReader_Vorbisfile::Copy() const
  */
 
 >>>>>>> origin/c++11:src/RageSoundReader_Vorbisfile.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_Vorbisfile.cpp

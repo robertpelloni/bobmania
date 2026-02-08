@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ActorProxy.cpp
+<<<<<<< HEAD:itgmania/src/ActorProxy.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorProxy.cpp
 #include "global.h"
 #include "ActorProxy.h"
 #include "ActorUtil.h"
@@ -89,6 +92,7 @@ LUA_REGISTER_DERIVED_CLASS( ActorProxy, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ActorProxy.cpp
 =======
 #include "global.h"
 #include "ActorProxy.h"
@@ -181,3 +185,5 @@ LUA_REGISTER_DERIVED_CLASS( ActorProxy, Actor )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/ActorProxy.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorProxy.cpp

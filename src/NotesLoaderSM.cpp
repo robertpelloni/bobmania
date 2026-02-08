@@ -13,6 +13,245 @@
 #include "Attack.h"
 #include "PrefsManager.h"
 
+<<<<<<< HEAD
+=======
+// Everything from this line to the creation of sm_parser_helper exists to
+// speed up parsing by allowing the use of std::map.  All these functions
+// are put into a map of function pointers which is used when loading.
+// -Kyz
+/****************************************************************/
+struct SMSongTagInfo
+{
+	SMLoader* loader;
+	Song* song;
+	const MsdFile::value_t* params;
+	const RString& path;
+	vector< pair<float, float> > BPMChanges, Stops;
+	SMSongTagInfo(SMLoader* l, Song* s, const RString& p)
+		:loader(l), song(s), path(p)
+	{}
+};
+
+typedef void (*song_tag_func_t)(SMSongTagInfo& info);
+
+// Functions for song tags go below this line. -Kyz
+/****************************************************************/
+void SMSetTitle(SMSongTagInfo& info)
+{
+	info.song->m_sMainTitle = (*info.params)[1];
+	info.loader->SetSongTitle((*info.params)[1]);
+}
+void SMSetSubtitle(SMSongTagInfo& info)
+{
+	info.song->m_sSubTitle = (*info.params)[1];
+}
+void SMSetArtist(SMSongTagInfo& info)
+{
+	info.song->m_sArtist = (*info.params)[1];
+}
+void SMSetTitleTranslit(SMSongTagInfo& info)
+{
+	info.song->m_sMainTitleTranslit = (*info.params)[1];
+}
+void SMSetSubtitleTranslit(SMSongTagInfo& info)
+{
+	info.song->m_sSubTitleTranslit = (*info.params)[1];
+}
+void SMSetArtistTranslit(SMSongTagInfo& info)
+{
+	info.song->m_sArtistTranslit = (*info.params)[1];
+}
+void SMSetGenre(SMSongTagInfo& info)
+{
+	info.song->m_sGenre = (*info.params)[1];
+}
+void SMSetCredit(SMSongTagInfo& info)
+{
+	info.song->m_sCredit = (*info.params)[1];
+}
+void SMSetBanner(SMSongTagInfo& info)
+{
+	info.song->m_sBannerFile = (*info.params)[1];
+}
+void SMSetBackground(SMSongTagInfo& info)
+{
+	info.song->m_sBackgroundFile = (*info.params)[1];
+}
+void SMSetLyricsPath(SMSongTagInfo& info)
+{
+	info.song->m_sLyricsFile = (*info.params)[1];
+}
+void SMSetCDTitle(SMSongTagInfo& info)
+{
+	info.song->m_sCDTitleFile = (*info.params)[1];
+}
+void SMSetMusic(SMSongTagInfo& info)
+{
+	info.song->m_sMusicFile = (*info.params)[1];
+}
+void SMSetOffset(SMSongTagInfo& info)
+{
+	info.song->m_SongTiming.m_fBeat0OffsetInSeconds = StringToFloat((*info.params)[1]);
+}
+void SMSetBPMs(SMSongTagInfo& info)
+{
+	info.BPMChanges.clear();
+	info.loader->ParseBPMs(info.BPMChanges, (*info.params)[1]);
+}
+void SMSetStops(SMSongTagInfo& info)
+{
+	info.Stops.clear();
+	info.loader->ParseStops(info.Stops, (*info.params)[1]);
+}
+void SMSetDelays(SMSongTagInfo& info)
+{
+	info.loader->ProcessDelays(info.song->m_SongTiming, (*info.params)[1]);
+}
+void SMSetTimeSignatures(SMSongTagInfo& info)
+{
+	info.loader->ProcessTimeSignatures(info.song->m_SongTiming, (*info.params)[1]);
+}
+void SMSetTickCounts(SMSongTagInfo& info)
+{
+	info.loader->ProcessTickcounts(info.song->m_SongTiming, (*info.params)[1]);
+}
+void SMSetInstrumentTrack(SMSongTagInfo& info)
+{
+	info.loader->ProcessInstrumentTracks(*info.song, (*info.params)[1]);
+}
+void SMSetSampleStart(SMSongTagInfo& info)
+{
+	info.song->m_fMusicSampleStartSeconds = HHMMSSToSeconds((*info.params)[1]);
+}
+void SMSetSampleLength(SMSongTagInfo& info)
+{
+	info.song->m_fMusicSampleLengthSeconds = HHMMSSToSeconds((*info.params)[1]);
+}
+void SMSetDisplayBPM(SMSongTagInfo& info)
+{
+	// #DISPLAYBPM:[xxx][xxx:xxx]|[*];
+	if((*info.params)[1] == "*")
+	{ info.song->m_DisplayBPMType = DISPLAY_BPM_RANDOM; }
+	else
+	{
+		info.song->m_DisplayBPMType = DISPLAY_BPM_SPECIFIED;
+		info.song->m_fSpecifiedBPMMin = StringToFloat((*info.params)[1]);
+		if((*info.params)[2].empty())
+		{ info.song->m_fSpecifiedBPMMax = info.song->m_fSpecifiedBPMMin; }
+		else
+		{ info.song->m_fSpecifiedBPMMax = StringToFloat((*info.params)[2]); }
+	}
+}
+void SMSetSelectable(SMSongTagInfo& info)
+{
+	if((*info.params)[1].EqualsNoCase("YES"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if((*info.params)[1].EqualsNoCase("NO"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_NEVER; }
+	// ROULETTE from 3.9. It was removed since UnlockManager can serve
+	// the same purpose somehow. This, of course, assumes you're using
+	// unlocks. -aj
+	else if((*info.params)[1].EqualsNoCase("ROULETTE"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	/* The following two cases are just fixes to make sure simfiles that
+	 * used 3.9+ features are not excluded here */
+	else if((*info.params)[1].EqualsNoCase("ES") || (*info.params)[1].EqualsNoCase("OMES"))
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else if(StringToInt((*info.params)[1]) > 0)
+	{ info.song->m_SelectionDisplay = info.song->SHOW_ALWAYS; }
+	else
+	{ LOG->UserLog("Song file", info.path, "has an unknown #SELECTABLE value, \"%s\"; ignored.", (*info.params)[1].c_str()); }
+}
+void SMSetBGChanges(SMSongTagInfo& info)
+{
+	info.loader->ProcessBGChanges(*info.song, (*info.params)[0], info.path, (*info.params)[1]);
+}
+void SMSetFGChanges(SMSongTagInfo& info)
+{
+	std::vector<std::vector<RString> > aFGChanges;
+	info.loader->ParseBGChangesString((*info.params)[1], aFGChanges, info.song->GetSongDir());
+
+	for (const auto &b : aFGChanges)
+	{
+		BackgroundChange change;
+		if (info.loader->LoadFromBGChangesVector(change, b))
+			info.song->AddForegroundChange(change);
+	}
+}
+void SMSetKeysounds(SMSongTagInfo& info)
+{
+	split((*info.params)[1], ",", info.song->m_vsKeysoundFile);
+}
+void SMSetAttacks(SMSongTagInfo& info)
+{
+	info.loader->ProcessAttackString(info.song->m_sAttackString, (*info.params));
+	info.loader->ProcessAttacks(info.song->m_Attacks, (*info.params));
+}
+
+typedef std::map<RString, song_tag_func_t> song_handler_map_t;
+
+struct sm_parser_helper_t
+{
+	song_handler_map_t song_tag_handlers;
+	// Unless signed, the comments in this tag list are not by me.  They were
+	// moved here when converting from the else if chain. -Kyz
+	sm_parser_helper_t()
+	{
+		song_tag_handlers["TITLE"]= &SMSetTitle;
+		song_tag_handlers["SUBTITLE"]= &SMSetSubtitle;
+		song_tag_handlers["ARTIST"]= &SMSetArtist;
+		song_tag_handlers["TITLETRANSLIT"]= &SMSetTitleTranslit;
+		song_tag_handlers["SUBTITLETRANSLIT"]= &SMSetSubtitleTranslit;
+		song_tag_handlers["ARTISTTRANSLIT"]= &SMSetArtistTranslit;
+		song_tag_handlers["GENRE"]= &SMSetGenre;
+		song_tag_handlers["CREDIT"]= &SMSetCredit;
+		song_tag_handlers["BANNER"]= &SMSetBanner;
+		song_tag_handlers["BACKGROUND"]= &SMSetBackground;
+		// Save "#LYRICS" for later, so we can add an internal lyrics tag.
+		song_tag_handlers["LYRICSPATH"]= &SMSetLyricsPath;
+		song_tag_handlers["CDTITLE"]= &SMSetCDTitle;
+		song_tag_handlers["MUSIC"]= &SMSetMusic;
+		song_tag_handlers["OFFSET"]= &SMSetOffset;
+		song_tag_handlers["BPMS"]= &SMSetBPMs;
+		song_tag_handlers["STOPS"]= &SMSetStops;
+		song_tag_handlers["FREEZES"]= &SMSetStops;
+		song_tag_handlers["DELAYS"]= &SMSetDelays;
+		song_tag_handlers["TIMESIGNATURES"]= &SMSetTimeSignatures;
+		song_tag_handlers["TICKCOUNTS"]= &SMSetTickCounts;
+		song_tag_handlers["INSTRUMENTTRACK"]= &SMSetInstrumentTrack;
+		song_tag_handlers["SAMPLESTART"]= &SMSetSampleStart;
+		song_tag_handlers["SAMPLELENGTH"]= &SMSetSampleLength;
+		song_tag_handlers["DISPLAYBPM"]= &SMSetDisplayBPM;
+		song_tag_handlers["SELECTABLE"]= &SMSetSelectable;
+		// It's a bit odd to have the tag that exists for backwards compatibility
+		// in this list and not the replacement, but the BGCHANGES tag has a
+		// number on the end, allowing up to NUM_BackgroundLayer tags, so it
+		// can't fit in the map. -Kyz
+		song_tag_handlers["ANIMATIONS"]= &SMSetBGChanges;
+		song_tag_handlers["FGCHANGES"]= &SMSetFGChanges;
+		song_tag_handlers["KEYSOUNDS"]= &SMSetKeysounds;
+		// Attacks loaded from file
+		song_tag_handlers["ATTACKS"]= &SMSetAttacks;
+		/* Tags that no longer exist, listed for posterity.  May their names
+		 * never be forgotten for their service to Stepmania. -Kyz
+		 * LASTBEATHINT: // unable to identify at this point: ignore
+		 * MUSICBYTES: // ignore
+		 * FIRSTBEAT: // cache tags from older SM files: ignore.
+		 * LASTBEAT: // cache tags from older SM files: ignore.
+		 * SONGFILENAME: // cache tags from older SM files: ignore.
+		 * HASMUSIC: // cache tags from older SM files: ignore.
+		 * HASBANNER: // cache tags from older SM files: ignore.
+		 * SAMPLEPATH: // SamplePath was used when the song has a separate preview clip. -aj
+		 * LEADTRACK: // XXX: Does anyone know what LEADTRACK is for? -Wolfman2000
+		 * MUSICLENGTH: // Loaded from the cache now. -Kyz
+		 */
+	}
+};
+sm_parser_helper_t sm_parser_helper;
+// End sm_parser_helper related functions. -Kyz
+/****************************************************************/
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 void SMLoader::SetSongTitle(const RString & title)
 {
 	this->songTitle = title;
@@ -129,14 +368,14 @@ void SMLoader::ProcessBGChanges( Song &out, const RString &sValueName, const RSt
 	}
 	else
 	{
-		vector<RString> aBGChangeExpressions;
-		split( sParam, ",", aBGChangeExpressions );
-		
-		for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
+		std::vector<std::vector<RString> > aBGChanges;
+		ParseBGChangesString(sParam, aBGChanges, out.GetSongDir());
+
+		for (const auto &b : aBGChanges)
 		{
 			BackgroundChange change;
-			if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
-				out.AddBackgroundChange( iLayer, change );
+			if(LoadFromBGChangesVector( change, b))
+				out.AddBackgroundChange(iLayer, change);
 		}
 	}
 }
@@ -546,11 +785,8 @@ void SMLoader::ProcessFakes( TimingData &out, const RString line, const int rows
 	}
 }
 
-bool SMLoader::LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChangeExpression )
+bool SMLoader::LoadFromBGChangesVector( BackgroundChange &change, std::vector<RString> aBGChangeValues )
 {
-	vector<RString> aBGChangeValues;
-	split( sBGChangeExpression, "=", aBGChangeValues, false );
-
 	aBGChangeValues.resize( min((int)aBGChangeValues.size(),11) );
 
 	switch( aBGChangeValues.size() )
@@ -940,7 +1176,11 @@ bool SMLoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache
 	return true;
 }
 
+<<<<<<< HEAD
 bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
+=======
+bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* =nullptr */ )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 {
 	LOG->Trace( "SMLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
@@ -968,7 +1208,11 @@ bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditF
 	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
 }
 
+<<<<<<< HEAD
 bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
+=======
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong /* = nullptr */ )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 {
 	Song* pSong = nullptr;
 
@@ -1113,6 +1357,169 @@ void SMLoader::TidyUpData( Song &song, bool bFromCache )
 	{
 		song.TidyUpData( bFromCache, true );
 	}
+}
+
+std::vector<RString> SMLoader::GetSongDirFiles(const RString &sSongDir)
+{
+	if (!m_SongDirFiles.empty())
+		return m_SongDirFiles;
+
+	ASSERT(!sSongDir.empty());
+
+	std::vector<RString> vsDirs;
+	vsDirs.push_back(sSongDir);
+
+	while (!vsDirs.empty())
+	{
+		RString d = vsDirs.back();
+		vsDirs.pop_back();
+
+		std::vector<RString> vsFiles;
+		GetDirListing(d+"*", vsFiles, false, true);
+
+		for (const RString& f : vsFiles)
+		{
+			if (IsADirectory(f))
+				vsDirs.push_back(f+"/");
+
+			m_SongDirFiles.push_back(f.substr(sSongDir.size()));
+		}
+	}
+
+	return m_SongDirFiles;
+}
+
+void SMLoader::ParseBGChangesString(const RString& _sChanges, std::vector<std::vector<RString> > &vvsAddTo, const RString& sSongDir)
+{
+	// short circuit: empty string
+	if (_sChanges.empty())
+		return;
+
+	// strip newlines (basically operates as both split and join at the same time)
+	RString sChanges;
+	size_t start = 0;
+	do {
+		size_t pos = _sChanges.find_first_of("\r\n", start);
+		if (RString::npos == pos)
+			pos = _sChanges.size();
+
+		if (pos - start > 0) {
+			if ((start == 0) && (pos == _sChanges.size()))
+				sChanges = _sChanges;
+			else
+				sChanges += _sChanges.substr(start, pos - start);
+		}
+		start = pos + 1;
+	} while (start <= _sChanges.size());
+
+	// after removing newlines, do we have anything?
+	if (sChanges.empty())
+		return;
+
+	// get the list of possible files/directories for the file parameters
+	std::vector<RString> vsFiles = GetSongDirFiles(sSongDir);
+
+	start = 0;
+	int pnum = 0;
+	do {
+		switch (pnum) {
+		// parameters 1 and 7 can be files or folder names
+		case 1:
+		case 7:
+		{
+			// see if one of the files in the song directory are listed.
+			RString found;
+			for (const auto& f : vsFiles)
+			{
+				// there aren't enough characters for this to match
+				if ((sChanges.size() - start) < f.size())
+					continue;
+
+				// the string itself matches
+				if (f.EqualsNoCase(sChanges.substr(start, f.size()).c_str())) 
+				{
+					size_t nextpos = start + f.size();
+
+					// is this name followed by end-of-string, equals, or comma?
+					if ((nextpos == sChanges.size()) || (sChanges[nextpos] == '=') || (sChanges[nextpos] == ','))
+					{
+						found = f;
+						break;
+					}
+				}
+			}
+			// yes. use that as this parameter, even if it has commas or equals signs in it
+			if (!found.empty())
+			{
+				vvsAddTo.back().push_back(found);
+				start += found.size();
+				// the next character should be a comma or equals. skip it
+				if (start < sChanges.size())
+				{
+					if (sChanges[start] == '=')
+						++pnum;
+					else
+					{
+						ASSERT(sChanges[start] == ',');
+						pnum = 0;
+					}
+					start += 1;
+				}
+				// move to the next parameter
+				break;
+			}
+			// deliberate fall-through if not found. treat it as a normal string like before
+		}
+		// everything else should be safe
+		default:
+			if(0 == pnum) vvsAddTo.push_back(std::vector<RString>()); // first value of this set. create our vector
+
+			{
+				size_t eqpos = sChanges.find('=', start);
+				size_t compos = sChanges.find(',', start);
+				
+				if ((eqpos == RString::npos) && (compos == RString::npos))
+				{
+					// neither = nor , were found in the remainder of the string. consume the rest of the string.
+					vvsAddTo.back().push_back(sChanges.substr(start));
+					start = sChanges.size() + 1;
+				}
+				else if ((eqpos != RString::npos) && (compos != RString::npos))
+				{
+					// both were found. which came first?
+					if (eqpos < compos)
+					{
+						// equals. consume value and move to next value
+						vvsAddTo.back().push_back(sChanges.substr(start, eqpos - start));
+						start = eqpos + 1;
+						++pnum;
+					}
+					else
+					{
+						// comma. consume value and move to next set
+						vvsAddTo.back().push_back(sChanges.substr(start, compos - start));
+						start = compos + 1;
+						pnum = 0;
+					}
+				}
+				else if (eqpos != RString::npos)
+				{
+					// found only equals. consume and move on.
+					vvsAddTo.back().push_back(sChanges.substr(start, eqpos - start));
+					start = eqpos + 1;
+					++pnum;
+				}
+				else
+				{
+					// only foudn comma. consume and move on.
+					vvsAddTo.back().push_back(sChanges.substr(start, compos - start));
+					start = compos + 1;
+					pnum = 0;
+				}
+				break;
+			}
+		}
+	} while (start <= sChanges.size());
 }
 
 /*

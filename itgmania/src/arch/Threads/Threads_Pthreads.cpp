@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Pthreads.cpp
+<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Pthreads.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Pthreads.cpp
 #include "global.h"
 #include "Threads_Pthreads.h"
 #include "RageLog.h"
@@ -248,7 +251,11 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
+<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Pthreads.cpp
 #endif
+=======
+#endif // On MinGW clockid_t is defined in pthread.h
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Pthreads.cpp
 namespace
 {
 	typedef int (* CONDATTR_SET_CLOCK)( pthread_condattr_t *attr, clockid_t clock_id );
@@ -301,6 +308,7 @@ namespace
 		if( pLib != nullptr )
 			dlclose( pLib );
 		pLib = nullptr;
+<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Pthreads.cpp
 	}
 #elif defined(MACOSX)
 	void InitMonotonic() { bInitialized = true; }
@@ -865,6 +873,8 @@ namespace
 		if( pLib != nullptr )
 			dlclose( pLib );
 		pLib = nullptr;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Pthreads.cpp
 	}
 #elif defined(MACOSX)
 	void InitMonotonic() { bInitialized = true; }
@@ -887,7 +897,7 @@ EventImpl_Pthreads::EventImpl_Pthreads( MutexImpl_Pthreads *pParent )
 	m_pParent = pParent;
 
 	InitMonotonic();
-       
+
 	pthread_condattr_t condattr;
 	pthread_condattr_init( &condattr );
 
@@ -1019,7 +1029,7 @@ bool SemaImpl_Pthreads::TryWait()
 	int ret = sem_trywait( &sem );
 	if( ret == -1 && errno == EAGAIN )
 		return false;
-	
+
 	ASSERT_M( ret == 0, ssprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
 
 	return true;
@@ -1032,7 +1042,7 @@ SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
 	ret = pthread_mutex_init( &m_Mutex, nullptr );
 	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
-		
+
 	m_iValue = iInitialValue;
 }
 
@@ -1141,7 +1151,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
 /*
  * (c) 2001-2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1151,7 +1161,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -1162,4 +1172,7 @@ SemaImpl *MakeSemaphore( int iInitialValue )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Pthreads.cpp
 >>>>>>> origin/c++11:src/arch/Threads/Threads_Pthreads.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Pthreads.cpp

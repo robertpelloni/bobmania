@@ -22,7 +22,11 @@ bool GetFileVersion( RString sFile, RString &sOut )
 
 		RString VersionBuffer( iSize, ' ' );
 		// Also VC6:
+<<<<<<< HEAD
 		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), NULL, iSize, VersionBuffer.GetBuffer() ) )
+=======
+		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), 0, iSize, const_cast<char *>(VersionBuffer.c_str()) ) )
+>>>>>>> origin/unified-ui-features-13937230807013224518
 			break;
 
 		WORD *iTrans;
@@ -73,7 +77,7 @@ RString FindSystemFile( RString sFile )
 		"/system/",
 		"/system/drivers/",
 		"/",
-		NULL
+		nullptr
 	};
 
 	for( int i = 0; szPaths[i]; ++i )
@@ -146,7 +150,7 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 
 		if( pGetProcessImageFileName != nullptr )
 		{
-			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, NULL, iProcessID );
+			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, FALSE, iProcessID );
 			if( hProc == nullptr )
 			{
 				sName = werr_ssprintf( GetLastError(), "OpenProcess" );

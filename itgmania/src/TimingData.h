@@ -1,10 +1,19 @@
 <<<<<<< HEAD:itgmania/src/TimingData.h
+<<<<<<< HEAD:itgmania/src/TimingData.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TimingData.h
 #ifndef TIMING_DATA_H
 #define TIMING_DATA_H
 
 #include "NoteTypes.h"
 #include "TimingSegments.h"
 #include "PrefsManager.h"
+<<<<<<< HEAD:itgmania/src/TimingData.h
+=======
+#include <float.h> // max float
+#include <array>
+struct lua_State;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TimingData.h
 
 #include <array>
 #include <cfloat>
@@ -942,4 +951,7 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/TimingData.h
 >>>>>>> origin/c++11:src/TimingData.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TimingData.h

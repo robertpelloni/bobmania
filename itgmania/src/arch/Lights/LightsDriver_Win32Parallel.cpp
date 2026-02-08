@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Parallel.cpp
 #include "global.h"
 #include "LightsDriver_Win32Parallel.h"
 #define WIN32_LEAN_AND_MEAN
@@ -47,6 +50,7 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 	// init io.dll
 	hDLL = LoadLibrary("parallel_lights_io.dll");
 	if(hDLL == nullptr)
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
 	{
 		MessageBox(nullptr, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;
@@ -185,8 +189,10 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 	// init io.dll
 	hDLL = LoadLibrary("parallel_lights_io.dll");
 	if(hDLL == nullptr)
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Parallel.cpp
 	{
-		MessageBox(NULL, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
+		MessageBox(nullptr, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;
 	}
 
@@ -275,4 +281,7 @@ void LightsDriver_Win32Parallel::Set( const LightsState *ls )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
 >>>>>>> origin/c++11:src/arch/Lights/LightsDriver_Win32Parallel.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Parallel.cpp

@@ -166,7 +166,11 @@ void KeyboardDevice::AddElement( int usagePage, int usage, IOHIDElementCookie co
 
 void KeyboardDevice::Open()
 {
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/KeyboardDevice.cpp
 	for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+=======
+	for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/KeyboardDevice.cpp
 	{
 		//LOG->Trace( "Adding %s to queue, cookie %p", DeviceButtonToString(i->second).c_str(), i->first );
 		AddElementToQueue( i->first );
@@ -175,7 +179,11 @@ void KeyboardDevice::Open()
 
 void KeyboardDevice::GetButtonPresses( std::vector<DeviceInput>& vPresses, IOHIDElementCookie cookie, int value, const RageTimer& now ) const
 {
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/KeyboardDevice.cpp
 	std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+=======
+	unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/KeyboardDevice.cpp
 
 	if( iter != m_Mapping.end() )
 	{

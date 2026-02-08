@@ -58,7 +58,11 @@ namespace Checkpoints
 	void SetCheckpoint( const char *file, int line, std::string const &message );
 }
 /** @brief Set a checkpoint with no message. */
+<<<<<<< HEAD
 #define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, ""))
+=======
+#define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, nullptr))
+>>>>>>> origin/unified-ui-features-13937230807013224518
 /** @brief Set a checkpoint with a specified message. */
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 

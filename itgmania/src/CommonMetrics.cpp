@@ -60,6 +60,7 @@ void ThemeMetricDifficultiesToShow::Read()
 		{
 			m_v.push_back( d );
 		}
+<<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
 =======
 	ASSERT( v.size() > 0 );
 
@@ -70,6 +71,8 @@ void ThemeMetricDifficultiesToShow::Read()
 			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i.c_str() );
 		m_v.push_back( d );
 >>>>>>> origin/c++11:src/CommonMetrics.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CommonMetrics.cpp
 	}
 }
 const std::vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
@@ -110,6 +113,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 		{
 			m_v.push_back( d );
 		}
+<<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
 =======
 	ASSERT( v.size() > 0 );
 
@@ -120,6 +124,8 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i.c_str() );
 		m_v.push_back( d );
 >>>>>>> origin/c++11:src/CommonMetrics.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CommonMetrics.cpp
 	}
 }
 const std::vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
@@ -137,10 +143,14 @@ static void RemoveStepsTypes( std::vector<StepsType>& inout, RString sStepsTypes
 		if( st == StepsType_Invalid )
 		{
 <<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
+<<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
 			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
 =======
 			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
 >>>>>>> origin/c++11:src/CommonMetrics.cpp
+=======
+			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CommonMetrics.cpp
 			continue;
 		}
 

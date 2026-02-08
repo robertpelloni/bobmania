@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ModIconRow.cpp
+<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp
 #include "global.h"
 #include "ModIconRow.h"
 #include "ThemeManager.h"
@@ -9,9 +12,12 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
+<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
 
 #include <vector>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp
 
 int OptionToPreferredColumn( RString sOptionText );
 
@@ -28,6 +34,7 @@ ModIconRow::~ModIconRow()
 {
 	for (ModIcon *p : m_vpModIcon)
 	{
+<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
 		RageUtil::SafeDelete( p );
 	}
 	this->RemoveAllChildren();
@@ -250,6 +257,8 @@ ModIconRow::~ModIconRow()
 {
 	for (ModIcon *p : m_vpModIcon)
 	{
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp
 		SAFE_DELETE( p );
 	}
 	this->RemoveAllChildren();
@@ -445,4 +454,7 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
 >>>>>>> origin/c++11:src/ModIconRow.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenSetTime.cpp
+<<<<<<< HEAD:itgmania/src/ScreenSetTime.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSetTime.cpp
 #include "global.h"
 #include "ScreenSetTime.h"
 #include "ScreenManager.h"
@@ -263,6 +266,7 @@ bool ScreenSetTime::MenuBack( const InputEventPlus &input )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/ScreenSetTime.cpp
 =======
 #include "global.h"
 #include "ScreenSetTime.h"
@@ -529,3 +533,5 @@ bool ScreenSetTime::MenuBack( const InputEventPlus &input )
  */
 
 >>>>>>> origin/c++11:src/ScreenSetTime.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSetTime.cpp

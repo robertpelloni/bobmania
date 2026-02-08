@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.cpp
 #include "global.h"
 #include "ArchHooks.h"
 #include "LuaReference.h"
@@ -11,6 +14,7 @@ bool ArchHooks::g_bToggleWindowed = false;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = nullptr; // global and accessible from anywhere in our program
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
 
 ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
 {
@@ -139,6 +143,8 @@ bool ArchHooks::g_bToggleWindowed = false;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = nullptr;
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.cpp
 
 ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
 {
@@ -199,11 +205,19 @@ class LunaArchHooks: public Luna<ArchHooks>
 public:
 	DEFINE_METHOD( AppHasFocus, AppHasFocus() );
 	DEFINE_METHOD( GetArchName, GetArchName() );
+	DEFINE_METHOD( GetClipboard, GetClipboard() );
+	static int SetClipboard( T* p, lua_State *L )
+	{
+		p->SetClipboard( SArg(1) );
+		return 0;
+	}
 	
 	LunaArchHooks()
 	{
 		ADD_METHOD( AppHasFocus );
 		ADD_METHOD( GetArchName );
+		ADD_METHOD( GetClipboard );
+		ADD_METHOD( SetClipboard );
 	}
 };
 LUA_REGISTER_CLASS( ArchHooks );
@@ -244,4 +258,7 @@ REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_Hooks );
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
 >>>>>>> origin/c++11:src/arch/ArchHooks/ArchHooks.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.cpp

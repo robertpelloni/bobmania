@@ -11,8 +11,11 @@
 #include "LightsDriver.h"
 #include "SextetUtils.h"
 
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Serial.h
 #include <cstdint>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Serial.h
 class LightsDriver_Win32Serial : public LightsDriver
 {
 protected:

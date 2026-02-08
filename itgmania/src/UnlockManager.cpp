@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/UnlockManager.cpp
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 #include "global.h"
 #include "UnlockManager.h"
 #include "PrefsManager.h"
@@ -12,6 +15,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "ThemeManager.h"
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 #include "Steps.h"
 #include "CommonMetrics.h"
 #include "LuaManager.h"
@@ -1055,6 +1059,8 @@ LUA_REGISTER_CLASS( UnlockManager )
 #include "Profile.h"
 #include "ThemeManager.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 #include "Steps.h"
 #include <float.h>
 #include "CommonMetrics.h"
@@ -1062,7 +1068,11 @@ LUA_REGISTER_CLASS( UnlockManager )
 #include "GameManager.h"
 #include "Style.h"
 
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 UnlockManager*	UNLOCKMAN = nullptr;	// global and accessable from anywhere in our program
+=======
+UnlockManager*	UNLOCKMAN = nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 
 #define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
 #define UNLOCK(x)		THEME->GetMetricR("UnlockManager", ssprintf("Unlock%sCommand",x.c_str()));
@@ -1630,20 +1640,32 @@ void UnlockManager::Load()
 		case UnlockRewardType_Song:
 			e.m_Song.FromSong( SONGMAN->FindSong( e.m_cmd.GetArg(0).s ) );
 			if( !e.m_Song.IsValid() )
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find song matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 			break;
 		case UnlockRewardType_Steps:
 			e.m_Song.FromSong( SONGMAN->FindSong( e.m_cmd.GetArg(0).s ) );
 			if( !e.m_Song.IsValid() )
 			{
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find song matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 				break;
 			}
 
 			e.m_dc = StringToDifficulty( e.m_cmd.GetArg(1).s );
 			if( e.m_dc == Difficulty_Invalid )
 			{
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e.m_cmd.GetArg(1).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Invalid difficulty \"%s\"", e.m_cmd.GetArg(1).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 				break;
 			}
 
@@ -1653,21 +1675,33 @@ void UnlockManager::Load()
 			e.m_Song.FromSong( SONGMAN->FindSong( e.m_cmd.GetArg(0).s ) );
 			if( !e.m_Song.IsValid() )
 			{
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find song matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 				break;
 			}
 			
 			e.m_dc = StringToDifficulty( e.m_cmd.GetArg(1).s );
 			if( e.m_dc == Difficulty_Invalid )
 			{
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e.m_cmd.GetArg(1).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Invalid difficulty \"%s\"", e.m_cmd.GetArg(1).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 				break;
 			}
 			
 			e.m_StepsType = GAMEMAN->StringToStepsType(e.m_cmd.GetArg(2).s);
 			if (e.m_StepsType == StepsType_Invalid)
 			{
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Invalid steps type \"%s\"", e.m_cmd.GetArg(2).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Invalid steps type \"%s\"", e.m_cmd.GetArg(2).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 				break;
 			}
 			break;
@@ -1675,7 +1709,11 @@ void UnlockManager::Load()
 		case UnlockRewardType_Course:
 			e.m_Course.FromCourse( SONGMAN->FindCourse(e.m_cmd.GetArg(0).s) );
 			if( !e.m_Course.IsValid() )
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+=======
+				LuaHelpers::ReportScriptErrorFmt( "Unlock: Cannot find course matching \"%s\"", e.m_cmd.GetArg(0).s.c_str() );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp
 			break;
 		case UnlockRewardType_Modifier:
 			// nothing to cache
@@ -2061,4 +2099,7 @@ LUA_REGISTER_CLASS( UnlockManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/UnlockManager.cpp
 >>>>>>> origin/c++11:src/UnlockManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/UnlockManager.cpp

@@ -59,6 +59,9 @@ void PlayerAI::InitFromDisk()
 	if(!bSuccess)
 	{
 <<<<<<< HEAD:itgmania/src/PlayerAI.cpp
+<<<<<<< HEAD:itgmania/src/PlayerAI.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerAI.cpp
 		LuaHelpers::ReportScriptErrorFmt("Error trying to read \"%s\" to load AI player skill settings.", AI_PATH);
 		for(int i= 0; i < NUM_SKILL_LEVELS; ++i)
 		{
@@ -103,6 +106,7 @@ void PlayerAI::InitFromDisk()
 			}
 			dist.ChangeWeightsToPercents();
 		}
+<<<<<<< HEAD:itgmania/src/PlayerAI.cpp
 =======
 		RString sKey = ssprintf("Skill%d", i);
 		XNode* pNode = ini.GetChild(sKey);
@@ -130,6 +134,8 @@ void PlayerAI::InitFromDisk()
 		for( int j=0; j<NUM_TapNoteScore; j++ )
 			dist.fPercent[j] /= fSum;
 >>>>>>> origin/c++11:src/PlayerAI.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerAI.cpp
 	}
 }
 

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/PercentageDisplay.cpp
+<<<<<<< HEAD:itgmania/src/PercentageDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PercentageDisplay.cpp
 #include "global.h"
 
 #include "PercentageDisplay.h"
@@ -254,6 +257,7 @@ LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/PercentageDisplay.cpp
 =======
 #include "global.h"
 
@@ -491,3 +495,5 @@ LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/PercentageDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PercentageDisplay.cpp

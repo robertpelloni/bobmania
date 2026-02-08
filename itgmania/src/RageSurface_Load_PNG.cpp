@@ -1,6 +1,13 @@
 <<<<<<< HEAD:itgmania/src/RageSurface_Load_PNG.cpp
+<<<<<<< HEAD:itgmania/src/RageSurface_Load_PNG.cpp
 #include "global.h"
 
+=======
+#include "global.h"
+
+#include <png.h>
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load_PNG.cpp
 #include "RageSurface_Load_PNG.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -256,6 +263,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	{
 		delete[] row_pointers;
 	}
+<<<<<<< HEAD:itgmania/src/RageSurface_Load_PNG.cpp
 
 	return img;
 }
@@ -556,6 +564,8 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	CHECKPOINT;
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, nullptr );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load_PNG.cpp
 
 	return img;
 }
@@ -585,7 +595,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -595,7 +605,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -606,4 +616,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const RString &sPath, RageSur
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageSurface_Load_PNG.cpp
 >>>>>>> origin/c++11:src/RageSurface_Load_PNG.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load_PNG.cpp

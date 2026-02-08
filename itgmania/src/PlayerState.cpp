@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/PlayerState.cpp
+<<<<<<< HEAD:itgmania/src/PlayerState.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerState.cpp
 #include "global.h"
 #include "PlayerState.h"
 #include "GameState.h"
@@ -308,6 +311,7 @@ public:
 		ADD_METHOD( GetHealthState );
 		ADD_METHOD( GetSuperMeterLevel );
 		ADD_METHOD( SetNotePath );
+<<<<<<< HEAD:itgmania/src/PlayerState.cpp
 	}
 };
 
@@ -614,6 +618,8 @@ public:
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 		ADD_METHOD( GetSuperMeterLevel );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerState.cpp
 	}
 };
 
@@ -644,4 +650,7 @@ LUA_REGISTER_CLASS( PlayerState )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/PlayerState.cpp
 >>>>>>> origin/c++11:src/PlayerState.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PlayerState.cpp

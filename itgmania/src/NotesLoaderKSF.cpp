@@ -156,8 +156,12 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		
 		else if( sValueName=="TICKCOUNT" )
 		{
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 			iTickCount = std::stoi( sParams[1] );
 >>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
+=======
+			iTickCount = StringToInt( sParams[1] );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderKSF.cpp
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
@@ -174,8 +178,12 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		
 		else if( sValueName=="DIFFICULTY" )
 		{
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 			out.SetMeter( max(std::stoi(sParams[1]), 1) );
 >>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
+=======
+			out.SetMeter( max(StringToInt(sParams[1]), 1) );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderKSF.cpp
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
@@ -638,10 +646,14 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
 <<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	ticks = StringToInt( value );
 =======
 	ticks = std::stoi( value );
 >>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
+=======
+	ticks = StringToInt( value );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderKSF.cpp
 	CLAMP( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )

@@ -33,10 +33,14 @@ void ScreenEditMenu::Init()
 {
 	// HACK: Disable any style set by the editor.
 <<<<<<< HEAD:itgmania/src/ScreenEditMenu.cpp
+<<<<<<< HEAD:itgmania/src/ScreenEditMenu.cpp
 	GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
 =======
 	GAMESTATE->m_pCurStyle.Set(nullptr);
 >>>>>>> origin/c++11:src/ScreenEditMenu.cpp
+=======
+	GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenEditMenu.cpp
 
 	// Enable all players.
 	FOREACH_PlayerNumber( pn )
@@ -221,12 +225,17 @@ bool ScreenEditMenu::MenuStart( const InputEventPlus & )
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 <<<<<<< HEAD:itgmania/src/ScreenEditMenu.cpp
+<<<<<<< HEAD:itgmania/src/ScreenEditMenu.cpp
 	GAMESTATE->m_pCurCourse.Set( nullptr );
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st), PLAYER_INVALID );
 =======
 	GAMESTATE->m_pCurCourse.Set(nullptr);
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st) );
 >>>>>>> origin/c++11:src/ScreenEditMenu.cpp
+=======
+	GAMESTATE->m_pCurCourse.Set( nullptr );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetEditorStyleForStepsType(st), PLAYER_INVALID );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenEditMenu.cpp
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	// handle error cases

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageFileBasic.cpp
+<<<<<<< HEAD:itgmania/src/RageFileBasic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileBasic.cpp
 #include "global.h"
 #include "RageFileBasic.h"
 #include "RageUtil.h"
@@ -438,6 +441,7 @@ int RageFileObj::FillReadBuf()
 {
 	/* Don't call this unless buffering is enabled. */
 	ASSERT( m_pReadBuffer != nullptr );
+<<<<<<< HEAD:itgmania/src/RageFileBasic.cpp
 
 	/* The buffer starts at m_Buffer; any data in it starts at m_pReadBuf; space between
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
@@ -916,6 +920,8 @@ int RageFileObj::FillReadBuf()
 {
 	/* Don't call this unless buffering is enabled. */
 	ASSERT( m_pReadBuffer != nullptr );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileBasic.cpp
 
 	/* The buffer starts at m_Buffer; any data in it starts at m_pReadBuf; space between
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
@@ -961,4 +967,7 @@ void RageFileObj::ResetReadBuf()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/RageFileBasic.cpp
 >>>>>>> origin/c++11:src/RageFileBasic.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileBasic.cpp

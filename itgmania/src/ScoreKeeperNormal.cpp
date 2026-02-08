@@ -20,7 +20,11 @@
 #include "Song.h"
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
+<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 #include "StepsWithScoring.h"
+=======
+#include "Scoring/WifeScoring.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperNormal.cpp
 
 
 void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
@@ -135,6 +139,7 @@ void ScoreKeeperNormal::Load(
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
+<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 
 		radarSteps.SetNoteData(nd);
@@ -143,6 +148,15 @@ void ScoreKeeperNormal::Load(
 		
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
+=======
+		NoteData ndPost = ndPre;
+		NoteDataUtil::TransformNoteData(ndPost, *(pSteps->GetTimingData()), m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType);
+
+		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
+		iTotalPossibleGradePoints += this->GetPossibleGradePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
+		GAMESTATE->SetProcessedTimingData(nullptr);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperNormal.cpp
 	}
 
 	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
@@ -407,6 +421,19 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		MESSAGEMAN->Broadcast( msg );
 	}
 
+	// Etterna Parity: Wife Scoring
+	if( tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead || tn.type == TapNoteType_Lift )
+	{
+		float fWifePoints = 0.0f;
+		if( tns == TNS_Miss )
+			fWifePoints = -8.0f;
+		else if( tns > TNS_Miss && tns != TNS_None )
+			fWifePoints = WifeScoring::CalculateWife3( tn.result.fTapNoteOffset );
+		
+		m_pPlayerStageStats->m_fWifeScore += fWifePoints;
+		m_pPlayerStageStats->m_fCurMaxWifeScore += 2.0f;
+	}
+
 	AddTapScore( tns );
 }
 
@@ -617,7 +644,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	float offset = StepsWithScoring::LastTapNoteWithResult(nd, iRow, stc, pn ).result.fTapNoteOffset;
 	NSMAN->ReportScore( pn, scoreOfLastTap,
 			m_pPlayerStageStats->m_iScore,
-			m_pPlayerStageStats->m_iCurCombo, offset );
+			m_pPlayerStageStats->m_iCurCombo, offset, m_iNumNotesHitThisRow);
 	Message msg( "ScoreChanged" );
 	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );

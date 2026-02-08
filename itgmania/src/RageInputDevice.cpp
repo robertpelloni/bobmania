@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageInputDevice.cpp
+<<<<<<< HEAD:itgmania/src/RageInputDevice.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageInputDevice.cpp
 /* Define all of the input devices we know about. This is the public interface
  * for describing input devices. */
 
@@ -582,4 +585,7 @@ bool DeviceInput::FromString( const RString &s )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageInputDevice.cpp
 >>>>>>> origin/c++11:src/RageInputDevice.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageInputDevice.cpp

@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/ScreenOptionsManageEditSteps.cpp
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageEditSteps.cpp
 #include "global.h"
 #include "ScreenOptionsManageEditSteps.h"
 #include "ScreenManager.h"
@@ -333,6 +334,8 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageEditSteps.cpp
 #include "global.h"
 #include "ScreenOptionsManageEditSteps.h"
 #include "ScreenManager.h"
@@ -565,7 +568,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageEditSteps::AfterChangeRow( PlayerNumber pn )
 {
 	Steps *pSteps = GetStepsWithFocus();
-	Song *pSong = pSteps ? pSteps->m_pSong : NULL;
+	Song *pSong = pSteps ? pSteps->m_pSong : nullptr;
 	
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
@@ -662,4 +665,7 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageEditSteps.cpp
 >>>>>>> origin/c++11:src/ScreenOptionsManageEditSteps.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageEditSteps.cpp

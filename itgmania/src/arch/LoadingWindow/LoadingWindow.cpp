@@ -18,11 +18,15 @@ LoadingWindow *LoadingWindow::Create()
 	return new LoadingWindow_Null;
 #endif
 <<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
 	// Don't load nullptr by default.
 	const RString drivers = "win32,macosx,gtk";
 	std::vector<RString> DriversToTry;
 =======
 	// Don't load NULL by default.
+=======
+	// Don't load nullptr by default.
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow.cpp
 	const RString drivers = "win32,macosx,gtk";
 	vector<RString> DriversToTry;
 >>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow.cpp

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenInstallOverlay.cpp
+<<<<<<< HEAD:itgmania/src/ScreenInstallOverlay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenInstallOverlay.cpp
 #include "global.h"
 #include "ScreenInstallOverlay.h"
 #include "RageFileManager.h"
@@ -427,6 +430,7 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenInstallOverlay.cpp
 =======
 #include "global.h"
 #include "ScreenInstallOverlay.h"
@@ -849,3 +853,5 @@ void ScreenInstallOverlay::Update( float fDeltaTime )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/ScreenInstallOverlay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenInstallOverlay.cpp

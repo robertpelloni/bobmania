@@ -55,7 +55,11 @@ public:
 
 	virtual void ReloadSongList();
 
+<<<<<<< HEAD:itgmania/src/MusicWheel.h
 	void GetCurrentSections(std::vector<RString> &sections);
+=======
+	void GetCurrentSections(vector<RString> &sections);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/MusicWheel.h
 	// Lua
 	void PushSelf( lua_State *L );
 

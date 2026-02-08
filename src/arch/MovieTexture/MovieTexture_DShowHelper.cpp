@@ -71,7 +71,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
 	if( m_pTexture == nullptr )
 	{
-		LOG->Warn( "DoRenderSample called while m_pTexture was NULL!" );
+		LOG->Warn( "DoRenderSample called while m_pTexture was nullptr!" );
 		return S_OK;
 	}
 

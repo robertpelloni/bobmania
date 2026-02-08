@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
+<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp
 #include "global.h"
 #include "RageSoundManager.h"
 #include "GameSoundManager.h"
@@ -21,6 +24,7 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
+<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
 #include <cmath>
 #include <cstddef>
 #include <vector>
@@ -972,6 +976,8 @@ LUAFUNC_REGISTER_COMMON(get_sound_driver_list);
 #include "SongUtil.h"
 #include "LuaManager.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp
 GameSoundManager *SOUND = nullptr;
 
 /*
@@ -1035,6 +1041,8 @@ static RageThread MusicThread;
 vector<RString> g_SoundsToPlayOnce;
 vector<RString> g_SoundsToPlayOnceFromDir;
 vector<RString> g_SoundsToPlayOnceFromAnnouncer;
+// This should get updated to unordered_map when once C++11 is supported
+std::map<RString, vector<int>> g_DirSoundOrder;
 
 struct MusicToPlay
 {
@@ -1250,9 +1258,31 @@ static void DoPlayOnceFromDir( RString sPath )
 	GetDirListing( sPath + "*.oga", arraySoundFiles );
 
 	if( arraySoundFiles.empty() )
+	{
 		return;
+	}
+	else if (arraySoundFiles.size() == 1)
+	{
+		DoPlayOnce(  sPath + arraySoundFiles[0]  );
+		return;
+	}
 
-	int index = RandomInt( arraySoundFiles.size( ));
+	g_Mutex->Lock();
+	vector<int> &order = g_DirSoundOrder.insert({sPath, vector<int>()}).first->second;
+	// If order is exhausted, repopulate and reshuffle
+	if (order.size() == 0)
+	{
+		for (int i = 0; i < (int)arraySoundFiles.size(); ++i)
+		{
+			order.push_back(i);
+		}
+		std::random_shuffle(order.begin(), order.end());
+	}
+
+	int index = order.back();
+	order.pop_back();
+	g_Mutex->Unlock();
+
 	DoPlayOnce(  sPath + arraySoundFiles[index]  );
 }
 
@@ -1793,9 +1823,31 @@ public:
 				fadeOut = FArg(5);
 			}
 		}
+<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
 		p->PlayMusic(musicPath, nullptr, false, musicStart, musicLength,
 					 fadeIn, fadeOut);
 		return 0;
+=======
+		if(!lua_isnoneornil(L, 5))
+		{
+			fadeOut = FArg(5);
+		}
+		if(!lua_isnoneornil(L, 6))
+		{
+			loop = BArg(6);
+		}
+		if(!lua_isnoneornil(L, 7))
+		{
+			applyRate = BArg(7);
+		}
+		if(!lua_isnoneornil(L, 8))
+		{
+			alignBeat = BArg(8);
+		}
+		p->PlayMusic(musicPath, nullptr, loop, musicStart, musicLength,
+			fadeIn, fadeOut, alignBeat, applyRate);
+		COMMON_RETURN_SELF;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp
 	}
 
 	LunaGameSoundManager()
@@ -1836,4 +1888,7 @@ LUA_REGISTER_CLASS( GameSoundManager )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
 >>>>>>> origin/c++11:src/GameSoundManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp

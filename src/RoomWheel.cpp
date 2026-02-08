@@ -129,7 +129,11 @@ void RoomWheel::RemoveItem( int index )
 	vector<WheelItemBaseData *>::iterator i = m_CurWheelItemData.begin();
 	i += index;
 
+<<<<<<< HEAD
 	// If this item's data happened to be last selected, make it NULL.
+=======
+	// If this item's data happened to be last selected, make it nullptr.
+>>>>>>> origin/unified-ui-features-13937230807013224518
 	if( m_LastSelection == *i )
 		m_LastSelection = nullptr;
 
@@ -196,6 +200,35 @@ unsigned int RoomWheel::GetNumItems() const
 	return m_CurWheelItemData.size() - m_offset;
 }
 
+<<<<<<< HEAD
+=======
+// lua start
+#include "LuaBinding.h"
+
+class LunaRoomWheel : public Luna<RoomWheel>
+{
+public:
+	static int Move(T* p, lua_State *L)
+	{
+		if (lua_isnil(L, 1)) { p->Move(0); }
+		else
+		{
+			p->Move(IArg(1));
+		}
+		return 1;
+	}
+
+	LunaRoomWheel()
+	{
+		ADD_METHOD(Move);
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS(RoomWheel, WheelBase)
+// lua end
+
+
+>>>>>>> origin/unified-ui-features-13937230807013224518
 /*
  * (c) 2004 Josh Allen
  * All rights reserved.

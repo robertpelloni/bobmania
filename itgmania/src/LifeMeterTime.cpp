@@ -98,11 +98,14 @@ void LifeMeterTime::OnLoadSong()
 		return;
 
 <<<<<<< HEAD:itgmania/src/LifeMeterTime.cpp
+<<<<<<< HEAD:itgmania/src/LifeMeterTime.cpp
 =======
 	Course* pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse != nullptr );
 
 >>>>>>> origin/c++11:src/LifeMeterTime.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/LifeMeterTime.cpp
 	float fOldLife = m_fLifeTotalLostSeconds;
 	float fGainSeconds = 0;
 	if(GAMESTATE->IsCourseMode())

@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/Difficulty.cpp
+<<<<<<< HEAD:itgmania/src/Difficulty.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Difficulty.cpp
 #include "global.h"
 #include "Difficulty.h"
 #include "GameState.h"
@@ -27,13 +30,22 @@ LuaXType( Difficulty );
 
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
+<<<<<<< HEAD:itgmania/src/Difficulty.cpp
 	static std::unique_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
+=======
+	static unique_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Difficulty.cpp
 	if( g_CourseDifficultyName[0].get() == nullptr )
 	{
 		FOREACH_ENUM( Difficulty,i)
 		{
+<<<<<<< HEAD:itgmania/src/Difficulty.cpp
 			std::unique_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
 			g_CourseDifficultyName[i] = std::move(ap);
+=======
+			unique_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
+			g_CourseDifficultyName[i] = move(ap);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Difficulty.cpp
 		}
 	}
 	return g_CourseDifficultyName[x]->GetValue();
@@ -130,6 +142,7 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 				if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
 				{
 					ThemeMetric<RString> STRING("CustomDifficulty",sName + "String");
+<<<<<<< HEAD:itgmania/src/Difficulty.cpp
 					return STRING.GetValue();
 				}
 			}
@@ -303,6 +316,8 @@ RString GetCustomDifficulty( StepsType st, Difficulty dc, CourseType ct )
 				if( COURSE_TYPE == CourseType_Invalid  ||  ct == COURSE_TYPE )	// match
 				{
 					ThemeMetric<RString> STRING("CustomDifficulty",sName + "String");
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Difficulty.cpp
 					return STRING.GetValue();
 				}
 			}
@@ -363,4 +378,7 @@ LuaFunction( TrailToCustomDifficulty, TrailToCustomDifficulty(Luna<Trail>::check
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Difficulty.cpp
 >>>>>>> origin/c++11:src/Difficulty.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Difficulty.cpp

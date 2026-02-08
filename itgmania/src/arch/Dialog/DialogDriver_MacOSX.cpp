@@ -22,10 +22,14 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 {
 	CFOptionFlags result;
 <<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
 	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage.c_str(), kCFStringEncodingUTF8 );
 =======
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
 >>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+=======
+	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage, kCFStringEncodingUTF8 );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_MacOSX.cpp
 
 	if( text == nullptr )
 	{

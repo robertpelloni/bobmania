@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/BPMDisplay.cpp
+<<<<<<< HEAD:itgmania/src/BPMDisplay.cpp
 #include "global.h"
 #include "BPMDisplay.h"
 #include "RageUtil.h"
@@ -381,6 +382,8 @@ LUA_REGISTER_DERIVED_CLASS( BPMDisplay, BitmapText )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BPMDisplay.cpp
 #include "global.h"
 #include "BPMDisplay.h"
 #include "RageUtil.h"
@@ -596,7 +599,11 @@ void BPMDisplay::SetBpmFromSteps( const Steps* pSteps )
 void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 {
 	ASSERT( pCourse != nullptr );
+<<<<<<< HEAD:itgmania/src/BPMDisplay.cpp
 	ASSERT( GAMESTATE->GetCurrentStyle() != nullptr );
+=======
+	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BPMDisplay.cpp
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	Trail *pTrail = pCourse->GetTrail( st );
@@ -642,7 +649,11 @@ void BPMDisplay::SetFromGameState()
 	}
 	if( GAMESTATE->m_pCurCourse.Get() )
 	{
+<<<<<<< HEAD:itgmania/src/BPMDisplay.cpp
 		if( GAMESTATE->GetCurrentStyle() == nullptr )
+=======
+		if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BPMDisplay.cpp
 			; // This is true when backing out from ScreenSelectCourse to ScreenTitleMenu.  So, don't call SetBpmFromCourse where an assert will fire.
 		else
 			SetBpmFromCourse( GAMESTATE->m_pCurCourse );
@@ -759,4 +770,7 @@ LUA_REGISTER_DERIVED_CLASS( BPMDisplay, BitmapText )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/BPMDisplay.cpp
 >>>>>>> origin/c++11:src/BPMDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/BPMDisplay.cpp

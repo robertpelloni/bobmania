@@ -181,7 +181,11 @@ class InputHandler_SextetStream::Impl
 			}
 		}
 
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_SextetStream.cpp
 		void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut)
+=======
+		void GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_SextetStream.cpp
 		{
 			vDevicesOut.push_back(InputDeviceInfo(FIRST_DEVICE, "SextetStream"));
 		}

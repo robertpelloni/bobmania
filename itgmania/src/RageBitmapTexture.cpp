@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
+<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageBitmapTexture.cpp
 #include "global.h"
 #include "RageBitmapTexture.h"
 #include "RageUtil.h"
@@ -96,6 +99,7 @@ void RageBitmapTexture::Create()
 		Dialog::OK(warning, "missing_texture");
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( pImg != nullptr );
+<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
 	}
 
 	if( actualID.bHotPinkColorKey )
@@ -450,6 +454,8 @@ void RageBitmapTexture::Create()
 		Dialog::OK( sWarning );
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( pImg != nullptr );
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageBitmapTexture.cpp
 	}
 
 	if( actualID.bHotPinkColorKey )
@@ -735,4 +741,7 @@ void RageBitmapTexture::Destroy()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */ 
+<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
 >>>>>>> origin/c++11:src/RageBitmapTexture.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageBitmapTexture.cpp

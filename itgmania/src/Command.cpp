@@ -89,10 +89,14 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, std::v
 RString Commands::GetOriginalCommandString() const
 {
 <<<<<<< HEAD:itgmania/src/Command.cpp
+<<<<<<< HEAD:itgmania/src/Command.cpp
 	return std::accumulate(v.begin(), v.end(), RString(), [](RString const &res, Command const &c) { return res + c.GetOriginalCommandString(); });
 =======
 	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res + c.GetOriginalCommandString(); });
 >>>>>>> origin/c++11:src/Command.cpp
+=======
+	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res + c.GetOriginalCommandString(); });
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Command.cpp
 }
 
 void ParseCommands( const RString &sCommands, Commands &vCommandsOut, bool bLegacy )

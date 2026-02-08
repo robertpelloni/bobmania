@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/ScreenOptionsManageCourses.cpp
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageCourses.cpp
 #include "global.h"
 #include "ScreenOptionsManageCourses.h"
 #include "ScreenManager.h"
@@ -310,6 +311,8 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageCourses.cpp
 #include "global.h"
 #include "ScreenOptionsManageCourses.h"
 #include "ScreenManager.h"
@@ -507,7 +510,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 {
 	Course *pCourse = GetCourseWithFocus();
-	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : NULL;
+	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : nullptr;
 
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -607,4 +610,7 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsManageCourses.cpp
 >>>>>>> origin/c++11:src/ScreenOptionsManageCourses.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageCourses.cpp

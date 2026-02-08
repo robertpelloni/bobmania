@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_MacOSX_HID.mm
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_MacOSX_HID.mm
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_MacOSX_HID.cpp
 #include "global.h"
 #include "RageLog.h"
 #include "InputHandler_MacOSX_HID.h"
@@ -85,6 +88,7 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
 		CFRunLoopSourceContext context = { 0, info, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, perform };
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_MacOSX_HID.mm
 
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
@@ -578,6 +582,8 @@ int InputHandler_MacOSX_HID::Run( void *data )
 		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
 		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
 		CFRunLoopSourceContext context = { 0, info, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, perform };
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_MacOSX_HID.cpp
 
 		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
 		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
@@ -867,6 +873,56 @@ RString InputHandler_MacOSX_HID::GetDeviceSpecificInputString( const DeviceInput
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_MacOSX_HID.mm
+=======
+// Modified from NESControllerInterface of Macifom project,
+// used under MIT license from http://macifom.googlecode.com/svn-history/r89/Macifom/trunk/NESControllerInterface.m
+// Used under MIT license from http://inquisitivecocoa.com/2009/04/05/key-code-translator/
+static wchar_t KeyCodeToChar(CGKeyCode keyCode, unsigned int modifierFlags)
+{
+	if(keyCode == 0)
+		return 0;
+
+	TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
+	CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
+	const UCKeyboardLayout *keyboardLayout = uchr ? (const UCKeyboardLayout*)CFDataGetBytePtr(uchr) : nullptr;
+	
+	if( keyboardLayout )
+	{
+		UInt32 deadKeyState = 0;
+		UniCharCount maxStringLength = 255;
+		UniCharCount actualStringLength = 0;
+		UniChar unicodeString[maxStringLength];
+		
+		OSStatus status = UCKeyTranslate(keyboardLayout,
+						 keyCode, kUCKeyActionDown, modifierFlags,
+						 LMGetKbdType(), 0,
+						 &deadKeyState,
+						 maxStringLength,
+						 &actualStringLength, unicodeString);
+		
+		if( status != noErr )
+		{
+			fprintf(stderr, "There was an %s error translating from the '%d' key code to a human readable string: %s\n",
+				GetMacOSStatusErrorString(status), (int)status, GetMacOSStatusCommentString(status));
+		}
+		else if( actualStringLength == 0 )
+		{
+			fprintf(stderr, "Couldn't find a translation for the '%d' key code\n", keyCode);
+		}
+		else
+		{
+			return unicodeString[0];
+		}
+	}
+	else
+	{
+		fprintf(stderr, "Couldn't find a translation for the '%d' key code\n", keyCode);
+	}
+	return 0;
+}
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_MacOSX_HID.cpp
 wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
 	// KeyTranslate maps these keys to a character.  They shouldn't be mapped to any character.
@@ -900,6 +956,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 	UInt8 iMacVirtualKey;
 	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
 	{
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_MacOSX_HID.mm
 		UInt32 modifiers = 0;
 		if( bUseCurrentKeyModifiers )
 			modifiers = GetCurrentKeyModifiers();
@@ -913,6 +970,14 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
 		static UCKeyboardLayout **KeyLayout;
 
 		if( iCurrentKeyLayoutID != iLastKeyLayoutID )
+=======
+		CGEventRef event = CGEventCreate(nullptr);
+		CGEventFlags mods = CGEventGetFlags(event);
+        CFRelease(event);
+		UInt32 nModifiers = bUseCurrentKeyModifiers ? (UInt32)mods : 0;
+		wchar_t sCharCode = KeyCodeToChar( iMacVirtualKey, nModifiers );
+		if( sCharCode != 0 )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_MacOSX_HID.cpp
 		{
 			iDeadKeyState = 0;
 			KeyLayout = (UCKeyboardLayout **)GetResource( 'uchr', iCurrentKeyLayoutID );
@@ -991,4 +1056,7 @@ wchar_t InputHandler_MacOSX_HID::DeviceButtonToChar( DeviceButton button, bool b
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_MacOSX_HID.mm
 >>>>>>> origin/c++11:src/arch/InputHandler/InputHandler_MacOSX_HID.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_MacOSX_HID.cpp

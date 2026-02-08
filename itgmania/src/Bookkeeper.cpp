@@ -134,7 +134,11 @@ void Bookkeeper::ReadFromDisk()
 
 	if ( numCoins < 0 )
 		numCoins = 0;
+<<<<<<< HEAD:itgmania/src/Bookkeeper.cpp
 	else if ( numCoins / PREFSMAN->m_iCoinsPerCredit > PREFSMAN->m_iMaxNumCredits )
+=======
+	else if ( numCoins / PREFSMAN->m_iCoinsPerCredit > MAX_NUM_CREDITS )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Bookkeeper.cpp
 		numCoins = 0;
 
     LOG->Trace("Number of Coins to Load on boot: %i", numCoins);

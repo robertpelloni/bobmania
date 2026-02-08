@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/OptionRow.h
+<<<<<<< HEAD:itgmania/src/OptionRow.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRow.h
 /* OptionRow - One line in ScreenOptions. */
 
 #ifndef OptionRow_H
@@ -10,6 +13,7 @@
 #include "ModIcon.h"
 #include "ThemeMetric.h"
 #include "AutoActor.h"
+#include <array>
 
 #include <array>
 #include <cstddef>
@@ -363,4 +367,7 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/OptionRow.h
 >>>>>>> origin/c++11:src/OptionRow.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRow.h

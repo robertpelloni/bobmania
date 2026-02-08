@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/Style.cpp
+<<<<<<< HEAD:itgmania/src/Style.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Style.cpp
 #include "global.h"
 
 /*
@@ -406,4 +409,7 @@ LUA_REGISTER_CLASS( Style )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Style.cpp
 >>>>>>> origin/c++11:src/Style.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Style.cpp

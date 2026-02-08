@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageFileManager.cpp
+<<<<<<< HEAD:itgmania/src/RageFileManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileManager.cpp
 #include "global.h"
 #include "RageFileManager.h"
 #include "RageFileDriver.h"
@@ -7,6 +10,7 @@
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 #include "RageThreads.h"
+<<<<<<< HEAD:itgmania/src/RageFileManager.cpp
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
 
@@ -1375,6 +1379,8 @@ LUA_REGISTER_CLASS( RageFileManager )
 #include "RageLog.h"
 #include "RageThreads.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileManager.cpp
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
 
@@ -1539,6 +1545,45 @@ public:
 	}
 };
 static RageFileDriverMountpoints *g_Mountpoints = nullptr;
+<<<<<<< HEAD:itgmania/src/RageFileManager.cpp
+=======
+
+static RString ExtractDirectory( RString sPath )
+{
+	// return the directory containing sPath
+	size_t n = sPath.find_last_of("/");
+	if( n != sPath.npos )
+		sPath.erase(n);
+	else
+		sPath.erase();
+	return sPath;
+}
+
+static RString ReadlinkRecursive( RString sPath )
+{
+#if defined(UNIX) || defined(MACOSX)
+	// unices support symbolic links; dereference them
+	RString dereferenced = sPath;
+	do
+	{
+		sPath = dereferenced;
+		char derefPath[512];
+		ssize_t linkSize = readlink(sPath, derefPath, sizeof(derefPath));
+		if ( linkSize != -1 && linkSize != sizeof(derefPath) )
+		{
+			dereferenced = RString( derefPath, linkSize );
+			if (derefPath[0] != '/')
+			{
+				// relative link
+				dereferenced = RString( ExtractDirectory(sPath) + "/" + dereferenced);
+			}
+		}
+	} while (sPath != dereferenced);
+#endif
+
+	return sPath;
+}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileManager.cpp
 
 static RString GetDirOfExecutable( RString argv0 )
 {
@@ -1547,7 +1592,7 @@ static RString GetDirOfExecutable( RString argv0 )
 	RString sPath;
 #if defined(WIN32)
 	char szBuf[MAX_PATH];
-	GetModuleFileName( NULL, szBuf, sizeof(szBuf) );
+	GetModuleFileName( nullptr, szBuf, sizeof(szBuf) );
 	sPath = szBuf;
 #else
 	sPath = argv0;
@@ -1587,7 +1632,11 @@ static RString GetDirOfExecutable( RString argv0 )
 			{
 				if( access(i + "/" + argv0, X_OK|R_OK) )
 					continue;
+<<<<<<< HEAD:itgmania/src/RageFileManager.cpp
 				sPath = i;
+=======
+				sPath = ExtractDirectory(ReadlinkRecursive(i + "/" + argv0));
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileManager.cpp
 				break;
 			}
 			if( sPath.empty() )
@@ -2513,4 +2562,7 @@ LUA_REGISTER_CLASS( RageFileManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageFileManager.cpp
 >>>>>>> origin/c++11:src/RageFileManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileManager.cpp

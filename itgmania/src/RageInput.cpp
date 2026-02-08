@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageInput.cpp
+<<<<<<< HEAD:itgmania/src/RageInput.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageInput.cpp
 #include "global.h"
 #include "RageInput.h"
 #include "RageLog.h"
@@ -7,6 +10,7 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
+<<<<<<< HEAD:itgmania/src/RageInput.cpp
 #if LINUX
 // FIXME: bit gross to include this here, see GH issue #73:
 // https://github.com/itgmania/itgmania/issues/73#issuecomment-2597176788
@@ -16,6 +20,8 @@
 #include <vector>
 
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageInput.cpp
 RageInput* INPUTMAN = nullptr; // global and accessible from anywhere in our program
 
 Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
@@ -474,4 +480,7 @@ LUA_REGISTER_CLASS( RageInput )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageInput.cpp
 >>>>>>> origin/c++11:src/RageInput.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageInput.cpp

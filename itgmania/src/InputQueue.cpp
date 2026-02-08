@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "InputEventPlus.h"
 <<<<<<< HEAD:itgmania/src/InputQueue.cpp
+<<<<<<< HEAD:itgmania/src/InputQueue.cpp
 #include "InputMapper.h"
 
 #include <vector>
@@ -16,6 +17,11 @@ InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our 
 
 InputQueue*	INPUTQUEUE = nullptr;	// global and accessable from anywhere in our program
 >>>>>>> origin/c++11:src/InputQueue.cpp
+=======
+#include "InputMapper.h"
+
+InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/InputQueue.cpp
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
 

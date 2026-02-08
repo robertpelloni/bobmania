@@ -1,4 +1,5 @@
 <<<<<<< HEAD:itgmania/src/Background.cpp
+<<<<<<< HEAD:itgmania/src/Background.cpp
 #include "global.h"
 #include "Background.h"
 #include "RageUtil.h"
@@ -1019,6 +1020,8 @@ void Background::GetLoadedBackgroundChanges( std::vector<BackgroundChange> *pBac
  * PERFORMANCE OF THIS SOFTWARE.
  */
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp
 #include "global.h"
 #include "Background.h"
 #include "RageUtil.h"
@@ -1394,7 +1397,12 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
+<<<<<<< HEAD:itgmania/src/Background.cpp
 	ASSERT( pActor != nullptr );
+=======
+	if( pActor == nullptr )
+		pActor = new Actor;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp
 	m_BGAnimations[bd] = pActor;
 
 	for( unsigned i=0; i<vsResolvedRef.size(); i++ )
@@ -1453,7 +1461,11 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 
 		for(int j=max(ts->GetRow(),iStartRow);
 			j<min(iEndRow,iSegmentEndRow);
+<<<<<<< HEAD:itgmania/src/Background.cpp
 			j+=4*ts->GetNoteRowsPerMeasure())
+=======
+			j+= int(RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure()))
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA(m_pSong,
@@ -1574,7 +1586,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			{
 				BackgroundChange change = bgc;
 				BackgroundDef &bd = change.m_def;
-				
+
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
 
 				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE  &&  !bIsAlreadyLoaded )
@@ -1596,7 +1608,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						}
 					}
 				}
-			
+
 				if( !bd.IsEmpty() )
 					layer.m_aBGChanges.push_back( change );
 			}
@@ -1728,8 +1740,8 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	int iThrowAway;
 	pSong->m_SongTiming.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze, bFreeze, iThrowAway, fThrowAway );
 
-	// Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it.
-	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+	// Calls to Update() should *not* be scaled by music rate unless RateModsAffectFGChanges is enabled; fCurrentTime is. Undo it.
+	const float fRate = PREFSMAN->m_bRateModsAffectTweens ? 1.0f : GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	// Find the BGSegment we're in
 	const int i = FindBGSegmentForBeat( fBeat );
@@ -1772,7 +1784,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			if( m_pFadingBGA )
 			{
 				m_pFadingBGA->PlayCommand( "LoseFocus" );
-				
+
 				if( !change.m_sTransition.empty() )
 				{
 					map<RString,BackgroundTransition>::const_iterator lIter = mapNameToTransition.find( change.m_sTransition );
@@ -1981,7 +1993,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
 /*
  * (c) 2001-2004 Chris Danford, Ben Nordstrom
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -1991,7 +2003,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -2002,4 +2014,7 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/Background.cpp
 >>>>>>> origin/c++11:src/Background.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp

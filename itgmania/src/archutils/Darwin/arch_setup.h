@@ -37,9 +37,12 @@ extern "C" int sm_main( int argc, char *argv[] );
 #define ArchSwap16(n) OSSwapInt16((n))
 #define HAVE_BYTE_SWAPS
 
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/arch_setup.h
 #include <unistd.h>
 
 >>>>>>> origin/c++11:src/archutils/Darwin/arch_setup.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/arch_setup.h
 #endif
 
 /*

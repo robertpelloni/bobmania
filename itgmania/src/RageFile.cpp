@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/RageFile.cpp
+<<<<<<< HEAD:itgmania/src/RageFile.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp
 /*
  * This provides an interface to open files in RageFileManager's namespace
  * This is just a simple RageFileBasic wrapper on top of another RageFileBasic;
@@ -143,6 +146,7 @@ RString RageFile::GetError() const
 void RageFile::SetError( const RString &err )
 {
 	if( m_File != nullptr )
+<<<<<<< HEAD:itgmania/src/RageFile.cpp
 		m_File->ClearError();
 	m_sError = err;
 }
@@ -660,6 +664,8 @@ RString RageFile::GetError() const
 void RageFile::SetError( const RString &err )
 {
 	if( m_File != nullptr )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp
 		m_File->ClearError();
 	m_sError = err;
 }
@@ -959,7 +965,11 @@ namespace RageFileUtil
 	const luaL_Reg RageFileUtilTable[] =
 	{
 		LIST_METHOD( CreateRageFile ),
+<<<<<<< HEAD:itgmania/src/RageFile.cpp
 		{ NULL, nullptr }
+=======
+		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp
 	};
 	LUA_REGISTER_NAMESPACE( RageFileUtil );
 }
@@ -988,4 +998,7 @@ namespace RageFileUtil
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/RageFile.cpp
 >>>>>>> origin/c++11:src/RageFile.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp

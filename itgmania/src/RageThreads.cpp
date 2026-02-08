@@ -64,10 +64,14 @@ struct ThreadSlot
 		char m_szFormattedBuf[1024];
 
 <<<<<<< HEAD:itgmania/src/RageThreads.cpp
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 		ThreadCheckpoint() { Set( nullptr, 0, nullptr ); }
 =======
 		ThreadCheckpoint() { Set( NULL, 0, nullptr ); }
 >>>>>>> origin/c++11:src/RageThreads.cpp
+=======
+		ThreadCheckpoint() { Set( nullptr, 0, nullptr ); }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageThreads.cpp
 		void Set( const char *szFile, int iLine, const char *szMessage = nullptr );
 		const char *GetFormattedCheckpoint();
 	};
@@ -405,10 +409,14 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 	/* We can't ASSERT here, since that uses checkpoints. */
 	if( slot == nullptr )
 <<<<<<< HEAD:itgmania/src/RageThreads.cpp
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 		sm_crash( "GetUnknownThreadSlot() returned nullptr" );
 
 =======
 		sm_crash( "GetUnknownThreadSlot() returned NULL" );
+=======
+		sm_crash( "GetUnknownThreadSlot() returned nullptr" );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageThreads.cpp
 	
 >>>>>>> origin/c++11:src/RageThreads.cpp
 	/* Ignore everything up to and including the first "src/". */

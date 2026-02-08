@@ -1,9 +1,13 @@
 <<<<<<< HEAD:itgmania/src/CharacterManager.cpp
+<<<<<<< HEAD:itgmania/src/CharacterManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CharacterManager.cpp
 #include "global.h"
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
 
+<<<<<<< HEAD:itgmania/src/CharacterManager.cpp
 #include "LuaManager.h"
 
 #include <vector>
@@ -207,11 +211,17 @@ LUA_REGISTER_CLASS( CharacterManager )
 #include "Character.h"
 #include "GameState.h"
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CharacterManager.cpp
 #include "LuaManager.h"
 
 #define CHARACTERS_DIR "/Characters/"
 
+<<<<<<< HEAD:itgmania/src/CharacterManager.cpp
 CharacterManager*	CHARMAN = nullptr;	// global object accessable from anywhere in the program
+=======
+CharacterManager*	CHARMAN = nullptr;	// global object accessible from anywhere in the program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CharacterManager.cpp
 
 CharacterManager::CharacterManager()
 {
@@ -402,4 +412,7 @@ LUA_REGISTER_CLASS( CharacterManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/CharacterManager.cpp
 >>>>>>> origin/c++11:src/CharacterManager.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/CharacterManager.cpp

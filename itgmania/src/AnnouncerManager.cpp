@@ -5,6 +5,7 @@
 #include "RageFile.h"
 
 <<<<<<< HEAD:itgmania/src/AnnouncerManager.cpp
+<<<<<<< HEAD:itgmania/src/AnnouncerManager.cpp
 #include <cstring>
 #include <vector>
 
@@ -13,6 +14,9 @@ AnnouncerManager*	ANNOUNCER = nullptr; // global and accessible from anywhere in
 =======
 AnnouncerManager*	ANNOUNCER = nullptr;	// global object accessable from anywhere in the program
 >>>>>>> origin/c++11:src/AnnouncerManager.cpp
+=======
+AnnouncerManager*	ANNOUNCER = nullptr; // global and accessible from anywhere in our program
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AnnouncerManager.cpp
 
 
 const RString EMPTY_ANNOUNCER_NAME = "Empty";
@@ -109,10 +113,14 @@ static const char *aliases[][2] = {
 	{ "gameplay combo 1000", "gameplay 1000 combo" },
 
 <<<<<<< HEAD:itgmania/src/AnnouncerManager.cpp
+<<<<<<< HEAD:itgmania/src/AnnouncerManager.cpp
 	{ nullptr, nullptr }
 =======
 	{ NULL, nullptr }
 >>>>>>> origin/c++11:src/AnnouncerManager.cpp
+=======
+	{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/AnnouncerManager.cpp
 };
 
 /* Find an announcer directory with sounds in it.  First search sFolderName,

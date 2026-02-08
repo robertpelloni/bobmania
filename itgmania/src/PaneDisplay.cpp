@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/PaneDisplay.cpp
+<<<<<<< HEAD:itgmania/src/PaneDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PaneDisplay.cpp
 #include "global.h"
 #include "PaneDisplay.h"
 #include "ThemeManager.h"
@@ -375,6 +378,7 @@ LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/PaneDisplay.cpp
 =======
 #include "global.h"
 #include "PaneDisplay.h"
@@ -708,3 +712,5 @@ LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 >>>>>>> origin/c++11:src/PaneDisplay.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/PaneDisplay.cpp

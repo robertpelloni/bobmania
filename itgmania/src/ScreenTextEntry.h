@@ -1,4 +1,7 @@
 <<<<<<< HEAD:itgmania/src/ScreenTextEntry.h
+<<<<<<< HEAD:itgmania/src/ScreenTextEntry.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenTextEntry.h
 #ifndef SCREEN_TEXT_ENTRY_H
 #define SCREEN_TEXT_ENTRY_H
 
@@ -401,4 +404,7 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+<<<<<<< HEAD:itgmania/src/ScreenTextEntry.h
 >>>>>>> origin/c++11:src/ScreenTextEntry.h
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenTextEntry.h
