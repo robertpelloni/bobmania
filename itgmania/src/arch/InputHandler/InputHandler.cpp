@@ -6,10 +6,7 @@
 #include "LocalizedString.h"
 #include "arch/arch_default.h"
 #include "InputHandler_MonkeyKeyboard.h"
-//#include "InputHandler_NSEvent.hpp"
-
-#include <vector>
-
+#include "Foreach.h"
 
 void InputHandler::UpdateTimer()
 {
@@ -60,15 +57,15 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	case KEY_KP_EQUAL:	c = L'=';	break;
 	}
 
-	// Handle some default US keyboard modifiers for derived InputHandlers that
+	// Handle some default US keyboard modifiers for derived InputHandlers that 
 	// don't implement DeviceButtonToChar.
 	if( bUseCurrentKeyModifiers )
 	{
-		bool bHoldingShift =
+		bool bHoldingShift = 
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
 
-		bool bHoldingCtrl =
+		bool bHoldingCtrl = 
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
 
@@ -105,7 +102,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 		}
 
 	}
-
+	
 	return c;
 }
 
@@ -130,12 +127,9 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 
 	if( di.device == DEVICE_KEYBOARD )
 	{
-		if( di.button >= KEY_KP_C0 && di.button <= KEY_KP_ENTER )
-			return DeviceButtonToString( di.button );
-
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
-			return InputDeviceToString( di.device ) + " " + Capitalize( WStringToRString(std::wstring()+c) );
+			return InputDeviceToString( di.device ) + " " + Capitalize( WStringToRString(wstring()+c) );
 	}
 
 	RString s = DeviceButtonToString( di.button );
@@ -164,7 +158,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	default:
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' ) // Don't show "Key  " for space.
-			return Capitalize( WStringToRString(std::wstring()+c) );
+			return Capitalize( WStringToRString(wstring()+c) );
 
 		return DeviceButtonToString( di.button );
 	}
@@ -172,39 +166,44 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 
 DriverList InputHandler::m_pDriverList;
 
+#include "arch/LuaDriver/LuaDriver.h"
+
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void InputHandler::Create( const RString &drivers_, std::vector<InputHandler *> &add )
+void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
 {
-	const std::vector<RString>& driversToTry = drivers_.empty() ? GetDefaultInputDriverList() : split(drivers_, ',', true);
+	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
+	vector<RString> DriversToTry;
+	split( drivers, ",", DriversToTry, true );
 
-	if (driversToTry.empty())
-	{
-		RageException::Throw("%s", INPUT_HANDLERS_EMPTY.GetValue().c_str());
-	}
+	if( DriversToTry.empty() )
+		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
 
-	for (const RString &s : driversToTry)
+	FOREACH_CONST( RString, DriversToTry, s )
 	{
-		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );
-		if( pDriver == nullptr )
+		RageDriver *pDriver = InputHandler::m_pDriverList.Create( *s );
+		if( pDriver == NULL )
 		{
-			LOG->Trace( "Unknown Input Handler name: %s", s.c_str() );
+			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
 			continue;
 		}
 
 		InputHandler *ret = dynamic_cast<InputHandler *>( pDriver );
 		DEBUG_ASSERT( ret );
-		add.push_back( ret );
+		Add.push_back( ret );
 	}
 
 	// Always add
-	add.push_back(new InputHandler_MonkeyKeyboard);
-//    add.push_back(new InputHandler_NSEvent);
+	Add.push_back( new InputHandler_MonkeyKeyboard );
+
+	// Add any additional Lua modules
+	LuaDriver::AddInputModules( drivers, Add );
 }
+
 
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -214,7 +213,7 @@ void InputHandler::Create( const RString &drivers_, std::vector<InputHandler *> 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

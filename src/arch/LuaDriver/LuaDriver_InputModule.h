@@ -1,47 +1,39 @@
-#include "global.h"
-#include "LightsDriver.h"
-#include "LightsDriver_Export.h"
-#include "RageLog.h"
-#include "Foreach.h"
-#include "arch/arch_default.h"
-#include "arch/LuaDriver/LuaDriver.h"
+#ifndef LUADRIVER_INPUTMODULE_H
+#define LUADRIVER_INPUTMODULE_H
 
-DriverList LightsDriver::m_pDriverList;
+#include "LuaDriver.h"
+#include "arch/InputHandler/InputHandler.h"
+#include "RageInputDevice.h" // for InputDevice
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+class LuaDriver_InputModule : public LuaDriver, public InputHandler
 {
-	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
+public:
+	LuaDriver_InputModule( const RString &sName );
+	virtual ~LuaDriver_InputModule();
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	bool ModuleInit( lua_State *L );
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
-	{
-		RageDriver *pRet = m_pDriverList.Create( *Driver );
-		if( pRet == NULL )
-		{
-			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
-			continue;
-		}
+	/* InputHandler entry point, for non-threaded drivers */
+	void Update();
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo> &vDevicesOut );
 
-		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+	/* C callback: we wrap InputHandler::ButtonPressed around this */
+	void ButtonPressed( DeviceButton db, float level );
 
-		LOG->Info( "Lights driver: %s", Driver->c_str() );
-		Add.push_back( pDriver );
-	}
+protected:
+	virtual bool LoadDerivedFromTable( Lua *L, LuaReference *pTable );
 
-	// always add Export
-	Add.push_back( new LightsDriver_Export );
+	void ModuleThread();
 
-	// Add any additional Lua modules
-	LuaDriver::AddLightsModules( sDrivers, Add );
-}
+	InputDevice m_InputDevice;
+};
+
+#endif // LUADRIVER_INPUTMODULE_H
 
 /*
- * (c) 2002-2005 Glenn Maynard
+ * (c) 2011 Mark Cannon
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +43,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

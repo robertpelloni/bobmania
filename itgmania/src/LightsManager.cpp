@@ -39,6 +39,7 @@ static const char *CabinetLightNames[] = {
 };
 XToString( CabinetLight );
 StringToX( CabinetLight );
+LuaXType( CabinetLight );
 
 static const char *LightsModeNames[] = {
 	"Attract",

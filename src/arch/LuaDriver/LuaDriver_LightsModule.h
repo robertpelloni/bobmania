@@ -1,47 +1,51 @@
-#include "global.h"
-#include "LightsDriver.h"
-#include "LightsDriver_Export.h"
-#include "RageLog.h"
-#include "Foreach.h"
-#include "arch/arch_default.h"
-#include "arch/LuaDriver/LuaDriver.h"
+#ifndef LUADRIVER_LIGHTSMODULE_H
+#define LUADRIVER_LIGHTSMODULE_H
 
-DriverList LightsDriver::m_pDriverList;
+#include "LuaDriver.h"
+#include "arch/Lights/LightsDriver.h"
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+class RageEvent;
+
+class LuaDriver_LightsModule : public LuaDriver, public LightsDriver
 {
-	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
+public:
+	/* Pushes a table representing the given LightsState. */
+	static void PushLightsState( Lua *L, const LightsState *ls );
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	LuaDriver_LightsModule( const RString &sName );
+	virtual ~LuaDriver_LightsModule();
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
-	{
-		RageDriver *pRet = m_pDriverList.Create( *Driver );
-		if( pRet == NULL )
-		{
-			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
-			continue;
-		}
+	bool ModuleInit( lua_State *L );
+	void ModuleUpdate( lua_State *L );
 
-		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+	/* we need to manually wait here, or LuaDriver hang on Wait() */
+	void ModuleExit( lua_State *L );
 
-		LOG->Info( "Lights driver: %s", Driver->c_str() );
-		Add.push_back( pDriver );
-	}
+	void Set( const LightsState *ls );
 
-	// always add Export
-	Add.push_back( new LightsDriver_Export );
+protected:
+	/* on Set(), threaded drivers copy the state here for update threads */
+	LightsState m_LightsState;
 
-	// Add any additional Lua modules
-	LuaDriver::AddLightsModules( sDrivers, Add );
-}
+	/* In case the Set() takes longer than time between calls, we use
+	 * this flag to ignore any subsequent Set()s until the first is done. */
+	bool m_bUpdating;
+
+	void ModuleThread();
+
+	virtual bool LoadDerivedFromTable( Lua *L, LuaReference *pTable ) { return true; }
+
+	/* LightsDrivers currently receive LightsState through Set(), so
+	 * for threads, we use a RageEvent to signal threaded updates. */
+	RageEvent *m_pEvent;
+};
+
+#endif // LUADRIVER_LIGHTSMODULE_H
 
 /*
- * (c) 2002-2005 Glenn Maynard
+ * (c) 2011 Mark Cannon
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +55,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -62,3 +66,4 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

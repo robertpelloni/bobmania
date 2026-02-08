@@ -1,47 +1,34 @@
-#include "global.h"
-#include "LightsDriver.h"
-#include "LightsDriver_Export.h"
-#include "RageLog.h"
-#include "Foreach.h"
-#include "arch/arch_default.h"
-#include "arch/LuaDriver/LuaDriver.h"
+#ifndef LUA_DRIVER_PERIPHERAL_H
+#define LUA_DRIVER_PERIPHERAL_H
 
-DriverList LightsDriver::m_pDriverList;
+#include "LuaDriver.h"
+#include "MessageManager.h"
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+struct lua_State;
+
+class LuaDriver_Peripheral : public LuaDriver, MessageSubscriber
 {
-	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
+public:
+	LuaDriver_Peripheral( const RString &sName ) : LuaDriver(sName) { }
+	~LuaDriver_Peripheral();
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	void ModuleUpdate( lua_State *L, float fDeltaTime );
+	void HandleMessage( const Message &msg );
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
-	{
-		RageDriver *pRet = m_pDriverList.Create( *Driver );
-		if( pRet == NULL )
-		{
-			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
-			continue;
-		}
+protected:
+	// peripherals are not threaded (for now)
+	void ModuleThread() { }
+	bool LoadDerivedFromTable( lua_State *L, LuaReference *pTable );
 
-		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+	map<RString,LuaReference*> m_mMessageFunctions;
+};
 
-		LOG->Info( "Lights driver: %s", Driver->c_str() );
-		Add.push_back( pDriver );
-	}
-
-	// always add Export
-	Add.push_back( new LightsDriver_Export );
-
-	// Add any additional Lua modules
-	LuaDriver::AddLightsModules( sDrivers, Add );
-}
+#endif // LUA_DRIVER_PERIPHERAL_H
 
 /*
- * (c) 2002-2005 Glenn Maynard
+ * (c) 2011 Mark Cannon
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +38,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -62,3 +49,4 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

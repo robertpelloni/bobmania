@@ -17,6 +17,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
+#include "arch/LuaDriver/LuaDriver.h"
 #include <ctime>
 
 #include "ProductInfo.h"
@@ -930,7 +931,7 @@ static void MountTreeOfZips( const RString &dir )
 			FILEMAN->Mount( "zip", zips[i], "/" );
 		}
 
-		GetDirListing( path + "/*", dirs, true, true );
+		GetDirListing( path + "/*", dirs, true, true ); /* */
 	}
 }
 
@@ -1152,6 +1153,12 @@ int sm_main(int argc, char* argv[])
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 
+	/* Load all Lua drivers from Data/Modules. This needs to be done before
+	 * LightsManager or InputHandler are initialized, so their constructors
+	 * can load the resulting modules. */
+
+	LuaDriver::LoadModulesDir( SpecialFiles::LUADRIVER_MODULES_DIR );
+
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init();
 	SOUNDMAN->SetMixVolume();
@@ -1188,6 +1195,8 @@ int sm_main(int argc, char* argv[])
 	SONGMAN->UpdatePreferredSort();
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
 	STATSMAN	= new StatsManager;
+
+	LuaDriver::LoadPeripherals();
 
 	// Initialize which courses are ranking courses here.
 	SONGMAN->UpdateRankingCourses();

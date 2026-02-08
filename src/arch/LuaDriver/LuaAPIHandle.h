@@ -1,47 +1,53 @@
-#include "global.h"
-#include "LightsDriver.h"
-#include "LightsDriver_Export.h"
-#include "RageLog.h"
-#include "Foreach.h"
-#include "arch/arch_default.h"
-#include "arch/LuaDriver/LuaDriver.h"
+/* LuaAPIHandle: an object representing the internal handles and methods
+ * needed for a LuaDriver to interact with an I/O device. */
 
-DriverList LightsDriver::m_pDriverList;
+#ifndef LUA_API_HANDLE_H
+#define LUA_API_HANDLE_H
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
+struct lua_State;
+
+/* Registers a LuaAPIHandle with the core class. */
+
+#define REGISTER_LUA_API_HANDLE( API ) \
+	LuaAPIHandle *Create##API() { return new LuaAPIHandle_##API; } \
+	struct Register##API { \
+		Register##API() { LuaAPIHandle::RegisterAPI( #API, &Create##API); } \
+	}; \
+	static Register##API register##API;
+
+class LuaAPIHandle;
+typedef LuaAPIHandle* (*MakeHandleFn)();
+
+class LuaAPIHandle
 {
-	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
+public:
+	static void RegisterAPI( const RString &sName, MakeHandleFn fn );
+	static void PushAPIHandle( lua_State *L, const RString &sName );
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
+	LuaAPIHandle();
+	virtual ~LuaAPIHandle();
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
-	{
-		RageDriver *pRet = m_pDriverList.Create( *Driver );
-		if( pRet == NULL )
-		{
-			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
-			continue;
-		}
+	/* can't implement Open() abstractly; arguments differ between APIs */
+	virtual void Close() { }
 
-		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != NULL );
+	virtual bool IsOpen() const { return false; }
 
-		LOG->Info( "Lights driver: %s", Driver->c_str() );
-		Add.push_back( pDriver );
-	}
+	virtual int GetRevisionMajor() const { return 0; }
+	virtual int GetRevisionMinor() const { return 0; }
 
-	// always add Export
-	Add.push_back( new LightsDriver_Export );
+	virtual int GetError() const { return 0; }
+	virtual const char* GetErrorStr( int err ) const { return NULL; }
 
-	// Add any additional Lua modules
-	LuaDriver::AddLightsModules( sDrivers, Add );
-}
+	/* Lua bindings */
+	virtual void PushSelf( lua_State *L );
+};
+
+#endif // LUA_API_HANDLE_H
 
 /*
- * (c) 2002-2005 Glenn Maynard
+ * (c) 2011 Mark Cannon
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +57,7 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
