@@ -4,6 +4,11 @@
 #define THEME_METRIC_H
 
 #include "ThemeManager.h"
+<<<<<<< HEAD:itgmania/src/ThemeMetric.h
+=======
+#include <map>
+
+>>>>>>> origin/c++11:src/ThemeMetric.h
 #include "LuaManager.h"
 #include "RageUtil.h"
 
@@ -272,7 +277,11 @@ class ThemeMetricMap : public IThemeMetric
 	std::map<RString,ThemeMetricT> m_metric;
 
 public:
+<<<<<<< HEAD:itgmania/src/ThemeMetric.h
 	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const std::vector<RString> vsValueNames = std::vector<RString>() )
+=======
+	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = nullptr, const vector<RString> vsValueNames = vector<RString>() )
+>>>>>>> origin/c++11:src/ThemeMetric.h
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}

@@ -21,6 +21,31 @@ private:
 	static LightsState m_State;
 };
 
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Export.h
+=======
+struct User
+{
+	CachedObjectPointer<Object> cache;
+
+	Object *foobar()
+	{
+		Object *p;
+		if( !cache.Get(&p) )
+		{
+			p = nullptr;
+			cache.Set(p);
+		}
+		return p;
+	}
+};
+
+void test()
+{
+	Object p;
+	User gar;
+	gar.foobar();
+}
+>>>>>>> origin/c++11:src/RageUtil_CachedObject.cpp
 #endif
 
 /*

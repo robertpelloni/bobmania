@@ -56,7 +56,11 @@ private:
 		Mapping(): iFramesBuffered(0), iPositionOfFirstFrame(0),
 			fRate(1.0f) {}
 	};
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.h
 	std::list<Mapping> m_StreamPosition;
+=======
+	list<Mapping> m_StreamPosition;
+>>>>>>> origin/c++11:src/RageSoundReader_ThreadedBuffer.h
 
 	bool m_bEOF;
 
@@ -70,12 +74,16 @@ private:
 
 	RageThread m_Thread;
 	bool m_bShutdownThread;
+<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.h
 	static int StartBufferingThread(void* p)
 	{
 		((RageSoundReader_ThreadedBuffer*)p)->BufferingThread();
 		return 0;
 	}
 
+=======
+	static int StartBufferingThread( void *p ) { ((RageSoundReader_ThreadedBuffer *) p)->BufferingThread(); return 0; }
+>>>>>>> origin/c++11:src/RageSoundReader_ThreadedBuffer.h
 	void BufferingThread();
 };
 

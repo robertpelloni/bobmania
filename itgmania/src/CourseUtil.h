@@ -74,7 +74,11 @@ namespace EditCourseUtil
 class CourseID
 {
 public:
+<<<<<<< HEAD:itgmania/src/CourseUtil.h
 	CourseID(): sPath(""), sFullTitle("") { Unset(); }
+=======
+	CourseID(): sPath(""), sFullTitle(""), m_Cache() { Unset(); }
+>>>>>>> origin/c++11:src/CourseUtil.h
 	void Unset() { FromCourse(nullptr); }
 	void FromCourse( const Course *p );
 	Course *ToCourse() const;

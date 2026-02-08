@@ -9,10 +9,13 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 #include <cstddef>
 #include <vector>
 
 
+=======
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 
 void ScreenOptionsMemoryCard::Init()
@@ -29,9 +32,15 @@ void ScreenOptionsMemoryCard::Init()
 
 bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 {
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 	std::vector<UsbStorageDevice> aOldDevices = m_CurrentUsbStorageDevices;
 
 	const std::vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
+=======
+	vector<UsbStorageDevice> aOldDevices = m_CurrentUsbStorageDevices;
+
+	const vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 
 	m_CurrentUsbStorageDevices.clear();
 	for( size_t i = 0; i < aNewDevices.size(); ++i )
@@ -50,11 +59,19 @@ static LocalizedString SIZE_UNKNOWN ("ScreenOptionsMemoryCard", "size ???" );
 static LocalizedString VOLUME_SIZE ("ScreenOptionsMemoryCard", "%dMB" );
 void ScreenOptionsMemoryCard::CreateMenu()
 {
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 	std::vector<OptionRowHandler*> vHands;
 
 	for (UsbStorageDevice const &iter : m_CurrentUsbStorageDevices)
 	{
 		std::vector<RString> vs;
+=======
+	vector<OptionRowHandler*> vHands;
+
+	for (UsbStorageDevice const &iter : m_CurrentUsbStorageDevices)
+	{
+		vector<RString> vs;
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 		if( iter.sVolumeLabel.empty() )
 			vs.push_back( NO_LABEL );
 		else
@@ -85,7 +102,11 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		def.m_bAllowThemeTitle = true;
 		def.m_bOneChoiceForAllPlayers = true;
 	}
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 	InitMenu( vHands );
 }
 
@@ -127,7 +148,11 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 		if( !m_Out.IsTransitioning() )
 		{
 			/* Remember the old mountpoint. */
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 			const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+=======
+			const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 			int iRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 			RString sOldMountPoint;
 			if( iRow < int(v.size()) )
@@ -151,12 +176,20 @@ void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 	ScreenOptions::HandleMessage( msg );
 }
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 void ScreenOptionsMemoryCard::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
+=======
+void ScreenOptionsMemoryCard::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 {
 
 }
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 void ScreenOptionsMemoryCard::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
+=======
+void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 {
 	OptionRow &row = *m_pRows[iRow];
 	if( row.GetRowType() == OptionRow::RowType_Exit )
@@ -165,7 +198,11 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const std::vector<PlayerN
 	PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
 	if( m_iCurrentRow[pn] == iRow )
 	{
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 		const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+=======
+		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 		if( iRow < int(v.size()) )
 		{
 			const UsbStorageDevice &dev = v[iRow];
@@ -179,7 +216,11 @@ void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPo
 	if( sOsMountPoint.empty() )
 		return;
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 	const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+=======
+	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 	for( unsigned i=0; i<v.size(); i++ )
 	{
 		if( v[i].sOsMountDir == sOsMountPoint )
@@ -198,11 +239,19 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 
 	int iCurRow = m_iCurrentRow[GAMESTATE->GetMasterPlayerNumber()];
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 	const std::vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 	if( iCurRow < int(v.size()) )	// a card
 	{
 		// Why is this statement in twice? Doubt it would change right after the if. -Wolfman2000
 		const std::vector<UsbStorageDevice> &vUSB = m_CurrentUsbStorageDevices;
+=======
+	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+	if( iCurRow < int(v.size()) )	// a card
+	{
+		// Why is this statement in twice? Doubt it would change right after the if. -Wolfman2000
+		const vector<UsbStorageDevice> &vUSB = m_CurrentUsbStorageDevices;
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 		const UsbStorageDevice &dev = vUSB[iCurRow];
 		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
 
@@ -215,7 +264,11 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 		}
 		else
 		{
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
 			RString s = ssprintf(ERROR_MOUNTING_CARD.GetValue().c_str(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+=======
+			RString s = ssprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}
@@ -228,7 +281,11 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
 /*
  * (c) 2005 Chris Danford
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -238,7 +295,11 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus & )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMemoryCard.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/ScreenOptionsMemoryCard.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

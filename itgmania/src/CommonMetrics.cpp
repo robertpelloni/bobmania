@@ -42,6 +42,7 @@ void ThemeMetricDifficultiesToShow::Read()
 
 	std::vector<RString> v;
 	split( ThemeMetric<RString>::GetValue(), ",", v );
+<<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("DifficultiesToShow must have at least one entry.");
@@ -59,6 +60,16 @@ void ThemeMetricDifficultiesToShow::Read()
 		{
 			m_v.push_back( d );
 		}
+=======
+	ASSERT( v.size() > 0 );
+
+	for (RString const &i : v)
+	{
+		Difficulty d = StringToDifficulty( i );
+		if( d == Difficulty_Invalid )
+			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i.c_str() );
+		m_v.push_back( d );
+>>>>>>> origin/c++11:src/CommonMetrics.cpp
 	}
 }
 const std::vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
@@ -81,6 +92,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 
 	std::vector<RString> v;
 	split( ThemeMetric<RString>::GetValue(), ",", v );
+<<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
 	if(v.empty())
 	{
 		LuaHelpers::ReportScriptError("CourseDifficultiesToShow must have at least one entry.");
@@ -98,6 +110,16 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 		{
 			m_v.push_back( d );
 		}
+=======
+	ASSERT( v.size() > 0 );
+
+	for (RString const &i : v)
+	{
+		CourseDifficulty d = StringToDifficulty( i );
+		if( d == Difficulty_Invalid )
+			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i.c_str() );
+		m_v.push_back( d );
+>>>>>>> origin/c++11:src/CommonMetrics.cpp
 	}
 }
 const std::vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
@@ -114,7 +136,11 @@ static void RemoveStepsTypes( std::vector<StepsType>& inout, RString sStepsTypes
 		StepsType st = GAMEMAN->StringToStepsType(i);
 		if( st == StepsType_Invalid )
 		{
+<<<<<<< HEAD:itgmania/src/CommonMetrics.cpp
 			LuaHelpers::ReportScriptErrorFmt( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
+=======
+			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i.c_str(), sStepsTypesToRemove.c_str() );
+>>>>>>> origin/c++11:src/CommonMetrics.cpp
 			continue;
 		}
 

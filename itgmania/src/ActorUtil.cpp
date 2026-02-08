@@ -10,9 +10,13 @@
 #include "XmlFileUtil.h"
 #include "IniFile.h"
 #include "LuaManager.h"
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 #include "Song.h"
 #include "Course.h"
 #include "GameState.h"
+=======
+
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 
 #include "arch/Dialog/Dialog.h"
 
@@ -20,7 +24,11 @@
 
 
 // Actor registration
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 static std::map<RString,CreateActorFn>	*g_pmapRegistrees = nullptr;
+=======
+static map<RString,CreateActorFn>	*g_pmapRegistrees = nullptr;
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 
 static bool IsRegistered( const RString& sClassName )
 {
@@ -30,7 +38,11 @@ static bool IsRegistered( const RString& sClassName )
 void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == nullptr )
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 		g_pmapRegistrees = new std::map<RString,CreateActorFn>;
+=======
+		g_pmapRegistrees = new map<RString,CreateActorFn>;
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 
 	std::map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Actor class '%s' already registered.", sClassName.c_str()) );
@@ -116,6 +128,7 @@ bool ActorUtil::ResolvePath( RString &sPath, const RString &sName, bool optional
 
 namespace
 {
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 	RString GetLegacyActorClass(XNode *pActor)
 	{
 		DEBUG_ASSERT(PREFSMAN->m_bQuirksMode);
@@ -176,13 +189,20 @@ Actor *ActorUtil::LoadFromNode( const XNode* _pNode, Actor *pParentActor )
 	ASSERT( _pNode != nullptr );
 
 	XNode node = *_pNode;
+=======
+	ASSERT( pNode != nullptr );
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 
 	// Remove this in favor of using conditionals in Lua. -Chris
 	// There are a number of themes out there that depend on this (including
 	// sm-ssc default). Probably for the best to leave this in. -aj
 	{
 		bool bCond;
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 		if( node.GetAttrValue("Condition", bCond) && !bCond )
+=======
+		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 			return nullptr;
 	}
 
@@ -251,7 +271,11 @@ namespace
 		{
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 			LuaHelpers::ReportScriptError(sError);
+=======
+			Dialog::OK( sError, "LUA_ERROR" );
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 			return nullptr;
 		}
 
@@ -307,7 +331,11 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor )
 	{
 	case FT_Lua:
 		{
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 			std::unique_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
+=======
+			unique_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 			if( pNode.get() == nullptr )
 			{
 				// XNode will warn about the error
@@ -478,7 +506,11 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sMetricsGr
 
 	for (RString const & sv : vsValueNames)
 	{
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 		static const RString sEnding = "Command";
+=======
+		static const RString sEnding = "Command"; 
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 		if( EndsWith(sv,sEnding) )
 		{
 			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
@@ -680,7 +712,11 @@ namespace
 		LIST_METHOD( LoadAllCommands ),
 		LIST_METHOD( LoadAllCommandsFromName ),
 		LIST_METHOD( LoadAllCommandsAndSetXY ),
+<<<<<<< HEAD:itgmania/src/ActorUtil.cpp
 		{ nullptr, nullptr }
+=======
+		{ NULL, nullptr }
+>>>>>>> origin/c++11:src/ActorUtil.cpp
 	};
 }
 

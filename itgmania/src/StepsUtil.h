@@ -187,7 +187,11 @@ public:
 	 * This used to call Unset(), which set the variables to
 	 * the same thing. */
 	StepsID(): st(StepsType_Invalid), dc(Difficulty_Invalid),
+<<<<<<< HEAD:itgmania/src/StepsUtil.h
 		sDescription(""), uHash(0) {}
+=======
+		sDescription(""), uHash(0), m_Cache() {}
+>>>>>>> origin/c++11:src/StepsUtil.h
 	void Unset() { FromSteps(nullptr); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;

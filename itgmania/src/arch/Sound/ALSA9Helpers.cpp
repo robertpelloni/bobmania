@@ -5,9 +5,12 @@
 #include "ALSA9Dynamic.h"
 #include "PrefsManager.h"
 
+<<<<<<< HEAD:itgmania/src/arch/Sound/ALSA9Helpers.cpp
 #include <fstream>
 #include <string>
 
+=======
+>>>>>>> origin/c++11:src/arch/Sound/ALSA9Helpers.cpp
 /* int err; must be defined before using this macro */
 #define ALSA_CHECK(x) \
        if ( err < 0 ) { LOG->Info("ALSA: %s: %s", x, dsnd_strerror(err)); return false; }
@@ -143,12 +146,20 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		return;
 	done = true;
 
+<<<<<<< HEAD:itgmania/src/arch/Sound/ALSA9Helpers.cpp
 	std::ifstream f("/proc/asound/version");
 	if (f.good())
 	{
 		std::string version;
 		std::getline(f, version);
 		LOG->Info( "ALSA: %s", version.c_str() );
+=======
+	if( DoesFileExist("/rootfs/proc/asound/version") )
+	{
+		RString sVersion;
+		GetFileContents( "/rootfs/proc/asound/version", sVersion, true );
+		LOG->Info( "ALSA: %s", sVersion.c_str() );
+>>>>>>> origin/c++11:src/arch/Sound/ALSA9Helpers.cpp
 	}
 
 	InitializeErrorHandler();

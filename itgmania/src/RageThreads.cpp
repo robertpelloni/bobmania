@@ -37,7 +37,11 @@ bool RageThread::s_bSystemSupportsTLS = false;
 bool RageThread::s_bIsShowingDialog = false;
 
 #define MAX_THREADS 128
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 //static std::vector<RageMutex*> *g_MutexList = nullptr; /* watch out for static initialization order problems */
+=======
+//static vector<RageMutex*> *g_MutexList = nullptr; /* watch out for static initialization order problems */
+>>>>>>> origin/c++11:src/RageThreads.cpp
 
 struct ThreadSlot
 {
@@ -59,7 +63,11 @@ struct ThreadSlot
 		int m_iLine;
 		char m_szFormattedBuf[1024];
 
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 		ThreadCheckpoint() { Set( nullptr, 0, nullptr ); }
+=======
+		ThreadCheckpoint() { Set( NULL, 0, nullptr ); }
+>>>>>>> origin/c++11:src/RageThreads.cpp
 		void Set( const char *szFile, int iLine, const char *szMessage = nullptr );
 		const char *GetFormattedCheckpoint();
 	};
@@ -212,7 +220,11 @@ static ThreadSlot *GetUnknownThreadSlot()
 RageThread::RageThread(): m_pSlot(nullptr), m_sName("unnamed") {}
 
 /* Copying a thread does not start the copy. */
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 RageThread::RageThread( const RageThread &cpy ):
+=======
+RageThread::RageThread( const RageThread &cpy ): 
+>>>>>>> origin/c++11:src/RageThreads.cpp
 	m_pSlot(nullptr), m_sName(cpy.m_sName) {}
 
 RageThread::~RageThread()
@@ -392,8 +404,13 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 		slot = GetUnknownThreadSlot();
 	/* We can't ASSERT here, since that uses checkpoints. */
 	if( slot == nullptr )
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 		sm_crash( "GetUnknownThreadSlot() returned nullptr" );
 
+=======
+		sm_crash( "GetUnknownThreadSlot() returned NULL" );
+	
+>>>>>>> origin/c++11:src/RageThreads.cpp
 	/* Ignore everything up to and including the first "src/". */
 	const char *temp = strstr( file, "src/" );
 	if( temp )
@@ -438,7 +455,11 @@ void Checkpoints::GetLogs( char *pBuf, int iSize, const char *delim )
 			continue;
 		strcat( pBuf, buf );
 		strcat( pBuf, delim );
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 
+=======
+		
+>>>>>>> origin/c++11:src/RageThreads.cpp
 		for( int line = 1; (buf = GetCheckpointLog(slotno, line)) != nullptr; ++line )
 		{
 			strcat( pBuf, buf );
@@ -528,7 +549,11 @@ void RageMutex::MarkLockedMutex()
 }
 
 /* XXX: How can g_FreeMutexIDs and g_MutexList be threadsafed? */
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 static std::set<int> *g_FreeMutexIDs = nullptr;
+=======
+static set<int> *g_FreeMutexIDs = nullptr;
+>>>>>>> origin/c++11:src/RageThreads.cpp
 #endif
 
 RageMutex::RageMutex( const RString &name ):
@@ -562,7 +587,11 @@ RageMutex::RageMutex( const RString &name ):
 	g_FreeMutexIDs->erase( g_FreeMutexIDs->begin() );
 
 	if( g_MutexList == nullptr )
+<<<<<<< HEAD:itgmania/src/RageThreads.cpp
 		g_MutexList = new std::vector<RageMutex*>;
+=======
+		g_MutexList = new vector<RageMutex*>;
+>>>>>>> origin/c++11:src/RageThreads.cpp
 
 	g_MutexList->push_back( this );
 */

@@ -15,7 +15,11 @@ namespace
 			return;
 
 		/* Register base classes first. */
+<<<<<<< HEAD:itgmania/src/LuaBinding.cpp
 		std::map<RString, LuaBinding*> mapToRegister;
+=======
+		map<RString, LuaBinding *> mapToRegister;
+>>>>>>> origin/c++11:src/LuaBinding.cpp
 		for (LuaBinding *binding : *m_Subscribers.m_pSubscribers)
 			mapToRegister[binding->GetClassName()] = binding;
 

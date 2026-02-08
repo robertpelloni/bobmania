@@ -50,7 +50,10 @@ public:
 	bool Open( const RString& path, int mode = READ );
 	void Close();
 	bool IsOpen() const { return m_File != nullptr; }
+<<<<<<< HEAD:itgmania/src/RageFile.h
 	int GetMode() const { return m_Mode; }
+=======
+>>>>>>> origin/c++11:src/RageFile.h
 
 	bool AtEOF() const;
 	RString GetError() const;

@@ -24,10 +24,13 @@ void ComboGraph::Load( RString sMetricsGroup )
 	BODY_WIDTH.Load( sMetricsGroup, "BodyWidth" );
 	BODY_HEIGHT.Load( sMetricsGroup, "BodyHeight" );
 
+<<<<<<< HEAD:itgmania/src/ComboGraph.cpp
 	// These need to be set so that a theme can use zoomtowidth/zoomtoheight and get correct behavior.
 	this->SetWidth(BODY_WIDTH);
 	this->SetHeight(BODY_HEIGHT);
 
+=======
+>>>>>>> origin/c++11:src/ComboGraph.cpp
 	Actor *pActor = nullptr;
 
 	m_pBacking = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"Backing") );
@@ -55,6 +58,7 @@ void ComboGraph::Load( RString sMetricsGroup )
 	}
 
 	pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ComboNumber") );
+<<<<<<< HEAD:itgmania/src/ComboGraph.cpp
 	if( pActor != nullptr )
 	{
 		m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
@@ -63,6 +67,12 @@ void ComboGraph::Load( RString sMetricsGroup )
 		else
 			LuaHelpers::ReportScriptErrorFmt( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
 	}
+=======
+	m_pComboNumber = dynamic_cast<BitmapText *>( pActor );
+	if( m_pComboNumber == nullptr )
+		RageException::Throw( "ComboGraph: \"sMetricsGroup\" \"ComboNumber\" must be a BitmapText" );
+	this->AddChild( m_pComboNumber );
+>>>>>>> origin/c++11:src/ComboGraph.cpp
 }	
 
 void ComboGraph::Set( const StageStats &s, const PlayerStageStats &pss )

@@ -9,11 +9,16 @@
 #include "Song.h"
 #include "Steps.h"
 
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 #include <vector>
 
 
 static void HandleBunki( TimingData &timing, const float fEarlyBPM,
 			const float fCurBPM, const float fGap,
+=======
+static void HandleBunki( TimingData &timing, const float fEarlyBPM, 
+			const float fCurBPM, const float fGap, 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 			const float fPos )
 {
 	const float BeatsPerSecond = fEarlyBPM / 60.0f;
@@ -38,11 +43,19 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	int iTickCount = -1;
 	// used to adapt weird tickcounts
 	//float fScrollRatio = 1.0f; -- uncomment when ready to use.
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	std::vector<RString> vNoteRows;
 
 	// According to Aldo_MX, there is a default BPM and it's 60. -aj
 	bool bDoublesChart = false;
 
+=======
+	vector<RString> vNoteRows;
+
+	// According to Aldo_MX, there is a default BPM and it's 60. -aj
+	bool bDoublesChart = false;
+	
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	TimingData stepsTiming;
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 
@@ -113,7 +126,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			SMGap1 = -StringToFloat( sParams[1] )/100;
 			stepsTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		// This is currently required for more accurate KIU BPM changes.
+=======
+		// This is currently required for more accurate KIU BPM changes.  
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		else if( sValueName=="STARTTIME2" )
 		{
 			if (bKIUCompliant)
@@ -130,10 +147,17 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			// STARTTIME3 only ensures this is a KIU compliant simfile.
 			bKIUCompliant = true;
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 
 		else if( sValueName=="TICKCOUNT" )
 		{
 			iTickCount = StringToInt( sParams[1] );
+=======
+		
+		else if( sValueName=="TICKCOUNT" )
+		{
+			iTickCount = std::stoi( sParams[1] );
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
@@ -141,17 +165,28 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			}
 			stepsTiming.AddSegment( TickcountSegment(0, iTickCount));
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 
 		else if( sValueName=="DIFFICULTY" )
 		{
 			out.SetMeter( std::max(StringToInt(sParams[1]), 1) );
+=======
+		
+		else if( sValueName=="DIFFICULTY" )
+		{
+			out.SetMeter( max(std::stoi(sParams[1]), 1) );
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
 		{
 			RString sPlayer = sParams[1];
 			sPlayer.MakeLower();
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 			if( sPlayer.find( "double" ) != std::string::npos )
+=======
+			if( sPlayer.find( "double" ) != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 				bDoublesChart = true;
 		}
 		// This should always be last.
@@ -168,7 +203,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		iTickCount = 4;
 		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", iTickCount );
 	}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	// Prepare BPM stuff already if the file uses KSF syntax.
 	if( bKIUCompliant )
 	{
@@ -176,7 +215,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		{
 			HandleBunki( stepsTiming, BPM1, BPM2, SMGap1, BPMPos2 );
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 
+=======
+		
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		if( BPM3 > 0 && BPMPos3 > 0 )
 		{
 			HandleBunki( stepsTiming, BPM2, BPM3, SMGap2, BPMPos3 );
@@ -192,48 +235,87 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 
 		out.SetDescription(sFName);
 		// Check another before anything else... is this okay? -DaisuMaster
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		if( sFName.find("another") != std::string::npos )
+=======
+		if( sFName.find("another") != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		{
 			out.SetDifficulty( Difficulty_Edit );
 			if( !out.GetMeter() ) out.SetMeter( 25 );
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		else if(sFName.find("wild") != std::string::npos ||
 			sFName.find("wd") != std::string::npos ||
 			sFName.find("crazy+") != std::string::npos ||
 			sFName.find("cz+") != std::string::npos ||
 			sFName.find("hardcore") != std::string::npos )
+=======
+		else if(sFName.find("wild") != string::npos || 
+			sFName.find("wd") != string::npos || 
+			sFName.find("crazy+") != string::npos || 
+			sFName.find("cz+") != string::npos || 
+			sFName.find("hardcore") != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		{
 			out.SetDifficulty( Difficulty_Challenge );
 			if( !out.GetMeter() ) out.SetMeter( 20 );
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		else if(sFName.find("crazy") != std::string::npos ||
 			sFName.find("cz") != std::string::npos ||
 			sFName.find("nightmare") != std::string::npos ||
 			sFName.find("nm") != std::string::npos ||
 			sFName.find("crazydouble") != std::string::npos )
+=======
+		else if(sFName.find("crazy") != string::npos || 
+			sFName.find("cz") != string::npos || 
+			sFName.find("nightmare") != string::npos || 
+			sFName.find("nm") != string::npos || 
+			sFName.find("crazydouble") != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		{
 			out.SetDifficulty( Difficulty_Hard );
 			if( !out.GetMeter() ) out.SetMeter( 14 ); // Set the meters to the Pump scale, not DDR.
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		else if(sFName.find("hard") != std::string::npos ||
 			sFName.find("hd") != std::string::npos ||
 			sFName.find("freestyle") != std::string::npos ||
 			sFName.find("fs") != std::string::npos ||
 			sFName.find("double") != std::string::npos )
+=======
+		else if(sFName.find("hard") != string::npos || 
+			sFName.find("hd") != string::npos || 
+			sFName.find("freestyle") != string::npos || 
+			sFName.find("fs") != string::npos || 
+			sFName.find("double") != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		{
 			out.SetDifficulty( Difficulty_Medium );
 			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		else if(sFName.find("easy") != std::string::npos ||
 			sFName.find("ez") != std::string::npos ||
 			sFName.find("normal") != std::string::npos )
+=======
+		else if(sFName.find("easy") != string::npos || 
+			sFName.find("ez") != string::npos || 
+			sFName.find("normal") != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		{
 			// I wonder if I should leave easy fall into the Beginner difficulty... -DaisuMaster
 			out.SetDifficulty( Difficulty_Easy );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		else if(sFName.find("beginner") != std::string::npos ||
 			sFName.find("practice") != std::string::npos || sFName.find("pr") != std::string::npos  )
+=======
+		else if(sFName.find("beginner") != string::npos || 
+			sFName.find("practice") != string::npos || sFName.find("pr") != string::npos  )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		{
 			out.SetDifficulty( Difficulty_Beginner );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
@@ -247,6 +329,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		out.m_StepsType = StepsType_pump_single;
 
 		// Check for "halfdouble" before "double".
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		if(sFName.find("halfdouble") != std::string::npos ||
 		   sFName.find("half-double") != std::string::npos ||
 		   sFName.find("h_double") != std::string::npos ||
@@ -263,6 +346,24 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		else if( sFName.find("_1") != std::string::npos )
 			out.m_StepsType = StepsType_pump_single;
 		else if( sFName.find("_2") != std::string::npos )
+=======
+		if(sFName.find("halfdouble") != string::npos || 
+		   sFName.find("half-double") != string::npos || 
+		   sFName.find("h_double") != string::npos || 
+		   sFName.find("hdb") != string::npos )
+			out.m_StepsType = StepsType_pump_halfdouble;
+		// Handle bDoublesChart from above as well. -aj
+		else if(sFName.find("double") != string::npos || 
+			sFName.find("nightmare") != string::npos || 
+			sFName.find("freestyle") != string::npos || 
+			sFName.find("db") != string::npos || 
+			sFName.find("nm") != string::npos || 
+			sFName.find("fs") != string::npos || bDoublesChart )
+			out.m_StepsType = StepsType_pump_double;
+		else if( sFName.find("_1") != string::npos )
+			out.m_StepsType = StepsType_pump_single;
+		else if( sFName.find("_2") != string::npos )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 			out.m_StepsType = StepsType_pump_couple;
 	}
 
@@ -344,14 +445,24 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 
 			RString temp = sRowString.substr(2,sRowString.size()-3);
 			float numTemp = StringToFloat(temp);
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 			if (BeginsWith(sRowString, "|T"))
+=======
+			if (BeginsWith(sRowString, "|T")) 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 			{
 				// duh
 				iTickCount = static_cast<int>(numTemp);
 				// I have been owned by the man -DaisuMaster
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 				stepsTiming.SetTickcountAtBeat( fCurBeat, std::clamp(iTickCount, 0, ROWS_PER_BEAT) );
 			}
 			else if (BeginsWith(sRowString, "|B"))
+=======
+				stepsTiming.SetTickcountAtBeat( fCurBeat, clamp(iTickCount, 0, ROWS_PER_BEAT) );
+			}
+			else if (BeginsWith(sRowString, "|B")) 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 			{
 				// BPM
 				stepsTiming.SetBPMAtBeat( fCurBeat, numTemp );
@@ -475,7 +586,11 @@ static void LoadTags( const RString &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	std::vector<RString> asBits;
+=======
+	vector<RString> asBits;
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	split( str, " - ", asBits, false );
 	// Ignore the difficulty, since we get that elsewhere.
 	if( asBits.size() == 3 && (
@@ -484,7 +599,11 @@ static void LoadTags( const RString &str, Song &out )
 		asBits[2].EqualsNoCase("normal") ||
 		asBits[2].EqualsNoCase("hard") ||
 		asBits[2].EqualsNoCase("crazy") ||
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		asBits[2].EqualsNoCase("nightmare"))
+=======
+		asBits[2].EqualsNoCase("nightmare")) 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		)
 	{
 		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
@@ -518,7 +637,11 @@ static void ProcessTickcounts( const RString & value, int & ticks, TimingData & 
 	/* TICKCOUNT will be used below if there are DM compliant BPM changes
 	 * and stops. It will be called again in LoadFromKSFFile for the
 	 * actual steps. */
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	ticks = StringToInt( value );
+=======
+	ticks = std::stoi( value );
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	CLAMP( ticks, 0, ROWS_PER_BEAT );
 
 	if( ticks == 0 )
@@ -538,7 +661,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 
 	// changed up there in case of something is found inside the SONGFILE tag in the head ksf -DaisuMaster
 	// search for music with song in the file name
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	std::vector<RString> arrayPossibleMusic;
+=======
+	vector<RString> arrayPossibleMusic;
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
@@ -551,7 +678,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 	int iTickCount = -1;
 	bKIUCompliant = false;
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	std::vector<RString> vNoteRows;
+=======
+	vector<RString> vNoteRows;
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -654,7 +785,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	out.m_fMusicSampleLengthSeconds = 7.0f;
 
 	/* BPM Change checks are done here.  If bKIUCompliant, it's short and sweet.
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	 * Otherwise, the whole file has to be processed.  Right now, this is only
+=======
+	 * Otherwise, the whole file has to be processed.  Right now, this is only 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	 * called once, for the initial file (often the Crazy steps).  Hopefully that
 	 * will end up changing soon. */
 	if( bKIUCompliant )
@@ -701,14 +836,22 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				// ignore whatever else...
 				//continue;
 			}
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 
+=======
+			
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
 
 	// Try to fill in missing bits of information from the pathname.
 	{
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 		std::vector<RString> asBits;
+=======
+		vector<RString> asBits;
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 		split( sPath, "/", asBits, true);
 
 		ASSERT( asBits.size() > 1 );
@@ -718,7 +861,11 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	return true;
 }
 
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 void KSFLoader::GetApplicableFiles( const RString &sPath, std::vector<RString> &out )
+=======
+void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 {
 	GetDirListing( sPath + RString("*.ksf"), out );
 }
@@ -743,7 +890,11 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "KSFLoader::LoadFromDir(%s)", sDir.c_str() );
 
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	std::vector<RString> arrayKSFFileNames;
+=======
+	vector<RString> arrayKSFFileNames;
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
 
 	// We shouldn't have been called to begin with if there were no KSFs.
@@ -752,7 +903,11 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case
 	 * anything goes wrong. As these files are kept in alphabetical
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	 * order (hopefully), it is best to use the LAST file for timing
+=======
+	 * order (hopefully), it is best to use the LAST file for timing 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	 * purposes, for that is the "normal", or easiest difficulty.
 	 * Usually. */
 	// Nevermind, kiu compilancy is screwing things up:
@@ -773,7 +928,11 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	out.m_sSongFileName = dir + arrayKSFFileNames[files - 1];
 	// load the Steps from the rest of the KSF files
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
 	for( unsigned i=0; i<files; i++ )
+=======
+	for( unsigned i=0; i<files; i++ ) 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
 	{
 		Steps* pNewNotes = out.CreateSteps();
 		if( !LoadFromKSFFile(dir + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
@@ -790,7 +949,11 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard, Jason Felds
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -800,7 +963,11 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/NotesLoaderKSF.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/NotesLoaderKSF.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

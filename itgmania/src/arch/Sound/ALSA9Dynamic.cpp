@@ -35,7 +35,11 @@ RString LoadALSA()
 
 	ASSERT( Handle == nullptr );
 
+<<<<<<< HEAD:itgmania/src/arch/Sound/ALSA9Dynamic.cpp
 	Handle = dlopen( lib.c_str(), RTLD_NOW );
+=======
+	Handle = dlopen( lib, RTLD_NOW );
+>>>>>>> origin/c++11:src/arch/Sound/ALSA9Dynamic.cpp
 	if( Handle == nullptr )
 		return ssprintf("dlopen(%s): %s", lib.c_str(), dlerror());
 

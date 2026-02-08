@@ -97,6 +97,12 @@ void LifeMeterTime::OnLoadSong()
 	if( GetLifeSeconds() <= 0 && GAMESTATE->GetCourseSongIndex() > 0 )
 		return;
 
+<<<<<<< HEAD:itgmania/src/LifeMeterTime.cpp
+=======
+	Course* pCourse = GAMESTATE->m_pCurCourse;
+	ASSERT( pCourse != nullptr );
+
+>>>>>>> origin/c++11:src/LifeMeterTime.cpp
 	float fOldLife = m_fLifeTotalLostSeconds;
 	float fGainSeconds = 0;
 	if(GAMESTATE->IsCourseMode())

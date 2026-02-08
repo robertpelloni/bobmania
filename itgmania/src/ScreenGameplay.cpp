@@ -38,6 +38,10 @@
 #include "StatsManager.h"
 #include "PlayerAI.h" // for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
+=======
+
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
@@ -103,12 +107,20 @@ PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_bIsDummy(false), m_iDummyIndex(0), m_iAddToDifficulty(0),
 	m_bPlayerEnabled(false), m_PlayerStateDummy(),
 	m_PlayerStageStatsDummy(), m_SoundEffectControl(),
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(nullptr),
+=======
+	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(nullptr), 
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 	m_ptextCourseSongNumber(nullptr), m_ptextStepsDescription(nullptr),
 	m_pPrimaryScoreDisplay(nullptr), m_pSecondaryScoreDisplay(nullptr),
 	m_pPrimaryScoreKeeper(nullptr), m_pSecondaryScoreKeeper(nullptr),
 	m_ptextPlayerOptions(nullptr), m_pActiveAttackList(nullptr),
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr),
+=======
+	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr), 
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 	m_pStepsDisplay(nullptr), m_sprOniGameOver() {}
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
@@ -326,10 +338,13 @@ ScreenGameplay::ScreenGameplay()
 {
 	m_pSongBackground = nullptr;
 	m_pSongForeground = nullptr;
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	m_pModfile = nullptr;
 	m_bForceNoNetwork = false;
 	m_delaying_ready_announce= false;
 	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= false;
+=======
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 }
 
 void ScreenGameplay::Init()
@@ -411,7 +426,11 @@ void ScreenGameplay::Init()
 		MEMCARDMAN->PauseMountingThread();
 
 	m_pSoundMusic = nullptr;
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	set_paused_internal(false);
+=======
+	m_bPaused = false;
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 
 	m_pCombinedLifeMeter = nullptr;
 
@@ -1741,6 +1760,7 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	// Economy Integration: Update mining/background tasks
 	EconomyManager::Instance()->Update(fDeltaTime);
 	
@@ -1751,6 +1771,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_textEconomy.SetText( ssprintf("Coins: %lld", balance) );
 	}
 
+=======
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 	if( GAMESTATE->m_pCurSong == nullptr  )
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
@@ -1899,7 +1921,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 				FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
 				switch( ft )
 				{
+<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 				case FailType_Immediate:
+=======
+				case PlayerOptions::FAIL_IMMEDIATE:
+>>>>>>> origin/c++11:src/ScreenGameplay.cpp
 					if( pi->m_pLifeMeter == nullptr  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
 						bAllFailed = false;
 					break;
@@ -3325,7 +3351,7 @@ void ScreenGameplay::SaveReplay()
 					continue;
 
 				ASSERT( matches.size() == 1 );
-				iIndex = StringToInt( matches[0] )+1;
+				iIndex = std::stoi( matches[0] )+1;
 				break;
 			}
 

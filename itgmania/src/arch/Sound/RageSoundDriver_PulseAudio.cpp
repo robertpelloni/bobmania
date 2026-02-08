@@ -23,7 +23,11 @@ REGISTER_SOUND_DRIVER_CLASS2( Pulse, PulseAudio );
 /* Constructor */
 RageSoundDriver_PulseAudio::RageSoundDriver_PulseAudio()
 : RageSoundDriver(),
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 m_LastPosition(0), m_Error(nullptr),
+=======
+m_LastPosition(0), m_SampleRate(0), m_Error(nullptr),
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 m_Sem("Pulseaudio Synchronization Semaphore"),
 m_PulseMainLoop(nullptr), m_PulseCtx(nullptr), m_PulseStream(nullptr)
 {
@@ -40,7 +44,11 @@ RageSoundDriver_PulseAudio::~RageSoundDriver_PulseAudio()
 	pa_context_unref(m_PulseCtx);
 	pa_threaded_mainloop_stop(m_PulseMainLoop);
 	pa_threaded_mainloop_free(m_PulseMainLoop);
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	if(m_Error != nullptr)
 	{
 		free(m_Error);
@@ -71,7 +79,11 @@ RString RageSoundDriver_PulseAudio::Init()
 			pa_threaded_mainloop_get_api(m_PulseMainLoop),
 			PRODUCT_FAMILY, plist);
 	pa_proplist_free(plist);
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new_with_proplist() failed!";
@@ -80,7 +92,11 @@ RString RageSoundDriver_PulseAudio::Init()
 	LOG->Trace("Pulse: pa_context_new()...");
 	m_PulseCtx = pa_context_new(
 			pa_threaded_mainloop_get_api(m_PulseMainLoop),
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 			PRODUCT_FAMILY);
+=======
+			"Stepmania");
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	if(m_PulseCtx == nullptr)
 	{
 		return "pa_context_new() failed!";
@@ -91,7 +107,11 @@ RString RageSoundDriver_PulseAudio::Init()
 
 	LOG->Trace("Pulse: pa_context_connect()...");
 	error = pa_context_connect(m_PulseCtx, nullptr, (pa_context_flags_t)0, nullptr);
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	if(error < 0)
 	{
 		return ssprintf("pa_contect_connect(): %s",
@@ -142,7 +162,11 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 	{
 		if(asprintf(&m_Error, "invalid sample spec!") == -1)
 		{
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 			m_Error = nullptr; // asprintf failed to allocate memory
+=======
+			m_Error = nullptr;
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 		}
 		m_Sem.Post();
 		return;
@@ -155,12 +179,20 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 
 	/* create the stream */
 	LOG->Trace("Pulse: pa_stream_new()...");
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	m_PulseStream = pa_stream_new(m_PulseCtx, PRODUCT_FAMILY " Audio", &ss_local, &map);
+=======
+	m_PulseStream = pa_stream_new(m_PulseCtx, "Stepmania Audio", &ss, &map);
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	if(m_PulseStream == nullptr)
 	{
 		if(asprintf(&m_Error, "pa_stream_new(): %s", pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 			m_Error = nullptr; // asprintf failed to allocate memory
+=======
+			m_Error = nullptr;
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 		}
 		m_Sem.Post();
 		return;
@@ -235,18 +267,27 @@ void RageSoundDriver_PulseAudio::m_InitStream(void)
 
 	 /* connect the stream for playback */
 	LOG->Trace("Pulse: pa_stream_connect_playback()...");
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	const int flags = PA_STREAM_INTERPOLATE_TIMING
 		| PA_STREAM_NOT_MONOTONIC // mHostTime may not be monotonic in some cases
 		| PA_STREAM_AUTO_TIMING_UPDATE
 		| PA_STREAM_ADJUST_LATENCY; // Allow server to adjust latency based on our buffer_attr
 	error = pa_stream_connect_playback(m_PulseStream, nullptr, &attr,
 			static_cast<pa_stream_flags_t>(flags), nullptr, nullptr);
+=======
+	error = pa_stream_connect_playback(m_PulseStream, nullptr, &attr,
+			PA_STREAM_AUTO_TIMING_UPDATE, nullptr, nullptr);
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	if(error < 0)
 	{
 		if(asprintf(&m_Error, "pa_stream_connect_playback(): %s",
 				pa_strerror(pa_context_errno(m_PulseCtx))) == -1)
 		{
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 			m_Error = nullptr; // asprintf failed to allocate memory
+=======
+			m_Error = nullptr;
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 		}
 		m_Sem.Post();
 		return;
@@ -347,8 +388,22 @@ int64_t RageSoundDriver_PulseAudio::GetPositionUnlocked() const
 
 void RageSoundDriver_PulseAudio::StreamWriteCb(pa_stream *s, size_t length)
 {
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	int64_t curPos = GetPositionUnlocked();
 	while(length > 0)
+=======
+#if PA_API_VERSION <= 11
+	/* We have to multiply the requested length by 2 on 0.9.10
+	* maybe the requested length is given in frames instead of bytes */
+	length *= 2;
+#endif
+	size_t nbframes = length / sizeof(int16_t); /* we use 16-bit frames */
+	int16_t buf[nbframes];
+	int64_t pos1 = m_LastPosition;
+	int64_t pos2 = pos1 + nbframes/2; /* Mix() position in stereo frames */
+	this->Mix( buf, pos2-pos1, pos1, pos2);
+	if(pa_stream_write(m_PulseStream, buf, length, nullptr, 0, PA_SEEK_RELATIVE) < 0)
+>>>>>>> origin/c++11:src/arch/Sound/RageSoundDriver_PulseAudio.cpp
 	{
 		void* buf;
 		size_t bufsize = length;

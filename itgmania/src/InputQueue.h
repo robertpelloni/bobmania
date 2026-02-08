@@ -18,7 +18,11 @@ public:
 
 	void RememberInput( const InputEventPlus &gi );
 	bool WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP = nullptr );
+<<<<<<< HEAD:itgmania/src/InputQueue.h
 	const std::vector<InputEventPlus> &GetQueue( GameController c ) const { return m_aQueue[c]; }
+=======
+	const vector<InputEventPlus> &GetQueue( GameController c ) const { return m_aQueue[c]; }
+>>>>>>> origin/c++11:src/InputQueue.h
 	void ClearQueue( GameController c );
 
 protected:

@@ -63,14 +63,24 @@ static LocalizedString MUTE_ACTIONS_ON ("ScreenDebugOverlay", "Mute actions on")
 static LocalizedString MUTE_ACTIONS_OFF ("ScreenDebugOverlay", "Mute actions off");
 
 class IDebugLine;
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 static std::vector<IDebugLine*> *g_pvpSubscribers = nullptr;
+=======
+static vector<IDebugLine*> *g_pvpSubscribers = nullptr;
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 class IDebugLine
 {
 public:
 	IDebugLine()
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 	{
 		if( g_pvpSubscribers == nullptr )
 			g_pvpSubscribers = new std::vector<IDebugLine*>;
+=======
+	{ 
+		if( g_pvpSubscribers == nullptr )
+			g_pvpSubscribers = new vector<IDebugLine*>;
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 		g_pvpSubscribers->push_back( this );
 	}
 	virtual ~IDebugLine() { }
@@ -107,16 +117,28 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 
 	for (BitmapText *p : m_vptextPages)
 	{
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 		RageUtil::SafeDelete(p);
 	}
 	for (BitmapText *p : m_vptextButton)
 	{
 		RageUtil::SafeDelete(p);
+=======
+		SAFE_DELETE(p);
+	}
+	for (BitmapText *p : m_vptextButton)
+	{
+		SAFE_DELETE(p);
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 	}
 	m_vptextButton.clear();
 	for (BitmapText *p : m_vptextFunction)
 	{
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 		RageUtil::SafeDelete(p);
+=======
+		SAFE_DELETE(p);
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 	}
 	m_vptextFunction.clear();
 }
@@ -278,7 +300,11 @@ void ScreenDebugOverlay::Init()
 	this->AddChild( &m_textHeader );
 
 	auto start = m_asPages.begin();
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+=======
+	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 	{
 		int iPage = s - start;
 
@@ -378,7 +404,11 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 void ScreenDebugOverlay::UpdateText()
 {
 	auto start = m_asPages.begin();
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+=======
+	for (vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 	{
 		int iPage = s - start;
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
@@ -387,7 +417,11 @@ void ScreenDebugOverlay::UpdateText()
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
 	auto subStart = g_pvpSubscribers->begin();
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 	for (std::vector<IDebugLine*>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
+=======
+	for (vector<IDebugLine *>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -493,7 +527,11 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 	}
 
 	auto start = g_pvpSubscribers->begin();
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 	for (std::vector<IDebugLine*>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
+=======
+	for (vector<IDebugLine *>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 	{
 		RString sPageName = (*p)->GetPageName();
 
@@ -933,10 +971,17 @@ static void FillProfileStats( Profile *pProfile )
 		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
 		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
 
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 	std::vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
 	for (Song const *pSong : vpAllSongs)
 	{
 		std::vector<Steps*> vpAllSteps = pSong->GetAllSteps();
+=======
+	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
+	for (Song const *pSong : vpAllSongs)
+	{
+		vector<Steps*> vpAllSteps = pSong->GetAllSteps();
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 		for (Steps const *pSteps : vpAllSteps)
 		{
 			if( rand() % 5 )
@@ -953,7 +998,11 @@ static void FillProfileStats( Profile *pProfile )
 	SONGMAN->GetAllCourses( vpAllCourses, true );
 	for (Course const *pCourse : vpAllCourses)
 	{
+<<<<<<< HEAD:itgmania/src/ScreenDebugOverlay.cpp
 		std::vector<Trail*> vpAllTrails;
+=======
+		vector<Trail*> vpAllTrails;
+>>>>>>> origin/c++11:src/ScreenDebugOverlay.cpp
 		pCourse->GetAllTrails( vpAllTrails );
 		for (Trail const *pTrail : vpAllTrails)
 		{

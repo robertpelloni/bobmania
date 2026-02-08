@@ -40,6 +40,7 @@ LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
 	m_sGroup = sGroup;
 	m_sName = sName;
 	m_pImpl = nullptr;
+<<<<<<< HEAD:itgmania/src/LocalizedString.cpp
 
 	CreateImpl();
 }
@@ -51,6 +52,8 @@ LocalizedString::LocalizedString(LocalizedString const& other)
 	m_sGroup = other.m_sGroup;
 	m_sName = other.m_sName;
 	m_pImpl = nullptr;
+=======
+>>>>>>> origin/c++11:src/LocalizedString.cpp
 
 	CreateImpl();
 }

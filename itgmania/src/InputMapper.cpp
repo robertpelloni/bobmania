@@ -9,6 +9,10 @@
 #include "RageInput.h"
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
+<<<<<<< HEAD:itgmania/src/InputMapper.cpp
+=======
+
+>>>>>>> origin/c++11:src/InputMapper.cpp
 #include "arch/Dialog/Dialog.h"
 
 #include <cstddef>
@@ -29,7 +33,11 @@ namespace
 	PlayerNumber g_JoinControllers;
 };
 
+<<<<<<< HEAD:itgmania/src/InputMapper.cpp
 InputMapper*	INPUTMAPPER = nullptr;	// global and accessible from anywhere in our program
+=======
+InputMapper*	INPUTMAPPER = nullptr;	// global and accessable from anywhere in our program
+>>>>>>> origin/c++11:src/InputMapper.cpp
 
 InputMapper::InputMapper()
 {
@@ -605,7 +613,11 @@ void InputMapper::Unmap( InputDevice id )
 
 void InputMapper::ApplyMapping( const std::vector<AutoMappingEntry> &vMmaps, GameController gc, InputDevice id )
 {
+<<<<<<< HEAD:itgmania/src/InputMapper.cpp
 	std::map<GameInput, int> MappedButtons;
+=======
+	map<GameInput, int> MappedButtons;
+>>>>>>> origin/c++11:src/InputMapper.cpp
 	for (AutoMappingEntry const &iter : vMmaps)
 	{
 		GameController map_gc = gc;

@@ -8,9 +8,12 @@
 #include "LuaExpressionTransform.h"
 #include "ThemeMetric.h"
 
+<<<<<<< HEAD:itgmania/src/StreamDisplay.h
 #include <vector>
 
 
+=======
+>>>>>>> origin/c++11:src/StreamDisplay.h
 enum StreamType
 {
 	StreamType_Normal,
@@ -35,7 +38,11 @@ public:
 	float GetPercent() { return m_fPercent; }
 
 private:
+<<<<<<< HEAD:itgmania/src/StreamDisplay.h
 	std::vector<Sprite*>	m_vpSprPill[NUM_StreamType];
+=======
+	vector<Sprite*>	m_vpSprPill[NUM_StreamType];
+>>>>>>> origin/c++11:src/StreamDisplay.h
 
 	LuaExpressionTransform		m_transformPill;	// params: self,offsetFromCenter,itemIndex,numItems
 	ThemeMetric<float> VELOCITY_MULTIPLIER;
@@ -59,7 +66,11 @@ private:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/StreamDisplay.h
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/StreamDisplay.h
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -69,7 +80,11 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/StreamDisplay.h
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/StreamDisplay.h
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

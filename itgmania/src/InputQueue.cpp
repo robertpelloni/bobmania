@@ -3,12 +3,19 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "InputEventPlus.h"
+<<<<<<< HEAD:itgmania/src/InputQueue.cpp
 #include "InputMapper.h"
 
 #include <vector>
 
 
 InputQueue*	INPUTQUEUE = nullptr;	// global and accessible from anywhere in our program
+=======
+
+#include "InputMapper.h"
+
+InputQueue*	INPUTQUEUE = nullptr;	// global and accessable from anywhere in our program
+>>>>>>> origin/c++11:src/InputQueue.cpp
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 32;
 

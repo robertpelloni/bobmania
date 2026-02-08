@@ -34,7 +34,11 @@ void ScreenDemonstration::Init()
 	{
 		std::vector<RString> v;
 		split( ALLOW_STYLE_TYPES, ",", v );
+<<<<<<< HEAD:itgmania/src/ScreenDemonstration.cpp
 		std::vector<StyleType> vStyleTypeAllow;
+=======
+		vector<StyleType> vStyleTypeAllow;
+>>>>>>> origin/c++11:src/ScreenDemonstration.cpp
 		for (RString const &s : v)
 		{
 			StyleType st = StringToStyleType( s );

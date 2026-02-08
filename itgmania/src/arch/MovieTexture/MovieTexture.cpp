@@ -99,15 +99,25 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 
 	if( DriversToTry.empty() )
 		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture.cpp
 
 	RageMovieTexture *ret = nullptr;
 
+=======
+	
+	RageMovieTexture *ret = nullptr;
+	
+>>>>>>> origin/c++11:src/arch/MovieTexture/MovieTexture.cpp
 	for (RString const &Driver : DriversToTry)
 	{
 		char const * driverString = Driver.c_str();
 		LOG->Trace( "Initializing driver: %s", driverString );
 		RageDriver *pDriverBase = RageMovieTextureDriver::m_pDriverList.Create( Driver );
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture.cpp
 
+=======
+		
+>>>>>>> origin/c++11:src/arch/MovieTexture/MovieTexture.cpp
 		if( pDriverBase == nullptr )
 		{
 			LOG->Trace( "Unknown movie driver name: %s", driverString );
@@ -124,7 +134,11 @@ RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 		if( ret == nullptr )
 		{
 			LOG->Trace( "Couldn't load driver %s: %s", driverString, sError.c_str() );
+<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture.cpp
 			RageUtil::SafeDelete( ret );
+=======
+			SAFE_DELETE( ret );
+>>>>>>> origin/c++11:src/arch/MovieTexture/MovieTexture.cpp
 			continue;
 		}
 		LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",

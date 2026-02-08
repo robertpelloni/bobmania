@@ -8,9 +8,12 @@
 #include "LuaManager.h"
 #include "PrefsManager.h"
 
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
 #include <vector>
 
 
+=======
+>>>>>>> origin/c++11:src/BGAnimation.cpp
 REGISTER_ACTOR_CLASS(BGAnimation);
 
 BGAnimation::BGAnimation()
@@ -27,9 +30,15 @@ static bool CompareLayerNames( const RString& s1, const RString& s2 )
 	int i1, i2;
 	int ret;
 
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
 	ret = sscanf( s1.c_str(), "Layer%d", &i1 );
 	ASSERT( ret == 1 );
 	ret = sscanf( s2.c_str(), "Layer%d", &i2 );
+=======
+	ret = sscanf( s1, "Layer%d", &i1 );
+	ASSERT( ret == 1 );
+	ret = sscanf( s2, "Layer%d", &i2 );
+>>>>>>> origin/c++11:src/BGAnimation.cpp
 	ASSERT( ret == 1 );
 	return i1 < i2;
 }
@@ -39,10 +48,17 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 	const RString& sAniDir = _sAniDir;
 
 	{
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
 		std::vector<RString> vsLayerNames;
 		FOREACH_CONST_Child( pNode, pLayer )
 		{
 			if( strncmp(pLayer->GetName().c_str(), "Layer", 5) == 0 )
+=======
+		vector<RString> vsLayerNames;
+		FOREACH_CONST_Child( pNode, pLayer )
+		{
+			if( strncmp(pLayer->GetName(), "Layer", 5) == 0 )
+>>>>>>> origin/c++11:src/BGAnimation.cpp
 				vsLayerNames.push_back( pLayer->GetName() );
 		}
 
@@ -110,14 +126,24 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 			// This is a 3.9-style BGAnimation (using .ini)
 			IniFile ini;
 			ini.ReadFile( sPathToIni );
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
 
 			AddLayersFromAniDir( sAniDir, &ini ); // TODO: Check for circular load
 
+=======
+			
+			AddLayersFromAniDir( sAniDir, &ini ); // TODO: Check for circular load
+			
+>>>>>>> origin/c++11:src/BGAnimation.cpp
 			XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 			XNode dummy( "BGAnimation" );
 			if( pBGAnimation == nullptr )
 				pBGAnimation = &dummy;
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
 
+=======
+			
+>>>>>>> origin/c++11:src/BGAnimation.cpp
 			LoadFromNode( pBGAnimation );
 		}
 		else // We don't officially support .ini files anymore.
@@ -132,7 +158,11 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		// This is an 3.0 and before-style BGAnimation (not using .ini)
 
 		// loading a directory of layers
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
 		std::vector<RString> asImagePaths;
+=======
+		vector<RString> asImagePaths;
+>>>>>>> origin/c++11:src/BGAnimation.cpp
 		ASSERT( sAniDir != "" );
 
 		GetDirListing( sAniDir+"*.png", asImagePaths, false, true );
@@ -183,7 +213,11 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/BGAnimation.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -193,7 +227,11 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/BGAnimation.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/BGAnimation.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

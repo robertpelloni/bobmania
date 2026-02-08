@@ -15,6 +15,7 @@ void DateTime::Init()
 	ZERO( *this );
 }
 
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 bool DateTime::operator<(const DateTime& other) const {
 	if (tm_year != other.tm_year) return tm_year < other.tm_year;
 	if (tm_mon != other.tm_mon) return tm_mon < other.tm_mon;
@@ -59,6 +60,49 @@ bool DateTime::operator>=(const DateTime& other) const {
 	return !(*this < other); // Reuse the < operator
 }
 
+=======
+bool DateTime::operator<( const DateTime& other ) const
+{
+#define COMPARE( v ) if(v!=other.v) return v<other.v;
+	COMPARE( tm_year );
+	COMPARE( tm_mon );
+	COMPARE( tm_mday );
+	COMPARE( tm_hour );
+	COMPARE( tm_min );
+	COMPARE( tm_sec );
+#undef COMPARE
+	// they're equal
+	return false;
+}
+
+bool DateTime::operator==( const DateTime& other ) const 
+{
+#define COMPARE(x)	if( x!=other.x )	return false;
+	COMPARE( tm_year );
+	COMPARE( tm_mon );
+	COMPARE( tm_mday );
+	COMPARE( tm_hour );
+	COMPARE( tm_min );
+	COMPARE( tm_sec );
+#undef COMPARE
+	return true;
+}
+
+bool DateTime::operator>( const DateTime& other ) const
+{
+#define COMPARE( v ) if(v!=other.v) return v>other.v;
+	COMPARE( tm_year );
+	COMPARE( tm_mon );
+	COMPARE( tm_mday );
+	COMPARE( tm_hour );
+	COMPARE( tm_min );
+	COMPARE( tm_sec );
+#undef COMPARE
+	// they're equal
+	return false;
+}
+
+>>>>>>> origin/c++11:src/DateTime.cpp
 DateTime DateTime::GetNowDateTime()
 {
 	time_t now = time(nullptr);
@@ -117,7 +161,11 @@ bool DateTime::FromString( const RString sDateTime )
 
 	int ret;
 
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 	ret = sscanf( sDateTime.c_str(), "%d-%d-%d %d:%d:%d", 
+=======
+	ret = sscanf( sDateTime, "%d-%d-%d %d:%d:%d", 
+>>>>>>> origin/c++11:src/DateTime.cpp
 		&tm_year,
 		&tm_mon,
 		&tm_mday,
@@ -126,7 +174,11 @@ bool DateTime::FromString( const RString sDateTime )
 		&tm_sec );
 	if( ret != 6 )
 	{
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 		ret = sscanf( sDateTime.c_str(), "%d-%d-%d", 
+=======
+		ret = sscanf( sDateTime, "%d-%d-%d", 
+>>>>>>> origin/c++11:src/DateTime.cpp
 			&tm_year,
 			&tm_mon,
 			&tm_mday );
@@ -151,7 +203,11 @@ RString DayInYearToString( int iDayInYear )
 int StringToDayInYear( RString sDayInYear )
 {
 	int iDayInYear;
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 	if( sscanf( sDayInYear.c_str(), "DayInYear%d", &iDayInYear ) != 1 )
+=======
+	if( sscanf( sDayInYear, "DayInYear%d", &iDayInYear ) != 1 )
+>>>>>>> origin/c++11:src/DateTime.cpp
 		return -1;
 	return iDayInYear;
 }
@@ -252,7 +308,11 @@ RString HourInDayToLocalizedString( int iHourIndex )
 tm AddDays( tm start, int iDaysToMove )
 {
 	/*
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 	 * This causes problems on macOS, which doesn't correctly handle range that are below
+=======
+	 * This causes problems on OS X, which doesn't correctly handle range that are below
+>>>>>>> origin/c++11:src/DateTime.cpp
 	 * their normal values (eg. mday = 0).  According to the manpage, it should adjust them:
 	 *
 	 * "If structure members are outside their legal interval, they will be normalized (so
@@ -266,7 +326,11 @@ tm AddDays( tm start, int iDaysToMove )
 	 *
 	 * Note "Log starting 2004-03-07 03:50:42"; mday is 7, and PrintCaloriesBurned calls us
 	 * with iDaysToMove = -7, resulting in an out-of-range value 0.  This seems legal, but
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 	 * macOS chokes on it.
+=======
+	 * OS X chokes on it.
+>>>>>>> origin/c++11:src/DateTime.cpp
 	 */
 /*	start.tm_mday += iDaysToMove;
 	time_t seconds = mktime( &start );
@@ -305,7 +369,11 @@ tm GetNextSunday( tm start )
 tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 {
 	/* If iDayInYearIndex is 200, set the date to Jan 200th, and let mktime
+<<<<<<< HEAD:itgmania/src/DateTime.cpp
 	 * round it.  This shouldn't suffer from the macOS mktime() issue described
+=======
+	 * round it.  This shouldn't suffer from the OSX mktime() issue described
+>>>>>>> origin/c++11:src/DateTime.cpp
 	 * above, since we're not giving it negative values. */
 	tm when;
 	ZERO( when );

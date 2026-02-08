@@ -52,7 +52,11 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	{
 		HANDLE hFile = CreateFile( ssprintf( "%stmp%i", pDevice->sOsMountDir.c_str(), RandomInt(100000)),
 			GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp
 			nullptr, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, nullptr );
+=======
+			NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, nullptr );
+>>>>>>> origin/c++11:src/arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp
 
 		if( hFile == INVALID_HANDLE_VALUE )
 		{
@@ -199,7 +203,11 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 	/* Try to flush the device before returning.  This requires administrator priviliges. */
 	HANDLE hDevice = CreateFile( pDevice->sDevice.c_str(), GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp
 		nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
+=======
+		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
+>>>>>>> origin/c++11:src/arch/MemoryCard/MemoryCardDriverThreaded_Windows.cpp
 
 	if( hDevice == INVALID_HANDLE_VALUE )
 	{

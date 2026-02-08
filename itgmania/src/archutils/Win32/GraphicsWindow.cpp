@@ -40,7 +40,11 @@ static RString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == nullptr )
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 		return "(NULL)";
+=======
+		return "(nullptr)";
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
@@ -115,12 +119,16 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		case WM_SETCURSOR:
 			if( !g_CurrentParams.windowed )
 			{
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 				// We check if the preference is false because we don't want
 				// to show the cursor if the user has set it to false.
 				if (!PREFSMAN->m_bShowMouseCursor.Get())
 				{
 					SetCursor(nullptr);
 				}
+=======
+				SetCursor(nullptr);
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 				return 1;
 			}
 			break;
@@ -310,6 +318,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	// Adjust g_CurrentParams to reflect the actual display settings.
 	AdjustVideoModeParams( g_CurrentParams );
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 	DEVMODE devmode;
 	resetDeviceMode(devmode);
 
@@ -322,6 +331,9 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	// Look for the preferred display's position.
 	if (EnumDisplaySettingsEx(p.sDisplayId.c_str(), ENUM_CURRENT_SETTINGS, &devmode, 0) && deviceModeIsValid(devmode)
 		&& (devmode.dmFields & DM_POSITION))
+=======
+	if( g_hWndMain == nullptr || bForceRecreateWindow )
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 	{
 		pos = devmode.dmPosition;
 		resetDeviceMode(devmode);
@@ -332,7 +344,11 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 		int iWindowStyle = GetWindowStyle( p.windowed , p.bWindowIsFullscreenBorderless );
 
 		AppInstance inst;
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 		HWND hWnd = CreateWindow( g_sClassName.c_str(), "app", iWindowStyle,
+=======
+		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 						0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
 		if( hWnd == nullptr )
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
@@ -376,7 +392,11 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	}
 	g_hIcon = IconFromFile( p.sIconFile );
 	if( g_hIcon != nullptr )
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 		SetClassLongPtrA( g_hWndMain, GCLP_HICON, reinterpret_cast<LONG_PTR>(g_hIcon) );
+=======
+		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 
 	/* The window style may change as a result of switching to or from fullscreen;
 	 * apply it. Don't change the WS_VISIBLE bit. */
@@ -436,18 +456,26 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 /** @brief Shut down the window, but don't reset the video mode. */
 void GraphicsWindow::DestroyGraphicsWindow()
 {
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
 	// If we were in fullscreen, release the display mode before destroying the window
 	if( g_hWndMain && !g_CurrentParams.windowed )
 	{
 		ChangeDisplaySettingsEx(g_CurrentParams.sDisplayId, nullptr, nullptr, 0, nullptr);
 	}
 	
+=======
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 	if( g_HDC != nullptr )
 	{
 		ReleaseDC( g_hWndMain, g_HDC );
 		g_HDC = nullptr;
 	}
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
+=======
+	CHECKPOINT;
+
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 	if( g_hWndMain != nullptr )
 	{
 		DestroyWindow( g_hWndMain );
@@ -455,6 +483,11 @@ void GraphicsWindow::DestroyGraphicsWindow()
 		CrashHandler::SetForegroundWindow( g_hWndMain );
 	}
 
+<<<<<<< HEAD:itgmania/src/archutils/Win32/GraphicsWindow.cpp
+=======
+	CHECKPOINT;
+
+>>>>>>> origin/c++11:src/archutils/Win32/GraphicsWindow.cpp
 	if( g_hIcon != nullptr )
 	{
 		DestroyIcon( g_hIcon );

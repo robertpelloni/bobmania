@@ -15,6 +15,10 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
+<<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
+=======
+
+>>>>>>> origin/c++11:src/RageSoundManager.cpp
 #include "LocalizedString.h"
 #include "Preference.h"
 #include "RageSoundReader_PostBuffering.h"
@@ -37,7 +41,11 @@ static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAU
 
 RageSoundManager *SOUNDMAN = nullptr;
 
+<<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
 RageSoundManager::RageSoundManager(): m_pDriver(nullptr),
+=======
+RageSoundManager::RageSoundManager(): m_pDriver(nullptr), m_fMixVolume(1.0f),
+>>>>>>> origin/c++11:src/RageSoundManager.cpp
 	m_fVolumeOfNonCriticalSounds(1.0f) {}
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
@@ -133,7 +141,11 @@ float RageSoundManager::GetPlayLatency() const
 int RageSoundManager::GetDriverSampleRate() const
 {
 	if( m_pDriver == nullptr )
+<<<<<<< HEAD:itgmania/src/RageSoundManager.cpp
 		return kFallbackSampleRate;
+=======
+		return 44100;
+>>>>>>> origin/c++11:src/RageSoundManager.cpp
 
 	// Returns the *actual* operating rate of the loaded driver
 	return m_pDriver->GetSampleRate();

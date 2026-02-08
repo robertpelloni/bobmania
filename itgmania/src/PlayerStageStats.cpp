@@ -2,7 +2,14 @@
 #include "PlayerStageStats.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
+<<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
 #include "LuaManager.h"
+=======
+
+#include "LuaManager.h"
+#include <float.h>
+#include <numeric>
+>>>>>>> origin/c++11:src/PlayerStageStats.cpp
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
@@ -342,9 +349,15 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
+<<<<<<< HEAD:itgmania/src/PlayerStageStats.cpp
 	float fScore = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
 		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds]; });
 	return std::lrint( fScore * LESSON_PASS_THRESHOLD );
+=======
+	float score = std::accumulate(m_vpPossibleSteps.begin(), m_vpPossibleSteps.end(), 0.f,
+		[](float total, Steps const *steps) { return total + steps->GetRadarValues(PLAYER_1).m_Values.v.fNumTapsAndHolds; });
+	return lrintf( score * LESSON_PASS_THRESHOLD );
+>>>>>>> origin/c++11:src/PlayerStageStats.cpp
 }
 
 void PlayerStageStats::ResetScoreForLesson()

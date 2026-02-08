@@ -58,6 +58,7 @@ void PlayerAI::InitFromDisk()
 	bool bSuccess = ini.ReadFile( AI_PATH );
 	if(!bSuccess)
 	{
+<<<<<<< HEAD:itgmania/src/PlayerAI.cpp
 		LuaHelpers::ReportScriptErrorFmt("Error trying to read \"%s\" to load AI player skill settings.", AI_PATH);
 		for(int i= 0; i < NUM_SKILL_LEVELS; ++i)
 		{
@@ -102,6 +103,33 @@ void PlayerAI::InitFromDisk()
 			}
 			dist.ChangeWeightsToPercents();
 		}
+=======
+		RString sKey = ssprintf("Skill%d", i);
+		XNode* pNode = ini.GetChild(sKey);
+		if( pNode == nullptr )
+			RageException::Throw( "AI.ini: \"%s\" doesn't exist.", sKey.c_str() );
+
+		TapScoreDistribution& dist = g_Distributions[i];
+		dist.fPercent[TNS_None] = 0;
+		bSuccess = pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
+		ASSERT( bSuccess );
+
+		float fSum = 0;
+		for( int j=0; j<NUM_TapNoteScore; j++ )
+			fSum += dist.fPercent[j];
+		for( int j=0; j<NUM_TapNoteScore; j++ )
+			dist.fPercent[j] /= fSum;
+>>>>>>> origin/c++11:src/PlayerAI.cpp
 	}
 }
 

@@ -316,19 +316,31 @@ ScreenUnlockStatus::~ScreenUnlockStatus()
 	while (Unlocks.size() > 0)
 	{
 		Sprite* entry = Unlocks[Unlocks.size()-1];
+<<<<<<< HEAD:itgmania/src/ScreenUnlockStatus.cpp
 		RageUtil::SafeDelete(entry);
+=======
+		SAFE_DELETE(entry);
+>>>>>>> origin/c++11:src/ScreenUnlockStatus.cpp
 		Unlocks.pop_back();
 	}
 	while (item.size() > 0)
 	{
 		BitmapText* entry = item[item.size()-1];
+<<<<<<< HEAD:itgmania/src/ScreenUnlockStatus.cpp
 		RageUtil::SafeDelete(entry);
+=======
+		SAFE_DELETE(entry);
+>>>>>>> origin/c++11:src/ScreenUnlockStatus.cpp
 		item.pop_back();
 	}
 	while (ItemIcons.size() > 0)
 	{
 		Sprite* entry = ItemIcons[ItemIcons.size()-1];
+<<<<<<< HEAD:itgmania/src/ScreenUnlockStatus.cpp
 		RageUtil::SafeDelete(entry);
+=======
+		SAFE_DELETE(entry);
+>>>>>>> origin/c++11:src/ScreenUnlockStatus.cpp
 		ItemIcons.pop_back();
 	}
 }

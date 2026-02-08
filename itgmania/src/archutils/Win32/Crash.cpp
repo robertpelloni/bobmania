@@ -87,7 +87,11 @@ void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
 	while( iSize )
 	{
 		DWORD iActual;
+<<<<<<< HEAD:itgmania/src/archutils/Win32/Crash.cpp
 		if( !WriteFile(hPipe, pData, static_cast<DWORD>(iSize), &iActual, nullptr) )
+=======
+		if( !WriteFile(hPipe, pData, iSize, &iActual, nullptr) )
+>>>>>>> origin/c++11:src/archutils/Win32/Crash.cpp
 			return;
 		iSize -= iActual;
 	}
@@ -178,9 +182,15 @@ static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
 
 		if( period )
 			*period = 0;
+<<<<<<< HEAD:itgmania/src/archutils/Win32/Crash.cpp
 //	} __except(1) {
 //		return nullptr;
 //	}
+=======
+	} __except(1) {
+		return nullptr;
+	}
+>>>>>>> origin/c++11:src/archutils/Win32/Crash.cpp
 
 	return pszBaseName;
 }
@@ -313,7 +323,11 @@ static DWORD WINAPI MainExceptionHandler( LPVOID lpParameter )
 		 * crashed. If InHere is greater than 1, then we crashed after writing
 		 * the crash dump; say so. */
 		SetUnhandledExceptionFilter(nullptr);
+<<<<<<< HEAD:itgmania/src/archutils/Win32/Crash.cpp
 		MessageBox( nullptr,
+=======
+		MessageBox( NULL,
+>>>>>>> origin/c++11:src/archutils/Win32/Crash.cpp
 			InHere == 1?
 			"The error reporting interface has crashed.\n":
 			"The error reporting interface has crashed. However, crashinfo.txt was"
@@ -483,11 +497,14 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	 * due to stack corruption, we might not be able to get any frames from the
 	 * stack. Pull it out of pContext->Eip, which is always valid, and then
 	 * discard the first stack frame if it's the same. */
+<<<<<<< HEAD:itgmania/src/archutils/Win32/Crash.cpp
 #if _WIN64
 	if( buf+1 != pLast && pContext->Rip != 0 )
 	{
 		*buf = (void *) pContext->Rip;
 #else
+=======
+>>>>>>> origin/c++11:src/archutils/Win32/Crash.cpp
 	if( buf+1 != pLast && pContext->Eip != 0 )
 	{
 		*buf = (void *) pContext->Eip;

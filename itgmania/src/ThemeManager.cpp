@@ -16,7 +16,11 @@
 #include "Profile.h"
 #include "ActorUtil.h"
 #endif
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 #include "GameLoop.h" // For ChangeTheme
+=======
+
+>>>>>>> origin/c++11:src/ThemeManager.cpp
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
 #include "LuaManager.h"
@@ -27,12 +31,16 @@
 #include "PrefsManager.h"
 #include "XmlFileUtil.h"
 
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 #include <cstddef>
 #include <deque>
 #include <vector>
 
 
 ThemeManager*	THEME = nullptr;	// global object accessible from anywhere in the program
+=======
+ThemeManager*	THEME = nullptr;	// global object accessable from anywhere in the program
+>>>>>>> origin/c++11:src/ThemeManager.cpp
 
 static const RString THEME_INFO_INI = "ThemeInfo.ini";
 
@@ -647,9 +655,24 @@ bool ThemeManager::GetPathInfoToRaw( PathInfo &out, const RString &sThemeName_, 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			// BGAnimations, Fonts, Graphics, Sounds, Other
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 			const RString ext = GetExtension(asPaths[p]);
 			bool matches= category == EC_OTHER || ext == "redir";
 			if(!matches)
+=======
+			static const char *masks[NUM_ElementCategory][15] = {
+				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", nullptr},
+				{ "redir", "ini", nullptr },
+				{ "redir", "lua", "xml", "png", "jpg", "jpeg", "bmp", "gif", "ogv", "avi", "mpg", "mpeg", "txt", "", nullptr},
+				{ "redir", "lua", "mp3", "oga", "ogg", "wav", nullptr },
+				{ "*", nullptr },
+			};
+			const char **asset_masks = masks[category];
+
+			const RString ext = GetExtension( asPaths[p] );
+
+			for( int i = 0; asset_masks[i]; ++i )
+>>>>>>> origin/c++11:src/ThemeManager.cpp
 			{
 				FileType ft= ActorUtil::GetFileType(asPaths[p]);
 				switch(ft)
@@ -1172,7 +1195,11 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, std::vector<
 	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
 	std::vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
+<<<<<<< HEAD:itgmania/src/ThemeManager.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/ThemeManager.cpp
 	for (RString const &s : as)
 	{
 		// ignore metrics.ini

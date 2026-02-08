@@ -28,6 +28,7 @@ struct FontPageTextures
 
 	/** @brief Set up the initial textures. */
 	FontPageTextures(): m_pTextureMain(nullptr), m_pTextureStroke(nullptr) {}
+<<<<<<< HEAD:itgmania/src/Font.h
 
 	bool operator == (const struct FontPageTextures& other) const {
 		return m_pTextureMain == other.m_pTextureMain &&
@@ -37,6 +38,8 @@ struct FontPageTextures
 	bool operator != (const struct FontPageTextures& other) const {
 		return !operator==(other);
 	}
+=======
+>>>>>>> origin/c++11:src/Font.h
 };
 
 /** @brief The components of a glyph (not technically a character). */

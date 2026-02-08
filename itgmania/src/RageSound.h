@@ -124,8 +124,13 @@ public:
 
 	RString GetError() const { return m_sError; }
 
+<<<<<<< HEAD:itgmania/src/RageSound.h
 	void Play(bool is_action, const RageSoundParams *params=nullptr);
 	void PlayCopy(bool is_action, const RageSoundParams *pParams = nullptr) const;
+=======
+	void Play( const RageSoundParams *params=NULL );
+	void PlayCopy( const RageSoundParams *pParams = nullptr ) const;
+>>>>>>> origin/c++11:src/RageSound.h
 	void Stop();
 
 	/* Cleanly pause or unpause the sound. If the sound wasn't already playing,
@@ -177,7 +182,11 @@ private:
 
 	RString m_sError;
 
+<<<<<<< HEAD:itgmania/src/RageSound.h
 	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame ) const;
+=======
+	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = nullptr ) const;
+>>>>>>> origin/c++11:src/RageSound.h
 
 	bool SetPositionFrames( int frames = -1 );
 	RageSoundParams::StopMode_t GetStopMode() const; // resolves M_AUTO

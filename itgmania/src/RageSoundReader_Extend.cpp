@@ -4,8 +4,11 @@
 #include "RageSoundUtil.h"
 #include "RageUtil.h"
 
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 #include <cmath>
 
+=======
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 /*
  * Add support for negative seeks (adding a delay), extending a sound
  * beyond its end (m_LengthSeconds and M_CONTINUE), looping and fading.
@@ -33,7 +36,11 @@ int RageSoundReader_Extend::SetPosition( int iFrame )
 	m_bIgnoreFadeInFrames = false;
 
 	m_iPositionFrames = iFrame;
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 	int iRet = m_pSource->SetPosition( std::max(iFrame, 0) );
+=======
+	int iRet = m_pSource->SetPosition( max(iFrame, 0) );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 	if( iRet < 0 )
 		return iRet;
 
@@ -61,8 +68,13 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 	if( m_iLengthFrames != -1 )
 	{
 		int iFramesLeft = GetEndFrame() - m_iPositionFrames;
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 		iFramesLeft = std::max( 0, iFramesLeft );
 		iFramesToRead = std::min( iFramesToRead, iFramesLeft );
+=======
+		iFramesLeft = max( 0, iFramesLeft );
+		iFramesToRead = min( iFramesToRead, iFramesLeft );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 	}
 
 	if( iFrames && !iFramesToRead )
@@ -70,7 +82,11 @@ int RageSoundReader_Extend::GetData( float *pBuffer, int iFrames )
 
 	if( m_iPositionFrames < 0 )
 	{
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 		iFramesToRead = std::min( iFramesToRead, -m_iPositionFrames );
+=======
+		iFramesToRead = min( iFramesToRead, -m_iPositionFrames );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 		memset( pBuffer, 0, iFramesToRead * sizeof(float) * this->GetNumChannels() );
 		return iFramesToRead;
 	}
@@ -95,7 +111,11 @@ int RageSoundReader_Extend::Read( float *pBuffer, int iFrames )
 		{
 			iFramesRead = iFrames;
 			if( m_StopMode != M_CONTINUE )
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 				iFramesRead = std::min( GetEndFrame() - m_iPositionFrames, iFramesRead );
+=======
+				iFramesRead = min( GetEndFrame() - m_iPositionFrames, iFramesRead );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 			memset( pBuffer, 0, iFramesRead * sizeof(float) * this->GetNumChannels() );
 		}
 	}
@@ -155,7 +175,11 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 {
 	if( sProperty == "StartSecond" )
 	{
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 		m_iStartFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
+=======
+		m_iStartFrames = lrintf( fValue * this->GetSampleRate() );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 		return true;
 	}
 
@@ -164,7 +188,11 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 		if( fValue == -1 )
 			m_iLengthFrames = -1;
 		else
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 			m_iLengthFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
+=======
+			m_iLengthFrames = lrintf( fValue * this->GetSampleRate() );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 		return true;
 	}
 
@@ -188,13 +216,21 @@ bool RageSoundReader_Extend::SetProperty( const RString &sProperty, float fValue
 
 	if( sProperty == "FadeInSeconds" )
 	{
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 		m_iFadeInFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
+=======
+		m_iFadeInFrames = lrintf( fValue * this->GetSampleRate() );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 		return true;
 	}
 
 	if( sProperty == "FadeSeconds" || sProperty == "FadeOutSeconds" )
 	{
+<<<<<<< HEAD:itgmania/src/RageSoundReader_Extend.cpp
 		m_iFadeOutFrames = static_cast<int>((fValue * this->GetSampleRate()) + 0.5);
+=======
+		m_iFadeOutFrames = lrintf( fValue * this->GetSampleRate() );
+>>>>>>> origin/c++11:src/RageSoundReader_Extend.cpp
 		return true;
 	}
 

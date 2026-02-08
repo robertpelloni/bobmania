@@ -152,6 +152,7 @@ void ScreenHowToPlay::Init()
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 
 		Steps *pSteps = SongUtil::GetClosestNotes( &m_Song, pStyle->m_StepsType, Difficulty_Beginner );
+<<<<<<< HEAD:itgmania/src/ScreenHowToPlay.cpp
 		if(pSteps == nullptr)
 		{
 			LuaHelpers::ReportScriptErrorFmt("No playable steps of StepsType '%s' for ScreenHowToPlay in file %s", StringConversion::ToString(pStyle->m_StepsType).c_str(), sStepsPath.c_str());
@@ -163,6 +164,9 @@ void ScreenHowToPlay::Init()
 			NoteData tempNoteData;
 			pSteps->GetNoteData( tempNoteData );
 			pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );
+=======
+		ASSERT_M( pSteps != nullptr, ssprintf("No playable steps of StepsType '%s' for ScreenHowToPlay", StringConversion::ToString(pStyle->m_StepsType).c_str()) );
+>>>>>>> origin/c++11:src/ScreenHowToPlay.cpp
 
 			GAMESTATE->m_pCurSong.Set( &m_Song );
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set(pSteps);

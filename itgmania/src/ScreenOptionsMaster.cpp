@@ -12,6 +12,10 @@
 #include "PrefsManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMaster.cpp
+=======
+
+>>>>>>> origin/c++11:src/ScreenOptionsMaster.cpp
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"
@@ -64,6 +68,7 @@ void ScreenOptionsMaster::Init()
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == nullptr )
+<<<<<<< HEAD:itgmania/src/ScreenOptionsMaster.cpp
 		{
 			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler \"%s\" in \"%s:Line:%s\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
 		}
@@ -71,6 +76,10 @@ void ScreenOptionsMaster::Init()
 		{
 			OptionRowHandlers.push_back( pHand );
 		}
+=======
+			RageException::Throw( "Invalid OptionRowHandler \"%s\" in \"%s::Line%i\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
+		OptionRowHandlers.push_back( pHand );
+>>>>>>> origin/c++11:src/ScreenOptionsMaster.cpp
 	}
 	InitMenu( OptionRowHandlers );
 }

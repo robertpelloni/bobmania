@@ -29,6 +29,17 @@ extern "C" int sm_main( int argc, char *argv[] );
 # define __MACOSX__
 #endif
 
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/arch_setup.h
+=======
+#include <libkern/OSByteOrder.h>
+#define ArchSwap32(n) OSSwapInt32((n))
+#define ArchSwap24(n) (ArchSwap32((n)) >> 8)
+#define ArchSwap16(n) OSSwapInt16((n))
+#define HAVE_BYTE_SWAPS
+
+#include <unistd.h>
+
+>>>>>>> origin/c++11:src/archutils/Darwin/arch_setup.h
 #endif
 
 /*

@@ -49,7 +49,11 @@ void CrashHandler::InformUserOfCrash( const std::string& sPath )
 						      sPath.c_str(), REPORT_BUG_URL );
 	CFOptionFlags response = kCFUserNotificationCancelResponse;
 	CFTimeInterval timeout = 0.0; // Should we ever time out?
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/Crash.mm
 
+=======
+	
+>>>>>>> origin/c++11:src/archutils/Darwin/Crash.cpp
 	CFUserNotificationDisplayAlert( timeout, kCFUserNotificationStopAlertLevel, nullptr, nullptr, nullptr,
 					sTitle, sBody, sDefault, sAlternate, sOther, &response );
 
@@ -89,7 +93,11 @@ bool CrashHandler::IsDebuggerPresent()
 	// Call sysctl.
 	size = sizeof( info );
 	ret = sysctl( mib, sizeof(mib)/sizeof(*mib), &info, &size, nullptr, 0 );
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/Crash.mm
 
+=======
+	
+>>>>>>> origin/c++11:src/archutils/Darwin/Crash.cpp
 	// We're being debugged if the P_TRACED flag is set.
 
 	return  ret == 0 && (info.kp_proc.p_flag & P_TRACED) != 0;

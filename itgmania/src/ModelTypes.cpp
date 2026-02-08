@@ -9,7 +9,10 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 
+<<<<<<< HEAD:itgmania/src/ModelTypes.cpp
 #include <cmath>
+=======
+>>>>>>> origin/c++11:src/ModelTypes.cpp
 #include <numeric>
 
 #define MS_MAX_NAME	32

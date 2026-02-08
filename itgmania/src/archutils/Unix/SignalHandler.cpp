@@ -122,7 +122,11 @@ static void *CreateStack( int size )
 	 * mmap entries always show up individually in /proc/#/maps.  We could use posix_memalign as
 	 * a fallback, but we'd have to put a barrier page on both sides to guarantee that. */
 	char *p = nullptr;
+<<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
 	p = (char *) mmap( nullptr, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+=======
+	p = (char *) mmap( NULL, size+PageSize, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+>>>>>>> origin/c++11:src/archutils/Unix/SignalHandler.cpp
 
 	if( p == (void *) -1 )
 		return nullptr;
@@ -147,8 +151,12 @@ static void *CreateStack( int size )
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose( handler h )
 {
+<<<<<<< HEAD:itgmania/src/archutils/Unix/SignalHandler.cpp
 	//if the unique_ptr has not been set, then enter.
 	if( !saved_sigs )
+=======
+	if( saved_sigs == nullptr )
+>>>>>>> origin/c++11:src/archutils/Unix/SignalHandler.cpp
 	{
 		saved_sigs.reset(new SaveSignals());
 		bool bUseAltSigStack = true;

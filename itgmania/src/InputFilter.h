@@ -67,7 +67,11 @@ public:
 	void ResetKeyRepeat( const DeviceInput &di );
 	void RepeatStopKey( const DeviceInput &di );
 
+<<<<<<< HEAD:itgmania/src/InputFilter.h
 	// If aButtonState is nullptr, use the last reported state.
+=======
+	// If aButtonState is NULL, use the last reported state.
+>>>>>>> origin/c++11:src/InputFilter.h
 	bool IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState = nullptr ) const;
 	float GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState = nullptr ) const;
 	float GetLevel( const DeviceInput &di, const DeviceInputList *pButtonState = nullptr ) const;

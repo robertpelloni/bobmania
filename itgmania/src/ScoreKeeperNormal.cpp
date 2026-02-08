@@ -92,8 +92,15 @@ void ScoreKeeperNormal::Load(
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
+<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 		NoteData ndPost = ndPre;
 		NoteDataUtil::TransformNoteData(ndPost, *(pSteps->GetTimingData()), m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType);
+=======
+		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
+		RadarValues rvPost;
+		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
+		GAMESTATE->SetProcessedTimingData(nullptr);
+>>>>>>> origin/c++11:src/ScoreKeeperNormal.cpp
 
 		GAMESTATE->SetProcessedTimingData(pSteps->GetTimingData()); // XXX: Not sure why but NoteDataUtil::CalculateRadarValues segfaults without this
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
@@ -199,7 +206,11 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
+<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/ScoreKeeperNormal.cpp
 	GAMESTATE->SetProcessedTimingData(nullptr);
 }
 

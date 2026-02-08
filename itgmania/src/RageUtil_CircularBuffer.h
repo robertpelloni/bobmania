@@ -3,8 +3,11 @@
 #ifndef RAGE_UTIL_CIRCULAR_BUFFER
 #define RAGE_UTIL_CIRCULAR_BUFFER
 
+<<<<<<< HEAD:itgmania/src/RageUtil_CircularBuffer.h
 #include <cstring>
 
+=======
+>>>>>>> origin/c++11:src/RageUtil_CircularBuffer.h
 /* Lock-free circular buffer.  This should be threadsafe if one thread is reading
  * and another is writing. */
 template<class T>
@@ -133,8 +136,12 @@ public:
 
 	void clear()
 	{
+<<<<<<< HEAD:itgmania/src/RageUtil_CircularBuffer.h
 		read_pos = 0;
 		write_pos = 0;
+=======
+		read_pos = write_pos = 0;
+>>>>>>> origin/c++11:src/RageUtil_CircularBuffer.h
 	}
 
 	/* Indicate that n elements have been written. */
@@ -237,10 +244,17 @@ public:
 		if( buffer_size > sizes[0] + sizes[1] )
 			return false;
 		
+<<<<<<< HEAD:itgmania/src/RageUtil_CircularBuffer.h
 		const int from_first = std::min( buffer_size, sizes[0] );
 		memcpy( p[0], buffer, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
 			memcpy( p[1], buffer+from_first, (buffer_size-sizes[0])*sizeof(T) );
+=======
+		const int from_first = min( buffer_size, sizes[0] );
+		memcpy( p[0], buffer, from_first*sizeof(T) );
+		if( buffer_size > sizes[0] )
+			memcpy( p[1], buffer+from_first, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+>>>>>>> origin/c++11:src/RageUtil_CircularBuffer.h
 
 		advance_write_pointer( buffer_size );
 
@@ -259,16 +273,27 @@ public:
 		if( buffer_size > sizes[0] + sizes[1] )
 			return false;
 
+<<<<<<< HEAD:itgmania/src/RageUtil_CircularBuffer.h
 		const int from_first = std::min( buffer_size, sizes[0] );
 		memcpy( buffer, p[0], from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
 			memcpy( buffer+from_first, p[1], (buffer_size-sizes[0])*sizeof(T) );
+=======
+		const int from_first = min( buffer_size, sizes[0] );
+		memcpy( buffer, p[0], from_first*sizeof(T) );
+		if( buffer_size > sizes[0] )
+			memcpy( buffer+from_first, p[1], max(buffer_size-sizes[0], 0u)*sizeof(T) );
+>>>>>>> origin/c++11:src/RageUtil_CircularBuffer.h
 
 		/* Set the data that we just read to 0xFF.  This way, if we're passing pointesr
 		 * through, we can tell if we accidentally get a stale pointer. */
 		memset( p[0], 0xFF, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
+<<<<<<< HEAD:itgmania/src/RageUtil_CircularBuffer.h
 			memset( p[1], 0xFF, (buffer_size-sizes[0])*sizeof(T) );
+=======
+			memset( p[1], 0xFF, max(buffer_size-sizes[0], 0u)*sizeof(T) );
+>>>>>>> origin/c++11:src/RageUtil_CircularBuffer.h
 
 		advance_read_pointer( buffer_size );
 		return true;

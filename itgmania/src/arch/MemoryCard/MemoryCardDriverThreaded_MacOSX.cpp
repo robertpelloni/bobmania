@@ -97,7 +97,11 @@ bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()
 static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 	if( !t )
 		return -1;
 	if( CFGetTypeID( t ) != CFNumberGetTypeID() )
@@ -116,7 +120,11 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
+<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 	if( !t )
 		return RString();
 	if( CFGetTypeID( t ) != CFStringGetTypeID() )

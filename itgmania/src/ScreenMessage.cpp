@@ -22,7 +22,11 @@ static std::map<RString, ScreenMessage> *m_pScreenMessages;
 ScreenMessage ScreenMessageHelpers::ToScreenMessage( const RString &sName )
 {
 	if( m_pScreenMessages == nullptr )
+<<<<<<< HEAD:itgmania/src/ScreenMessage.cpp
 		m_pScreenMessages = new std::map<RString, ScreenMessage>;
+=======
+		m_pScreenMessages = new map<RString, ScreenMessage>;
+>>>>>>> origin/c++11:src/ScreenMessage.cpp
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
 		(*m_pScreenMessages)[sName] = (ScreenMessage)sName;

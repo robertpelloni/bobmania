@@ -179,7 +179,11 @@ void StepsDisplay::Unset()
 
 void StepsDisplay::SetFromStepsTypeAndMeterAndDifficultyAndCourseType( StepsType st, int iMeter, Difficulty dc, CourseType ct )
 {
+<<<<<<< HEAD:itgmania/src/StepsDisplay.cpp
 	SetParams params = { nullptr, nullptr, iMeter, st, dc, ct };
+=======
+	SetParams params = { NULL, nullptr, iMeter, st, dc, ct };
+>>>>>>> origin/c++11:src/StepsDisplay.cpp
 	SetInternal( params );
 }
 
@@ -288,7 +292,11 @@ void StepsDisplay::SetInternal( const SetParams &params )
 class LunaStepsDisplay: public Luna<StepsDisplay>
 {
 public:
+<<<<<<< HEAD:itgmania/src/StepsDisplay.cpp
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), nullptr ); COMMON_RETURN_SELF; }
+=======
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1), nullptr ); return 0; }
+>>>>>>> origin/c++11:src/StepsDisplay.cpp
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )

@@ -4,12 +4,17 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 #include <cstddef>
 #include <vector>
 
 
 /* Search for "beginning*containing*ending". */
 void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sContaining_, const RString &sEnding_, std::vector<RString> &asOut, bool bOnlyDirs ) const
+=======
+/* Search for "beginning*containing*ending". */
+void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sContaining_, const RString &sEnding_, vector<RString> &asOut, bool bOnlyDirs ) const
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
@@ -20,7 +25,11 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 	RString sEnding = sEnding_;
 	sEnding.MakeLower();
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
+=======
+	set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	for( ; i != files.end(); ++i )
 	{
 		const File &f = *i;
@@ -43,7 +52,11 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 		/* Check end. */
 		if( end_pos < 0 )
 			continue; /* can't end with it */
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 		if( sPath.compare(end_pos, std::string::npos, sEnding) )
+=======
+		if( sPath.compare(end_pos, string::npos, sEnding) )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 			continue; /* doesn't end with it */
 
 		/* Check sContaining.  Do this last, since it's the slowest (substring
@@ -61,9 +74,15 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 	}
 }
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 void FileSet::GetFilesEqualTo( const RString &sStr, std::vector<RString> &asOut, bool bOnlyDirs ) const
 {
 	std::set<File>::const_iterator i = files.find( File(sStr) );
+=======
+void FileSet::GetFilesEqualTo( const RString &sStr, vector<RString> &asOut, bool bOnlyDirs ) const
+{
+	set<File>::const_iterator i = files.find( File(sStr) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	if( i == files.end() )
 		return;
 
@@ -75,7 +94,11 @@ void FileSet::GetFilesEqualTo( const RString &sStr, std::vector<RString> &asOut,
 
 RageFileManager::FileType FileSet::GetFileType( const RString &sPath ) const
 {
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::set<File>::const_iterator i = files.find( File(sPath) );
+=======
+	set<File>::const_iterator i = files.find( File(sPath) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	if( i == files.end() )
 		return RageFileManager::TYPE_NONE;
 
@@ -84,7 +107,11 @@ RageFileManager::FileType FileSet::GetFileType( const RString &sPath ) const
 
 int FileSet::GetFileSize( const RString &sPath ) const
 {
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::set<File>::const_iterator i = files.find( File(sPath) );
+=======
+	set<File>::const_iterator i = files.find( File(sPath) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	if( i == files.end() )
 		return -1;
 	return i->size;
@@ -92,7 +119,11 @@ int FileSet::GetFileSize( const RString &sPath ) const
 
 int FileSet::GetFileHash( const RString &sPath ) const
 {
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::set<File>::const_iterator i = files.find( File(sPath) );
+=======
+	set<File>::const_iterator i = files.find( File(sPath) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	if( i == files.end() )
 		return -1;
 	return i->hash + i->size;
@@ -193,7 +224,11 @@ bool FilenameDB::ResolvePath( RString &sPath )
 		RString p = sPath.substr( iBegin, iSize );
 		ASSERT_M( p.size() != 1 || p[0] != '.', sPath ); // no .
 		ASSERT_M( p.size() != 2 || p[0] != '.' || p[1] != '.', sPath ); // no ..
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 		std::set<File>::const_iterator it = fs->files.find( File(p) );
+=======
+		set<File>::const_iterator it = fs->files.find( File(p) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 
 		/* If there were no matches, the path isn't found. */
 		if( it == fs->files.end() )
@@ -208,7 +243,11 @@ bool FilenameDB::ResolvePath( RString &sPath )
 
 		m_Mutex.Unlock(); /* locked by GetFileSet */
 	}
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	if( sPath.size() && sPath[sPath.size()-1] == '/' )
 		sPath = ret + "/";
 	else
@@ -216,7 +255,11 @@ bool FilenameDB::ResolvePath( RString &sPath )
 	return true;
 }
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 void FilenameDB::GetFilesMatching( const RString &sDir, const RString &sBeginning, const RString &sContaining, const RString &sEnding, std::vector<RString> &asOut, bool bOnlyDirs )
+=======
+void FilenameDB::GetFilesMatching( const RString &sDir, const RString &sBeginning, const RString &sContaining, const RString &sEnding, vector<RString> &asOut, bool bOnlyDirs )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
@@ -225,7 +268,11 @@ void FilenameDB::GetFilesMatching( const RString &sDir, const RString &sBeginnin
 	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 void FilenameDB::GetFilesEqualTo( const RString &sDir, const RString &sFile, std::vector<RString> &asOut, bool bOnlyDirs )
+=======
+void FilenameDB::GetFilesEqualTo( const RString &sDir, const RString &sFile, vector<RString> &asOut, bool bOnlyDirs )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 {
 	ASSERT( !m_Mutex.IsLockedByThisThread() );
 
@@ -235,7 +282,11 @@ void FilenameDB::GetFilesEqualTo( const RString &sDir, const RString &sFile, std
 }
 
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 void FilenameDB::GetFilesSimpleMatch( const RString &sDir, const RString &sMask, std::vector<RString> &asOut, bool bOnlyDirs )
+=======
+void FilenameDB::GetFilesSimpleMatch( const RString &sDir, const RString &sMask, vector<RString> &asOut, bool bOnlyDirs )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 {
 	/* Does this contain a wildcard? */
 	size_t first_pos = sMask.find_first_of( '*' );
@@ -255,7 +306,11 @@ void FilenameDB::GetFilesSimpleMatch( const RString &sDir, const RString &sMask,
 	}
 
 	/* Two *s: "A*B*C". */
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	GetFilesMatching( sDir,
+=======
+	GetFilesMatching( sDir, 
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 		sMask.substr(0, first_pos),
 		sMask.substr(first_pos+1, second_pos-first_pos-1),
 		sMask.substr(second_pos+1), asOut, bOnlyDirs );
@@ -291,7 +346,11 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 	for(;;)
 	{
 		/* Look for the directory. */
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 		std::map<RString, FileSet*>::iterator i = dirs.find( sLower );
+=======
+		map<RString, FileSet *>::iterator i = dirs.find( sLower );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 		if( !bCreate )
 		{
 			if( i == dirs.end() )
@@ -317,7 +376,11 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 			continue;
 		}
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 		if( ExpireSeconds == -1 || pFileSet->age.Ago() < ExpireSeconds )
+=======
+		if( ExpireSeconds == -1 || pFileSet->age.PeekDeltaTime() < ExpireSeconds )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 		{
 			/* Found it, and it hasn't expired. */
 			return pFileSet;
@@ -355,7 +418,11 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		FileSet *pParent = GetFileSet( sParent );
 		if( pParent != nullptr )
 		{
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 			std::set<File>::iterator it = pParent->files.find( File(Basename(sDir)) );
+=======
+			set<File>::iterator it = pParent->files.find( File(Basename(sDir)) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 			if( it != pParent->files.end() )
 				pParentDirp = const_cast<FileSet **>(&it->dirp);
 		}
@@ -391,11 +458,19 @@ void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPr
 	if( sPath[0] != '/' )
 		sPath = "/" + sPath;
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::vector<RString> asParts;
 	split( sPath, "/", asParts, false );
 
 	std::vector<RString>::const_iterator begin = asParts.begin();
 	std::vector<RString>::const_iterator end = asParts.end();
+=======
+	vector<RString> asParts;
+	split( sPath, "/", asParts, false );
+
+	vector<RString>::const_iterator begin = asParts.begin();
+	vector<RString>::const_iterator end = asParts.end();
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 
 	bool IsDir = true;
 	if( sPath[sPath.size()-1] != '/' )
@@ -435,7 +510,11 @@ void FilenameDB::AddFile( const RString &sPath_, int iSize, int iHash, void *pPr
 /* Remove the given FileSet, and all dirp pointers to it.  This means the cache has
  * expired, not that the directory is necessarily gone; don't actually delete the file
  * from the parent. */
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 void FilenameDB::DelFileSet( std::map<RString, FileSet*>::iterator dir )
+=======
+void FilenameDB::DelFileSet( map<RString, FileSet *>::iterator dir )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 {
 	/* If this isn't locked, dir may not be valid. */
 	ASSERT( m_Mutex.IsLockedByThisThread() );
@@ -446,10 +525,17 @@ void FilenameDB::DelFileSet( std::map<RString, FileSet*>::iterator dir )
 	FileSet *fs = dir->second;
 
 	/* Remove any stale dirp pointers. */
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	for( std::map<RString, FileSet*>::iterator it = dirs.begin(); it != dirs.end(); ++it )
 	{
 		FileSet *Clean = it->second;
 		for( std::set<File>::iterator f = Clean->files.begin(); f != Clean->files.end(); ++f )
+=======
+	for( map<RString, FileSet *>::iterator it = dirs.begin(); it != dirs.end(); ++it )
+	{
+		FileSet *Clean = it->second;
+		for( set<File>::iterator f = Clean->files.begin(); f != Clean->files.end(); ++f )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 		{
 			File &ff = (File &) *f;
 			if( ff.dirp == fs )
@@ -467,7 +553,11 @@ void FilenameDB::DelFile( const RString &sPath )
 	RString lower = sPath;
 	lower.MakeLower();
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::map<RString, FileSet*>::iterator fsi = dirs.find( lower );
+=======
+	map<RString, FileSet *>::iterator fsi = dirs.find( lower );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	DelFileSet( fsi );
 
 	/* Delete sPath from its parent. */
@@ -489,6 +579,7 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 	{
 		if( dirs.empty() )
 			break;
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 
 		/* Grab the first entry.  Take it out of the list while we hold the
 		 * lock, to guarantee that we own it. */
@@ -496,13 +587,26 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 
 		dirs.erase( dirs.begin() );
 
+=======
+		
+		/* Grab the first entry.  Take it out of the list while we hold the
+		 * lock, to guarantee that we own it. */
+		pFileSet = dirs.begin()->second;
+		
+		dirs.erase( dirs.begin() );
+		
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 		/* If it's being filled, we don't really own it until it's finished being
 		 * filled, so wait. */
 		while( !pFileSet->m_bFilled )
 			m_Mutex.Wait();
 		delete pFileSet;
 	}
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 #if 0
 	/* XXX: This is tricky, we want to flush all of the subdirectories of
 	 * sDir, but once we unlock the mutex, we basically have to start over.
@@ -526,7 +630,11 @@ void FilenameDB::FlushDirCache( const RString & /* sDir */ )
 				if( it != dirs.end() )
 				{
 					FileSet *pParent = it->second;
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 					std::set<File>::iterator fileit = pParent->files.find( File(Basename(sDir)) );
+=======
+					set<File>::iterator fileit = pParent->files.find( File(Basename(sDir)) );
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 					if( fileit != pParent->files.end() )
 						fileit->dirp = nullptr;
 				}
@@ -549,7 +657,11 @@ const File *FilenameDB::GetFile( const RString &sPath )
 	SplitPath(sPath, Dir, Name);
 	FileSet *fs = GetFileSet( Dir );
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 	std::set<File>::iterator it;
+=======
+	set<File>::iterator it;
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 	it = fs->files.find( File(Name) );
 	if( it == fs->files.end() )
 		return nullptr;
@@ -572,7 +684,11 @@ void *FilenameDB::GetFilePriv( const RString &path )
 
 
 
+<<<<<<< HEAD:itgmania/src/RageUtil_FileDB.cpp
 void FilenameDB::GetDirListing( const RString &sPath_, std::vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
+=======
+void FilenameDB::GetDirListing( const RString &sPath_, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
+>>>>>>> origin/c++11:src/RageUtil_FileDB.cpp
 {
 	RString sPath = sPath_;
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );

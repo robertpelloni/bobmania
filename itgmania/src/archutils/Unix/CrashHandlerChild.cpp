@@ -155,7 +155,11 @@ static void child_process()
 	FD_ZERO( &rs );
 	FD_SET( 3, &rs );
 	int ret = select( 4, &rs, nullptr, nullptr, &timeout );
+<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandlerChild.cpp
 
+=======
+	
+>>>>>>> origin/c++11:src/archutils/Unix/CrashHandlerChild.cpp
 	if( ret == 0 )
 	{
 		fputs( "Timeout exceeded.\n", stderr );
@@ -193,8 +197,13 @@ static void child_process()
 		sCrashInfoPath = home;
 #endif
 	sCrashInfoPath += "/crashinfo.txt";
+<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandlerChild.cpp
 
 	FILE *CrashDump = fopen( sCrashInfoPath.c_str(), "w+" );
+=======
+	
+	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
+>>>>>>> origin/c++11:src/archutils/Unix/CrashHandlerChild.cpp
 	if(CrashDump == nullptr)
 	{
 		fprintf( stderr, "Couldn't open %s: %s\n", sCrashInfoPath.c_str(), strerror(errno) );

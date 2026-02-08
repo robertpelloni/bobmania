@@ -12,11 +12,19 @@ uint32_t RageSurfaceUtils::decodepixel( const uint8_t *p, int bpp )
 	case 1: return *p;
 	case 2: return *(uint16_t *)p;
 	case 3:
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 #if BYTE_ORDER == BIG_ENDIAN
 			return p[0] << 16 | p[1] << 8 | p[2];
 #else
 			return p[0] | p[1] << 8 | p[2] << 16;
 #endif
+=======
+		if( BYTE_ORDER == BIG_ENDIAN )
+			return p[0] << 16 | p[1] << 8 | p[2];
+		else
+			return p[0] | p[1] << 8 | p[2] << 16;
+
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 	case 4: return *(uint32_t *)p;
 	default: return 0;	// shouldn't happen, but avoids warnings
 	}
@@ -29,6 +37,7 @@ void RageSurfaceUtils::encodepixel( uint8_t *p, int bpp, uint32_t pixel )
 	case 1: *p = uint8_t(pixel); break;
 	case 2: *(uint16_t *)p = uint16_t(pixel); break;
 	case 3:
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 #if BYTE_ORDER == BIG_ENDIAN
 		p[0] = uint8_t((pixel >> 16) & 0xff);
 		p[1] = uint8_t((pixel >> 8) & 0xff);
@@ -38,6 +47,18 @@ void RageSurfaceUtils::encodepixel( uint8_t *p, int bpp, uint32_t pixel )
 		p[1] = uint8_t((pixel >> 8) & 0xff);
 		p[2] = uint8_t((pixel >> 16) & 0xff);
 #endif
+=======
+		if( BYTE_ORDER == BIG_ENDIAN )
+		{
+			p[0] = uint8_t((pixel >> 16) & 0xff);
+			p[1] = uint8_t((pixel >> 8) & 0xff);
+			p[2] = uint8_t(pixel & 0xff);
+		} else {
+			p[0] = uint8_t(pixel & 0xff);
+			p[1] = uint8_t((pixel >> 8) & 0xff);
+			p[2] = uint8_t((pixel >> 16) & 0xff);
+		}
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 		break;
 	case 4: *(uint32_t *)p = pixel; break;
 	}
@@ -133,7 +154,11 @@ void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
 	// Copy the palette, if we have one.
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 		ASSERT( dest->fmt.palette != NULL );
+=======
+		ASSERT( dest->fmt.palette != nullptr );
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 		*dest->fmt.palette = *src->fmt.palette;
 	}
 
@@ -150,7 +175,11 @@ bool RageSurfaceUtils::ConvertSurface( const RageSurface *src, RageSurface *&dst
 	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
 	{
 		delete dst;
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 		dst = NULL;
+=======
+		dst = nullptr;
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 		return false;
 	}
 
@@ -771,26 +800,45 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 {
 	RageFile f;
 	if( !f.Open( file ) )
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 		return NULL;
 
 	SurfaceHeader h;
 	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
 		return NULL;
+=======
+		return nullptr;
+
+	SurfaceHeader h;
+	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
+		return nullptr;
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 
 	RageSurfacePalette palette;
 	if( h.bpp == 8 )
 	{
 		if( f.Read( &palette.ncolors, sizeof(palette.ncolors) ) != sizeof(palette.ncolors) )
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 			return NULL;
 		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
 		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
 			return NULL;
+=======
+			return nullptr;
+		ASSERT_M( palette.ncolors <= 256, ssprintf("%i", palette.ncolors) );
+		if( f.Read( palette.colors, palette.ncolors * sizeof(RageSurfaceColor) ) != int(palette.ncolors * sizeof(RageSurfaceColor)) )
+			return nullptr;
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 	}
 
 	// Create the surface.
 	RageSurface *img = CreateSurface( h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask );
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 	ASSERT( img != NULL );
+=======
+	ASSERT( img != nullptr );
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 
 	/* If the pitch has changed, this surface is either corrupt, or was
 	 * created with a different version whose CreateSurface() behavior
@@ -800,13 +848,21 @@ RageSurface *RageSurfaceUtils::LoadSurface( RString file )
 		LOG->Trace( "Error loading \"%s\": expected pitch %i, got %i (%ibpp, %i width)",
 				file.c_str(), h.pitch, img->pitch, h.bpp, h.width );
 		delete img;
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 		return NULL;
+=======
+		return nullptr;
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 	}
 
 	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
 	{
 		delete img;
+<<<<<<< HEAD:itgmania/src/RageSurfaceUtils.cpp
 		return NULL;
+=======
+		return nullptr;
+>>>>>>> origin/c++11:src/RageSurfaceUtils.cpp
 	}
 
 	// Set the palette.

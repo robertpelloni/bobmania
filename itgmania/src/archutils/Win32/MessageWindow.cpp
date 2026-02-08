@@ -25,7 +25,11 @@ MessageWindow::MessageWindow( const RString &sClassName )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "RegisterClass" ).c_str() );
 
 	// XXX: on 2k/XP, use HWND_MESSAGE as parent
+<<<<<<< HEAD:itgmania/src/archutils/Win32/MessageWindow.cpp
 	m_hWnd = CreateWindow( sClassName.c_str(), sClassName.c_str(), WS_DISABLED, 0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
+=======
+	m_hWnd = CreateWindow( sClassName, sClassName, WS_DISABLED, 0, 0, 0, 0, nullptr, nullptr, inst, nullptr );
+>>>>>>> origin/c++11:src/archutils/Win32/MessageWindow.cpp
 	ASSERT( m_hWnd != nullptr );
 
 	SetProp( m_hWnd, "MessageWindow", this );

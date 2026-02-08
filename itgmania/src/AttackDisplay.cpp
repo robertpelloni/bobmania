@@ -42,7 +42,11 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
 		return;
 
+<<<<<<< HEAD:itgmania/src/AttackDisplay.cpp
 	std::set<RString> attacks;
+=======
+	set<RString> attacks;
+>>>>>>> origin/c++11:src/AttackDisplay.cpp
 	for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
 	{
 		const Character *ch = GAMESTATE->m_pCurCharacters[pn];
@@ -52,7 +56,11 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 			attacks.insert( asAttacks[att] );
 	}
 
+<<<<<<< HEAD:itgmania/src/AttackDisplay.cpp
 	for( std::set<RString>::const_iterator it = attacks.begin(); it != attacks.end(); ++it )
+=======
+	for( set<RString>::const_iterator it = attacks.begin(); it != attacks.end(); ++it )
+>>>>>>> origin/c++11:src/AttackDisplay.cpp
 	{
 		const RString path = THEME->GetPathG( "AttackDisplay", GetAttackPieceName( *it ), true );
 		if( path == "" )

@@ -3,7 +3,11 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 #include "RageSoundReader_FileReader.h"
+=======
+
+>>>>>>> origin/c++11:src/RageUtil.cpp
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
@@ -153,7 +157,11 @@ namespace
 	{
 		LIST_METHOD( Seed ),
 		LIST_METHOD( Random ),
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 		{ nullptr, nullptr }
+=======
+		{ NULL, nullptr }
+>>>>>>> origin/c++11:src/RageUtil.cpp
 	};
 }
 
@@ -278,8 +286,8 @@ float HHMMSSToSeconds( const RString &sHHMMSS )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
-	fSeconds += StringToInt( arrayBits[0] ) * 60 * 60;
-	fSeconds += StringToInt( arrayBits[1] ) * 60;
+	fSeconds += std::stoi( arrayBits[0] ) * 60 * 60;
+	fSeconds += std::stoi( arrayBits[1] ) * 60;
 	fSeconds += StringToFloat( arrayBits[2] );
 
 	return fSeconds;
@@ -433,7 +441,11 @@ RString vssprintf( const char *szFormat, va_list argList )
 {
 	RString sStr;
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 #if defined(WIN32)
+=======
+#if defined(WIN32) && !defined(__MINGW32__)
+>>>>>>> origin/c++11:src/RageUtil.cpp
 	char *pBuf = nullptr;
 	int iChars = 1;
 	int iUsed = 0;
@@ -1879,20 +1891,43 @@ void MakeLower( wchar_t *p, size_t iLen )
 
 float StringToFloat( const RString &sString )
 {
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 	float fOut = std::strtof(sString, nullptr);
 	if (!isfinite(fOut))
 	{
 		fOut = 0.0f;
 	}
 	return fOut;
+=======
+	RString toTrim = sString;
+	Trim(toTrim);
+	if (toTrim.size() == 0)
+	{
+		return 0;
+	}
+	return std::stof(toTrim);
+>>>>>>> origin/c++11:src/RageUtil.cpp
 }
 
 bool StringToFloat( const RString &sString, float &fOut )
 {
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 	char *endPtr = nullptr;
 
 	fOut = std::strtof(sString, &endPtr);
 	return sString.size() && *endPtr == '\0' && isfinite(fOut);
+=======
+	RString toTrim = sString;
+	Trim(toTrim);
+	if (toTrim.size() == 0)
+	{
+		return false;
+	}
+	char *endPtr;
+
+	fOut = strtof( toTrim, &endPtr );
+	return *endPtr == '\0' && isfinite( fOut );
+>>>>>>> origin/c++11:src/RageUtil.cpp
 }
 
 RString FloatToString( const float &num )
@@ -2371,7 +2406,11 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 		out = StringToInt(sValue) != 0;
+=======
+		out = (std::stoi(sValue) != 0);
+>>>>>>> origin/c++11:src/RageUtil.cpp
 		return true;
 	}
 
@@ -2432,7 +2471,10 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
 			if( bReadError != nullptr )
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 			{
+=======
+>>>>>>> origin/c++11:src/RageUtil.cpp
 				*bReadError = true;
 			}
 			return false;
@@ -2446,7 +2488,10 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 		{
 			sError = ssprintf( "write error: %s", out.GetError().c_str() );
 			if( bReadError != nullptr )
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 			{
+=======
+>>>>>>> origin/c++11:src/RageUtil.cpp
 				*bReadError = false;
 			}
 			return false;
@@ -2457,7 +2502,10 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 	{
 		sError = ssprintf( "write error: %s", out.GetError().c_str() );
 		if( bReadError != nullptr )
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
 		{
+=======
+>>>>>>> origin/c++11:src/RageUtil.cpp
 			*bReadError = false;
 		}
 		return false;

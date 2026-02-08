@@ -9,12 +9,16 @@
  */
 
 #include "global.h"
+<<<<<<< HEAD:itgmania/src/RageSoundReader_PitchChange.cpp
 #include "Preference.h"
+=======
+>>>>>>> origin/c++11:src/RageSoundReader_PitchChange.cpp
 #include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_SpeedChange.h"
 #include "RageSoundReader_Resample_Good.h"
 #include "RageLog.h"
 
+<<<<<<< HEAD:itgmania/src/RageSoundReader_PitchChange.cpp
 static Preference<bool> g_bRateModPreservesPitch( "RateModPreservesPitch", true );
 
 RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSource ):
@@ -31,6 +35,13 @@ RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSour
 	{
 		m_pResample = new RageSoundReader_Resample_Good( pSource, pSource->GetSampleRate() );
 	}
+=======
+RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSource ):
+	RageSoundReader_Filter(nullptr)
+{
+	m_pSpeedChange = new RageSoundReader_SpeedChange( pSource );
+	m_pResample = new RageSoundReader_Resample_Good( m_pSpeedChange, m_pSpeedChange->GetSampleRate() );
+>>>>>>> origin/c++11:src/RageSoundReader_PitchChange.cpp
 	m_pSource = m_pResample;
 	m_fSpeedRatio = 1.0f;
 	m_fPitchRatio = 1.0f;
@@ -58,10 +69,15 @@ int RageSoundReader_PitchChange::Read( float *pBuf, int iFrames )
 	 * immediately on the next Read().  When this is true, apply the ratio to the
 	 * resampler and the speed changer simultaneously, so they take effect as
 	 * closely together as possible. */
+<<<<<<< HEAD:itgmania/src/RageSoundReader_PitchChange.cpp
 	bool bPreservePitch = g_bRateModPreservesPitch.Get();
 	if( (!bPreservePitch) ||
 	    ((m_fLastSetSpeedRatio != m_fSpeedRatio || m_fLastSetPitchRatio != m_fPitchRatio) &&
 		 m_pSpeedChange->NextReadWillStep()) )
+=======
+	if( (m_fLastSetSpeedRatio != m_fSpeedRatio || m_fLastSetPitchRatio != m_fPitchRatio) &&
+		m_pSpeedChange->NextReadWillStep() )
+>>>>>>> origin/c++11:src/RageSoundReader_PitchChange.cpp
 	{
 		float fRate = GetStreamToSourceRatio();
 
@@ -72,6 +88,7 @@ int RageSoundReader_PitchChange::Read( float *pBuf, int iFrames )
 		/* However, the resampler has a limited granularity due to internal fixed-
 		 * point math, and the actual ratio will be slightly different than what
 		 * we tell it to use.  The actual ratio used is fActualPitchRatio. */
+<<<<<<< HEAD:itgmania/src/RageSoundReader_PitchChange.cpp
 
 		if (bPreservePitch)
 		{
@@ -88,6 +105,15 @@ int RageSoundReader_PitchChange::Read( float *pBuf, int iFrames )
 			m_fLastSetSpeedRatio = m_fSpeedRatio;
 		}
 
+=======
+		m_pResample->SetRate( m_fPitchRatio );
+		float fActualPitchRatio = m_pResample->GetRate();
+		float fRequestedSpeedRatio = m_fSpeedRatio / fActualPitchRatio;
+		m_pSpeedChange->SetSpeedRatio( fRequestedSpeedRatio );
+
+		m_fLastSetSpeedRatio = m_fSpeedRatio;
+		m_fLastSetPitchRatio = m_fPitchRatio;
+>>>>>>> origin/c++11:src/RageSoundReader_PitchChange.cpp
 
 		/* If we just applied a new speed and it caused the ratio to change, return
 		 * no data, so the caller can see the new ratio. */
