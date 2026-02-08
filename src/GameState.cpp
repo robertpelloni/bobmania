@@ -3037,6 +3037,8 @@ public:
 	}
 	static int GetSongPercent( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetSongPercent(FArg(1))); return 1; }
 	DEFINE_METHOD( GetCurMusicSeconds,	m_Position.m_fMusicSeconds )
+	DEFINE_METHOD( GetSongTime,		m_Position.m_fMusicSeconds )
+	DEFINE_METHOD( GetSongBeat,		m_Position.m_fSongBeat )
 
 	DEFINE_METHOD( GetWorkoutGoalComplete,		m_bWorkoutGoalComplete )
 	static int GetCharacter( T* p, lua_State *L )				{ p->m_pCurCharacters[Enum::Check<PlayerNumber>(L, 1)]->PushSelf(L); return 1; }
@@ -3401,6 +3403,8 @@ public:
 		ADD_METHOD( JoinInput );
 		ADD_METHOD( GetSongPercent );
 		ADD_METHOD( GetCurMusicSeconds );
+		ADD_METHOD( GetSongTime );
+		ADD_METHOD( GetSongBeat );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( SetCharacter );
 		ADD_METHOD( GetExpandedSectionName );

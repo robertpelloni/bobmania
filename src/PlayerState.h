@@ -10,6 +10,7 @@
 #include "PlayerOptions.h"
 #include "RageTimer.h"
 #include "SampleHistory.h"
+#include "LuaReference.h"
 struct lua_State;
 
 struct CacheDisplayedBeat {
@@ -59,6 +60,7 @@ public:
 
 	// Music statistics:
 	SongPosition m_Position;
+	SongPosition m_DisplayedPosition;
 
 	const SongPosition &GetDisplayedPosition() const;
 	const TimingData   &GetDisplayedTiming()   const;
@@ -132,6 +134,8 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+
+	LuaReference m_NotePathFunction;
 };
 
 #endif

@@ -351,10 +351,10 @@ void NoteColumnRenderArgs::spae_pos_for_beat(const PlayerState* player_state,
 	switch(pos_handler->m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ArrowEffects::GetXYZPos(player_state, column, y_offset, y_reverse_offset, ae_pos);
+			ArrowEffects::GetXYZPos(player_state, column, y_offset, y_reverse_offset, ae_pos, true, beat);
 			break;
 		case NCSM_Offset:
-			ArrowEffects::GetXYZPos(player_state, column, y_offset, y_reverse_offset, ae_pos);
+			ArrowEffects::GetXYZPos(player_state, column, y_offset, y_reverse_offset, ae_pos, true, beat);
 			pos_handler->EvalForBeat(song_beat, beat, sp_pos);
 			break;
 		case NCSM_Position:
@@ -454,6 +454,11 @@ bool NoteDisplay::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTarge
 	// IMPORTANT:  Do not modify this function without also modifying the
 	// version that is in NoteField.cpp or coming up with a good way to
 	// merge them. -Kyz
+	
+	// If NotePath is active, disable culling to ensure notes are visible.
+	if( m_pPlayerState->m_NotePathFunction.IsSet() )
+		return true;
+
 	// TRICKY: If boomerang is on, then ones in the range
 	// [iFirstRowToDraw,iLastRowToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.
@@ -1464,10 +1469,10 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const
 	switch(NCR_current.m_pos_handler.m_spline_mode)
 	{
 		case NCSM_Disabled:
-			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos);
+			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos, true, song_beat);
 			break;
 		case NCSM_Offset:
-			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos);
+			ArrowEffects::GetXYZPos(player_state, m_column, 0, m_field_render_args->reverse_offset_pixels, ae_pos, true, song_beat);
 			NCR_current.m_pos_handler.EvalForReceptor(song_beat, sp_pos);
 			break;
 		case NCSM_Position:

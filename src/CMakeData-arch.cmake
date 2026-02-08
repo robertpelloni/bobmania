@@ -27,9 +27,11 @@ source_group("Arch Specific\\\\Threads"
 list(APPEND SMDATA_ARCH_SOUND_SRC
             "arch/Sound/RageSoundDriver.cpp"
             "arch/Sound/RageSoundDriver_Generic_Software.cpp"
+            "arch/Sound/RageSoundDriver_MiniAudio.cpp"
             "arch/Sound/RageSoundDriver_Null.cpp")
 
 list(APPEND SMDATA_ARCH_SOUND_HPP "arch/Sound/RageSoundDriver.h"
+            "arch/Sound/RageSoundDriver_MiniAudio.h"
             "arch/Sound/RageSoundDriver_Null.h")
 
 if(WIN32)

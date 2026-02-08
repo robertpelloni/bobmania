@@ -51,7 +51,7 @@ public:
 	// underneath the combo and judgment.  They're not embedded in
 	// PlayerMatrixPusher so that some nutjob can later decide to expose them
 	// to lua. -Kyz
-	void PushPlayerMatrix(float x, float skew, float center_y);
+	void PushPlayerMatrix(float x, float skew, float center_y, float fov, float vanish_y);
 	void PopPlayerMatrix();
 
 	// This exists so that the board can be drawn underneath combo/judge. -Kyz
@@ -63,7 +63,7 @@ public:
 	// cleanup. -Kyz
 	struct PlayerNoteFieldPositioner
 	{
-		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse);
+		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse, float fov, float vanish_y);
 		~PlayerNoteFieldPositioner();
 		Player* player;
 		float original_y;

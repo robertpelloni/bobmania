@@ -580,6 +580,13 @@ public:
 
 	// render states
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
+	void SetShader( RString sPath );
+	void SetShader( RString sVert, RString sFrag );
+	void ClearShader();
+	void SetUniform( const RString &sName, float f );
+	void SetUniform( const RString &sName, float f1, float f2 );
+	void SetUniform( const RString &sName, float f1, float f2, float f3 );
+	void SetUniform( const RString &sName, float f1, float f2, float f3, float f4 );
 	void SetTextureTranslate( float x, float y )	{ m_texTranslate.x = x; m_texTranslate.y = y; }
 	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetTextureFiltering( bool b ) 		{ m_bTextureFiltering = b; } 
@@ -589,6 +596,11 @@ public:
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
 	void SetZBias( float f )					{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) { m_CullMode = mode; } 
+	void SetPolygonMode( PolygonMode pm )		{ m_PolygonMode = pm; }
+	void SetLineWidth( float fWidth )			{ m_fLineWidth = fWidth; }
+
+	void SetDrawFunction( const LuaReference &ref ) { m_LuaDrawFunction = ref; }
+	void SetUpdateFunction( const LuaReference &ref ) { m_LuaUpdateFunction = ref; }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
@@ -659,6 +671,17 @@ protected:
 	RageColor m_internalGlow;
 
 	RageVector2	m_size;
+	uintptr_t	m_iShader;
+	uintptr_t	m_iPrevShader;
+
+	struct ShaderUniform
+	{
+		RString name;
+		enum Type { Float, Vec2, Vec3, Vec4, Int, Mat4 } type;
+		float fvals[4];
+	};
+	vector<ShaderUniform> m_ShaderUniforms;
+
 	TweenState	m_current;
 	TweenState	m_start;
 	TweenState	m_current_with_effects;
@@ -732,6 +755,8 @@ protected:
 	BlendMode	m_BlendMode;
 	ZTestMode	m_ZTestMode;
 	CullMode	m_CullMode;
+	PolygonMode	m_PolygonMode;
+	float		m_fLineWidth;
 	RageVector2	m_texTranslate;
 	bool		m_bTextureWrapping;
 	bool		m_bTextureFiltering;
@@ -752,6 +777,9 @@ protected:
 private:
 	// commands
 	map<RString, apActorCommands> m_mapNameToCommands;
+
+	LuaReference m_LuaDrawFunction;
+	LuaReference m_LuaUpdateFunction;
 };
 
 #endif

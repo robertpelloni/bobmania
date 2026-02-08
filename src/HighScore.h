@@ -36,6 +36,7 @@ struct HighScore
 	 * @return true if no judgments were recorded, false otherwise. */
 	bool IsEmpty() const;
 	float GetPercentDP() const;
+	float GetWifeScore() const;
 	/**
 	 * @brief Determine how many seconds the player had left in Survival mode.
 	 * @return the number of seconds left. */
@@ -68,6 +69,7 @@ struct HighScore
 	void SetGrade( Grade g );
 	void SetScore( unsigned int iScore );
 	void SetPercentDP( float f );
+	void SetWifeScore( float f );
 	void SetAliveSeconds( float f );
 	void SetMaxCombo( unsigned int i );
 	void SetStageAward( StageAward a );

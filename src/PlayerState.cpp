@@ -89,6 +89,17 @@ void PlayerState::Update( float fDelta )
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+
+	// Update Displayed Position
+	const SongPosition &basePos = (GAMESTATE->m_bIsUsingStepTiming) ? m_Position : GAMESTATE->m_Position;
+	m_DisplayedPosition = basePos;
+
+	float fVisualDelay = m_PlayerOptions.GetCurrent().m_fVisualDelaySeconds;
+	if( fVisualDelay != 0.0f )
+	{
+		float fSeconds = m_DisplayedPosition.m_fMusicSeconds - fVisualDelay;
+		m_DisplayedPosition.UpdateSongPosition( fSeconds, GetDisplayedTiming() );
+	}
 }
 
 void PlayerState::SetPlayerNumber(PlayerNumber pn)
@@ -196,9 +207,7 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 
 const SongPosition &PlayerState::GetDisplayedPosition() const
 {
-	if( GAMESTATE->m_bIsUsingStepTiming )
-		return m_Position;
-	return GAMESTATE->m_Position;
+	return m_DisplayedPosition;
 }
 
 const TimingData &PlayerState::GetDisplayedTiming() const
@@ -268,6 +277,21 @@ public:
 	DEFINE_METHOD( GetHealthState, m_HealthState );
 	DEFINE_METHOD( GetSuperMeterLevel, m_fSuperMeter );
 
+	static int SetNotePath( T* p, lua_State *L )
+	{
+		if( lua_isnoneornil(L, 1) )
+		{
+			p->m_NotePathFunction.Unset();
+		}
+		else
+		{
+			luaL_checktype( L, 1, LUA_TFUNCTION );
+			lua_pushvalue( L, 1 );
+			p->m_NotePathFunction.SetFromStack( L );
+		}
+		return 0;
+	}
+
 	LunaPlayerState()
 	{
 		ADD_METHOD( ApplyPreferredOptionsToOtherLevels );
@@ -282,6 +306,7 @@ public:
 		ADD_METHOD( GetSongPosition );
 		ADD_METHOD( GetHealthState );
 		ADD_METHOD( GetSuperMeterLevel );
+		ADD_METHOD( SetNotePath );
 	}
 };
 

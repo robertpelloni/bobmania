@@ -80,10 +80,12 @@ public:
 		m_fModTimerOffset(0), m_SpeedfModTimerOffset(1.0f),
 		m_fDrawSize(0), m_SpeedfDrawSize(1.0f),
 		m_fDrawSizeBack(0), m_SpeedfDrawSizeBack(1.0f),
+		m_fVisualDelaySeconds(0), m_SpeedfVisualDelaySeconds(1.0f),
 		m_bMuteOnError(false), m_FailType(FailType_Immediate),
 		m_bStealthType(false), m_bStealthPastReceptors(false),
 		m_bDizzyHolds(false), m_bZBuffer(false),
 		m_bCosecant(false),
+		m_bScoreMissedHoldsAndRolls(false),
 		m_MinTNSToHideNotes(PREFSMAN->m_MinTNSToHideNotes)
 	{
 		m_sNoteSkin = "";
@@ -353,6 +355,8 @@ public:
 	float	m_fPlayerAutoPlay,		m_SpeedfPlayerAutoPlay;
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
+	float	m_fFOV,				m_SpeedfFOV;
+	float	m_fVanishY,			m_SpeedfVanishY;
 
 	/* If this is > 0, then the player must have life above this value at the end of
 	 * the song to pass.  This is independent of SongOptions::m_FailType. */
@@ -363,6 +367,7 @@ public:
 	float	m_fModTimerOffset,		m_SpeedfModTimerOffset;
 	float	m_fDrawSize,			m_SpeedfDrawSize;
 	float	m_fDrawSizeBack,		m_SpeedfDrawSizeBack;
+	float	m_fVisualDelaySeconds,	m_SpeedfVisualDelaySeconds;
 	/* The maximum column number is 16.*/
 	float	m_fMovesX[16],			m_SpeedfMovesX[16];
 	float	m_fMovesY[16],			m_SpeedfMovesY[16];
@@ -384,6 +389,9 @@ public:
 	bool		m_bDizzyHolds;
 	bool		m_bZBuffer;
 	bool		m_bCosecant;
+	bool		m_bScoreMissedHoldsAndRolls;
+	bool		m_bPracticeMode; // Disable Timing Windows logic
+	bool		m_bGhostTapping; // Override PENALIZE_TAP_SCORE_NONE
 	/** @brief The method for which a player can fail a song. */
 	FailType m_FailType;
 	TapNoteScore m_MinTNSToHideNotes;

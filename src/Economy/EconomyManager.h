@@ -1,81 +1,39 @@
 #ifndef ECONOMY_MANAGER_H
 #define ECONOMY_MANAGER_H
 
-#include <string>
+#include "RageTypes.h"
 #include <map>
 #include <vector>
-#include "RageThreads.h"
 
 struct lua_State;
 
 // Basic types for our simulated economy
 typedef std::string WalletAddress;
 typedef long long CurrencyAmount;
+class XNode;
 
-struct Transaction {
-	std::string txID;
-	WalletAddress from;
-	WalletAddress to;
-	CurrencyAmount amount;
-	std::string reason;
-	long long timestamp;
+struct EconomyItem {
+    RString ID;
+    RString Name;
+    long long Price;
+    RString Type;
+    RString Icon;
 };
 
-struct Asset {
-	std::string assetID;
-	std::string name;
-	std::string type; // "Title", "Avatar", "License"
-	WalletAddress owner;
-	CurrencyAmount value;
+struct Transaction {
+    RString Date;
+    RString Description;
+    long long Amount;
 };
 
 class EconomyManager
 {
 public:
-	static EconomyManager* Instance();
-	static void Destroy();
-
 	EconomyManager();
 	~EconomyManager();
 
-	void Initialize();
-	void LoadState();
-	void SaveState();
-	void Update(float fDeltaTime); // Called every frame for background mining
-
-	// Wallet Functions
-	CurrencyAmount GetBalance(const WalletAddress& address);
-	bool Transfer(const WalletAddress& from, const WalletAddress& to, CurrencyAmount amount, const std::string& reason);
-	WalletAddress RegisterUser(const std::string& username);
-
-	// Betting System
-	bool IsBetActive() const { return m_bBetActive; }
-	void StartMatchBet(CurrencyAmount amount);
-	void ResolveMatchBet(bool playerWon); // Simple single player vs House/Score for MVP
-
-	// Industry / Infrastructure
-	void PaySongRoyalty(const std::string& songTitle, const std::string& artistName);
-	void AwardBandwidthReward(CurrencyAmount amount);
-	CurrencyAmount GetMiningReward() const { return m_iAccumulatedMiningReward; }
-
-	// Competitive
-	int GetPlayerElo() const { return m_iPlayerElo; }
-	void UpdateElo(bool bWon, int iOpponentElo);
-	int GetHighestElo() const { return m_iHighestEloAchieved; }
-
-	// Shareholders
-	int GetShareCount();
-	CurrencyAmount CalculateDividend();
-
-	// Inventory
-	void AddToInventory(const Asset& asset);
-	bool HasAsset(const std::string& name);
-	void EquipAsset(const std::string& type, const std::string& name);
-	std::string GetEquippedAsset(const std::string& type);
-	std::vector<Asset> GetInventory() const;
-
-	// Data Access for UI
-	std::vector<Transaction> GetRecentTransactions() const;
+	void Init();
+	void Update( float fDeltaTime );
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -84,27 +42,48 @@ private:
 	// Simulated Ledger
 	std::map<WalletAddress, CurrencyAmount> m_Ledger;
 	std::vector<Transaction> m_TransactionHistory;
+	// Basic Ledger
+	RString GetWalletAddress() const;
+	long long GetBalance() const;
+	bool SendTip( const RString& sAddress, long long iAmount );
 
-	// Active Bet State
-	bool m_bBetActive;
-	CurrencyAmount m_iCurrentBetAmount;
+    // Marketplace
+    bool BuyItem( const RString& sItemID );
+    bool HasItem( const RString& sItemID ) const;
+    const std::vector<EconomyItem>& GetMarketplaceItems() const;
 
-	// Server Mode Simulation
-	float m_fMiningTimer;
-	float m_fDividendTimer;
-	CurrencyAmount m_iAccumulatedMiningReward;
+    // Transaction History
+    const std::vector<Transaction>& GetHistory() const;
+    void LogTransaction( const RString& sDesc, long long iAmount );
 
-	// Competitive
-	int m_iPlayerElo;
-	int m_iHighestEloAchieved;
+    // Mining
+    void AwardMiningReward( float fScore, float fDifficulty );
+    float GetHashRate() const;
 
-	// Inventory
-	std::vector<Asset> m_Inventory;
-	std::map<std::string, std::string> m_Equipped; // Type -> Name
+	// Mocking Tempo connection
+	void ConnectToTempo();
+	bool IsConnected() const;
 
-	static EconomyManager* s_pInstance;
+	// Persistence
+	void LoadFromNode( const XNode *pNode );
+	XNode *CreateNode() const;
+	void ReadFromDisk();
+	void WriteToDisk();
 
-	RageMutex m_Mutex; // Thread safety
+	// Lua
+	void PushSelf( lua_State *L );
+
+private:
+	RString m_sWalletAddress;
+	long long m_iBalance; // In micro-units
+	bool m_bConnected;
+    float m_fCurrentHashRate;
+
+    std::map<RString, bool> m_OwnedItems;
+    std::vector<Transaction> m_History;
+    std::vector<EconomyItem> m_MarketplaceCatalog;
 };
+
+extern EconomyManager*	ECONOMYMAN;	// global and accessible from anywhere in our program
 
 #endif

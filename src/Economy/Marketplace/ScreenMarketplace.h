@@ -21,10 +21,14 @@ public:
 private:
 	void RefreshList();
 	void BuyItem( int index );
+	void SellItem( int index );
 
 	BitmapText m_textTitle;
 	BitmapText m_textBalance;
 	BitmapText m_textStatus;
+	BitmapText m_textViewMode;
+
+	bool m_bShowInventory;
 
 	std::vector<MarketItem> m_Items;
 	std::vector<BitmapText*> m_pRowTexts;

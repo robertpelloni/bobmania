@@ -12,10 +12,7 @@ void ScreenGovernance::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	// Mock Data
-	m_Proposals.push_back( { 1, "Add Song: Butterfly", "License fee: 5000 Coins", 120, 10 } );
-	m_Proposals.push_back( { 2, "Increase Tournament Fee", "Change from 5% to 7%", 45, 90 } );
-	m_Proposals.push_back( { 3, "New Gym Feature", "Fund dev of Calorie Course", 300, 5 } );
+	// Proposals are now managed by EconomyManager
 	m_iCurrentPropIndex = 0;
 
 	m_textTitle.LoadFromFont( THEME->GetPathF("Common", "header") );
@@ -49,9 +46,12 @@ void ScreenGovernance::Init()
 
 void ScreenGovernance::UpdateUI()
 {
-	if( m_Proposals.empty() ) return;
+	const auto& proposals = EconomyManager::Instance()->GetProposals();
+	if( proposals.empty() ) return;
 
-	const Proposal& p = m_Proposals[m_iCurrentPropIndex];
+	if( m_iCurrentPropIndex >= (int)proposals.size() ) m_iCurrentPropIndex = 0;
+
+	const Proposal& p = proposals[m_iCurrentPropIndex];
 	m_textPropTitle.SetText( ssprintf("Prop #%d: %s", p.id, p.title.c_str()) );
 	m_textPropDesc.SetText( p.desc );
 	m_textVotes.SetText( ssprintf("YES: %d   NO: %d", p.yesVotes, p.noVotes) );
@@ -59,15 +59,11 @@ void ScreenGovernance::UpdateUI()
 
 void ScreenGovernance::Vote( bool bYes )
 {
-	if( m_Proposals.empty() ) return;
+	const auto& proposals = EconomyManager::Instance()->GetProposals();
+	if( proposals.empty() ) return;
 
-	// Vote weight is determined by share ownership
-	// Minimum 1 vote for citizenship
-	int shares = EconomyManager::Instance()->GetShareCount();
-	int weight = (shares > 0) ? shares : 1;
-
-	if( bYes ) m_Proposals[m_iCurrentPropIndex].yesVotes += weight;
-	else       m_Proposals[m_iCurrentPropIndex].noVotes += weight;
+	int propId = proposals[m_iCurrentPropIndex].id;
+	EconomyManager::Instance()->VoteOnProposal(propId, bYes);
 
 	SOUND->PlayOnce( THEME->GetPathS("Common", "start") );
 	UpdateUI();
@@ -76,6 +72,8 @@ void ScreenGovernance::Vote( bool bYes )
 void ScreenGovernance::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS ) return;
+
+	const auto& proposals = EconomyManager::Instance()->GetProposals();
 
 	if( input.MenuI == GAME_BUTTON_LEFT )
 	{
@@ -87,7 +85,7 @@ void ScreenGovernance::Input( const InputEventPlus &input )
 	else if( input.MenuI == GAME_BUTTON_RIGHT )
 	{
 		// Next Prop
-		if( m_iCurrentPropIndex < (int)m_Proposals.size() - 1 ) m_iCurrentPropIndex++;
+		if( m_iCurrentPropIndex < (int)proposals.size() - 1 ) m_iCurrentPropIndex++;
 		UpdateUI();
 		SOUND->PlayOnce( THEME->GetPathS("Common", "change") );
 	}

@@ -58,6 +58,9 @@
 #include "UnlockManager.h"
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
+#include "Economy/EconomyManager.h"
+#include "GrooveStats/GrooveStatsManager.h"
+#include "Discord/DiscordManager.h"
 #include "LightsManager.h"
 #include "ModelManager.h"
 #include "CryptManager.h"
@@ -321,6 +324,9 @@ void ShutdownGame()
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( BOOKKEEPER );
+	SAFE_DELETE( ECONOMYMAN );
+	SAFE_DELETE( GROOVESTATSMAN );
+	SAFE_DELETE( DISCORD );
 	SAFE_DELETE( LIGHTSMAN );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
@@ -1151,6 +1157,12 @@ int sm_main(int argc, char* argv[])
 	SOUNDMAN->SetMixVolume();
 	SOUND		= new GameSoundManager;
 	BOOKKEEPER	= new Bookkeeper;
+	ECONOMYMAN	= new EconomyManager;
+	ECONOMYMAN->Init();
+	GROOVESTATSMAN = new GrooveStatsManager;
+	GROOVESTATSMAN->Init();
+	DISCORD		= new DiscordManager;
+	// DISCORD->Init(); // Defer init to Lua or Theme to avoid early startup issues
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
@@ -1224,6 +1236,8 @@ int sm_main(int argc, char* argv[])
 
 	// Run the main loop.
 	GameLoop::RunGameLoop();
+
+	DISCORD->Shutdown();
 
 	PREFSMAN->SavePrefsToDisk();
 

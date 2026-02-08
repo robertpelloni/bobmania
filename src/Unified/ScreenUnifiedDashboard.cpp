@@ -27,6 +27,7 @@ void ScreenUnifiedDashboard::Init()
 	m_Options.push_back( "SYNC EXT. ASSETS" ); // New
 	m_Options.push_back( "CUSTOMIZE PROFILE" ); // New
 	m_Options.push_back( "WALLET HISTORY" ); // New
+	m_Options.push_back( "QR LOGIN (TEST)" ); // New
 	m_Options.push_back( "CONTENT SWARM" );
 	m_Options.push_back( "DAO GOVERNANCE" );
 	m_Options.push_back( "SERVER NODE (IDLE)" );
@@ -152,6 +153,7 @@ void ScreenUnifiedDashboard::Input( const InputEventPlus &input )
 		}
 		else if( sChoice == "CUSTOMIZE PROFILE" ) SCREENMAN->SetNewScreen( "ScreenProfileCustomize" );
 		else if( sChoice == "WALLET HISTORY" ) SCREENMAN->SetNewScreen( "ScreenWalletHistory" );
+		else if( sChoice == "QR LOGIN (TEST)" ) SCREENMAN->SetNewScreen( "ScreenLoginQR" );
 		else if( sChoice == "CONTENT SWARM" ) SCREENMAN->SetNewScreen( "ScreenContentNetwork" );
 		else if( sChoice == "DAO GOVERNANCE" ) SCREENMAN->SetNewScreen( "ScreenGovernance" );
 		else if( sChoice == "SERVER NODE (IDLE)" ) SCREENMAN->SetNewScreen( "ScreenServerNode" );

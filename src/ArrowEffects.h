@@ -30,12 +30,7 @@ public:
 		return GetYOffset( pPlayerState, iCol, fNoteBeat, fThrowAway, bThrowAway, bAbsolute );
 	}
 
-	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse= true)
-	{
-		ret.x= GetMoveX(col) + GetXPos(player_state, col, y_offset);
-		ret.y= GetMoveY(col) + GetYPos(player_state, col, y_offset, y_reverse_offset, with_reverse);
-		ret.z= GetMoveZ(col) + GetZPos(player_state, col, y_offset);
-	}
+	static void GetXYZPos(const PlayerState* player_state, int col, float y_offset, float y_reverse_offset, RageVector3& ret, bool with_reverse= true, float fNoteBeat = 0);
 
 	/**
 	 * @brief Retrieve the actual display position.

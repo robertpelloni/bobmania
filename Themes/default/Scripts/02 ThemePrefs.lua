@@ -206,3 +206,31 @@ function OptionRowProTiming()
 end
 
 --[[ end option rows ]]
+
+-- Judge Scale (Etterna-style)
+function OptionRowJudgeScale()
+	return {
+		Name = "JudgeScale",
+		LayoutType = "ShowAllInRow",
+		SelectType = "SelectOne",
+		OneChoiceForAllPlayers = true,
+		ExportOnChange = true,
+		Choices = { "J1", "J2", "J3", "J4", "J5", "J6", "J7", "J8" },
+		LoadSelections = function(self, list, pn)
+			local scale = PREFSMAN:GetPreference("TimingWindowScale")
+			-- Rough mapping: J4 = 1.0 (Standard)
+			-- J1=2.0, J4=1.0, J8=0.2?
+			-- For now, just defaulting to J4 (index 4)
+			list[4] = true
+		end,
+		SaveSelections = function(self, list, pn)
+			local val = 1.0
+			for i=1,#list do
+				if list[i] then
+					-- Mock logic to set scale
+					-- PREFSMAN:SetPreference("TimingWindowScale", val)
+				end
+			end
+		end
+	}
+end

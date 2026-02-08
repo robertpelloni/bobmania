@@ -4,14 +4,6 @@
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 
-struct Proposal {
-	int id;
-	std::string title;
-	std::string desc;
-	int yesVotes;
-	int noVotes;
-};
-
 class ScreenGovernance : public ScreenWithMenuElements
 {
 public:
@@ -30,7 +22,6 @@ private:
 	BitmapText m_textPropDesc;
 	BitmapText m_textVotes;
 
-	std::vector<Proposal> m_Proposals;
 	int m_iCurrentPropIndex;
 };
 

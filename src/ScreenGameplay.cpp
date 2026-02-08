@@ -62,6 +62,7 @@
 #include "Profile.h" // for replay data stuff
 #include "RageDisplay.h"
 #include "Gym/ActorCalorieGraph.h" // Added for Gym Integration
+#include "Economy/EconomyManager.h" // Added for Economy Integration
 
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
@@ -325,6 +326,7 @@ ScreenGameplay::ScreenGameplay()
 {
 	m_pSongBackground = nullptr;
 	m_pSongForeground = nullptr;
+	m_pModfile = nullptr;
 	m_bForceNoNetwork = false;
 	m_delaying_ready_announce= false;
 	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= false;
@@ -380,6 +382,15 @@ void ScreenGameplay::Init()
 	}
 
 	ScreenWithMenuElements::Init();
+
+	// Economy Integration: Initialize UI
+	m_textEconomy.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	m_textEconomy.SetName("EconomyDisplay");
+	m_textEconomy.SetXY( 10, 10 ); // Top left corner
+	m_textEconomy.SetHorizAlign( align_left );
+	m_textEconomy.SetZoom( 0.6f );
+	m_textEconomy.SetShadowLength( 1 );
+	this->AddChild( &m_textEconomy );
 
 	this->FillPlayerInfo( m_vPlayerInfo );
 
@@ -1045,6 +1056,7 @@ ScreenGameplay::~ScreenGameplay()
 
 	SAFE_DELETE( m_pSongBackground );
 	SAFE_DELETE( m_pSongForeground );
+	SAFE_DELETE( m_pModfile );
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->UnPauseMountingThread();
@@ -1332,6 +1344,12 @@ void ScreenGameplay::LoadNextSong()
 	if( m_pSongForeground )
 		m_pSongForeground->Unload();
 
+	if( m_pModfile )
+	{
+		this->RemoveChild( m_pModfile );
+		SAFE_DELETE( m_pModfile );
+	}
+
 	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Init(2) )
 	{
 		m_BeginnerHelper.SetVisible( false );
@@ -1378,6 +1396,23 @@ void ScreenGameplay::LoadNextSong()
 
 	if( m_pSongForeground )
 		m_pSongForeground->LoadFromSong( GAMESTATE->m_pCurSong );
+
+	if( GAMESTATE->m_pCurSong )
+	{
+		RString sDir = GAMESTATE->m_pCurSong->GetSongDir();
+		if( DoesFileExist( sDir + "mods.lua" ) )
+		{
+			m_pModfile = ActorUtil::MakeActor( sDir + "mods.lua" );
+			if( m_pModfile )
+			{
+				m_pModfile->SetName( "Modfile" );
+				m_pModfile->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
+				ActorUtil::LoadAllCommands( *m_pModfile, m_sName );
+				this->AddChild( m_pModfile );
+				m_pModfile->PlayCommand( "On" );
+			}
+		}
+	}
 
 	m_fTimeSinceLastDancingComment = 0;
 
@@ -1488,6 +1523,15 @@ void ScreenGameplay::LoadLights()
 
 void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )
 {
+	// Economy Integration: Pay Royalty
+	if (GAMESTATE->m_pCurSong)
+	{
+		EconomyManager::Instance()->PaySongRoyalty(
+			GAMESTATE->m_pCurSong->GetTranslitMainTitle(),
+			GAMESTATE->m_pCurSong->GetTranslitArtist()
+		);
+	}
+
 	ASSERT( fMinTimeToNotes >= 0 );
 	ASSERT( fMinTimeToMusic >= 0 );
 
@@ -1495,6 +1539,10 @@ void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMu
 
 	RageSoundParams p;
 	p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+	if( PREFSMAN->m_bPitchDependentRate )
+	{
+		p.m_fPitch = p.m_fSpeed;
+	}
 	p.StopMode = RageSoundParams::M_CONTINUE;
 
 	{
@@ -1693,6 +1741,16 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+	// Economy Integration: Update mining/background tasks
+	EconomyManager::Instance()->Update(fDeltaTime);
+	
+	// Economy Integration: Update UI
+	if (EconomyManager::Instance())
+	{
+		long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
+		m_textEconomy.SetText( ssprintf("Coins: %lld", balance) );
+	}
+
 	if( GAMESTATE->m_pCurSong == nullptr  )
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
@@ -1778,6 +1836,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( fabsf(p.m_fSpeed - fSpeed) > 0.01f && fSpeed >= 0.0f)
 		{
 			p.m_fSpeed = fSpeed;
+			if( PREFSMAN->m_bPitchDependentRate )
+			{
+				p.m_fPitch = fSpeed;
+			}
 			m_pSoundMusic->SetParams( p );
 		}
 	}
@@ -2608,7 +2670,19 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 					return false;
 				case GameButtonType_Step:
 					if( iCol != -1 )
-						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					{
+						if( PREFSMAN->m_bBothAtOnce )
+						{
+							FOREACH_EnabledPlayerInfo( m_vPlayerInfo, other_pi )
+							{
+								other_pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+							}
+						}
+						else
+						{
+							pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+						}
+					}
 					return true;
 				}
 			}
@@ -2702,6 +2776,13 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	if( STATSMAN->m_CurStageStats.AllFailed() )
 	{
 		FOREACH_HumanPlayer( p )
+	// Economy Integration: Resolve Bets
+	if (EconomyManager::Instance()->IsBetActive())
+	{
+		bool bAnyPlayerPassed = !STATSMAN->m_CurStageStats.AllFailed();
+		EconomyManager::Instance()->ResolveMatchBet(bAnyPlayerPassed);
+	}
+
 			GAMESTATE->m_iPlayerStageTokens[p] = 0;
 	}
 

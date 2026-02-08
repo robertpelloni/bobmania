@@ -30,6 +30,15 @@ void ScreenGymWelcome::Init()
 	m_textCalories.SetXY( 320, 240 );
 	this->AddChild( &m_textCalories );
 
+	// Intensity Selection
+	m_Options = { INTENSITY_LIGHT, INTENSITY_MODERATE, INTENSITY_VIGOROUS, INTENSITY_PRO_ATHLETE };
+	m_iSelection = 1; // Default to Moderate
+
+	m_textIntensity.LoadFromFont( THEME->GetPathF("Common", "normal") );
+	m_textIntensity.SetXY( 320, 280 );
+	this->AddChild( &m_textIntensity );
+	UpdateSelection();
+
 	// Show Server Status (Simulated "Working" Machine)
 	m_textServerStatus.LoadFromFont( THEME->GetPathF("Common", "normal") );
 	m_textServerStatus.SetZoom( 0.6f );
@@ -51,25 +60,53 @@ void ScreenGymWelcome::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS ) return;
 
-	if( input.MenuI == GAME_BUTTON_START )
+	if( input.MenuI == GAME_BUTTON_MENULEFT )
+	{
+		m_iSelection--;
+		if( m_iSelection < 0 ) m_iSelection = m_Options.size() - 1;
+		UpdateSelection();
+	}
+	else if( input.MenuI == GAME_BUTTON_MENURIGHT )
+	{
+		m_iSelection++;
+		if( m_iSelection >= (int)m_Options.size() ) m_iSelection = 0;
+		UpdateSelection();
+	}
+	else if( input.MenuI == GAME_BUTTON_START )
 	{
 		// Generate a workout playlist
 		// In a real flow, we would set GAMESTATE->m_pCurCourse to this new course
 		// and then jump to ScreenGameplay directly or ScreenSelectCourse.
 
-		Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, INTENSITY_MODERATE );
+		Course* pWorkout = GymPlaylistGenerator::GenerateCircuit( 1200.0f, m_Options[m_iSelection] );
 		if (pWorkout) {
 		   // Use a user-writable path (e.g., Save/ directory) if possible, but standard is Songs/
 		   // For simulation, we assume write permissions.
 		   GymCourseWriter::WriteCourse(pWorkout, "Save/LocalProfiles/MyWorkout.crs");
+		   
+		   // Set GameState for Course Play
+		   GAMESTATE->m_PlayMode.Set( PLAY_MODE_NONSTOP );
 		   GAMESTATE->m_pCurCourse.Set( pWorkout );
 		}
 
-		// For MVP, just jump to music select
-		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		// Jump to Stage Information to start the course
+		SCREENMAN->SetNewScreen( "ScreenStageInformation" );
 	}
 	else if( input.MenuI == GAME_BUTTON_BACK )
 	{
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 	}
+}
+
+void ScreenGymWelcome::UpdateSelection()
+{
+	RString sIntensity = "Unknown";
+	switch( m_Options[m_iSelection] )
+	{
+	case INTENSITY_LIGHT:      sIntensity = "Light (Meter 1-3)"; break;
+	case INTENSITY_MODERATE:   sIntensity = "Moderate (Meter 4-7)"; break;
+	case INTENSITY_VIGOROUS:   sIntensity = "Vigorous (Meter 8-11)"; break;
+	case INTENSITY_PRO_ATHLETE: sIntensity = "Pro Athlete (Meter 12-16)"; break;
+	}
+	m_textIntensity.SetText( "< " + sIntensity + " >" );
 }

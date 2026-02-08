@@ -188,6 +188,18 @@ public:
 	 */
 	Preference<bool>	m_bRateModsAffectTweens;
 
+	/**
+	 * Whether rate mods should change pitch (vinyl effect) or just speed (time stretch).
+	 * ITGMania / "Pitch Dependent" vs "Pitch Independent".
+	 */
+	Preference<bool>	m_bPitchDependentRate;
+
+	/**
+	 * NotITG-style "BothAtOnce" mode.
+	 * If true, inputs are mirrored to all enabled players in ScreenGameplay.
+	 */
+	Preference<bool>	m_bBothAtOnce;
+
 	// Whoever added these: Please add a comment saying what they do. -Chris
 	Preference<int>		m_iRegenComboAfterMiss; // combo that must be met after a Miss to regen life
 	Preference<int>		m_iMaxRegenComboAfterMiss; // caps RegenComboAfterMiss if multiple Misses occur in rapid succession

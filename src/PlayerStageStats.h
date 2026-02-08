@@ -77,6 +77,11 @@ public:
 	unsigned int		m_iCurMaxScore;
 	/** @brief The maximum score the Player can get this goaround. */
 	unsigned int		m_iMaxScore;
+
+	/** @brief The current Wife score (Etterna parity). */
+	float			m_fWifeScore;
+	/** @brief The maximum possible Wife score so far. */
+	float			m_fCurMaxWifeScore;
 	
 	/**
 	 * @brief The possible RadarValues for a song.

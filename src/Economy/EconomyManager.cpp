@@ -1,16 +1,18 @@
 #include "global.h"
 #include "EconomyManager.h"
 #include "RageLog.h"
+#include "LuaBinding.h"
+#include "XmlFile.h"
+#include "XmlFileUtil.h"
+#include "RageFile.h"
 #include "RageUtil.h"
 #include "IniFile.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
 #include <climits>
+#include "DateTime.h"
 
-// Fix for missing macro in standalone compilation
-#ifndef PRINTF
-#define PRINTF(a,b)
-#endif
+EconomyManager*	ECONOMYMAN = nullptr;
 
 // Local UUID helper to avoid dependency issues
 static std::string MakeUUID()
@@ -37,50 +39,36 @@ EconomyManager* EconomyManager::Instance()
 	}
 	return s_pInstance;
 }
+static const RString ECONOMY_DAT = "Save/Economy.xml";
 
-void EconomyManager::Destroy()
+EconomyManager::EconomyManager()
 {
-	delete s_pInstance;
-	s_pInstance = NULL;
-}
+	m_iBalance = 1000000; // Mock start balance
+	m_bConnected = false;
+	m_sWalletAddress = "0xMockAddress123";
+    m_fCurrentHashRate = 0.0f;
 
-EconomyManager::EconomyManager() : m_Mutex("EconomyManager")
-{
-	m_bBetActive = false;
-	m_iCurrentBetAmount = 0;
-	m_fMiningTimer = 0;
-	m_fDividendTimer = 0;
-	m_iAccumulatedMiningReward = 0;
-	m_iPlayerElo = 1200; // Default Starting Elo (Gold/Silver border)
-	m_iHighestEloAchieved = 1200;
+    // Initialize Mock Catalog
+    m_MarketplaceCatalog.push_back({ "song_pack_1", "Classic Pack 1", 500, "Song", "Graphics/song_pack_icon.png" });
+    m_MarketplaceCatalog.push_back({ "avatar_frame_gold", "Gold Frame", 200, "Item", "Graphics/item_icon.png" });
+    m_MarketplaceCatalog.push_back({ "xp_boost_1h", "1h XP Boost", 100, "Boost", "Graphics/boost_icon.png" });
+    m_MarketplaceCatalog.push_back({ "theme_dark", "Dark Mode Theme", 0, "Theme", "Graphics/theme_icon.png" });
+    m_MarketplaceCatalog.push_back({ "bobcoin_miner", "Bobcoin Miner", 5000, "Hardware", "Graphics/miner_icon.png" });
 }
 
 EconomyManager::~EconomyManager()
 {
+	WriteToDisk();
 }
 
-void EconomyManager::Initialize()
+void EconomyManager::Init()
 {
-	static bool bInitialized = false;
-	if( bInitialized ) return;
-	bInitialized = true;
-
-	// Simulate loading a ledger from a blockchain
-	LOG->Trace("EconomyManager: Initializing Blockchain Link...");
-
-	// Create a "House" wallet and a "Company DAO" wallet
-	m_Ledger["WALLET_HOUSE"] = 100000000;
-	m_Ledger["WALLET_DAO"] = 5000000;
-
-	// Create a default Player wallet with signup bonus
-	m_Ledger["WALLET_PLAYER"] = 100; // Sign-up bonus
-
-	LOG->Trace("EconomyManager: Genesis Block Loaded.");
-
-	LoadState();
+	LOG->Trace( "EconomyManager::Init()" );
+	ReadFromDisk();
+	ConnectToTempo();
 }
 
-void EconomyManager::LoadState()
+void EconomyManager::LoadFromNode( const XNode *pNode )
 {
 	LockMut(m_Mutex);
 	IniFile ini;
@@ -120,12 +108,41 @@ void EconomyManager::LoadState()
 		FOREACH_CONST_Attr(pEquipNode, attr) {
 			m_Equipped[attr->first] = attr->second->GetValue();
 		}
+	if( pNode->GetName() != "Economy" )
+	{
+		LOG->Warn( "Error loading economy: unexpected \"%s\"", pNode->GetName().c_str() );
+		return;
 	}
 
-	LOG->Trace("EconomyManager: State Loaded.");
+	pNode->GetChildValue( "Balance", m_iBalance );
+	pNode->GetChildValue( "WalletAddress", m_sWalletAddress );
+
+    const XNode *pItems = pNode->GetChild( "OwnedItems" );
+    if( pItems )
+    {
+        FOREACH_CONST_Child( pItems, item )
+        {
+            RString sID;
+            item->GetAttrValue( "ID", sID );
+            m_OwnedItems[sID] = true;
+        }
+    }
+
+    const XNode *pHistory = pNode->GetChild( "History" );
+    if( pHistory )
+    {
+        FOREACH_CONST_Child( pHistory, txn )
+        {
+            Transaction t;
+            txn->GetAttrValue( "Date", t.Date );
+            txn->GetAttrValue( "Desc", t.Description );
+            txn->GetAttrValue( "Amount", t.Amount );
+            m_History.push_back( t );
+        }
+    }
 }
 
-void EconomyManager::SaveState()
+XNode* EconomyManager::CreateNode() const
 {
 	LockMut(m_Mutex);
 	IniFile ini;
@@ -152,294 +169,171 @@ void EconomyManager::SaveState()
 	}
 
 	ini.WriteFile("Save/Economy.ini");
+	XNode *xml = new XNode( "Economy" );
+	xml->AppendChild( "Balance", (double)m_iBalance );
+	xml->AppendChild( "WalletAddress", m_sWalletAddress );
+
+    XNode *pItems = xml->AppendChild( "OwnedItems" );
+    for( std::map<RString, bool>::const_iterator it = m_OwnedItems.begin(); it != m_OwnedItems.end(); ++it )
+    {
+        if( it->second )
+        {
+            XNode *item = pItems->AppendChild( "Item" );
+            item->AppendAttr( "ID", it->first );
+        }
+    }
+
+    XNode *pHistory = xml->AppendChild( "History" );
+    for( std::vector<Transaction>::const_iterator it = m_History.begin(); it != m_History.end(); ++it )
+    {
+        XNode *txn = pHistory->AppendChild( "Transaction" );
+        txn->AppendAttr( "Date", it->Date );
+        txn->AppendAttr( "Desc", it->Description );
+        txn->AppendAttr( "Amount", it->Amount );
+    }
+
+	return xml;
 }
 
-void EconomyManager::Update(float fDeltaTime)
+void EconomyManager::ReadFromDisk()
 {
-	LockMut(m_Mutex);
+	if( !IsAFile(ECONOMY_DAT) )
+		return;
 
-	// Simulate "Server Mode" - earning small crypto rewards for uptime
-	m_fMiningTimer += fDeltaTime;
-	if (m_fMiningTimer >= 10.0f) // Every 10 seconds
+	XNode xml;
+	if( !XmlFileUtil::LoadFromFileShowErrors(xml, ECONOMY_DAT) )
+		return;
+
+	LoadFromNode( &xml );
+}
+
+void EconomyManager::WriteToDisk()
+{
+	RageFile f;
+	if( !f.Open(ECONOMY_DAT, RageFile::WRITE|RageFile::SLOW_FLUSH) )
 	{
-		m_fMiningTimer = 0;
-		// Micro-reward for "Proof of Uptime"
-		m_iAccumulatedMiningReward += 1;
-		m_Ledger["WALLET_PLAYER"] += 1;
-
-		// Log occasionally
-		// LOG->Trace( ssprintf("EconomyManager: Server Node Reward Mined! Balance: %lld", m_Ledger["WALLET_PLAYER"]) );
+		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", ECONOMY_DAT.c_str(), f.GetError().c_str() );
+		return;
 	}
 
-	// Shareholder Dividends Logic
-	m_fDividendTimer += fDeltaTime;
-	if (m_fDividendTimer >= 60.0f) // Every minute (simulating a "period")
-	{
-		m_fDividendTimer = 0;
-		CurrencyAmount div = CalculateDividend();
-		if (div > 0)
-		{
-			// Pay out
-			m_Ledger["WALLET_DAO"] -= div;
-			m_Ledger["WALLET_PLAYER"] += div;
-
-			Transaction tx;
-			tx.txID = "DIV_" + MakeUUID();
-			tx.from = "WALLET_DAO";
-			tx.to = "WALLET_PLAYER";
-			tx.amount = div;
-			tx.reason = "Shareholder Dividend";
-			tx.timestamp = time(NULL);
-			m_TransactionHistory.push_back(tx);
-
-			LOG->Trace("EconomyManager: Paid Dividend of %lld", div);
-		}
-	}
+	std::unique_ptr<XNode> xml( CreateNode() );
+	XmlFileUtil::SaveToFile( xml.get(), f );
 }
 
-int EconomyManager::GetShareCount()
+void EconomyManager::Update( float fDeltaTime )
 {
-	LockMut(m_Mutex);
-	int count = 0;
-	for(const auto& item : m_Inventory) {
-		if(item.name == "Company Share") count++;
-	}
-	return count;
+	// Simulate network activity?
 }
 
-CurrencyAmount EconomyManager::CalculateDividend()
+void EconomyManager::ConnectToTempo()
 {
-	// Simple model: 1% of DAO Treasury distributed per Share
-	// In reality this would be complex.
-	// We only calculate what the PLAYER gets.
-
-	int myShares = GetShareCount();
-	if (myShares == 0) return 0;
-
-	CurrencyAmount treasury = m_Ledger["WALLET_DAO"];
-	if (treasury <= 1000) return 0; // Minimum threshold
-
-	// Each share gets 0.01% of treasury
-	double percentage = 0.0001 * myShares;
-	CurrencyAmount payout = (CurrencyAmount)(treasury * percentage);
-
-	return payout;
+	// Mock connection
+	m_bConnected = true;
 }
 
-CurrencyAmount EconomyManager::GetBalance(const WalletAddress& address)
+bool EconomyManager::IsConnected() const
 {
-	LockMut(m_Mutex);
-	if (m_Ledger.find(address) == m_Ledger.end())
-		return 0;
-	return m_Ledger[address];
+	return m_bConnected;
 }
 
-bool EconomyManager::Transfer(const WalletAddress& from, const WalletAddress& to, CurrencyAmount amount, const std::string& reason)
+RString EconomyManager::GetWalletAddress() const
 {
-	if (amount <= 0)
-	{
-		LOG->Warn("EconomyManager: Invalid transfer amount %lld", amount);
-		return false;
-	}
+	return m_sWalletAddress;
+}
 
-	LockMut(m_Mutex);
+long long EconomyManager::GetBalance() const
+{
+	return m_iBalance;
+}
 
-	// Check if from address exists and has funds using find() to avoid creating 0-entries
-	auto it = m_Ledger.find(from);
-	if (it == m_Ledger.end() || it->second < amount)
-	{
-		LOG->Warn("EconomyManager: Insufficient funds for transfer from %s", from.c_str());
-		return false;
-	}
+bool EconomyManager::SendTip( const RString& sAddress, long long iAmount )
+{
+	if( iAmount <= 0 ) return false;
+	if( m_iBalance < iAmount ) return false;
 
-	m_Ledger[from] -= amount;
-	m_Ledger[to] += amount;
-
-	Transaction tx;
-	tx.txID = "TX_" + MakeUUID();
-	tx.from = from;
-	tx.to = to;
-	tx.amount = amount;
-	tx.reason = reason;
-	tx.timestamp = time(NULL);
-
-	m_TransactionHistory.push_back(tx);
-
-	SaveState(); // Auto-save on transaction
-	LOG->Trace("EconomyManager: Transfer Success! %lld coins from %s to %s (%s)", amount, from.c_str(), to.c_str(), reason.c_str());
+	m_iBalance -= iAmount;
+    LogTransaction( "Sent Tip to " + sAddress, -iAmount );
+	LOG->Trace( "Sent tip of %lld to %s. New Balance: %lld", iAmount, sAddress.c_str(), m_iBalance );
 	return true;
 }
 
-WalletAddress EconomyManager::RegisterUser(const std::string& username)
+const std::vector<EconomyItem>& EconomyManager::GetMarketplaceItems() const
 {
-	LockMut(m_Mutex);
-	WalletAddress newAddr = "WALLET_" + username; // Simplified for simulation
-	if (m_Ledger.find(newAddr) == m_Ledger.end())
-	{
-		m_Ledger[newAddr] = 50; // Welcome bonus
-		LOG->Trace("EconomyManager: Registered new user %s with 50 coins.", username.c_str());
-	}
-	return newAddr;
+    return m_MarketplaceCatalog;
 }
 
-void EconomyManager::StartMatchBet(CurrencyAmount amount)
+bool EconomyManager::HasItem( const RString& sItemID ) const
 {
-	if (amount <= 0) return;
-
-	LockMut(m_Mutex);
-	// Need to release mutex before calling Transfer to avoid recursion deadlock if Transfer also locks
-	// But our Transfer locks internally. Standard mutex isn't recursive usually in StepMania?
-	// RageMutex IS recursive. "Recursive mutex class."
-
-	if (Transfer("WALLET_PLAYER", "WALLET_ESCROW", amount, "Match Wager"))
-	{
-		m_bBetActive = true;
-		m_iCurrentBetAmount = amount;
-		LOG->Trace("EconomyManager: Bet placed for %lld", amount);
-	}
+    std::map<RString, bool>::const_iterator it = m_OwnedItems.find( sItemID );
+    return it != m_OwnedItems.end() && it->second;
 }
 
-void EconomyManager::ResolveMatchBet(bool playerWon)
+bool EconomyManager::BuyItem( const RString& sItemID )
 {
-	LockMut(m_Mutex);
-	if (!m_bBetActive) return;
+    if( HasItem( sItemID ) ) return false; // Already owned
 
-	if (playerWon)
-	{
-		// Return wager + winnings (1:1 payout from House for this MVP)
-		// Check for overflow
-		if (m_iCurrentBetAmount > LLONG_MAX / 2)
-		{
-			LOG->Warn("EconomyManager: Bet amount too high, potential overflow.");
-			// Cap or handle error. For now just return original bet?
-			Transfer("WALLET_ESCROW", "WALLET_PLAYER", m_iCurrentBetAmount, "Bet Refund (Overflow)");
-		}
-		else
-		{
-			CurrencyAmount winnings = m_iCurrentBetAmount; // House pays this part
+    // Find price
+    long long price = 0;
+    bool found = false;
+    for( const auto& item : m_MarketplaceCatalog )
+    {
+        if( item.ID == sItemID )
+        {
+            price = item.Price;
+            found = true;
+            break;
+        }
+    }
 
-			// 1. House pays matching amount to player
-			Transfer("WALLET_HOUSE", "WALLET_PLAYER", winnings, "House Payout");
+    if( !found ) return false;
+    if( m_iBalance < price ) return false;
 
-			// 2. Escrow returns original bet to player
-			Transfer("WALLET_ESCROW", "WALLET_PLAYER", m_iCurrentBetAmount, "Bet Return");
-		}
-	}
-	else
-	{
-		// Player lost. Escrow goes to House.
-		Transfer("WALLET_ESCROW", "WALLET_HOUSE", m_iCurrentBetAmount, "House Win");
-	}
+    m_iBalance -= price;
+    m_OwnedItems[sItemID] = true;
+    LogTransaction( "Purchased " + sItemID, -price );
 
-	m_bBetActive = false;
-	m_iCurrentBetAmount = 0;
+    // If Miner purchased, increase hashrate (simulated)
+    if( sItemID == "bobcoin_miner" ) m_fCurrentHashRate += 50.0f;
+
+    return true;
 }
 
-void EconomyManager::PaySongRoyalty(const std::string& songTitle, const std::string& artistName)
+const std::vector<Transaction>& EconomyManager::GetHistory() const
 {
-	// Simulate finding the artist's wallet
-	WalletAddress artistWallet = "ARTIST_" + artistName;
-
-	// Default cost per play
-	CurrencyAmount royaltyFee = 1;
-
-	// The Player pays the royalty (or the Gym Owner in a commercial setting)
-	// For this MVP, the Player pays.
-	if (Transfer("WALLET_PLAYER", artistWallet, royaltyFee, "Song Royalty: " + songTitle))
-	{
-		LOG->Trace("EconomyManager: Paid royalty to %s", artistName.c_str());
-	}
+    return m_History;
 }
 
-void EconomyManager::AwardBandwidthReward(CurrencyAmount amount)
+void EconomyManager::LogTransaction( const RString& sDesc, long long iAmount )
 {
-	LockMut(m_Mutex);
-	if (amount <= 0) return;
+    Transaction t;
+    t.Date = DateTime::GetNowDate().GetString();
+    t.Description = sDesc;
+    t.Amount = iAmount;
+    m_History.insert( m_History.begin(), t ); // Prepend for newest first
 
-	m_Ledger["WALLET_PLAYER"] += amount;
-	m_iAccumulatedMiningReward += amount; // Track as generic earning for now
-	LOG->Trace("EconomyManager: Awarded %lld tokens for bandwidth.", amount);
+    // Limit history size
+    if( m_History.size() > 50 ) m_History.resize( 50 );
 }
 
-void EconomyManager::UpdateElo(bool bWon, int iOpponentElo)
+void EconomyManager::AwardMiningReward( float fScore, float fDifficulty )
 {
-	LockMut(m_Mutex);
-
-	// Basic Elo Calculation
-	// K-Factor = 32 (Standard for new players)
-	const int K = 32;
-
-	// Expected Score = 1 / (1 + 10^((OpponentElo - PlayerElo) / 400))
-	double expected = 1.0 / (1.0 + pow(10.0, (double)(iOpponentElo - m_iPlayerElo) / 400.0));
-
-	double actual = bWon ? 1.0 : 0.0;
-	int change = (int)(K * (actual - expected));
-
-	m_iPlayerElo += change;
-
-	if (m_iPlayerElo > m_iHighestEloAchieved)
-	{
-		int oldHigh = m_iHighestEloAchieved;
-		m_iHighestEloAchieved = m_iPlayerElo;
-
-		// Check for Threshold Crossing (e.g. every 500 points)
-		// 1500 (Silver), 2000 (Gold), 2500 (Pro)
-		if (oldHigh < 1500 && m_iPlayerElo >= 1500)
-		{
-			Transfer("WALLET_HOUSE", "WALLET_PLAYER", 500, "Rank Up Reward: SILVER");
-		}
-		if (oldHigh < 2000 && m_iPlayerElo >= 2000)
-		{
-			Transfer("WALLET_HOUSE", "WALLET_PLAYER", 1000, "Rank Up Reward: GOLD");
-		}
-		if (oldHigh < 2500 && m_iPlayerElo >= 2500)
-		{
-			Transfer("WALLET_HOUSE", "WALLET_PLAYER", 5000, "Rank Up Reward: PRO");
-		}
-	}
-
-	LOG->Trace("EconomyManager: Elo Update. Old: %d, Opponent: %d, Result: %s, New: %d (Change: %d)",
-		m_iPlayerElo - change, iOpponentElo, bWon ? "WIN" : "LOSS", m_iPlayerElo, change);
+    // Basic formula: Score % * Difficulty * Base
+    float reward = (fScore * fDifficulty * 10.0f) + m_fCurrentHashRate;
+    long long amount = (long long)reward;
+    if( amount > 0 )
+    {
+        m_iBalance += amount;
+        LogTransaction( "Mining Reward (Score: " + RString::Format("%.2f%%", fScore*100) + ")", amount );
+    }
 }
 
-void EconomyManager::AddToInventory(const Asset& asset)
+float EconomyManager::GetHashRate() const
 {
-	LockMut(m_Mutex);
-	m_Inventory.push_back(asset);
-	LOG->Trace("EconomyManager: Added %s to inventory.", asset.name.c_str());
+    return m_fCurrentHashRate;
 }
 
-bool EconomyManager::HasAsset(const std::string& name)
-{
-	LockMut(m_Mutex);
-	for(const auto& a : m_Inventory) {
-		if(a.name == name) return true;
-	}
-	return false;
-}
-
-void EconomyManager::EquipAsset(const std::string& type, const std::string& name)
-{
-	LockMut(m_Mutex);
-	m_Equipped[type] = name;
-	LOG->Trace("EconomyManager: Equipped %s as %s.", name.c_str(), type.c_str());
-}
-
-std::string EconomyManager::GetEquippedAsset(const std::string& type)
-{
-	LockMut(m_Mutex);
-	if (m_Equipped.find(type) != m_Equipped.end()) return m_Equipped[type];
-	return "";
-}
-
-std::vector<Asset> EconomyManager::GetInventory() const
-{
-	// Returning copy is thread safe enough for MVP if we assume list doesn't change during copy
-	// Ideal: LockMut(m_Mutex); but const correctness + returning value is tricky without recursive mutex behavior guaranteed or copy.
-	return m_Inventory;
-}
-
-std::vector<Transaction> EconomyManager::GetRecentTransactions() const
+// Lua
+class LunaEconomyManager: public Luna<EconomyManager>
 {
 	return m_TransactionHistory;
 }
@@ -477,6 +371,83 @@ public:
 		lua_pushboolean( L, p->HasAsset(name) );
 		return 1;
 	}
+public:
+	static int GetBalance( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, (double)p->GetBalance() );
+		return 1;
+	}
+	static int GetWalletAddress( T* p, lua_State *L )
+	{
+		lua_pushstring( L, p->GetWalletAddress() );
+		return 1;
+	}
+	static int SendTip( T* p, lua_State *L )
+	{
+		RString addr = SArg(1);
+		long long amount = (long long)FArg(2);
+		lua_pushboolean( L, p->SendTip(addr, amount) );
+		return 1;
+	}
+	static int IsConnected( T* p, lua_State *L )
+	{
+		lua_pushboolean( L, p->IsConnected() );
+		return 1;
+	}
+    static int BuyItem( T* p, lua_State *L )
+    {
+        RString id = SArg(1);
+        lua_pushboolean( L, p->BuyItem(id) );
+        return 1;
+    }
+    static int HasItem( T* p, lua_State *L )
+    {
+        RString id = SArg(1);
+        lua_pushboolean( L, p->HasItem(id) );
+        return 1;
+    }
+    static int GetMarketplaceItems( T* p, lua_State *L )
+    {
+        const std::vector<EconomyItem>& items = p->GetMarketplaceItems();
+        lua_newtable(L);
+        for( size_t i=0; i<items.size(); ++i )
+        {
+            lua_newtable(L);
+            lua_pushstring(L, "ID"); lua_pushstring(L, items[i].ID); lua_settable(L, -3);
+            lua_pushstring(L, "Name"); lua_pushstring(L, items[i].Name); lua_settable(L, -3);
+            lua_pushstring(L, "Price"); lua_pushnumber(L, (double)items[i].Price); lua_settable(L, -3);
+            lua_pushstring(L, "Type"); lua_pushstring(L, items[i].Type); lua_settable(L, -3);
+            lua_pushstring(L, "Icon"); lua_pushstring(L, items[i].Icon); lua_settable(L, -3);
+            lua_rawseti(L, -2, i+1);
+        }
+        return 1;
+    }
+    static int GetHistory( T* p, lua_State *L )
+    {
+        const std::vector<Transaction>& hist = p->GetHistory();
+        lua_newtable(L);
+        for( size_t i=0; i<hist.size(); ++i )
+        {
+            lua_newtable(L);
+            lua_pushstring(L, "Date"); lua_pushstring(L, hist[i].Date); lua_settable(L, -3);
+            lua_pushstring(L, "Description"); lua_pushstring(L, hist[i].Description); lua_settable(L, -3);
+            lua_pushstring(L, "Amount"); lua_pushnumber(L, (double)hist[i].Amount); lua_settable(L, -3);
+            lua_rawseti(L, -2, i+1);
+        }
+        return 1;
+    }
+    static int AwardMiningReward( T* p, lua_State *L )
+    {
+        float score = FArg(1);
+        float diff = FArg(2);
+        p->AwardMiningReward(score, diff);
+        return 0;
+    }
+    static int GetHashRate( T* p, lua_State *L )
+    {
+        lua_pushnumber(L, p->GetHashRate());
+        return 1;
+    }
 
 	LunaEconomyManager()
 	{
@@ -484,6 +455,15 @@ public:
 		ADD_METHOD( Transfer );
 		ADD_METHOD( GetPlayerElo );
 		ADD_METHOD( HasAsset );
+		ADD_METHOD( GetWalletAddress );
+		ADD_METHOD( SendTip );
+		ADD_METHOD( IsConnected );
+        ADD_METHOD( BuyItem );
+        ADD_METHOD( HasItem );
+        ADD_METHOD( GetMarketplaceItems );
+        ADD_METHOD( GetHistory );
+        ADD_METHOD( AwardMiningReward );
+        ADD_METHOD( GetHashRate );
 	}
 };
 

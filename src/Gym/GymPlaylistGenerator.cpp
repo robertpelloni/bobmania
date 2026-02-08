@@ -5,12 +5,18 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "GameManager.h"
+#include "Steps.h"
+#include "Style.h"
+#include "Song.h"
+#include "LuaManager.h"
+#include "EnumHelper.h"
 
 Course* GymPlaylistGenerator::GenerateCircuit( float targetDurationSeconds, WorkoutIntensity intensity )
 {
 	Course* pCourse = new Course;
 	pCourse->m_sMainTitle = "Daily Circuit";
 	pCourse->m_sScripter = "AI Trainer";
+	pCourse->m_bIsAutogen = true;
 
 	// Determine target meter range based on intensity
 	int minMeter = 1;
@@ -29,26 +35,56 @@ Course* GymPlaylistGenerator::GenerateCircuit( float targetDurationSeconds, Work
 
 	if( allSongs.empty() ) return pCourse;
 
-	// Simple Greedy Algorithm for MVP
-	// In production, this would be smarter (Warmup -> Peak -> Cooldown)
+	// Filter songs that have at least one stepchart in the range for the current style
+	struct Candidate {
+		Song* pSong;
+		Steps* pSteps;
+	};
+	std::vector<Candidate> candidates;
+
+	const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
+	StepsType st = pStyle ? pStyle->m_StepsType : StepsType_dance_single;
+
+	for( Song* pSong : allSongs )
+	{
+		const std::vector<Steps*>& vpSteps = pSong->GetAllSteps();
+		for( Steps* pSteps : vpSteps )
+		{
+			if( pSteps->m_StepsType == st && 
+				pSteps->GetMeter() >= minMeter && 
+				pSteps->GetMeter() <= maxMeter )
+			{
+				candidates.push_back( { pSong, pSteps } );
+			}
+		}
+	}
+
+	if( candidates.empty() )
+	{
+		// Fallback: Just pick random songs and don't enforce steps
+		for( int i=0; i<10; ++i ) {
+			Song* pSong = allSongs[ RandomInt(allSongs.size()) ];
+			CourseEntry entry;
+			entry.songID.FromSong( pSong );
+			pCourse->m_vEntries.push_back( entry );
+			currentDuration += pSong->m_fMusicLengthSeconds;
+			if( currentDuration >= targetDurationSeconds ) break;
+		}
+		return pCourse;
+	}
 
 	int attempts = 0;
-	while( currentDuration < targetDurationSeconds && attempts < 100 )
+	while( currentDuration < targetDurationSeconds && attempts < 200 )
 	{
-		Song* pSong = allSongs[ RandomInt(allSongs.size()) ];
-
-		// Find a step chart in our range
-		// (Simplified logic: assumes we can find one)
-		// Real implementation would iterate pSong->GetAllSteps()
-
-		float fSongLen = pSong->m_fMusicLengthSeconds;
+		const Candidate& cand = candidates[ RandomInt(candidates.size()) ];
 
 		CourseEntry entry;
-		entry.pSong = pSong;
-		// entry.pSteps = ... (In SM5 CourseEntry usually just holds the song and difficulty type, not exact steps pointer)
+		entry.songID.FromSong( cand.pSong );
+		entry.stepsCriteria.m_difficulty = cand.pSteps->GetDifficulty();
+		entry.bNoDifficult = true; // Force this difficulty
 
 		pCourse->m_vEntries.push_back( entry );
-		currentDuration += fSongLen;
+		currentDuration += cand.pSong->m_fMusicLengthSeconds;
 		attempts++;
 	}
 
@@ -57,7 +93,54 @@ Course* GymPlaylistGenerator::GenerateCircuit( float targetDurationSeconds, Work
 
 float GymPlaylistGenerator::EstimateCalories( Song* pSong, float fRate )
 {
-	// Basic formula: Time * Intensity Factor
 	if(!pSong) return 0.0f;
-	return pSong->m_fMusicLengthSeconds * fRate * 0.15f; // Rough kcal approximation
+	// Rough approximation: Length * Rate * Factor
+	return pSong->m_fMusicLengthSeconds * fRate * 0.20f; 
 }
+
+// Lua bindings for GymPlaylistGenerator
+
+static const char *WorkoutIntensityNames[] = {
+	"Light",
+	"Moderate",
+	"Vigorous",
+	"ProAthlete",
+};
+XBOX360_NAMED_ENUM( WorkoutIntensity, WorkoutIntensityNames );
+
+class LunaGymPlaylistGenerator: public Luna<GymPlaylistGenerator>
+{
+public:
+	static int GenerateCircuit( T* p, lua_State *L )
+	{
+		float duration = FArg(1);
+		WorkoutIntensity intensity = Enum::Check<WorkoutIntensity>(L, 2);
+		
+		Course* pCourse = GymPlaylistGenerator::GenerateCircuit( duration, intensity );
+		if( pCourse )
+			pCourse->PushSelf(L);
+		else
+			lua_pushnil(L);
+		
+		return 1;
+	}
+
+	static int EstimateCalories( T* p, lua_State *L )
+	{
+		Song* pSong = Luna<Song>::check(L, 1);
+		float rate = FArg(2);
+		
+		float calories = GymPlaylistGenerator::EstimateCalories( pSong, rate );
+		lua_pushnumber(L, calories);
+		return 1;
+	}
+
+	LunaGymPlaylistGenerator()
+	{
+		ADD_METHOD( GenerateCircuit );
+		ADD_METHOD( EstimateCalories );
+	}
+};
+
+LUA_REGISTER_CLASS( GymPlaylistGenerator )
+

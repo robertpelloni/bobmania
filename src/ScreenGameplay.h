@@ -271,6 +271,7 @@ protected:
 
 	Background		*m_pSongBackground;
 	Foreground		*m_pSongForeground;
+	Actor			*m_pModfile;
 
 	/** @brief Used between songs in a course to show the next song. */
 	Transition		m_NextSong;
@@ -283,6 +284,7 @@ protected:
 	bool			m_bShowScoreboard;
 
 	BitmapText		m_textDebug;
+	BitmapText		m_textEconomy; // Added for Economy Integration
 
 	RageTimer		m_GiveUpTimer;
 	bool m_gave_up;
