@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-[submodule "itgmania/bobcoin"]
-	path = itgmania/bobcoin
-	url = https://github.com/robertpelloni/bobcoin
-[submodule "itgmania/Themes/Simply-Love-SM5"]
-	path = itgmania/Themes/Simply-Love-SM5
-=======
 [submodule "bobcoin"]
 	path = bobcoin
 	url = https://github.com/robertpelloni/bobcoin
 [submodule "Themes/Simply-Love-SM5"]
 	path = Themes/Simply-Love-SM5
->>>>>>> origin/unified-ui-features-13937230807013224518
 	url = https://github.com/Simply-Love/Simply-Love-SM5.git
