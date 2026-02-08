@@ -6,6 +6,11 @@
 
 NetworkSyncManager *NSMAN;
 
+// Aldo: used by GetCurrentSMVersion()
+#if defined(HAVE_VERSION_INFO)
+extern unsigned long version_num;
+#endif
+
 #if defined(WITHOUT_NETWORKING)
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
 NetworkSyncManager::~NetworkSyncManager () { }
@@ -25,11 +30,14 @@ void NetworkSyncManager::SendChat( const RString& message ) { }
 void NetworkSyncManager::SelectUserSong() { }
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
-void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { } 
+void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { }
+	#if defined(HAVE_VERSION_INFO)
+		unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return version_num; }
+	#else
+		unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
+	#endif
 #else
 #include "ezsockets.h"
-#include "NetworkPacket.h"
-#include "NetworkProtocol.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
 #include "ScreenManager.h"
@@ -52,11 +60,15 @@ AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
-static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." ); // safe -f.
+int NetworkSyncManager::GetSMOnlineSalt()
+{
+	return m_iSalt;
+}
 
+static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
-	LANserver = NULL;
+	LANserver = NULL;	//So we know if it has been created yet
 	BroadcastReception = NULL;
 
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
@@ -69,7 +81,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
 
-	m_startupStatus = 0;	// By default, connection not tried.
+	m_startupStatus = 0;	//By default, connection not tried.
 
 	m_ActivePlayers = 0;
 
@@ -78,7 +90,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 
 NetworkSyncManager::~NetworkSyncManager ()
 {
-	// Close Connection to server nicely.
+	//Close Connection to server nicely.
 	if( useSMserver )
 		NetPlayerClient->close();
 	SAFE_DELETE( NetPlayerClient );
@@ -95,17 +107,12 @@ void NetworkSyncManager::CloseConnection()
 	if( !useSMserver )
 		return;
 	m_ServerVersion = 0;
-	useSMserver = false;
+   	useSMserver = false;
 	isSMOnline = false;
 	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
 	m_startupStatus = 0;
 	NetPlayerClient->close();
-}
-
-int NetworkSyncManager::GetSMOnlineSalt()
-{
-	return m_iSalt;
 }
 
 void NetworkSyncManager::PostStartUp( const RString& ServerIP )
@@ -150,18 +157,20 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 
 	m_startupStatus = 1;	// Connection attepmpt successful
 
-	// If network play is desired and the connection works, halt until we know
-	// what server version we're dealing with.
+	// If network play is desired and the connection works,
+	// halt until we know what server version we're dealing with
 
-	// Legacy hello packet:
-	m_packet.Clear();
-	m_packet.Write1( LegacyNetCmdHello );
-	m_packet.Write1( LegacyProtocolVersion );
-	m_packet.WriteString( RString(PRODUCT_ID_VER) );
+	m_packet.ClearPacket();
+	m_packet.Write1( NSCHello );	//Hello Packet
+
+	m_packet.Write1( NETPROTOCOLVERSION );
+
+	m_packet.WriteNT( RString(PRODUCT_ID_VER) );
 
 	/* Block until response is received.
 	 * Move mode to blocking in order to give CPU back to the system,
-	 * and not wait. */
+	 * and not wait.
+	 */
 
 	bool dontExit = true;
 
@@ -171,14 +180,14 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	// If we are serving, we do not block for this.
 	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 
-	m_packet.Clear();
+	m_packet.ClearPacket();
 
 	while( dontExit )
 	{
-		m_packet.Clear();
-		if( NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE) < 1 )
+		m_packet.ClearPacket();
+		if( NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1 )
 			dontExit=false; // Also allow exit if there is a problem on the socket
-		if( m_packet.Read1() == NSServerOffset + LegacyNetCmdHello )
+		if( m_packet.Read1() == NSServerOffset + NSCHello )
 			dontExit=false;
 		// Only allow passing on handshake; otherwise scoreboard updates and
 		// such will confuse us.
@@ -187,54 +196,14 @@ void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 	NetPlayerClient->blocking = false;
 
 	m_ServerVersion = m_packet.Read1();
-	if( m_ServerVersion == 0x66 )
-	{
-		// temporary hack:
+	if( m_ServerVersion >= 128 )
 		isSMOnline = true;
 
-		// modern online servers send the status as a string
-		RString sStatus = RString( m_packet.ReadString() );
-		// check the status value:
-		if( sStatus != "OK!" )
-		{
-			if( sStatus == "Maintenence" )
-				LOG->Warn( "Server is offline for maintenence." );
-			else if( sStatus == "Offline" )
-				LOG->Warn( "Server is offline." );
-			m_startupStatus = 2;
-			CloseConnection();
-			return;
-		}
-
-		// send the real hello packet
-		m_packet.Clear();
-		//m_packet.Write1( NetworkProtocol::NetCommand_LegacyHello );
-		//m_packet.Write1( ModernProtocolVersion );
-		//m_packet.WriteString( RString(PRODUCT_ID_VER) );
-	}
-	else if( m_ServerVersion >= 128 )
-	{
-		// legacy smonline
-		//isSMOnline = true;
-
-		m_ServerName = m_packet.ReadString();
-		//m_iSalt = m_packet.Read4();
-		LOG->Info( "'%s' is running (legacy) server version: %d", m_ServerName.c_str(), m_ServerVersion );
-
-		m_startupStatus = 2;
-		LOG->Warn( "Legacy Server Detected. StepMania 5 cannot connect to legacy online servers." );
-		CloseConnection();
-		return;
-	}
-	else
-	{
-		// smlan
-		m_startupStatus = 2;
-		LOG->Warn( "LAN Server Detected. StepMania 5 cannot connect to legacy LAN servers." );
-		CloseConnection();
-		return;
-	}
+	m_ServerName = m_packet.ReadNT();
+	m_iSalt = m_packet.Read4();
+	LOG->Info( "Server Version: %d %s", m_ServerVersion, m_ServerName.c_str() );
 }
+
 
 void NetworkSyncManager::StartUp()
 {
@@ -243,12 +212,12 @@ void NetworkSyncManager::StartUp()
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp( ServerIP );
 
-	// LAN
 	BroadcastReception = new EzSockets;
 	BroadcastReception->create( IPPROTO_UDP );
 	BroadcastReception->bind( 8765 );
 	BroadcastReception->blocking = false;
 }
+
 
 bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 {
@@ -261,30 +230,28 @@ bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 	return useSMserver;
 }
 
+void NetworkSyncManager::ReportNSSOnOff(int i) 
+{
+	m_packet.ClearPacket();
+	m_packet.Write1( NSCSMS );
+	m_packet.Write1( (uint8_t) i );
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
+}
+
 RString NetworkSyncManager::GetServerName() 
 { 
 	return m_ServerName;
 }
 
-// legacy
-void NetworkSyncManager::ReportNSSOnOff(int i) 
-{
-	m_packet.Clear();
-	m_packet.Write1( LegacyNetCmdSMS );
-	m_packet.Write1( (uint8_t) i );
-	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
-}
-
-// legacy
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset)
 {
 	if( !useSMserver ) //Make sure that we are using the network
 		return;
 
-	LOG->Trace( ssprintf("Player ID %i combo = %i", playerID, combo) );
-	m_packet.Clear();
+	LOG->Trace( "Player ID %i combo = %i", playerID, combo );
+	m_packet.ClearPacket();
 
-	m_packet.Write1( LegacyNetCmdGSU );
+	m_packet.Write1( NSCGSU );
 	step = TranslateStepType(step);
 	uint8_t ctr = (uint8_t) (playerID * 16 + step - ( SMOST_HITMINE - 1 ) );
 	m_packet.Write1( ctr );
@@ -321,41 +288,38 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 
 }
 
-// legacy
 void NetworkSyncManager::ReportSongOver() 
 {
 	if ( !useSMserver )	//Make sure that we are using the network
 		return;
 
-	m_packet.Clear();
+	m_packet.ClearPacket();
 
-	m_packet.Write1( LegacyNetCmdGON );
+	m_packet.Write1( NSCGON );
 
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position ); 
 	return;
 }
 
-// legacy
 void NetworkSyncManager::ReportStyle() 
 {
 	LOG->Trace( "Sending \"Style\" to server" );
 
 	if( !useSMserver )
 		return;
-	m_packet.Clear();
-	m_packet.Write1( LegacyNetCmdSU );
+	m_packet.ClearPacket();
+	m_packet.Write1( NSCSU );
 	m_packet.Write1( (int8_t)GAMESTATE->GetNumPlayersEnabled() );
 
 	FOREACH_EnabledPlayer( pn ) 
 	{
 		m_packet.Write1( (uint8_t)pn );
-		m_packet.WriteString( GAMESTATE->GetPlayerDisplayName(pn) );
+		m_packet.WriteNT( GAMESTATE->GetPlayerDisplayName(pn) );
 	}
 
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-// legacy
 void NetworkSyncManager::StartRequest( short position ) 
 {
 	if( !useSMserver )
@@ -366,9 +330,9 @@ void NetworkSyncManager::StartRequest( short position )
 
 	LOG->Trace( "Requesting Start from Server." );
 
-	m_packet.Clear();
+	m_packet.ClearPacket();
 
-	m_packet.Write1( LegacyNetCmdGSR );
+	m_packet.Write1( NSCGSR );
 
 	unsigned char ctr=0;
 
@@ -401,33 +365,33 @@ void NetworkSyncManager::StartRequest( short position )
 
 	if( GAMESTATE->m_pCurSong != NULL )
 	{
-		m_packet.WriteString( GAMESTATE->m_pCurSong->m_sMainTitle );
-		m_packet.WriteString( GAMESTATE->m_pCurSong->m_sSubTitle );
-		m_packet.WriteString( GAMESTATE->m_pCurSong->m_sArtist );
+		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sMainTitle );
+		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sSubTitle );
+		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sArtist );
 	}
 	else
 	{
-		m_packet.WriteString( "" );
-		m_packet.WriteString( "" );
-		m_packet.WriteString( "" );
+		m_packet.WriteNT( "" );
+		m_packet.WriteNT( "" );
+		m_packet.WriteNT( "" );
 	}
 
 	if( GAMESTATE->m_pCurCourse != NULL )
-		m_packet.WriteString( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
+		m_packet.WriteNT( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
 	else
-		m_packet.WriteString( RString() );
+		m_packet.WriteNT( RString() );
 
 	//Send Player (and song) Options
-	m_packet.WriteString( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
+	m_packet.WriteNT( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
 
 	int players=0;
 	FOREACH_PlayerNumber( p )
 	{
 		++players;
-		m_packet.WriteString( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString() );
+		m_packet.WriteNT( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString() );
 	}
 	for (int i=0; i<2-players; ++i)
-		m_packet.WriteString("");	//Write a NULL if no player
+		m_packet.WriteNT("");	//Write a NULL if no player
 
 	//This needs to be reset before ScreenEvaluation could possibly be called
 	m_EvalPlayerData.clear();
@@ -446,17 +410,17 @@ void NetworkSyncManager::StartRequest( short position )
 	
 	LOG->Trace("Waiting for RECV");
 
-	m_packet.Clear();
+	m_packet.ClearPacket();
 
 	while (dontExit)
 	{
-		m_packet.Clear();
-		if( NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE) < 1 )
+		m_packet.ClearPacket();
+		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
 				dontExit=false; // Also allow exit if there is a problem on the socket
 								// Only do if we are not the server, otherwise the sync
 								// gets hosed up due to non blocking mode.
 
-			if (m_packet.Read1() == (NSServerOffset + LegacyNetCmdGSR))
+			if (m_packet.Read1() == (NSServerOffset + NSCGSR))
 				dontExit=false;
 		// Only allow passing on Start request; otherwise scoreboard updates
 		// and such will confuse us.
@@ -492,14 +456,14 @@ void NetworkSyncManager::Update(float fDeltaTime)
 	if (useSMserver)
 		ProcessInput();
 
-	NetworkPacket BroadIn;
+	PacketFunctions BroadIn;
 	if ( BroadcastReception->ReadPack( (char*)&BroadIn.Data, 1020 ) )
 	{
 		NetServerInfo ThisServer;
 		BroadIn.Position = 0;
 		if ( BroadIn.Read1() == 141 ) // SMLS_Info?
 		{
-			ThisServer.Name = BroadIn.ReadString();
+			ThisServer.Name = BroadIn.ReadNT();
 			int port = BroadIn.Read2();
 			BroadIn.Read2();	//Num players connected.
 			uint32_t addy = EzSockets::LongFromAddrIn(BroadcastReception->fromAddr);
@@ -546,12 +510,12 @@ void NetworkSyncManager::ProcessInput()
 
 	// load new data into buffer
 	NetPlayerClient->update();
-	m_packet.Clear();
+	m_packet.ClearPacket();
 
 	int packetSize;
-	while( (packetSize = NetPlayerClient->ReadPack((char *)&m_packet, MAX_PACKET_BUFFER_SIZE)) > 0 )
+	while ( (packetSize = NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE) ) > 0 )
 	{
-		m_packet.Size = packetSize;
+		m_packet.size = packetSize;
 		int command = m_packet.Read1();
 		//Check to make sure command is valid from server
 		if (command < NSServerOffset)
@@ -564,16 +528,16 @@ void NetworkSyncManager::ProcessInput()
 
 		switch (command)
 		{
-		case LegacyNetCmdPing: // Ping packet responce
-			m_packet.Clear();
-			m_packet.Write1( LegacyNetCmdPingR );
+		case NSCPing: // Ping packet responce
+			m_packet.ClearPacket();
+			m_packet.Write1( NSCPingR );
 			NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 			break;
-		case LegacyNetCmdPingR: // These are in response to when/if we send packet 0's
-		case LegacyNetCmdHello: // This is already taken care of by the blocking code earlier
-		case LegacyNetCmdGSR:   // This is taken care of by the blocking start code
+		case NSCPingR: // These are in response to when/if we send packet 0's
+		case NSCHello: // This is already taken care of by the blocking code earlier
+		case NSCGSR:   // This is taken care of by the blocking start code
 			break;
-		case LegacyNetCmdGON: 
+		case NSCGON: 
 			{
 				int PlayersInPack = m_packet.Read1();
 				m_EvalPlayerData.resize(PlayersInPack);
@@ -589,11 +553,11 @@ void NetworkSyncManager::ProcessInput()
 					for (int i=0; i<PlayersInPack; ++i)
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
 				for (int i=0; i<PlayersInPack; ++i)
-					m_EvalPlayerData[i].playerOptions = m_packet.ReadString();
+					m_EvalPlayerData[i].playerOptions = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_GotEval );
 			}
 			break;
-		case LegacyNetCmdGSU: // Scoreboard Update
+		case NSCGSU: // Scoreboard Update
 			{	//Ease scope
 				int ColumnNumber=m_packet.Read1();
 				int NumberPlayers=m_packet.Read1();
@@ -626,30 +590,30 @@ void NetworkSyncManager::ProcessInput()
 				*/
 			}
 			break;
-		case LegacyNetCmdSU: //System message from server
+		case NSCSU: //System message from server
 			{
-				RString SysMSG = m_packet.ReadString();
+				RString SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
-		case LegacyNetCmdCM: //Chat message from server
+		case NSCCM: //Chat message from server
 			{
-				m_sChatText += m_packet.ReadString() + " \n ";
+				m_sChatText += m_packet.ReadNT() + " \n ";
 				//10000 chars backlog should be more than enough
 				m_sChatText = m_sChatText.Right(10000);
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
 			break;
-		case LegacyNetCmdRSG: //Select Song/Play song
+		case NSCRSG: //Select Song/Play song
 			{
 				m_iSelectMode = m_packet.Read1();
-				m_sMainTitle = m_packet.ReadString();
-				m_sArtist = m_packet.ReadString();
-				m_sSubTitle = m_packet.ReadString();
+				m_sMainTitle = m_packet.ReadNT();
+				m_sArtist = m_packet.ReadNT();
+				m_sSubTitle = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
 			}
 			break;
-		case LegacyNetCmdUUL:
+		case NSCUUL:
 			{
 				/*int ServerMaxPlayers=*/m_packet.Read1();
 				int PlayersInThisPacket=m_packet.Read1();
@@ -666,16 +630,16 @@ void NetworkSyncManager::ProcessInput()
 						m_ActivePlayer.push_back( i );
 					}
 					m_PlayerStatus.push_back( PStatus );
-					m_PlayerNames.push_back( m_packet.ReadString() );
+					m_PlayerNames.push_back( m_packet.ReadNT() );
 				}
 				SCREENMAN->SendMessageToTopScreen( SM_UsersUpdate );
 			}
 			break;
-		case LegacyNetCmdSMS:
+		case NSCSMS:
 			{
 				RString StyleName, GameName;
-				GameName = m_packet.ReadString();
-				StyleName = m_packet.ReadString();
+				GameName = m_packet.ReadNT();
+				StyleName = m_packet.ReadNT();
 
 				GAMESTATE->SetCurGame( GAMEMAN->StringToGame(GameName) );
 				GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,StyleName) );
@@ -683,16 +647,16 @@ void NetworkSyncManager::ProcessInput()
 				SCREENMAN->SetNewScreen( "ScreenNetSelectMusic" ); //Should this be metric'd out?
 			}
 			break;
-		case LegacyNetCmdSMOnline:
+		case NSCSMOnline:
 			{
-				m_SMOnlinePacket.Size = packetSize - 1;
+				m_SMOnlinePacket.size = packetSize - 1;
 				m_SMOnlinePacket.Position = 0;
 				memcpy( m_SMOnlinePacket.Data, (m_packet.Data + 1), packetSize-1 );
 				LOG->Trace( "Received SMOnline Command: %d, size:%d", command, packetSize - 1 );
 				SCREENMAN->SendMessageToTopScreen( SM_SMOnlinePack );
 			}
 			break;
-		case LegacyNetCmdAttack:
+		case NSCAttack:
 			{
 				PlayerNumber iPlayerNumber = (PlayerNumber)m_packet.Read1();
 
@@ -701,18 +665,17 @@ void NetworkSyncManager::ProcessInput()
 					Attack a;
 					a.fSecsRemaining = float( m_packet.Read4() ) / 1000.0f;
 					a.bGlobal = false;
-					a.sModifiers = m_packet.ReadString();
+					a.sModifiers = m_packet.ReadNT();
 					GAMESTATE->m_pPlayerState[iPlayerNumber]->LaunchAttack( a );
 				}
-				m_packet.Clear();
+				m_packet.ClearPacket();
 			}
 			break;
 		}
-		m_packet.Clear();
+		m_packet.ClearPacket();
 	}
 }
 
-// legacy
 bool NetworkSyncManager::ChangedScoreboard(int Column) 
 {
 	if (!m_scoreboardchange[Column])
@@ -723,50 +686,40 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 
 void NetworkSyncManager::SendChat(const RString& message) 
 {
-	m_packet.Clear();
-	m_packet.Write1( LegacyNetCmdCM );
-	m_packet.WriteString( message );
+	m_packet.ClearPacket();
+	m_packet.Write1( NSCCM );
+	m_packet.WriteNT( message );
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
-// legacy
 void NetworkSyncManager::ReportPlayerOptions()
 {
-	m_packet.Clear();
-	m_packet.Write1( LegacyNetCmdUPOpts );
+	m_packet.ClearPacket();
+	m_packet.Write1( NSCUPOpts );
 	FOREACH_PlayerNumber (pn)
-		m_packet.WriteString( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString() );
+		m_packet.WriteNT( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString() );
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
-// legacy
 void NetworkSyncManager::SelectUserSong()
 {
-	m_packet.Clear();
-	m_packet.Write1( LegacyNetCmdRSG );
+	m_packet.ClearPacket();
+	m_packet.Write1( NSCRSG );
 	m_packet.Write1( (uint8_t) m_iSelectMode );
-	m_packet.WriteString( m_sMainTitle );
-	m_packet.WriteString( m_sArtist );
-	m_packet.WriteString( m_sSubTitle );
+	m_packet.WriteNT( m_sMainTitle );
+	m_packet.WriteNT( m_sArtist );
+	m_packet.WriteNT( m_sSubTitle );
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-// todo: replace anything that calls this? -aj
-void NetworkSyncManager::SendSMOnline()
+void NetworkSyncManager::SendSMOnline( )
 {
-	/*
-	if( m_Protocol->m_sName == "Legacy" )
-		static_cast<NetworkProtocolLegacy*>(m_Protocol)->SendSMOnline(&m_packet);
-	*/
+	m_packet.Position = m_SMOnlinePacket.Position + 1;
+	memcpy( (m_packet.Data + 1), m_SMOnlinePacket.Data, m_SMOnlinePacket.Position );
+	m_packet.Data[0] = NSCSMOnline;
+	NetPlayerClient->SendPack( (char*)&m_packet.Data , m_packet.Position );
 }
 
-// generic packet sending function, mostly used in NetworkProtocols
-void NetworkSyncManager::SendPacket(NetworkPacket *p)
-{
-	NetPlayerClient->SendPack( (char*)p->Data , p->Position );
-}
-
-// legacy
 SMOStepType NetworkSyncManager::TranslateStepType(int score)
 {
 	/* Translate from Stepmania's constantly changing TapNoteScore
@@ -798,19 +751,223 @@ SMOStepType NetworkSyncManager::TranslateStepType(int score)
 	}
 }
 
-// common
+// Packet functions
+uint8_t PacketFunctions::Read1()
+{
+	if (Position>=NETMAXBUFFERSIZE)
+		return 0;
+
+	return Data[Position++];
+}
+
+uint16_t PacketFunctions::Read2()
+{
+	if (Position>=NETMAXBUFFERSIZE-1)
+		return 0;
+
+	uint16_t Temp;
+	memcpy( &Temp, Data + Position,2 );
+	Position+=2;
+	return ntohs(Temp);
+}
+
+uint32_t PacketFunctions::Read4()
+{
+	if (Position>=NETMAXBUFFERSIZE-3)
+		return 0;
+
+	uint32_t Temp;
+	memcpy( &Temp, Data + Position,4 );
+	Position+=4;
+	return ntohl(Temp);
+}
+
+RString PacketFunctions::ReadNT()
+{
+	//int Orig=Packet.Position;
+	RString TempStr;
+	while ((Position<NETMAXBUFFERSIZE)&& (((char*)Data)[Position]!=0))
+		TempStr= TempStr + (char)Data[Position++];
+
+	++Position;
+	return TempStr;
+}
+
+
+void PacketFunctions::Write1(uint8_t data)
+{
+	if (Position>=NETMAXBUFFERSIZE)
+		return;
+	memcpy( &Data[Position], &data, 1 );
+	++Position;
+}
+
+void PacketFunctions::Write2(uint16_t data)
+{
+	if (Position>=NETMAXBUFFERSIZE-1)
+		return;
+	data = htons(data);
+	memcpy( &Data[Position], &data, 2 );
+	Position+=2;
+}
+
+void PacketFunctions::Write4(uint32_t data)
+{
+	if (Position>=NETMAXBUFFERSIZE-3)
+		return ;
+
+	data = htonl(data);
+	memcpy( &Data[Position], &data, 4 );
+	Position+=4;
+}
+
+void PacketFunctions::WriteNT(const RString& data)
+{
+	size_t index=0;
+	while( Position<NETMAXBUFFERSIZE && index<data.size() )
+		Data[Position++] = (unsigned char)(data.c_str()[index++]);
+	Data[Position++] = 0;
+}
+
+void PacketFunctions::ClearPacket()
+{
+	memset((void*)(&Data),0, NETMAXBUFFERSIZE);
+	Position = 0;
+}
+
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
 {
 	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
 }
 
-// LAN
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 
 {
 	AllServers = m_vAllLANServers;
 }
 
-// common
+// Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
+// I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
+// update when adding new files and how (Xcode/stepmania_xcode4.3.xcodeproj has a really crazy structure :/).
+#if !defined(HAVE_VERSION_INFO)
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld ) { return 0; }
+#else
+unsigned long NetworkSyncManager::GetCurrentSMBuild( LoadingWindow* ld )
+{
+	// Aldo: Using my own host by now, upload update_check/check_sm5.php to an official URL and change the following constants accordingly:
+	const RString sHost = "aldo.mx";
+	const unsigned short uPort = 80;
+	const RString sResource = "/stepmania/check_sm5.php";
+	const RString sUserAgent = PRODUCT_ID;
+	const RString sReferer = "http://aldo.mx/stepmania/";
+	
+	if( ld != NULL )
+	{
+		ld->SetIndeterminate( true );
+		ld->SetText("Checking for updates...");
+	}
+
+	unsigned long uCurrentSMBuild = version_num;
+	bool bSuccess = false;
+	EzSockets* socket = new EzSockets();
+	socket->create();
+	socket->blocking = true;
+
+	if( socket->connect(sHost, uPort) )
+	{
+		RString sHTTPRequest = ssprintf(
+			"GET %s HTTP/1.1"			"\r\n"
+			"Host: %s"					"\r\n"
+			"User-Agent: %s"			"\r\n"
+			"Cache-Control: no-cache"	"\r\n"
+			"Referer: %s"				"\r\n"
+			"X-SM-Build: %lu"			"\r\n"
+			"\r\n",
+			sResource.c_str(), sHost.c_str(),
+			sUserAgent.c_str(), sReferer.c_str(),
+			version_num
+		);
+
+		socket->SendData(sHTTPRequest);
+		
+		// Aldo: EzSocket::pReadData() is a lower level function, I used it because I was having issues
+		// with EzSocket::ReadData() in 3.9, feel free to refactor this function, the low lever character
+		// manipulation might look scary to people not used to it.
+		char* cBuffer = new char[NETMAXBUFFERSIZE];
+		// Reading the first NETMAXBUFFERSIZE bytes (usually 1024), should be enough to get the HTTP Header only
+		int iBytes = socket->pReadData(cBuffer);
+		if( iBytes != 0 )
+		{
+			// \r\n\r\n = Separator from HTTP Header and Body
+			char* cBodyStart = strstr(cBuffer, "\r\n\r\n");
+			if( cBodyStart != NULL )
+			{
+				// Get the HTTP Header only
+				int iHeaderLength = cBodyStart - cBuffer;
+				char* cHeader = new char[iHeaderLength+1];
+				strncpy( cHeader, cBuffer, iHeaderLength );
+				cHeader[iHeaderLength] = '\0';	// needed to make it a valid C String
+
+				RString sHTTPHeader( cHeader );
+				SAFE_DELETE_ARRAY( cHeader );
+				Trim( sHTTPHeader );
+				//LOG->Trace( sHTTPHeader.c_str() );
+
+				vector<RString> svResponse;
+				split( sHTTPHeader, "\r\n", svResponse );
+			
+				// Check for 200 OK
+				if( svResponse[0].find("200") != RString::npos )
+				{
+					// Iterate through every field until an X-SM-Build field is found
+					for( unsigned h=1; h<svResponse.size(); h++ )
+					{
+						RString::size_type sFieldPos = svResponse[h].find(": ");
+						if( sFieldPos != RString::npos )
+						{
+							RString sFieldName = svResponse[h].Left(sFieldPos),
+								sFieldValue = svResponse[h].substr(sFieldPos+2);
+
+							Trim( sFieldName );
+							Trim( sFieldValue );
+
+							if( 0 == stricmp(sFieldName,"X-SM-Build") )
+							{
+								bSuccess = true;
+								uCurrentSMBuild = strtoul( sFieldValue, NULL, 10 );
+								break;
+							}
+						}
+					}
+				} // if( svResponse[0].find("200") != RString::npos )
+			} // if( cBodyStart != NULL )
+		} // if( iBytes )
+		SAFE_DELETE_ARRAY( cBuffer );
+	} // if( socket->connect(sHost, uPort) )
+	
+	socket->close();
+	SAFE_DELETE( socket );
+
+	if( ld != NULL )
+	{
+		ld->SetIndeterminate(false);
+		ld->SetTotalWork(100);
+
+		if( bSuccess )
+		{
+			ld->SetProgress(100);
+			ld->SetText("Checking for updates... OK");
+		}
+		else
+		{
+			ld->SetProgress(0);
+			ld->SetText("Checking for updates... ERROR");
+		}
+	}
+
+	return uCurrentSMBuild;
+}
+#endif
+
 static bool ConnectToServer( const RString &t ) 
 { 
 	NSMAN->PostStartUp( t );
@@ -820,7 +977,6 @@ static bool ConnectToServer( const RString &t )
 
 extern Preference<RString> g_sLastServer;
 
-// begin lua
 LuaFunction( ConnectToServer, 		ConnectToServer( ( RString(SArg(1)).length()==0 ) ? RString(g_sLastServer) : RString(SArg(1) ) ) )
 
 #endif

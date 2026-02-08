@@ -11,13 +11,10 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
+#include "Foreach.h"
 #include "Style.h"
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
-
-#include <cmath>
-#include <vector>
-
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
 AutoScreenMessage( SM_SongChanged ); // TODO: Replace this with a Message and MESSAGEMAN
@@ -37,21 +34,19 @@ LuaXType( WheelState );
 
 WheelBase::~WheelBase()
 {
-	for (WheelItemBase *i : m_WheelBaseItems)
-	{
-		RageUtil::SafeDelete( i );
-	}
+	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
+		SAFE_DELETE( *i );
 	m_WheelBaseItems.clear();
-	m_LastSelection = nullptr;
+	m_LastSelection = NULL;
 }
 
-void WheelBase::Load( RString sType )
+void WheelBase::Load( RString sType ) 
 {
 	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 	ASSERT( this->GetNumChildren() == 0 ); // only load once
 
 	m_bEmpty = false;
-	m_LastSelection = nullptr;
+	m_LastSelection = NULL;
 	m_iSelection = 0;
 	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;
@@ -77,7 +72,7 @@ void WheelBase::Load( RString sType )
 		DEBUG_ASSERT( pItem );
 		m_WheelBaseItems.push_back( pItem );
 	}
-	RageUtil::SafeDelete( pTempl );
+	SAFE_DELETE( pTempl );
 
 	// draw outside->inside
 	for( int i=0; i<NUM_WHEEL_ITEMS/2; i++ )
@@ -91,7 +86,7 @@ void WheelBase::Load( RString sType )
 	ActorUtil::LoadAllCommands( *m_sprHighlight, m_sName );
 
 	m_ScrollBar.SetName( "ScrollBar" );
-	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
+	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
 	ActorUtil::LoadAllCommands( m_ScrollBar, m_sName );
 
@@ -103,9 +98,20 @@ void WheelBase::BeginScreen()
 	m_WheelState = STATE_SELECTING;
 }
 
-void WheelBase::SetItemPosition(Actor &item, int item_index, float offset_from_middle)
+void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 {
-	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached(offset_from_middle, item_index, NUM_WHEEL_ITEMS);
+	/* Don't supply and item index or num items. The number of items can be so
+	 * large that transforms that depend on such large numbers are likely to break. */
+	int iItemIndex = 0; // dummy
+	int iNumItems = 1; // dummy
+
+	Actor::TweenState ts = m_exprItemTransformFunction.GetTransformCached( fPosOffsetsFromMiddle, iItemIndex, iNumItems );
+
+	// Round to achieve pixel alignment. Any benefit to moving this to Lua? -Chris
+	ts.pos.x = roundf( ts.pos.x );
+	ts.pos.y = roundf( ts.pos.y );
+	ts.pos.z = roundf( ts.pos.z );
+
 	item.DestTweenState() = ts;
 }
 
@@ -141,12 +147,12 @@ void WheelBase::SetPositions()
 	{
 		WheelItemBase *pDisplay = m_WheelBaseItems[i];
 		const float fOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-		if( std::abs(fOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
+		if( fabsf(fOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
 			pDisplay->SetVisible( false );
 		else
 			pDisplay->SetVisible( true );
 
-		SetItemPosition(*pDisplay, i, fOffsetFromSelection);
+		SetItemPosition( *pDisplay, fOffsetFromSelection );
 	}
 }
 
@@ -174,7 +180,7 @@ void WheelBase::Update( float fDeltaTime )
 	if( m_Moving )
 	{
 		m_TimeBeforeMovingBegins -= fDeltaTime;
-		m_TimeBeforeMovingBegins = std::max(m_TimeBeforeMovingBegins, 0.0f);
+		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
 	}
 
 	// update wheel state
@@ -189,10 +195,10 @@ void WheelBase::Update( float fDeltaTime )
 		float fTime = fDeltaTime;
 		while( fTime > 0 )
 		{
-			float t = std::min( fTime, 0.1f );
+			float t = min( fTime, 0.1f );
 			fTime -= t;
 
-			m_fPositionOffsetFromSelection = std::clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
+			m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
 
 			float fSpringForce = - m_fPositionOffsetFromSelection * LOCKED_INITIAL_VELOCITY;
 			m_fLockedWheelVelocity += fSpringForce;
@@ -202,7 +208,7 @@ void WheelBase::Update( float fDeltaTime )
 
 			m_fPositionOffsetFromSelection  += m_fLockedWheelVelocity*t;
 
-			if( std::abs(m_fPositionOffsetFromSelection) < 0.01f  &&  std::abs(m_fLockedWheelVelocity) < 0.01f )
+			if( fabsf(m_fPositionOffsetFromSelection) < 0.01f  &&  fabsf(m_fLockedWheelVelocity) < 0.01f )
 			{
 				m_fPositionOffsetFromSelection = 0;
 				m_fLockedWheelVelocity = 0;
@@ -218,7 +224,7 @@ void WheelBase::Update( float fDeltaTime )
 
 		/* Make sure that we don't go further than 1 away, in case the speed is
 		 * very high or we miss a lot of frames. */
-		m_fPositionOffsetFromSelection  = std::clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
+		m_fPositionOffsetFromSelection  = clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
 
 		// If it passed the selection, move again.
 		if((m_Moving == -1 && m_fPositionOffsetFromSelection >= 0) ||
@@ -227,20 +233,20 @@ void WheelBase::Update( float fDeltaTime )
 			ChangeMusic( m_Moving );
 
 			if( PREFSMAN->m_iMusicWheelSwitchSpeed < MAX_WHEEL_SOUND_SPEED )
-				m_soundChangeMusic.Play(true);
+				m_soundChangeMusic.Play();
 		}
 
 		if( PREFSMAN->m_iMusicWheelSwitchSpeed >= MAX_WHEEL_SOUND_SPEED &&
-			m_MovingSoundTimer.Ago() >= 1.0f / MAX_WHEEL_SOUND_SPEED )
+			m_MovingSoundTimer.PeekDeltaTime() >= 1.0f / MAX_WHEEL_SOUND_SPEED )
 		{
 			m_MovingSoundTimer.GetDeltaTime();
-			m_soundChangeMusic.Play(true);
+			m_soundChangeMusic.Play();
 		}
 	}
 	else
 	{
 		// "rotate" wheel toward selected song
-		float fSpinSpeed = 0.2f + std::abs( m_fPositionOffsetFromSelection ) / SWITCH_SECONDS;
+		float fSpinSpeed = 0.2f + fabsf( m_fPositionOffsetFromSelection ) / SWITCH_SECONDS;
 
 		if( m_fPositionOffsetFromSelection > 0 )
 		{
@@ -284,29 +290,27 @@ bool WheelBase::Select()	// return true if this selection can end the screen
 	{
 	case WheelItemDataType_Generic:
 		m_LastSelection = m_CurWheelItemData[m_iSelection];
-		return true;
+		break;
 	case WheelItemDataType_Section:
 		{
 			RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
-			// Keep track of the open section so that we can restore it
-			// when navigating back to ScreenSelectMusic.
-			GAMESTATE->sLastOpenSection = sThisItemSectionName;
 			if( m_sExpandedSectionName == sThisItemSectionName ) // already expanded
 			{
 				SetOpenSection( "" ); // collapse it
-				m_soundCollapse.Play(true);
+				m_soundCollapse.Play();
 			}
 			else // already collapsed
 			{
 				SetOpenSection( sThisItemSectionName ); // expand it
-				m_soundExpand.Play(true);
+				m_soundExpand.Play();
 			}
 		}
-		// Opening/closing sections cannot end the screen
-		return false;
+		break;
 	default:
-		return true;
+		break;
 	}
+
+	return true;
 }
 
 WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
@@ -314,7 +318,7 @@ WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
 	if( !m_bEmpty && iIndex < m_CurWheelItemData.size() )
 		return m_CurWheelItemData[iIndex];
 
-	return nullptr;
+	return NULL;
 }
 
 int WheelBase::IsMoving() const
@@ -352,9 +356,9 @@ void WheelBase::ChangeMusicUnlessLocked( int n )
 	{
 		if(n)
 		{
-			int iSign = n / std::abs(n);
+			int iSign = n/abs(n);
 			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
-			m_soundLocked.Play(true);
+			m_soundLocked.Play();
 		}
 		return;
 	}
@@ -371,9 +375,9 @@ void WheelBase::Move(int n)
 	{
 		if(n)
 		{
-			int iSign = n / std::abs(n);
+			int iSign = n/abs(n);
 			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
-			m_soundLocked.Play(true);
+			m_soundLocked.Play();
 		}
 		return;
 	}
@@ -393,8 +397,8 @@ bool WheelBase::MoveSpecific( int n )
 {
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
-	/* Still process Move(0) so we sometimes continue moving immediate
-	 * after the sort change finished and before the repeat event causes a
+	/* Still process Move(0) so we sometimes continue moving immediate 
+	 * after the sort change finished and before the repeat event causes a 
 	 * Move(0). -Chris */
 	switch( m_WheelState )
 	{
@@ -414,7 +418,7 @@ bool WheelBase::MoveSpecific( int n )
 		/* We were moving, and now we're stopping.  If we're really close to
 		 * the selection, move to the next one, so we have a chance to spin down
 		 * smoothly. */
-		if(std::abs(m_fPositionOffsetFromSelection) < 0.25f )
+		if(fabsf(m_fPositionOffsetFromSelection) < 0.25f )
 			ChangeMusic(m_Moving);
 
 		/* Make sure the user always gets an SM_SongChanged when
@@ -438,13 +442,13 @@ void WheelBase::ChangeMusic( int iDist )
 
 	/* If we're moving automatically, don't play this; it'll be called in Update. */
 	if(!IsMoving())
-		m_soundChangeMusic.Play(true);
+		m_soundChangeMusic.Play();
 }
 
 void WheelBase::RebuildWheelItems( int iDist )
 {
-	const std::vector<WheelItemBaseData*> &data = m_CurWheelItemData;
-	std::vector<WheelItemBase*> &items = m_WheelBaseItems;
+	const vector<WheelItemBaseData *> &data = m_CurWheelItemData;
+	vector<WheelItemBase *> &items = m_WheelBaseItems;
 
 	// rewind to first index that will be displayed;
 	int iFirstVisibleIndex = m_iSelection;
@@ -496,7 +500,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 WheelItemBaseData* WheelBase::LastSelected()
 {
 	if( m_bEmpty )
-		return nullptr;
+		return NULL;
 	else
 		return m_LastSelection;
 }
@@ -507,7 +511,7 @@ int WheelBase::FirstVisibleIndex()
 	int iFirstVisibleIndex = m_iSelection;
 	if( m_iSelection >= int(m_CurWheelItemData.size()) )
 		m_iSelection = 0;
-
+	
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
@@ -518,27 +522,32 @@ int WheelBase::FirstVisibleIndex()
 // lua start
 #include "LuaBinding.h"
 
-/** @brief Allow Lua to have access to the WheelBase. */
+/** @brief Allow Lua to have access to the WheelBase. */ 
 class LunaWheelBase: public Luna<WheelBase>
 {
 public:
-	static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); COMMON_RETURN_SELF; }
+	static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	static int GetWheelItem( T* p, lua_State *L )
 	{
 		int iItem = IArg(1);
 
 		WheelItemBase *pItem = p->GetWheelItem( iItem );
-		if( pItem == nullptr )
+		if( pItem == NULL )
+		{
 			luaL_error( L, "%i out of bounds", iItem );
+			// the game would normally crash at the line above, but keep the compilers happy.
+			return 0;
+		}
 		pItem->PushSelf( L );
 
 		return 1;
 	}
 	static int IsSettled( T* p, lua_State *L ){ lua_pushboolean( L, p->IsSettled() ); return 1; }
-	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); COMMON_RETURN_SELF; }
+	static int SetOpenSection( T* p, lua_State *L ){ p->SetOpenSection( SArg(1) ); return 0; }
 	static int GetCurrentIndex( T* p, lua_State *L ){ lua_pushnumber( L, p->GetCurrentIndex() ); return 1; }
 	static int GetNumItems( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumItems() ); return 1; }
 	// evil shit
+	//static int Move( T* p, lua_State *L ){ p->Move( IArg(1) ); return 0; }
 	//static int ChangeMusic( T* p, lua_State *L ){ p->ChangeMusicUnlessLocked( IArg(1) ); return 0; }
 
 	DEFINE_METHOD( GetSelectedType,		GetSelectedType() )
@@ -569,7 +578,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -579,7 +588,7 @@ LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
