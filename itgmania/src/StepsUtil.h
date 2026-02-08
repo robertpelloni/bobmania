@@ -155,6 +155,50 @@ namespace StepsUtil
 	 * @return true if we find a match, false otherwise. */
 	bool HasMatching( const Song *pSong, const StepsCriteria &stc );
 
+	// Radar calculations below
+
+	/**
+	 * @brief Determine the stream values for the Steps.
+	 * @param in the Steps being analyzed.
+	 * @param the calculated length of the song.
+	 * @return the stream values for all affected Players for the steps. */
+	vector<float> GetStreamRadarValue( const Steps *in, float songLength );
+
+	/**
+	 * @brief Determine the voltage values for the Steps.
+	 * @param in the Steps being analyzed.
+	 * @param the calculated length of the song.
+	 * @return the voltage values for all affected Players for the steps. */
+	vector<float> GetVoltageRadarValue( const Steps *in, float songLength );
+
+	/**
+	 * @brief Determine the air values for the Steps.
+	 * @param in the Steps being analyzed.
+	 * @param the calculated length of the song.
+	 * @return the air values for all affected Players for the steps. */
+	vector<float> GetAirRadarValue( const Steps *in, float songLength );
+
+	/**
+	 * @brief Determine the freeze values for the Steps.
+	 * @param in the Steps being analyzed.
+	 * @param the calculated length of the song.
+	 * @return thefreeze values for all affected Players for the steps. */
+	vector<float> GetFreezeRadarValue( const Steps *in, float songLength );
+
+	/**
+	 * @brief Determine the chaos values for the Steps.
+	 * @param in the Steps being analyzed.
+	 * @param the calculated length of the song.
+	 * @return the chaos values for all affected Players for the steps. */
+	vector<float> GetChaosRadarValue( const Steps *in, float songLength );
+
+	/**
+	 * @brief Determine the radar values for the Steps in question.
+	 * @param in the Steps we're analyzing.
+	 * @param songLength the calculated length of the song. Unsure if this is needed.
+	 * @param out the RadarValues we want. */
+	void CalculateRadarValues( Steps *in, float songLength );
+
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByDifficulty(const Steps *pSteps1, const Steps *pSteps2);

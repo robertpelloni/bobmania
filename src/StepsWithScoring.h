@@ -1,55 +1,47 @@
-#ifndef NOTE_DATA_WITH_SCORING_H
-#define NOTE_DATA_WITH_SCORING_H
+#ifndef STEPS_WITH_SCORING_H
+#define STEPS_WITH_SCORING_H
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 
 struct RadarValues;
+class Steps;
 class NoteData;
 class PlayerStageStats;
 struct TapNote;
 
-/** @brief NoteData with scores for each TapNote and HoldNote. */
-namespace NoteDataWithScoring
+/** @brief Steps with scores for each TapNote and HoldNote. */
+namespace StepsWithScoring
 {
 	/**
 	 * @brief Has the current row of NoteData been judged completely?
-	 * @param in the entire Notedata.
+	 * @param in the NoteData in question.
 	 * @param iRow the row to check.
+	 * @param stc the StepsTypeCategory of this NoteData/Steps.
+	 * @param pn the PlayerNumber (should it be relevant).
 	 * @return true if it has been completley judged, or false otherwise. */
-	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
+	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, StepsTypeCategory stc, PlayerNumber pn = PLAYER_INVALID );
 
 	/**
-	 * @brief Whas is the minimum TapNoteScore for the row given the criteria listed below?
-	 * @param in the entire NoteData.
-	 * @param row the row to check.
-	 * @param start the first track to check, inclusive.
-	 * @param end the last row to check, exclusive.
-	 * @param pn the PlayerNumber to compare for (assuming it's not invalid).
-	 * @return the minimum TapNoteScore.
-	 */
-	TapNoteScore MinTapNoteScore(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn);
+	 * @brief Retrieve the last tap note that had a result associated with it.
+	 * @param in the NoteData in question.
+	 * @param iRow the row to check.
+	 * @param stc the StepsTypeCategory of this NoteData/Steps.
+	 * @param pn the PlayerNumber (should it be relevant).
+	 * @return the TapNote last judged. */
+	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, StepsTypeCategory stc, PlayerNumber pn = PLAYER_INVALID );
 
-	/**
-	 * @brief Retrieve the last scored track based on the criteria below.
-	 * @param in the entire NoteData.
-	 * @param row the row to check.
-	 * @param start the first track to check, inclusive.
-	 * @param end the last row to check, exclusive.
-	 * @param pn the PlayerNumber to compare for (assuming it's not invalid).
-	 * @return the track that was scored last.
-	 */
-	int LastTapNoteScoreTrack(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn);
-
-	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
-	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
+	RadarValues GetActualRadarValues(const Steps *in,
+		const PlayerStageStats &pss,
+		float songLength,
+		PlayerNumber pn);
 };
 
 #endif
 
 /**
  * @file
- * @author Chris Danford, Glenn Maynard (c) 2001-2004
+ * @author Chris Danford, Glenn Maynard, Jason Felds (c) 2001-2012
  * @section LICENSE
  * All rights reserved.
  * 
