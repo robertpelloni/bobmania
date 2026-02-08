@@ -1,28 +1,32 @@
-#ifndef SCREEN_NETWORK_OPTIONS_H
-#define SCREEN_NETWORK_OPTIONS_H
+#ifndef NETWORKPACKET_H
+#define NETWORKPACKET_H
 
-#include "ScreenOptions.h"
+const int MAX_PACKET_BUFFER_SIZE = 1020; // 1024 - 4 bytes for EzSockets
 
-class ScreenNetworkOptions : public ScreenOptions
+class NetworkPacket
 {
 public:
-	virtual void Init();
+	unsigned char Data[MAX_PACKET_BUFFER_SIZE];
+	int Position;
+	uint32_t Size; // Hacky; Only valid for packets read from the network.
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	void Clear();
 
-	virtual void MenuStart( const InputEventPlus &input );
+	uint8_t Read1();
+	uint16_t Read2();
+	uint32_t Read4();
+	RString ReadString();	// null-terminated
 
-private:
-	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-
-	void UpdateConnectStatus();
+	void Write1(uint8_t data);
+	void Write2(uint16_t data);
+	void Write4(uint32_t data);
+	void WriteString(const RString& str);	// null-terminated
 };
 
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

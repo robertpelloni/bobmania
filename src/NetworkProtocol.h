@@ -1,28 +1,25 @@
-#ifndef SCREEN_NETWORK_OPTIONS_H
-#define SCREEN_NETWORK_OPTIONS_H
+/* NetworkProtocol - The commands used for networking */
+#ifndef NetworkProtocol_H
+#define NetworkProtocol_H
 
-#include "ScreenOptions.h"
-
-class ScreenNetworkOptions : public ScreenOptions
+namespace NetworkProtocol
 {
-public:
-	virtual void Init();
-
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-	virtual void MenuStart( const InputEventPlus &input );
-
-private:
-	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-
-	void UpdateConnectStatus();
+	enum NetworkCommand
+	{
+		NetCommand_Ping = 0,
+		NetCommand_Pong,
+		NetCommand_LegacyHello,
+		//NetCommand_Json,
+		NUM_NetCommand
+	};
+	// xxx: do this?
+	const NetworkCommand ncServerOffset = (NetworkCommand)128;
 };
 
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2011 AJ Kelly
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
