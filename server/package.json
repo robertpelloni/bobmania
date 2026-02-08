@@ -1,0 +1,15 @@
+{
+  "name": "stepmania-network-server",
+  "version": "1.0.0",
+  "description": "Backend server for StepMania Network features (Chat, Matchmaking)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.0.0",
+    "uuid": "^9.0.0"
+  },
+  "author": "StepMania Network Team",
+  "license": "MIT"
+}

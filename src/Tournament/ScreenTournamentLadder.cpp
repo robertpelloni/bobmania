@@ -4,7 +4,7 @@
 #include "ThemeManager.h"
 #include "RageLog.h"
 #include "InputEventPlus.h"
-#include "EconomyManager.h" // To show user balance potentially
+#include "Economy/EconomyManager.h" // To show user balance potentially
 #include <algorithm>
 
 // Register the screen so the theme can load it

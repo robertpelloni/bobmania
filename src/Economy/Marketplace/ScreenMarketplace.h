@@ -16,7 +16,7 @@ class ScreenMarketplace : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
-	virtual void Input( const InputEventPlus &input );
+	virtual bool Input( const InputEventPlus &input );
 
 private:
 	void RefreshList();

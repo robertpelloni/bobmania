@@ -3,8 +3,10 @@
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "InputEventPlus.h"
-#include "EconomyManager.h"
-#include "ContentSwarmManager.h"
+#include "Economy/EconomyManager.h"
+#include "Network/ContentSwarmManager.h"
+#include "Network/SpectatorManager.h"
+#include "AssetSyncManager.h"
 #include "RageUtil.h"
 #include "GameSoundManager.h"
 
@@ -20,7 +22,9 @@ void ScreenUnifiedDashboard::Init()
 	m_Options.push_back( "WAGER BATTLE" ); // New
 	m_Options.push_back( "GYM CIRCUIT" );
 	m_Options.push_back( "TOURNAMENT LADDER" );
+	m_Options.push_back( "SPECTATE TV" ); // New
 	m_Options.push_back( "MARKETPLACE" ); // New
+	m_Options.push_back( "SYNC EXT. ASSETS" ); // New
 	m_Options.push_back( "CUSTOMIZE PROFILE" ); // New
 	m_Options.push_back( "WALLET HISTORY" ); // New
 	m_Options.push_back( "QR LOGIN (TEST)" ); // New
@@ -136,7 +140,17 @@ void ScreenUnifiedDashboard::Input( const InputEventPlus &input )
 		else if( sChoice == "WAGER BATTLE" ) SCREENMAN->SetNewScreen( "ScreenBettingEntry" );
 		else if( sChoice == "GYM CIRCUIT" ) SCREENMAN->SetNewScreen( "ScreenGymWelcome" );
 		else if( sChoice == "TOURNAMENT LADDER" ) SCREENMAN->SetNewScreen( "ScreenTournamentLadder" );
+		else if( sChoice == "SPECTATE TV" )
+		{
+			SpectatorManager::Instance()->ConnectToMatch("Pro Finals: Chris vs FEFEMZ");
+			SCREENMAN->SystemMessage( "Connecting to Live Stream..." );
+		}
 		else if( sChoice == "MARKETPLACE" ) SCREENMAN->SetNewScreen( "ScreenMarketplace" );
+		else if( sChoice == "SYNC EXT. ASSETS" )
+		{
+			int n = AssetSyncManager::Instance()->SyncWithGame("Bob's Game");
+			SCREENMAN->SystemMessage( ssprintf("Synced %d items from Bob's Game!", n) );
+		}
 		else if( sChoice == "CUSTOMIZE PROFILE" ) SCREENMAN->SetNewScreen( "ScreenProfileCustomize" );
 		else if( sChoice == "WALLET HISTORY" ) SCREENMAN->SetNewScreen( "ScreenWalletHistory" );
 		else if( sChoice == "QR LOGIN (TEST)" ) SCREENMAN->SetNewScreen( "ScreenLoginQR" );

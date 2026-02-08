@@ -6,10 +6,39 @@
 #include "XmlFileUtil.h"
 #include "RageFile.h"
 #include "RageUtil.h"
+#include "IniFile.h"
+#include "LuaBinding.h"
+#include "LuaManager.h"
+#include <climits>
 #include "DateTime.h"
 
 EconomyManager*	ECONOMYMAN = nullptr;
 
+// Local UUID helper to avoid dependency issues
+static std::string MakeUUID()
+{
+	std::string res = "";
+	for(int i=0; i<32; ++i) res += ssprintf("%x", RandomInt(16));
+	return res;
+}
+
+EconomyManager* EconomyManager::s_pInstance = NULL;
+
+EconomyManager* EconomyManager::Instance()
+{
+	if (s_pInstance == NULL)
+	{
+		s_pInstance = new EconomyManager;
+
+		// Register with Lua
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "ECONOMYMAN" );
+		s_pInstance->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+	return s_pInstance;
+}
 static const RString ECONOMY_DAT = "Save/Economy.xml";
 
 EconomyManager::EconomyManager()
@@ -41,6 +70,44 @@ void EconomyManager::Init()
 
 void EconomyManager::LoadFromNode( const XNode *pNode )
 {
+	LockMut(m_Mutex);
+	IniFile ini;
+	if( !ini.ReadFile("Save/Economy.ini") ) return;
+
+	// Load Ledger
+	const XNode* pLedgerNode = ini.GetChild("Ledger");
+	if( pLedgerNode ) {
+		FOREACH_CONST_Attr(pLedgerNode, attr) {
+			m_Ledger[attr->first] = StringToInt64(attr->second->GetValue());
+		}
+	}
+
+	// Load Stats
+	ini.GetValue("Stats", "Elo", m_iPlayerElo);
+	ini.GetValue("Stats", "HighElo", m_iHighestEloAchieved);
+	long long mining;
+	if(ini.GetValue("Stats", "MiningRewards", mining)) m_iAccumulatedMiningReward = mining;
+
+	// Load Inventory (Simplified: Comma separated list of names)
+	RString sInv;
+	if(ini.GetValue("Inventory", "Items", sInv)) {
+		std::vector<RString> names;
+		split(sInv, ",", names);
+		for(const auto& name : names) {
+			if(!HasAsset(name)) {
+				// Reconstruct minimal asset
+				Asset a; a.name = name; a.type = "Item"; a.value = 0;
+				m_Inventory.push_back(a);
+			}
+		}
+	}
+
+	// Load Equipped
+	const XNode* pEquipNode = ini.GetChild("Equipped");
+	if( pEquipNode ) {
+		FOREACH_CONST_Attr(pEquipNode, attr) {
+			m_Equipped[attr->first] = attr->second->GetValue();
+		}
 	if( pNode->GetName() != "Economy" )
 	{
 		LOG->Warn( "Error loading economy: unexpected \"%s\"", pNode->GetName().c_str() );
@@ -77,6 +144,31 @@ void EconomyManager::LoadFromNode( const XNode *pNode )
 
 XNode* EconomyManager::CreateNode() const
 {
+	LockMut(m_Mutex);
+	IniFile ini;
+
+	// Save Ledger
+	for(auto const& [addr, bal] : m_Ledger) {
+		ini.SetValue("Ledger", addr, ssprintf("%lld", bal));
+	}
+
+	// Save Stats
+	ini.SetValue("Stats", "Elo", m_iPlayerElo);
+	ini.SetValue("Stats", "HighElo", m_iHighestEloAchieved);
+	ini.SetValue("Stats", "MiningRewards", ssprintf("%lld", m_iAccumulatedMiningReward));
+
+	// Save Inventory
+	RString sInv;
+	for(const auto& item : m_Inventory) sInv += item.name + ",";
+	if(!sInv.empty()) sInv.erase(sInv.size()-1);
+	ini.SetValue("Inventory", "Items", sInv);
+
+	// Save Equipped
+	for(auto const& [slot, item] : m_Equipped) {
+		ini.SetValue("Equipped", slot, item);
+	}
+
+	ini.WriteFile("Save/Economy.ini");
 	XNode *xml = new XNode( "Economy" );
 	xml->AppendChild( "Balance", (double)m_iBalance );
 	xml->AppendChild( "WalletAddress", m_sWalletAddress );
@@ -243,6 +335,42 @@ float EconomyManager::GetHashRate() const
 // Lua
 class LunaEconomyManager: public Luna<EconomyManager>
 {
+	return m_TransactionHistory;
+}
+
+// Lua Bindings
+class LunaEconomyManager: public Luna<EconomyManager>
+{
+public:
+	static int GetBalance( T* p, lua_State *L )
+	{
+		RString sAddr = SArg(1);
+		lua_pushnumber( L, (double)p->GetBalance(sAddr) );
+		return 1;
+	}
+
+	static int Transfer( T* p, lua_State *L )
+	{
+		RString from = SArg(1);
+		RString to = SArg(2);
+		long long amount = (long long)IArg(3);
+		RString reason = SArg(4);
+		lua_pushboolean( L, p->Transfer(from, to, amount, reason) );
+		return 1;
+	}
+
+	static int GetPlayerElo( T* p, lua_State *L )
+	{
+		lua_pushnumber( L, p->GetPlayerElo() );
+		return 1;
+	}
+
+	static int HasAsset( T* p, lua_State *L )
+	{
+		RString name = SArg(1);
+		lua_pushboolean( L, p->HasAsset(name) );
+		return 1;
+	}
 public:
 	static int GetBalance( T* p, lua_State *L )
 	{
@@ -324,6 +452,9 @@ public:
 	LunaEconomyManager()
 	{
 		ADD_METHOD( GetBalance );
+		ADD_METHOD( Transfer );
+		ADD_METHOD( GetPlayerElo );
+		ADD_METHOD( HasAsset );
 		ADD_METHOD( GetWalletAddress );
 		ADD_METHOD( SendTip );
 		ADD_METHOD( IsConnected );

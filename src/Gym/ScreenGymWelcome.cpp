@@ -2,7 +2,7 @@
 #include "ScreenGymWelcome.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "EconomyManager.h"
+#include "Economy/EconomyManager.h"
 #include "InputEventPlus.h"
 #include "RageUtil.h"
 #include "GymPlaylistGenerator.h"

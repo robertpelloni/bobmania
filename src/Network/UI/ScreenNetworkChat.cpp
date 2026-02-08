@@ -4,8 +4,15 @@
 #include "ThemeManager.h"
 #include "InputEventPlus.h"
 #include "RageUtil.h"
+#include "RageInput.h"
+#include "Network/GameClient.h"
 
 REGISTER_SCREEN_CLASS( ScreenNetworkChat );
+
+ScreenNetworkChat::~ScreenNetworkChat()
+{
+	GameClient::Instance()->SetMessageCallback(nullptr);
+}
 
 void ScreenNetworkChat::Init()
 {
@@ -28,23 +35,18 @@ void ScreenNetworkChat::Init()
 	this->AddChild( &m_textInput );
 
 	m_sInputBuffer = "";
-	m_fAutoChatTimer = 0;
+
+	// Connect Client
+	GameClient::Instance()->Connect("simulated-server", 9000);
+	GameClient::Instance()->SetMessageCallback( [this](const std::string& msg) {
+		this->m_Messages.push_back(msg);
+	});
 }
 
 void ScreenNetworkChat::Update( float fDeltaTime )
 {
 	ScreenWithMenuElements::Update( fDeltaTime );
-
-	// Mock incoming messages
-	m_fAutoChatTimer += fDeltaTime;
-	if( m_fAutoChatTimer > 5.0f )
-	{
-		m_fAutoChatTimer = 0;
-		if( RandomInt(2) == 0 )
-			m_Messages.push_back("RhythmGamer: Looking for group...");
-		else
-			m_Messages.push_back("System: New Tournament starting in 5 mins.");
-	}
+	GameClient::Instance()->Update( fDeltaTime );
 
 	// Render Chat
 	std::string sDisplay;
@@ -58,21 +60,21 @@ void ScreenNetworkChat::Update( float fDeltaTime )
 	m_textInput.SetText( "> " + m_sInputBuffer + "_" );
 }
 
-void ScreenNetworkChat::Input( const InputEventPlus &input )
+bool ScreenNetworkChat::Input( const InputEventPlus &input )
 {
 	if( input.type == IET_FIRST_PRESS )
 	{
 		// Mock Typing
-		char c = input.DeviceI.ToChar();
+		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 		if( c >= 32 && c <= 126 )
 		{
-			m_sInputBuffer += c;
+			m_sInputBuffer += (char)c;
 		}
 		else if( input.DeviceI.button == KEY_ENTER || input.DeviceI.button == KEY_KP_ENTER )
 		{
 			if( !m_sInputBuffer.empty() )
 			{
-				m_Messages.push_back( "YOU: " + m_sInputBuffer );
+				GameClient::Instance()->SendChat( m_sInputBuffer );
 				m_sInputBuffer = "";
 			}
 		}
@@ -81,4 +83,5 @@ void ScreenNetworkChat::Input( const InputEventPlus &input )
 			SCREENMAN->SetNewScreen( "ScreenUnifiedDashboard" );
 		}
 	}
+	return true;
 }

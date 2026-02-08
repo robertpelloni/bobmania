@@ -6,6 +6,10 @@
 #include <vector>
 
 struct lua_State;
+
+// Basic types for our simulated economy
+typedef std::string WalletAddress;
+typedef long long CurrencyAmount;
 class XNode;
 
 struct EconomyItem {
@@ -31,6 +35,13 @@ public:
 	void Init();
 	void Update( float fDeltaTime );
 
+	// Lua
+	void PushSelf( lua_State *L );
+
+private:
+	// Simulated Ledger
+	std::map<WalletAddress, CurrencyAmount> m_Ledger;
+	std::vector<Transaction> m_TransactionHistory;
 	// Basic Ledger
 	RString GetWalletAddress() const;
 	long long GetBalance() const;

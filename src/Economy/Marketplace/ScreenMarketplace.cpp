@@ -2,7 +2,7 @@
 #include "ScreenMarketplace.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "EconomyManager.h"
+#include "Economy/EconomyManager.h"
 #include "InputEventPlus.h"
 #include "GameSoundManager.h"
 
@@ -19,6 +19,13 @@ void ScreenMarketplace::Init()
 	m_Items.push_back( { 3, "Company Share (DAO)", "Stock", 1000, false } );
 	m_Items.push_back( { 4, "Gym Skin: Neon", "Cosmetic", 200, false } );
 	m_Items.push_back( { 5, "Bob's Sword (Cross-Game)", "Item", 5000, false } );
+
+	// Check ownership
+	for( auto& item : m_Items ) {
+		if( EconomyManager::Instance()->HasAsset(item.name) ) {
+			item.owned = true;
+		}
+	}
 
 	m_textTitle.LoadFromFont( THEME->GetPathF("Common", "header") );
 	m_textTitle.SetText( "ASSET MARKETPLACE" );
@@ -121,27 +128,33 @@ void ScreenMarketplace::BuyItem( int index )
 	MarketItem& item = m_Items[index];
 	if( item.owned ) return;
 
+	// Check Funds
+	long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
+	if( balance < item.price ) {
+		SOUND->PlayOnce( THEME->GetPathS("Common", "cancel") );
+		m_textStatus.SetText( "Insufficient Funds." );
+		m_textStatus.SetDiffuse( RageColor(1,0,0,1) );
+		return;
+	}
+
 	if( EconomyManager::Instance()->Transfer("WALLET_PLAYER", "WALLET_MARKETPLACE", item.price, "Buy: " + item.name) )
 	{
 		item.owned = true;
 
 		// Add to persistent inventory
 		Asset a;
+		a.assetID = ssprintf("mkt_%d", (int)time(NULL));
 		a.name = item.name;
 		a.type = item.category;
 		a.value = item.price;
+		a.owner = "WALLET_PLAYER";
 		EconomyManager::Instance()->AddToInventory(a);
 
 		SOUND->PlayOnce( THEME->GetPathS("Common", "coin") );
 		m_textStatus.SetText( "Purchase Successful!" );
 		m_textStatus.SetDiffuse( RageColor(0,1,0,1) );
 	}
-	else
-	{
-		SOUND->PlayOnce( THEME->GetPathS("Common", "cancel") );
-		m_textStatus.SetText( "Insufficient Funds." );
-		m_textStatus.SetDiffuse( RageColor(1,0,0,1) );
-	}
+
 	RefreshList();
 }
 
@@ -176,7 +189,7 @@ void ScreenMarketplace::SellItem( int index )
 
 void ScreenMarketplace::Input( const InputEventPlus &input )
 {
-	if( input.type != IET_FIRST_PRESS ) return;
+	if( input.type != IET_FIRST_PRESS ) return false;
 
 	if( input.MenuI == GAME_BUTTON_SELECT )
 	{
@@ -207,4 +220,6 @@ void ScreenMarketplace::Input( const InputEventPlus &input )
 	{
 		SCREENMAN->SetNewScreen( "ScreenUnifiedDashboard" );
 	}
+
+	return true;
 }
