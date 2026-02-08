@@ -38,7 +38,6 @@
 #include "Steps.h"
 #include "Style.h"
 #include "ThemeManager.h"
-#include "UnlockManager.h"
 #include "ScreenManager.h"
 #include "Screen.h"
 

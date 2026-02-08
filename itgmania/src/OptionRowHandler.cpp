@@ -460,8 +460,12 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 
 			std::vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
+<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
+=======
+			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+>>>>>>> origin/broken:src/OptionRowHandler.cpp
 			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
 			for( unsigned i=0; i<vpSteps.size(); i++ )
 			{
@@ -1572,11 +1576,14 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
+<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		else if( sParam.CompareNoCase("StepsLocked")==0 )
 		{
 			MAKE( OptionRowHandlerListSteps );
 			pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		}
+=======
+>>>>>>> origin/broken:src/OptionRowHandler.cpp
 		else if( sParam.CompareNoCase("Characters")==0 )	MAKE( OptionRowHandlerListCharacters )
 		else if( sParam.CompareNoCase("Styles")==0 )		MAKE( OptionRowHandlerListStyles )
 		else if( sParam.CompareNoCase("Groups")==0 )		MAKE( OptionRowHandlerListGroups )

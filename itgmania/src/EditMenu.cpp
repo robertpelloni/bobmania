@@ -9,8 +9,12 @@
 #include "Song.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 #include "ImageCache.h"
 #include "UnlockManager.h"
+=======
+#include "BannerCache.h"
+>>>>>>> origin/broken:src/EditMenu.cpp
 #include "SongUtil.h"
 
 #include <cstddef>
@@ -43,6 +47,7 @@ StringToX( EditMenuAction );
 static RString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
 static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 void EditMenu::StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v )
 {
 	const Song *pSong = GetSelectedSong();
@@ -54,6 +59,9 @@ void EditMenu::StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v
 }
 
 void EditMenu::GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*> &vpSongsOut )
+=======
+void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
+>>>>>>> origin/broken:src/EditMenu.cpp
 {
 	if(sGroup == "")
 	{
@@ -70,7 +78,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*>
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial() )
+			if( pSong->IsTutorial() )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;
@@ -536,8 +544,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				else
 				{
 					Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedStepsType(), dc );
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
 						pSteps = nullptr;
+=======
+>>>>>>> origin/broken:src/EditMenu.cpp
 
 					switch( mode )
 					{
@@ -559,7 +570,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					}
 				}
 			}
-			StripLockedStepsAndDifficulty( m_vpSteps );
 
 			int i = 0;
 			for (StepsAndDifficulty const &s : m_vpSteps)
@@ -593,6 +603,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				m_StepsDisplay.SetFromStepsTypeAndMeterAndDifficultyAndCourseType( GetSelectedSourceStepsType(), 0, GetSelectedDifficulty(), CourseType_Invalid );
 			}
 		}
+<<<<<<< HEAD:itgmania/src/EditMenu.cpp
 		[[fallthrough]];
 	case ROW_SOURCE_STEPS_TYPE:
 			if(mode == EditMode_Practice)
@@ -630,6 +641,10 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
 		}
 		[[fallthrough]];
+=======
+		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
+		// fall through
+>>>>>>> origin/broken:src/EditMenu.cpp
 	case ROW_SOURCE_STEPS:
 		if(mode == EditMode_Practice)
 		{

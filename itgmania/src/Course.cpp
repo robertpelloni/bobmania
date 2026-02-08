@@ -14,7 +14,6 @@
 #include "SongCacheIndex.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "UnlockManager.h"
 #include "Game.h"
 #include "Style.h"
 
@@ -253,8 +252,40 @@ bool Course::IsPlayableIn( StepsType st ) const
 	Trail t;
 	FOREACH_ShownCourseDifficulty( cd )
 	{
+<<<<<<< HEAD:itgmania/src/Course.cpp
 		if( GetTrailUnsorted( st, cd, t ) )
 			return true;
+=======
+		SongCriteria soc = e->songCriteria;
+
+		Song *pSong = e->songID.ToSong();
+		if( pSong )
+		{
+			soc.m_bUseSongAllowedList = true;
+			soc.m_vpSongAllowedList.push_back( pSong );
+		}
+		soc.m_Tutorial = SongCriteria::Tutorial_No;
+		if( !soc.m_bUseSongAllowedList )
+			soc.m_iMaxStagesForSong = 1;
+
+		StepsCriteria stc = e->stepsCriteria;
+		stc.m_st = st;
+
+		const bool bSameSongCriteria  = e != m_vEntries.begin() && (e-1)->songCriteria == soc;
+		const bool bSameStepsCriteria = e != m_vEntries.begin() && (e-1)->stepsCriteria == stc;
+
+		if( pSong )
+		{
+			if( StepsUtil::HasMatching(pSong, stc) )
+				return true;
+		}
+		else if( !(bSameSongCriteria && bSameStepsCriteria) )
+		{
+			if( StepsUtil::HasMatching(soc, stc) )
+				return true;
+		}
+
+>>>>>>> origin/broken:src/Course.cpp
 	}
 
 	// No valid trail for this StepsType.
@@ -720,13 +751,11 @@ void Course::GetTrailUnsortedEndless( const std::vector<CourseEntry> &entries, T
 			soc.m_vpSongAllowedList.push_back( pSong );
 		}
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
-		soc.m_Locked = SongCriteria::Locked_Unlocked;
 		if( !soc.m_bUseSongAllowedList )
 			soc.m_iMaxStagesForSong = 1;
 
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;
-		stc.m_Locked = StepsCriteria::Locked_Unlocked;
 
 		const bool bSameSongCriteria = e != entries.begin() && ( e - 1 )->songCriteria == soc;
 		const bool bSameStepsCriteria = e != entries.begin() && ( e - 1 )->stepsCriteria == stc;

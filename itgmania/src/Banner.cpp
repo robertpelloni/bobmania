@@ -10,7 +10,6 @@
 #include "ThemeMetric.h"
 #include "CharacterManager.h"
 #include "ActorUtil.h"
-#include "UnlockManager.h"
 #include "PrefsManager.h"
 
 REGISTER_ACTOR_CLASS( Banner );
@@ -160,6 +159,7 @@ void Banner::LoadIconFromCharacter( const Character *pCharacter )
 	m_bScrolling = false;
 }
 
+<<<<<<< HEAD:itgmania/src/Banner.cpp
 void Banner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
 {
 	if( pUE == nullptr )
@@ -184,6 +184,8 @@ void Banner::LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE )
 	}
 }
 
+=======
+>>>>>>> origin/broken:src/Banner.cpp
 void Banner::LoadFallback()
 {
 	Load( THEME->GetPathG("Common","fallback banner") );
@@ -291,6 +293,7 @@ public:
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		COMMON_RETURN_SELF;
 	}
+<<<<<<< HEAD:itgmania/src/Banner.cpp
 	static int LoadBannerFromUnlockEntry( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadBannerFromUnlockEntry(nullptr); }
@@ -303,6 +306,8 @@ public:
 		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBackgroundFromUnlockEntry( pUE ); }
 		COMMON_RETURN_SELF;
 	}
+=======
+>>>>>>> origin/broken:src/Banner.cpp
 	static int LoadFromSongGroup( T* p, lua_State *L )
 	{ 
 		p->LoadFromSongGroup( SArg(1) );
@@ -331,8 +336,6 @@ public:
 		ADD_METHOD( LoadFromCachedBanner );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );
-		ADD_METHOD( LoadBannerFromUnlockEntry );
-		ADD_METHOD( LoadBackgroundFromUnlockEntry );
 		ADD_METHOD( LoadFromSongGroup );
 		ADD_METHOD( LoadFromSortOrder );
 		ADD_METHOD( GetScrolling );

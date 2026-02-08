@@ -193,9 +193,14 @@ public:
 private:
 	struct StepsAndDifficulty;
 
+<<<<<<< HEAD:itgmania/src/EditMenu.h
 	void StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v );
 	void GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*> &vpSongsOut );
 	void GetGroupsToShow( std::vector<RString> &vsGroupsOut );
+=======
+	void GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut );
+	void GetGroupsToShow( vector<RString> &vsGroupsOut );
+>>>>>>> origin/broken:src/EditMenu.h
 
 	void UpdateArrows();
 	AutoActor	m_sprArrows[NUM_ARROWS];

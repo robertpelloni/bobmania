@@ -55,8 +55,12 @@
 #include "InputMapper.h"
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
+<<<<<<< HEAD:itgmania/src/StepMania.cpp
 #include "ImageCache.h"
 #include "UnlockManager.h"
+=======
+#include "BannerCache.h"
+>>>>>>> origin/broken:src/StepMania.cpp
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
 #include "Economy/EconomyManager.h"
@@ -311,7 +315,6 @@ void ShutdownGame()
 	SAFE_DELETE( MODELMAN );
 	SAFE_DELETE( PROFILEMAN ); // PROFILEMAN needs the songs still loaded
 	SAFE_DELETE( CHARMAN );
-	SAFE_DELETE( UNLOCKMAN );
 	SAFE_DELETE( CRYPTMAN );
 	SAFE_DELETE( MEMCARDMAN );
 	SAFE_DELETE( SONGMAN );
@@ -1190,7 +1193,6 @@ int sm_main(int argc, char* argv[])
 	CHARMAN		= new CharacterManager;
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
-	UNLOCKMAN	= new UnlockManager;
 	SONGMAN->UpdatePopular();
 	SONGMAN->UpdatePreferredSort();
 	NSMAN 		= new NetworkSyncManager( pLoadingWindow );
