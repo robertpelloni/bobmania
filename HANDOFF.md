@@ -145,3 +145,11 @@ This project has successfully **unified** the critical features of these forks b
 The following features from forks were analyzed but explicitly **excluded** from this merge:
 *   **Direct Memory Access (`memory` namespace):** Present in NotITG for advanced hacks. Excluded due to extreme security risks and non-portability (Windows-specific memory layout dependence).
 *   **Unsafe Lua:** Lua 5.1 sandbox is maintained. Upgrading to Lua 5.3+ (Project OutFox) was rejected to maintain backwards compatibility with existing StepMania 5.x content.
+
+## Additional Notes from unified-ui-features Branch
+StepMania Unified - Handoff Notes
+===============================
+Last Session: Implemented MissionManager, Documentation, and Network Helpers.
+Next Steps: Implement ReplayManager, Wife Scoring, and advanced NetPlay features.
+Current Version: 5.7.0-Unified-Alpha
+Submodules: Simply-Love-SM5, bobcoin (mock)

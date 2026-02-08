@@ -1,28 +1,33 @@
-# Project Dashboard & Submodule Status
+# Project Dashboard
 
-## Project Structure
-This project is a fork of StepMania 5.1 (New), integrating features from ITGMania and a custom Economy/Tournament system.
-
-### Directory Layout
-*   **`src/`**: Core C++ source code.
-    *   **`Economy/`**: New EconomyManager, Wallet, and Marketplace logic.
-    *   **`Tournament/`**: Tournament ladder and QR login logic.
-    *   **`Unified/`**: Unified Dashboard UI screens.
-    *   **`Gym/`**: Gym mode logic.
-*   **`Themes/`**: Lua-based themes.
-    *   **`default/`**: The primary theme, updated with Dashboard links.
-*   **`Docs/`**: Documentation.
-*   **`extern/`**: External dependencies (Submodules).
+## Directory Structure
+*   **`src/`**: Core Engine Code (C++)
+    *   `Economy/`: EconomyManager, Marketplace
+    *   `Gym/`: GymManager, CalorieGraph
+    *   `Tournament/`: TournamentManager, Brackets
+    *   `Unified/`: Dashboard, MissionManager
+    *   `Network/`: GameClient, Spectator
+*   **`Themes/`**: Lua-based Skins
+    *   `default/`: Primary unified theme
+    *   `Simply-Love-SM5/`: ITG-faithful submodule
+*   **`extern/`**: External Dependencies (Submodules)
+    *   `bobcoin/`: Cryptocurrency mock (Privacy-focused)
+*   **`Docs/`**: Documentation
 
 ## Submodules
-*   *(No submodules currently registered in this fork. Dependencies are vendored or managed via CMake.)*
+| Name | Path | Version/Tag | Description |
+| :--- | :--- | :--- | :--- |
+| **Bobcoin** | `extern/bobcoin` | *HEAD* | Mock implementation of the project's economy token. |
+| **Simply Love** | `Themes/Simply-Love-SM5` | *HEAD* | The standard theme for ITG/Stamina play. |
 
-## Build Information
-*   **Current Version:** 5.1.0
+## Build Status
+*   **Version:** 5.7.0-Unified-Alpha
 *   **Build System:** CMake
-*   **Primary Branch:** `5_1-new`
+*   **Primary Branch:** `unified-backend-implementation`
 
-## Recent Changes
-*   **Economy Integration:** `ScreenGameplay` now supports wallet tracking and betting.
-*   **Dashboard:** Unified Dashboard accessible from Title Menu.
-*   **NotITG:** Render Targets and Shaders supported; NotePath pending.
+## Feature Status
+*   [x] **Economy:** Active
+*   [x] **Gym:** Active
+*   [x] **Tournament:** Active
+*   [ ] **Missions:** Pending (Backend)
+*   [ ] **NetPlay:** Stubbed

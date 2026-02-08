@@ -1,10 +1,9 @@
-local missions = {
-    { Name="First Steps", Desc="Clear 3 songs on Beginner", Status="Complete", Reward="50 XP" },
-    { Name="Stamina Test", Desc="Play a 10-minute marathon course", Status="Locked", Reward="100 XP" },
-    { Name="Speed Demon", Desc="Clear a song with 2x Speed Mod", Status="Active", Reward="200 XP" },
-    { Name="Boss Rush", Desc="Defeat 3 Boss Songs in a row", Status="Locked", Reward="Avatar Frame" }
-}
+local function GetMissions()
+    if not MISSIONMAN then return {} end
+    return MISSIONMAN:GetMissions()
+end
 
+local missions = GetMissions()
 local current_index = 1
 local t = Def.ActorFrame {}
 
@@ -45,7 +44,7 @@ t[#t+1] = Def.ActorFrame {
 
                     -- Name
                     LoadFont("Common Normal")..{
-                        Text=m.Name,
+                        Text=m.Title,
                         InitCommand=function(self) self:xy(-230, -10):zoom(1):halign(0) end
                     },
 
@@ -60,9 +59,30 @@ t[#t+1] = Def.ActorFrame {
                         Text=m.Status,
                         InitCommand=function(self)
                             self:xy(230, -10):zoom(0.8):halign(1)
-                            if m.Status == "Complete" then self:diffuse(Color.Green)
-                            elseif m.Status == "Locked" then self:diffuse(Color.Red)
-                            else self:diffuse(Color.Yellow) end
+                            if m.Status == "Complete" then
+                                self:diffuse(Color.Green)
+                            elseif m.Status == "Locked" then
+                                self:diffuse(Color.Red)
+                            elseif m.Status == "Claimed" then
+                                self:diffuse(Color.Gray)
+                            else
+                                self:diffuse(Color.Yellow)
+                            end
+                        end
+                    },
+
+                    -- Progress Bar
+                    Def.Quad {
+                        InitCommand=function(self) self:xy(0, 15):zoomto(100, 5):halign(0):diffuse(Color.Black) end
+                    },
+                    Def.Quad {
+                        InitCommand=function(self)
+                            local pct = 0
+                            if m.Progress and m.Target and m.Target > 0 then
+                                pct = m.Progress / m.Target
+                            end
+                            if pct > 1 then pct = 1 end
+                            self:xy(0, 15):zoomto(100*pct, 5):halign(0):diffuse(Color.Orange)
                         end
                     },
 
@@ -92,9 +112,23 @@ local function InputHandler(event)
         MESSAGEMAN:Broadcast("UpdateSelection")
         SOUND:PlayOnce(THEME:GetPathS("Common", "change"))
     elseif event.GameButton == "Start" or event.GameButton == "Center" then
-        if missions[current_index].Status ~= "Locked" then
-            SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
-            SCREENMAN:SetNewScreen("ScreenSelectMusic") -- Proceed to attempt mission
+        local m = missions[current_index]
+        if m.Status ~= "Locked" then
+            if m.Status == "Complete" and MISSIONMAN then
+                if MISSIONMAN:ClaimReward(m.ID) then
+                    SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
+                    SCREENMAN:SystemMessage("Reward Claimed!")
+                    SCREENMAN:SetNewScreen("ScreenMissionSelect") -- Refresh
+                else
+                    SOUND:PlayOnce(THEME:GetPathS("Common", "cancel"))
+                end
+            elseif m.Status == "Active" then
+                SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
+                SCREENMAN:SetNewScreen("ScreenSelectMusic") -- Proceed to attempt mission
+            else
+                SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
+                SCREENMAN:SetNewScreen("ScreenSelectMusic") -- Proceed to attempt mission
+            end
         else
             SOUND:PlayOnce(THEME:GetPathS("Common", "cancel"))
         end

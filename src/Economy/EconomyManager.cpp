@@ -1,4 +1,5 @@
 #include "global.h"
+#include "global.h"
 #include "EconomyManager.h"
 #include "RageLog.h"
 #include "LuaBinding.h"
@@ -7,7 +8,6 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "IniFile.h"
-#include "LuaBinding.h"
 #include "LuaManager.h"
 #include <climits>
 #include "DateTime.h"
@@ -332,80 +332,79 @@ float EconomyManager::GetHashRate() const
     return m_fCurrentHashRate;
 }
 
-// Lua
-class LunaEconomyManager: public Luna<EconomyManager>
-{
-	return m_TransactionHistory;
-}
-
 // Lua Bindings
 class LunaEconomyManager: public Luna<EconomyManager>
 {
 public:
-	static int GetBalance( T* p, lua_State *L )
-	{
-		RString sAddr = SArg(1);
-		lua_pushnumber( L, (double)p->GetBalance(sAddr) );
-		return 1;
-	}
+    static int GetBalance( T* p, lua_State *L )
+    {
+        if( lua_gettop(L) >= 1 )
+        {
+            RString sAddr = SArg(1);
+            lua_pushnumber( L, (double)p->GetBalance(sAddr) );
+            return 1;
+        }
+        lua_pushnumber( L, (double)p->GetBalance() );
+        return 1;
+    }
 
-	static int Transfer( T* p, lua_State *L )
-	{
-		RString from = SArg(1);
-		RString to = SArg(2);
-		long long amount = (long long)IArg(3);
-		RString reason = SArg(4);
-		lua_pushboolean( L, p->Transfer(from, to, amount, reason) );
-		return 1;
-	}
+    static int Transfer( T* p, lua_State *L )
+    {
+        RString from = SArg(1);
+        RString to = SArg(2);
+        long long amount = (long long)IArg(3);
+        RString reason = SArg(4);
+        lua_pushboolean( L, p->Transfer(from, to, amount, reason) );
+        return 1;
+    }
 
-	static int GetPlayerElo( T* p, lua_State *L )
-	{
-		lua_pushnumber( L, p->GetPlayerElo() );
-		return 1;
-	}
+    static int GetPlayerElo( T* p, lua_State *L )
+    {
+        lua_pushnumber( L, p->GetPlayerElo() );
+        return 1;
+    }
 
-	static int HasAsset( T* p, lua_State *L )
-	{
-		RString name = SArg(1);
-		lua_pushboolean( L, p->HasAsset(name) );
-		return 1;
-	}
-public:
-	static int GetBalance( T* p, lua_State *L )
-	{
-		lua_pushnumber( L, (double)p->GetBalance() );
-		return 1;
-	}
-	static int GetWalletAddress( T* p, lua_State *L )
-	{
-		lua_pushstring( L, p->GetWalletAddress() );
-		return 1;
-	}
-	static int SendTip( T* p, lua_State *L )
-	{
-		RString addr = SArg(1);
-		long long amount = (long long)FArg(2);
-		lua_pushboolean( L, p->SendTip(addr, amount) );
-		return 1;
-	}
-	static int IsConnected( T* p, lua_State *L )
-	{
-		lua_pushboolean( L, p->IsConnected() );
-		return 1;
-	}
+    static int HasAsset( T* p, lua_State *L )
+    {
+        RString name = SArg(1);
+        lua_pushboolean( L, p->HasAsset(name) );
+        return 1;
+    }
+
+    static int GetWalletAddress( T* p, lua_State *L )
+    {
+        lua_pushstring( L, p->GetWalletAddress() );
+        return 1;
+    }
+
+    static int SendTip( T* p, lua_State *L )
+    {
+        RString addr = SArg(1);
+        long long amount = (long long)FArg(2);
+        lua_pushboolean( L, p->SendTip(addr, amount) );
+        return 1;
+    }
+
+    static int IsConnected( T* p, lua_State *L )
+    {
+        lua_pushboolean( L, p->IsConnected() );
+        return 1;
+    }
+
     static int BuyItem( T* p, lua_State *L )
     {
         RString id = SArg(1);
         lua_pushboolean( L, p->BuyItem(id) );
         return 1;
     }
+
     static int HasItem( T* p, lua_State *L )
     {
         RString id = SArg(1);
         lua_pushboolean( L, p->HasItem(id) );
         return 1;
     }
+
     static int GetMarketplaceItems( T* p, lua_State *L )
     {
         const std::vector<EconomyItem>& items = p->GetMarketplaceItems();
@@ -422,6 +421,7 @@ public:
         }
         return 1;
     }
+
     static int GetHistory( T* p, lua_State *L )
     {
         const std::vector<Transaction>& hist = p->GetHistory();
@@ -436,6 +436,7 @@ public:
         }
         return 1;
     }
+
     static int AwardMiningReward( T* p, lua_State *L )
     {
         float score = FArg(1);
@@ -443,28 +444,29 @@ public:
         p->AwardMiningReward(score, diff);
         return 0;
     }
+
     static int GetHashRate( T* p, lua_State *L )
     {
         lua_pushnumber(L, p->GetHashRate());
         return 1;
     }
 
-	LunaEconomyManager()
-	{
-		ADD_METHOD( GetBalance );
-		ADD_METHOD( Transfer );
-		ADD_METHOD( GetPlayerElo );
-		ADD_METHOD( HasAsset );
-		ADD_METHOD( GetWalletAddress );
-		ADD_METHOD( SendTip );
-		ADD_METHOD( IsConnected );
+    LunaEconomyManager()
+    {
+        ADD_METHOD( GetBalance );
+        ADD_METHOD( Transfer );
+        ADD_METHOD( GetPlayerElo );
+        ADD_METHOD( HasAsset );
+        ADD_METHOD( GetWalletAddress );
+        ADD_METHOD( SendTip );
+        ADD_METHOD( IsConnected );
         ADD_METHOD( BuyItem );
         ADD_METHOD( HasItem );
         ADD_METHOD( GetMarketplaceItems );
         ADD_METHOD( GetHistory );
         ADD_METHOD( AwardMiningReward );
         ADD_METHOD( GetHashRate );
-	}
+    }
 };
 
 LUA_REGISTER_CLASS( EconomyManager )

@@ -4,6 +4,32 @@ local function AwardMining(score, meter)
     -- Optional: SystemMessage("Mining: " .. score .. "% Reward")
 end
 
+local function UpdateMissions(pn)
+    if not MISSIONMAN then return end
+
+    -- Report Song Clear
+    MISSIONMAN:ReportMetric("SongsPassed", 1)
+
+    -- Report Notes Hit (Simplified)
+    local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
+    if pss then
+        local hits = pss:GetTapNoteScores('TapNoteScore_W1') +
+                     pss:GetTapNoteScores('TapNoteScore_W2') +
+                     pss:GetTapNoteScores('TapNoteScore_W3')
+        MISSIONMAN:ReportMetric("NotesHit", hits)
+
+        -- Report Calories
+        local cals = pss:GetCaloriesBurned()
+        MISSIONMAN:ReportMetric("Calories", cals)
+
+        -- Also log to GymManager
+        if GYMMAN then
+            local dur = pss:GetAliveSeconds() / 60.0
+            GYMMAN:LogWorkout("Arcade", dur, cals)
+        end
+    end
+end
+
 local t = Def.ActorFrame {
     OnCommand=function(self)
         -- Listen for stage end
@@ -23,6 +49,7 @@ local t = Def.ActorFrame {
                     if steps then meter = steps:GetMeter() end
 
                     AwardMining(score, meter)
+                    UpdateMissions(pn)
                 end
             end
         end
