@@ -7,42 +7,26 @@
 #include "PlayerNumber.h"
 #include "RageLog.h"
 
-#include <cmath>
-
 class XNode;
 
 /** @brief The result of hitting (or missing) a tap note. */
 struct TapNoteResult
 {
 	/** @brief Set up the TapNoteResult with default values. */
-	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false), bHeld(false) { }
+	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false) { }
 	/** @brief The TapNoteScore that was achieved by the player. */
 	TapNoteScore	tns;
-	/** @brief The TapNoteScore of any early hits of this tap note. */
-	TapNoteScore	earlyTns;
 
 	/**
 	 * @brief Offset, in seconds, for a tap grade.
 	 *
-	 * Negative numbers mean the note was hit early; positive numbers mean
+	 * Negative numbers mean the note was hit early; positive numbers mean 
 	 * it was hit late. These values are only meaningful for graded taps
 	 * (tns >= TNS_W5). */
 	float		fTapNoteOffset;
 
-	/**
-	 * @brief Offset, in seconds, for the early tap grade.
-	 *
-	 * Negative numbers mean the note was hit early; positive numbers mean
-	 * it was hit late. These values are only meaningful for graded taps
-	 * (tns >= TNS_W5). */
-	float		fEarlyTapNoteOffset;
-
-
 	/** @brief If the whole row has been judged, all taps on the row will be set to hidden. */
 	bool		bHidden;
-
-	/** @brief Track if the note was held. Used to track held misses. */
-	bool		bHeld;
 
 	// XML
 	XNode* CreateNode() const;
@@ -61,11 +45,11 @@ struct HoldNoteResult
 
 	/**
 	 * @brief the current life of the hold.
-	 *
+	 * 
 	 * 1.0 means this HoldNote has full life.
-	 *
+	 * 
 	 * 0.0 means this HoldNote is dead.
-	 *
+	 * 
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HNS_LetGo.
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HNS_Held. */
 	float	fLife;
@@ -78,6 +62,7 @@ struct HoldNoteResult
 	/** @brief Last index where fLife was greater than 0. If the tap was missed, this
 	 * will be the first index of the hold. */
 	int		iLastHeldRow;
+	float last_held_second;
 
 	/** @brief If checkpoint holds are enabled, the number of checkpoints hit. */
 	int		iCheckpointsHit;
@@ -112,8 +97,8 @@ enum TapNoteType
 	NUM_TapNoteType,
 	TapNoteType_Invalid
 };
-const RString& TapNoteTypeToString( TapNoteType tnt );
-const RString& TapNoteTypeToLocalizedString( TapNoteType tnt );
+std::string const TapNoteTypeToString( TapNoteType tnt );
+std::string const TapNoteTypeToLocalizedString( TapNoteType tnt );
 LuaDeclareType( TapNoteType );
 
 /** @brief The list of a TapNote's sub types. */
@@ -125,8 +110,8 @@ enum TapNoteSubType
 	NUM_TapNoteSubType,
 	TapNoteSubType_Invalid
 };
-const RString& TapNoteSubTypeToString( TapNoteSubType tnst );
-const RString& TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
+std::string const TapNoteSubTypeToString( TapNoteSubType tnst );
+std::string const TapNoteSubTypeToLocalizedString( TapNoteSubType tnst );
 LuaDeclareType( TapNoteSubType );
 
 /** @brief The different places a TapNote could come from. */
@@ -137,8 +122,8 @@ enum TapNoteSource
 	NUM_TapNoteSource,
 	TapNoteSource_Invalid
 };
-const RString& TapNoteSourceToString( TapNoteSource tns );
-const RString& TapNoteSourceToLocalizedString( TapNoteSource tns );
+std::string const TapNoteSourceToString( TapNoteSource tns );
+std::string const TapNoteSourceToLocalizedString( TapNoteSource tns );
 LuaDeclareType( TapNoteSource );
 
 /** @brief The various properties of a tap note. */
@@ -155,8 +140,28 @@ struct TapNote
 	/** @brief The Player that is supposed to hit this note. This is mainly for Routine Mode. */
 	PlayerNumber	pn;
 
+	// Empty until filled in by NoteData.  These exist so that the notefield
+	// doesn't have to call GetElapsedTimeFromBeat 2-6 times for every note
+	// during rendering. -Kyz
+	float occurs_at_second;
+	float end_second; // occurs_at_second plus duration.
+	// highest_subtype_on_row on row is for rendering a tap as a hold head if
+	// there is a hold head on the same row.  It needs to be a TapNoteSubType
+	// instead of a bool to handle rolls. -Kyz
+	TapNoteSubType highest_subtype_on_row;
+	// id_in_chart, id_in_column, and row_id are for passing to mods.  The mod
+	// system uses floating point for everything, so they're floats. -Kyz
+	float id_in_chart;
+	float id_in_column;
+	float row_id;
+
+	// Quantization data.  This probably means something, but nobody knows
+	// what. -Kyz
+	int parts_per_beat;
+	int part_id;
+
 	// used only if Type == attack:
-	RString		sAttackModifiers;
+	std::string		sAttackModifiers;
 	float		fAttackDurationSeconds;
 
 	// Index into Song's vector of keysound files if nonnegative:
@@ -165,7 +170,7 @@ struct TapNote
 	// also used for hold_head only:
 	int		iDuration;
 	HoldNoteResult	HoldResult;
-
+	
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
@@ -174,23 +179,23 @@ struct TapNote
 	void PushSelf( lua_State *L );
 
 	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
-		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""),
+		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""), 
 		fAttackDurationSeconds(0), iKeysoundIndex(-1), iDuration(0), HoldResult() {}
 	void Init()
 	{
 		type = TapNoteType_Empty;
-		subType = TapNoteSubType_Invalid;
-		source = TapNoteSource_Original;
-		pn = PLAYER_INVALID,
-		fAttackDurationSeconds = 0.f;
+		subType = TapNoteSubType_Invalid; 
+		source = TapNoteSource_Original; 
+		pn = PLAYER_INVALID, 
+		fAttackDurationSeconds = 0.f; 
 		iKeysoundIndex = -1;
 		iDuration = 0;
 	}
-	TapNote(
+	TapNote( 
 		TapNoteType type_,
 		TapNoteSubType subType_,
-		TapNoteSource source_,
-		RString sAttackModifiers_,
+		TapNoteSource source_, 
+		std::string sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		int iKeysoundIndex_ ):
 		type(type_), subType(subType_), source(source_), result(),
@@ -209,15 +214,18 @@ struct TapNote
 	 * @brief Determine if the two TapNotes are equal to each other.
 	 * @param other the other TapNote we're checking.
 	 * @return true if the two TapNotes are equal, or false otherwise. */
-	bool operator==(const TapNote& other) const {
-		if (type != other.type) return false;
-		if (subType != other.subType) return false;
-		if (source != other.source) return false;
-		if (sAttackModifiers != other.sAttackModifiers) return false;
-		if (fAttackDurationSeconds != other.fAttackDurationSeconds) return false;
-		if (iKeysoundIndex != other.iKeysoundIndex) return false;
-		if (iDuration != other.iDuration) return false;
-		if (pn != other.pn) return false;
+	bool operator==( const TapNote &other ) const
+	{
+#define COMPARE(x)	if(x!=other.x) return false
+		COMPARE(type);
+		COMPARE(subType);
+		COMPARE(source);
+		COMPARE(sAttackModifiers);
+		COMPARE(fAttackDurationSeconds);
+		COMPARE(iKeysoundIndex);
+		COMPARE(iDuration);
+		COMPARE(pn);
+#undef COMPARE
 		return true;
 	}
 	/**
@@ -261,8 +269,8 @@ const int ROWS_PER_BEAT	= 48;
 const int MAX_NOTE_ROW = (1<<30);
 
 /** @brief The list of quantized note types allowed at present. */
-enum NoteType
-{
+enum NoteType 
+{ 
 	NOTE_TYPE_4TH,	/**< quarter note */
 	NOTE_TYPE_8TH,	/**< eighth note */
 	NOTE_TYPE_12TH,	/**< quarter note triplet */
@@ -275,8 +283,8 @@ enum NoteType
 	NUM_NoteType,
 	NoteType_Invalid
 };
-const RString& NoteTypeToString( NoteType nt );
-const RString& NoteTypeToLocalizedString( NoteType nt );
+std::string const NoteTypeToString( NoteType nt );
+std::string const NoteTypeToLocalizedString( NoteType nt );
 LuaDeclareType( NoteType );
 float NoteTypeToBeat( NoteType nt );
 int NoteTypeToRow( NoteType nt );
@@ -363,7 +371,7 @@ inline T ScalePosition( T start, T length, T newLength, T position )
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -373,7 +381,7 @@ inline T ScalePosition( T start, T length, T newLength, T position )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
