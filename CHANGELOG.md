@@ -29,3 +29,17 @@
 
 ### Fixed
 - Resolved merge conflicts in `ProfileManager.cpp`, `ScreenGameplay.cpp`, and others.
+
+## [5.7.0-Unified-Alpha] - 2026-02-08
+### Added
+- **Unified Dashboard:** Central hub for all game modes.
+- **Economy:** Full wallet, marketplace, and mining system ().
+- **Fitness:** Gym mode with weight tracking and workout logs ().
+- **Competitive:** Tournament ladder and match scheduling ().
+- **Missions:** Dynamic mission system with progression tracking ().
+- **Documentation:** Comprehensive Vision, Manual, and Agent Instructions.
+
+### Changed
+- **Gameplay:** Added mining rewards hook on stage finish.
+- **Options:** Added 'Judge Scale' modifier (Etterna-style).
+- **Structure:** Added `Simply-Love-SM5` submodule and mocked `bobcoin` dependency.
