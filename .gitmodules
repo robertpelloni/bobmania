@@ -1,0 +1,6 @@
+[submodule "itgmania/bobcoin"]
+	path = itgmania/bobcoin
+	url = https://github.com/robertpelloni/bobcoin
+[submodule "itgmania/Themes/Simply-Love-SM5"]
+	path = itgmania/Themes/Simply-Love-SM5
+	url = https://github.com/Simply-Love/Simply-Love-SM5.git
