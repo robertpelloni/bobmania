@@ -3,7 +3,7 @@ ITGmania
 
 ITGmania is a fork of [StepMania 5.1](https://github.com/stepmania/stepmania/tree/5_1-new), an advanced cross-platform rhythm game for home and arcade use.
 
-[![Continuous integration](https://github.com/itgmania/itgmania/actions/workflows/ci.yml/badge.svg?branch=beta)](https://github.com/itgmania/itgmania/actions/workflows/ci.yml) [![Nightly release](https://github.com/itgmania/itgmania/actions/workflows/release.yml/badge.svg?branch=beta&event=push)](https://github.com/itgmania/itgmania/actions/workflows/release.yml?query=branch%3Abeta+event%3Apush)
+[![Continuous integration](https://github.com/itgmania/itgmania/actions/workflows/ci.yml/badge.svg?branch=beta)](https://github.com/itgmania/itgmania/actions/workflows/ci.yml) [![Nightly release](https://github.com/itgmania/itgmania/actions/workflows/nightly.yml/badge.svg?branch=beta&event=push)](https://github.com/itgmania/itgmania/actions/workflows/nightly.yml?query=branch%3Abeta+event%3Apush)
 
 ## Changes to StepMania 5.1
 
@@ -42,25 +42,21 @@ You can choose between using the installer or using the portable build. Using th
 
 **Linux users should receive all they need from the package manager of their choice.**
 
-* **Debian-based** (Ubuntu, Mint, MX Linux, Pop!_OS, etc):
+* **Debian-based**:
 
   * `sudo apt install libgdk-pixbuf-2.0-0 libgl1 libglvnd0 libgtk-3-0 libusb-0.1-4 libxinerama1 libxtst6`
 
-* **Fedora-based** (Bazzite, Nobara, AlmaLinux, etc):
+* **Fedora-based**:
 
-  * `sudo dnf install gdk-pixbuf2 gtk3 libusb-compat-0.1 libXinerama libXtst`
+  * `sudo yum install gdk-pixbuf2 gtk3 libusb-compat-0.1 libXinerama libXtst`
 
-*  **Arch-based** (CachyOS, EndeavourOS, Manjaro, Garuda, etc):
+*  **Arch Linux**:
 
    * `sudo pacman -S mesa gtk3 libusb-compat libxinerama libxtst llvm-libs`
 
-* **Gentoo Linux**:
+* **OpenSUSE**:
 
-   * `sudo emerge --ask dev-build/cmake media-libs/alsa-lib media-libs/glew media-libs/libglvnd dev-libs/libusb dev-lang/nasm media-libs/libpulse x11-libs/gtk+ media-sound/alsa-utils`  
-
-* **OpenSUSE Linux**:
-
-   * All editions of OpenSUSE already have everything you need pre-installed.
+   * OpenSUSE comes with everything you need pre-installed.
 
 
 ### Build From Source

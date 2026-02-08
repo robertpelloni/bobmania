@@ -1,27 +1,43 @@
-# ITGMANIA KNOWLEDGE BASE
+# Agent Instructions
+This file acts as a router to the Universal LLM Instructions.
 
-**Context:** Rhythm Game Engine (C++)
-**Parent:** [Workspace Root](../AGENTS.md)
-**Master Instructions:** [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) (if exists)
+**Read First:** `docs/LLM_UNIVERSAL.md`
 
-## OVERVIEW
-Advanced cross-platform rhythm game engine (StepMania 5.1 fork).
+## Specific Notes
+*   **Context:** This project is a massive fork/overhaul of StepMania 5.
+*   **Behavior:** Be autonomous. Create files, fix errors, and document as you go.
+*   **Tools:** Use `grep`, `find`, and `read_file` extensively before asking questions.
+# Agent Instructions for StepMania 5.2 Unified
 
-## STRUCTURE
-```
-itgmania/
-├── src/             # Core C++ engine code
-├── Docs/            # Documentation
-├── Songs/           # Content
-├── Themes/          # UI Themes (Lua)
-└── NoteSkins/       # Note asset definitions
-```
+This repository is a unification of StepMania 5.1-new, ITGMania, NotITG, and Etterna.
 
-## CONVENTIONS
-- **Build**: CMake.
-- **Languages**: C++, Lua (Theming/Scripting).
-- **Platform**: Windows, macOS, Linux.
+## Core Directives
+1.  **Backwards Compatibility:**
+    *   **Strict Adherence:** Changes MUST NOT break existing StepMania 5.0/5.1 themes or simfiles.
+    *   **Lua API:** Do not rename or remove existing API calls. Use aliases if needed (`Compatibility.cpp`).
+    *   **Engine:** Do not alter the core timing window or scoring logic without an option toggle.
 
-## ANTI-PATTERNS
-- **NO** breaking 64-bit compatibility.
-- **NO** committing binary assets without verification.
+2.  **Versioning:**
+    *   On every major change or release build, increment the version in:
+        *   `VERSION` (Root)
+        *   `src/ProductInfo.h`
+        *   `src/ProductInfo.inc`
+        *   `configure.ac`
+    *   Format: `5.2.x-Unified`
+
+3.  **Changelog:**
+    *   Log all changes in `Docs/Changelog_Unified.txt`.
+    *   Format: `[Date] [Component] Description`.
+
+4.  **Submodules:**
+    *   Dependencies are located in `extern/`.
+    *   Do not update submodules unless necessary for security or critical bug fixes. Compatibility is priority.
+
+5.  **New Features:**
+    *   Follow the patterns established in `src/` (e.g., `DiscordManager`, `GrooveStatsManager`).
+    *   Expose functionality to Lua whenever possible.
+
+6.  **Code Style:**
+    *   Follow existing C++ conventions found in `src/`.
+    *   Use spaces, not tabs.
+    *   Comment complex logic.

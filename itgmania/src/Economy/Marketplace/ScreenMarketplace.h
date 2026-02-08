@@ -1,0 +1,38 @@
+#ifndef SCREEN_MARKETPLACE_H
+#define SCREEN_MARKETPLACE_H
+
+#include "ScreenWithMenuElements.h"
+#include "BitmapText.h"
+
+struct MarketItem {
+	int id;
+	std::string name;
+	std::string category;
+	long long price;
+	bool owned;
+};
+
+class ScreenMarketplace : public ScreenWithMenuElements
+{
+public:
+	virtual void Init();
+	virtual bool Input( const InputEventPlus &input );
+
+private:
+	void RefreshList();
+	void BuyItem( int index );
+	void SellItem( int index );
+
+	BitmapText m_textTitle;
+	BitmapText m_textBalance;
+	BitmapText m_textStatus;
+	BitmapText m_textViewMode;
+
+	bool m_bShowInventory;
+
+	std::vector<MarketItem> m_Items;
+	std::vector<BitmapText*> m_pRowTexts;
+	int m_iSelection;
+};
+
+#endif

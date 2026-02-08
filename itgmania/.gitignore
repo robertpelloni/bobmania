@@ -10,9 +10,6 @@ CMakeScripts/
 cmake_install.cmake
 CPackConfig.cmake
 CPackSourceConfig.cmake
-ffmpeg-prefix/
-libjpeg-turbo-install/
-extern/libjpeg_turbo_project-prefix/
 # The following are generated from CMake, and thus should be stopped.
 ITGmania.project
 ITGmania.workspace
