@@ -1,5 +1,6 @@
-See [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) for universal instructions.
+# CLAUDE Instructions
 
-## Claude Specifics
-*   Use your advanced reasoning capabilities to analyze complex C++ template issues.
-*   When refactoring, prefer modern C++11/14/17 standards where supported by the compiler.
+**IMPORTANT:**
+Please refer to `docs/LLM_UNIVERSAL.md` for the latest and most comprehensive instructions, project goals, and coding standards.
+
+This file is kept for historical context but the active directives are in `docs/LLM_UNIVERSAL.md`.

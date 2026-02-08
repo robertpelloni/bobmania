@@ -74,10 +74,7 @@ bool MissionManager::ClaimReward( const RString& sMissionID )
         int amount = 0;
         if( sscanf( m.Reward.c_str(), "%d BOB", &amount ) == 1 )
         {
-            if( ECONOMYMAN ) ECONOMYMAN->LogTransaction( "Mission Reward: " + m.Title, amount );
-            // Actually adding to balance would require accessing the private/protected member or a public setter in EconomyManager
-            // For now, we assume LogTransaction handles it or we need a Grant method.
-            // Let's assume EconomyManager has a deposit method or we add one later.
+            if( ECONOMYMAN ) ECONOMYMAN->Deposit( (long long)amount, "Mission Reward: " + m.Title );
         }
         WriteToDisk();
         return true;

@@ -1,73 +1,61 @@
-# StepMania Network: Project Roadmap & Status
+# Unified StepMania Project Roadmap
 
-## Overview
-This document tracks the implementation status of the "StepMania Network" features, integrating concepts from various forks (Etterna, OutFox, StepManiaX) into a unified economy and tournament platform.
+This document tracks the implementation status of all features required for the "Unified StepMania" vision.
 
-## Accomplished Features
+## 1. Core Systems (Backend)
 
-### 1. Economy & Cryptocurrency (Simulated)
-*   **Status:** Complete
-*   **Key Components:**
-    *   `EconomyManager`: Singleton managing a simulated blockchain ledger ("Save/Economy.ini").
-    *   **Wallets:** Support for `WALLET_PLAYER`, `WALLET_HOUSE`, `WALLET_DAO`, and `ARTIST_` wallets.
-    *   **Transactions:** `Transfer()` logic with logging and persistence.
-    *   **Betting:** `ScreenBettingEntry` for placing wagers; `ScreenEvaluation` resolution logic.
-    *   **Mining:** Passive income simulation for "Server Node" uptime.
-    *   **Dividends:** Shareholders (DAO) receive periodic rewards based on Treasury balance.
+### Economy (EconomyManager)
+- [x] Basic Ledger (Balance, Transactions).
+- [x] Mining Simulation (`AwardMiningReward`).
+- [x] Marketplace Purchasing (`BuyItem`).
+- [x] Persistence (`Save/Economy.xml`).
+- [ ] **Dynamic Catalog:** Load items from `Data/MarketplaceCatalog.json` instead of hardcoding.
+- [ ] **Real Blockchain Bridge:** Replace mock with `extern/bobcoin` calls.
 
-### 2. Tournament System
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ScreenTournamentLadder`: Displays Elo rankings and Divisions (Pro/Gold/Silver).
-    *   **Ranking:** Elo calculation logic in `EconomyManager`.
-    *   **Brackets:** `TournamentBracket` class for visualizing match trees.
-    *   **Rewards:** One-time bonuses for reaching Elo thresholds (Silver/Gold/Pro).
+### Gym (GymManager)
+- [x] Profile Management (Weight, BMI, Goals).
+- [x] Lua Bindings (`LogWorkout`, `GetProfile`).
+- [ ] **Persistence:** Save/Load `WorkoutHistory` to disk.
+- [ ] **Playlist Generator:** Implement `GymPlaylistGenerator` to create courses based on intensity/length.
+- [ ] **Course Integration:** Populate `GAMESTATE->m_pCurCourse` dynamically.
 
-### 3. Governance (DAO)
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ScreenGovernance`: Interface for voting on proposals.
-    *   **Weighted Voting:** Vote power determined by "Company Share" asset ownership.
-    *   **Treasury:** Visualizes DAO funds accumulated from fees/sales.
+### Tournament (TournamentManager)
+- [x] Ladder Display (Mock Data).
+- [x] Upcoming Matches (Mock Data).
+- [ ] **Match Execution:** Implement `StartMatch` to set up `GAMESTATE` for a specific song/mod set.
+- [ ] **Result Reporting:** Implement `ReportMatchResult` to update ELO.
+- [ ] **Persistence:** Save/Load Match History and dynamic Ladder state.
 
-### 4. Gym & Fitness
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ScreenGymWelcome`: Simplified fitness-focused launcher.
-    *   `GymPlaylistGenerator`: Creates courses based on intensity/METs.
-    *   `GymCourseWriter`: Saves custom workouts to `.crs` files.
-    *   `ActorCalorieGraph`: Visualizes calorie burn over time (integrated into Gameplay).
+### Scoring (Unified)
+- [x] **Wife Scoring:** Implemented J4 scoring curve (`Scoring/WifeScoring.cpp`).
+- [x] **MSD Calculation:** Implemented MVP.
+- [ ] **Replay System:** Record and playback inputs (NotITG/Etterna parity).
 
-### 5. Network Infrastructure (Simulated)
-*   **Status:** Complete
-*   **Key Components:**
-    *   `ContentSwarmManager`: Simulates P2P package downloading/seeding.
-    *   `ScreenContentNetwork`: UI for browsing and downloading content packs.
-    *   `ScreenServerNode`: Idle screen simulating distributed computing jobs (AI/Rendering).
-    *   `ScreenNetworkChat`: Simple chat interface accessible from Content Network.
+## 2. User Experience (Frontend)
 
-### 6. Integration & Forks
-*   **Status:** Complete
-*   **Key Components:**
-    *   `MsdCalculator`: Ported Etterna-style density scoring logic.
-    *   `ActorMsdGraph`: Visualizes MSD density in Evaluation.
-    *   `ScreenLoginQR`: StepManiaX-style QR code login simulation.
-    *   `ScreenUnifiedDashboard`: "OS-like" launcher connecting all modules.
-    *   **Anti-Cheat:** `ScoreSigner` using mock HMAC for score validation.
+### Dashboard
+- [x] Unified Dashboard Screen.
+- [x] Help Overlay Integration.
 
-## Pending / Future Work
+### Gym UI
+- [x] Welcome Screen (`ScreenGymWelcome`).
+- [x] Workout Screen (`ScreenGymWorkout`).
+- [ ] **Comprehensive Help:** Add `HelpOverlay` tooltips to these screens.
+- [ ] **Workout Summary:** A screen to show stats after a set.
 
-### 1. Real-World Integration (Post-MVP)
-*   **Blockchain Bridge:** Replace `EconomyManager` simulated ledger with actual RPC calls to Ethereum/Solana/Cosmos.
-*   **P2P Networking:** Replace `ContentSwarmManager` simulation with libtorrent or IPFS integration.
-*   **Server Backend:** Implement a real NodeJS/Go backend for matchmaking and global chat.
+### Tournament UI
+- [x] Ladder Screen (`ScreenTournamentLadder`).
+- [ ] **Match Lobby:** A screen to wait for opponent/ready up.
+- [ ] **Spectator View:** UI for watching a match (using `SpectatorManager`).
 
-### 2. Advanced Features
-*   **Live Spectating:** Real-time streaming of tournament matches.
-*   **Cross-Game Inventory:** API to sync assets with external games (e.g., "bob's game") for real.
-*   **VR Support:** "Gym Mode" specifically optimized for VR headsets.
+### Economy UI
+- [x] Marketplace (`ScreenMarketplace`).
+- [x] Wallet History (`ScreenWalletHistory`).
+- [ ] **Transaction Details:** Click a transaction to see more info.
 
-## Documentation
-*   `docs/SYSTEM_ARCHITECTURE.md`: Technical design.
-*   `docs/USER_GUIDE.md`: Player instructions.
-*   `src/CMakeData-economy.cmake`: Build configuration.
+## 3. Immediate Priorities (Next Steps)
+
+1.  **Gym Persistence:** Ensure workout history is saved.
+2.  **Gym Playlist Generator:** Create the logic to build workouts.
+3.  **Tournament Match Logic:** Allow players to actually "play" a tournament match.
+4.  **UI Polish:** Apply `HelpOverlay` to all new screens.

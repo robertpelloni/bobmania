@@ -47,7 +47,9 @@ void EconomyManager::LoadFromNode( const XNode *pNode )
 		return;
 	}
 
-	pNode->GetChildValue( "Balance", m_iBalance );
+	RString sBalance;
+	pNode->GetChildValue( "Balance", sBalance );
+	m_iBalance = StringToLLong( sBalance );
 	pNode->GetChildValue( "WalletAddress", m_sWalletAddress );
 
     const XNode *pItems = pNode->GetChild( "OwnedItems" );
@@ -69,7 +71,9 @@ void EconomyManager::LoadFromNode( const XNode *pNode )
             Transaction t;
             txn->GetAttrValue( "Date", t.Date );
             txn->GetAttrValue( "Desc", t.Description );
-            txn->GetAttrValue( "Amount", t.Amount );
+            RString sAmt;
+            txn->GetAttrValue( "Amount", sAmt );
+            t.Amount = StringToLLong(sAmt);
             m_History.push_back( t );
         }
     }
@@ -78,7 +82,7 @@ void EconomyManager::LoadFromNode( const XNode *pNode )
 XNode* EconomyManager::CreateNode() const
 {
 	XNode *xml = new XNode( "Economy" );
-	xml->AppendChild( "Balance", (double)m_iBalance );
+	xml->AppendChild( "Balance", ssprintf("%lld", m_iBalance) );
 	xml->AppendChild( "WalletAddress", m_sWalletAddress );
 
     XNode *pItems = xml->AppendChild( "OwnedItems" );
@@ -97,7 +101,7 @@ XNode* EconomyManager::CreateNode() const
         XNode *txn = pHistory->AppendChild( "Transaction" );
         txn->AppendAttr( "Date", it->Date );
         txn->AppendAttr( "Desc", it->Description );
-        txn->AppendAttr( "Amount", it->Amount );
+        txn->AppendAttr( "Amount", ssprintf("%lld", it->Amount) );
     }
 
 	return xml;
@@ -223,6 +227,13 @@ void EconomyManager::LogTransaction( const RString& sDesc, long long iAmount )
     if( m_History.size() > 50 ) m_History.resize( 50 );
 }
 
+void EconomyManager::Deposit( long long iAmount, const RString& sDesc )
+{
+    if( iAmount <= 0 ) return;
+    m_iBalance += iAmount;
+    LogTransaction( sDesc, iAmount );
+}
+
 void EconomyManager::AwardMiningReward( float fScore, float fDifficulty )
 {
     // Basic formula: Score % * Difficulty * Base
@@ -231,7 +242,7 @@ void EconomyManager::AwardMiningReward( float fScore, float fDifficulty )
     if( amount > 0 )
     {
         m_iBalance += amount;
-        LogTransaction( "Mining Reward (Score: " + RString::Format("%.2f%%", fScore*100) + ")", amount );
+        LogTransaction( "Mining Reward (Score: " + ssprintf("%.2f%%", fScore*100) + ")", amount );
     }
 }
 

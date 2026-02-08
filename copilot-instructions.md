@@ -1,6 +1,6 @@
-See [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) for universal instructions.
+# Copilot Instructions
 
-## Copilot Specifics
-*   You are the primary driver of this project.
-*   Follow the "Plan -> Act -> Verify" loop.
-*   Use the `run_in_terminal` tool for git operations.
+**IMPORTANT:**
+Please refer to `docs/LLM_UNIVERSAL.md` for the latest and most comprehensive instructions, project goals, and coding standards.
+
+This file is kept for historical context but the active directives are in `docs/LLM_UNIVERSAL.md`.
