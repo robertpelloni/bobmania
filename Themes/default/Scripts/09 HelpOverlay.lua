@@ -28,6 +28,22 @@ HelpOverlay.Register("ScreenWalletHistory", {
     Description = "Transaction History\n\nView your recent earnings from Mining, Tips, and Tournament wins.\nOutgoing transactions (Purchases) are shown in red."
 })
 
+HelpOverlay.Register("ScreenSpectate", {
+    Description = "Spectator Mode\n\nWatch live matches from top players or friends.\nUse Chat to interact with other spectators.\nCheer with bits (Bobcoin) to support players."
+})
+
+HelpOverlay.Register("ScreenReplayMenu", {
+    Description = "Replay Browser\n\nReview your past performances or study pro replays.\nSelect a replay file to load it into the game engine.\nCheck timing windows and judgment distribution."
+})
+
+HelpOverlay.Register("ScreenAssetSync", {
+    Description = "Asset Synchronization\n\nSync your profile data (Stats, Items, Songs) across devices or with the cloud.\nRequired for cross-platform progression."
+})
+
+HelpOverlay.Register("ScreenUnifiedDashboard", {
+    Description = "Unified Dashboard\n\nYour central hub for all game modes.\nPress Start to select a mode.\nUse Left/Right to browse: Arcade, Gym, Economy, Tournament, Missions."
+})
+
 function HelpOverlay.Create()
     return Def.ActorFrame {
         Name = "HelpOverlay",

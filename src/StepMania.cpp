@@ -63,6 +63,7 @@
 #include "Tournament/TournamentManager.h"
 #include "Unified/MissionManager.h"
 #include "Scoring/ReplayManager.h"
+#include "Network/SpectatorManager.h"
 #include "GrooveStats/GrooveStatsManager.h"
 #include "Discord/DiscordManager.h"
 #include "LightsManager.h"
@@ -1175,6 +1176,7 @@ int sm_main(int argc, char* argv[])
 	MISSIONMAN->Init();
 	REPLAYMAN	= new ReplayManager;
 	REPLAYMAN->Init();
+	SPECTATORMAN = new SpectatorManager;
 	GROOVESTATSMAN = new GrooveStatsManager;
 	GROOVESTATSMAN->Init();
 	DISCORD		= new DiscordManager;

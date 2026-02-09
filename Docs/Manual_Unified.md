@@ -9,8 +9,9 @@ Welcome to the Unified StepMania platform, a comprehensive fork integrating feat
 4.  [Tournament Mode](#tournament-mode)
 5.  [Economy & Marketplace](#economy--marketplace)
 6.  [Mission Mode](#mission-mode)
-7.  [Online Play](#online-play)
-8.  [Advanced Options](#advanced-options)
+7.  [Spectator & Replays](#spectator--replays)
+8.  [Online Play](#online-play)
+9.  [Advanced Options](#advanced-options)
 
 ---
 
@@ -62,14 +63,24 @@ A dedicated mode for completing specific tasks.
     *   *Defeat Boss Songs*
 *   **Rewards:** Completing missions grants XP and unique items (Avatar Frames, Titles).
 
+## Spectator & Replays
+New tools for learning and entertainment.
+*   **Spectator Mode:** Watch live matches from high-ranking players. Connect via the Tournament Ladder screen.
+    *   *Chat:* Interact with other viewers.
+    *   *Cheer:* Send Bobcoin bits to support players.
+*   **Replay System:** Every play is automatically recorded.
+    *   **Replay Browser:** View past plays, analyze judgment timing, and share replay files.
+    *   **Ghost Replay:** Compete against your own previous best (or a downloaded pro replay) in real-time.
+
 ## Online Play
 Connect to the StepMania Online (SMO) network.
 *   **Lobbies:** Chat with other players in room-based lobbies.
 *   **Multiplayer:** Synchronized gameplay with real-time score comparison.
+*   **Asset Sync:** Ensure your profile data, unlocked songs, and items are synchronized across devices using the Asset Sync manager.
 
 ## Advanced Options
 *   **Simply Love Integration:** The platform fully supports the "Simply Love" theme structure for ITG-faithful gameplay.
 *   **Feature Parity:** Unified StepMania includes mechanics inspired by DDR (Freeze Arrows, Shock Arrows), ITG (Mines, Hands), and PIU (Co-op).
 
 ---
-*Generated for Unified StepMania v5.1-New*
+*Generated for Unified StepMania v5.7.0-Unified-Alpha*
