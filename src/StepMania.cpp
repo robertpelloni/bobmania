@@ -59,6 +59,10 @@
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
 #include "Economy/EconomyManager.h"
+#include "Gym/GymManager.h"
+#include "Tournament/TournamentManager.h"
+#include "Unified/MissionManager.h"
+#include "Scoring/ReplayManager.h"
 #include "GrooveStats/GrooveStatsManager.h"
 #include "Discord/DiscordManager.h"
 #include "LightsManager.h"
@@ -325,6 +329,10 @@ void ShutdownGame()
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( BOOKKEEPER );
 	SAFE_DELETE( ECONOMYMAN );
+	SAFE_DELETE( GYMMAN );
+	SAFE_DELETE( TOURNAMENTMAN );
+	SAFE_DELETE( MISSIONMAN );
+	SAFE_DELETE( REPLAYMAN );
 	SAFE_DELETE( GROOVESTATSMAN );
 	SAFE_DELETE( DISCORD );
 	SAFE_DELETE( LIGHTSMAN );
@@ -1159,6 +1167,14 @@ int sm_main(int argc, char* argv[])
 	BOOKKEEPER	= new Bookkeeper;
 	ECONOMYMAN	= new EconomyManager;
 	ECONOMYMAN->Init();
+	GYMMAN		= new GymManager;
+	GYMMAN->Init();
+	TOURNAMENTMAN = new TournamentManager;
+	TOURNAMENTMAN->Init();
+	MISSIONMAN	= new MissionManager;
+	MISSIONMAN->Init();
+	REPLAYMAN	= new ReplayManager;
+	REPLAYMAN->Init();
 	GROOVESTATSMAN = new GrooveStatsManager;
 	GROOVESTATSMAN->Init();
 	DISCORD		= new DiscordManager;

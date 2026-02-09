@@ -35,6 +35,7 @@ public:
 	RString GetLocalProfileIDFromIndex( int iIndex );
 
 	bool CreateLocalProfile( RString sName, RString &sProfileIDOut );
+	bool SelectProfile( PlayerNumber pn, const RString& sProfileID );
 	void AddLocalProfileByID( Profile *pProfile, RString sProfileID ); // transfers ownership of pProfile
 	bool RenameLocalProfile( RString sProfileID, RString sNewName );
 	bool DeleteLocalProfile( RString sProfileID );

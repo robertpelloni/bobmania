@@ -111,14 +111,16 @@ list(APPEND SM_DATA_SCORE_SRC
             "ScoreKeeperNormal.cpp"
             "ScoreKeeperRave.cpp"
             "ScoreKeeperShared.cpp"
-            "Scoring/WifeScoring.cpp")
+            "Scoring/WifeScoring.cpp"
+            "Scoring/ReplayManager.cpp")
 
 list(APPEND SM_DATA_SCORE_HPP
             "ScoreKeeper.h"
             "ScoreKeeperNormal.h"
             "ScoreKeeperRave.h"
             "ScoreKeeperShared.h"
-            "Scoring/WifeScoring.h")
+            "Scoring/WifeScoring.h"
+            "Scoring/ReplayManager.h")
 
 list(APPEND SM_DATA_GYM_SRC
             "Gym/GymManager.cpp"
