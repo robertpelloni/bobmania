@@ -4,3 +4,36 @@
 [submodule "itgmania/Themes/Simply-Love-SM5"]
 	path = itgmania/Themes/Simply-Love-SM5
 	url = https://github.com/Simply-Love/Simply-Love-SM5.git
+[submodule "itgmania/extern/IXWebSocket"]
+	path = itgmania/extern/IXWebSocket
+	url = https://github.com/machinezone/IXWebSocket.git
+[submodule "itgmania/extern/ffmpeg"]
+	path = itgmania/extern/ffmpeg
+	url = https://github.com/FFmpeg/FFmpeg.git
+[submodule "itgmania/extern/hidapi"]
+	path = itgmania/extern/hidapi
+	url = https://github.com/libusb/hidapi.git
+[submodule "itgmania/extern/libjpeg-turbo"]
+	path = itgmania/extern/libjpeg-turbo
+	url = https://github.com/libjpeg-turbo/libjpeg-turbo.git
+[submodule "itgmania/extern/libpng"]
+	path = itgmania/extern/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "itgmania/extern/libtomcrypt"]
+	path = itgmania/extern/libtomcrypt
+	url = https://github.com/libtom/libtomcrypt.git
+[submodule "itgmania/extern/libtommath"]
+	path = itgmania/extern/libtommath
+	url = https://github.com/libtom/libtommath.git
+[submodule "itgmania/extern/libusb"]
+	path = itgmania/extern/libusb
+	url = https://github.com/libusb/libusb-cmake.git
+[submodule "itgmania/extern/mbedtls"]
+	path = itgmania/extern/mbedtls
+	url = https://github.com/Mbed-TLS/mbedtls.git
+[submodule "itgmania/extern/ogg"]
+	path = itgmania/extern/ogg
+	url = https://gitlab.xiph.org/xiph/ogg.git
+[submodule "itgmania/extern/vorbis"]
+	path = itgmania/extern/vorbis
+	url = https://gitlab.xiph.org/xiph/vorbis.git
