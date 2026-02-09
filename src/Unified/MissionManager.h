@@ -31,6 +31,8 @@ public:
     // Mission Handling
     const std::vector<Mission>& GetMissions() const;
     void ReportMetric( const RString& sType, float fValue ); // Updates progress
+    bool IsAnyMissionJustCompleted() const;
+    void ClearMissionCompletionFlag();
     bool ClaimReward( const RString& sMissionID );
 
 	// Persistence
@@ -44,6 +46,7 @@ public:
 
 private:
     std::vector<Mission> m_Missions;
+    bool m_bJustCompletedMission;
 
     // Helper to find index
     int GetMissionIndex( const RString& sID );

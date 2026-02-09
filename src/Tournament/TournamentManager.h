@@ -41,6 +41,8 @@ public:
     // Logic
     bool StartMatch( const RString& sOpponentName, int iSongID );
     void ReportMatchResult( const RString& sWinner );
+    bool IsMatchActive() const;
+    void SetMatchActive( bool bActive );
 
 	// Persistence
 	void LoadFromNode( const XNode *pNode );
@@ -55,6 +57,7 @@ private:
     std::vector<LadderEntry> m_Ladder;
     std::vector<MatchInfo> m_Matches;
     TournamentBracket m_CurrentBracket;
+    bool m_bMatchActive;
 };
 
 extern TournamentManager* TOURNAMENTMAN;

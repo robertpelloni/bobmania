@@ -20,7 +20,22 @@ std::vector<Song*> GymPlaylistGenerator::GeneratePlaylist( float fTargetDuration
     for( Song* s : allSongs )
     {
         // Check if song has music length > 30s and < 5 mins
-        if( s->m_fMusicLengthSeconds > 30.0f && s->m_fMusicLengthSeconds < 300.0f )
+        if( s->m_fMusicLengthSeconds < 30.0f || s->m_fMusicLengthSeconds > 300.0f )
+            continue;
+
+        // Check intensity (Meter)
+        bool bHasValidSteps = false;
+        const std::vector<Steps*> &vpSteps = s->GetAllSteps();
+        for( const Steps* steps : vpSteps )
+        {
+            if( steps->GetMeter() >= iMinMeter && steps->GetMeter() <= iMaxMeter )
+            {
+                bHasValidSteps = true;
+                break;
+            }
+        }
+
+        if( bHasValidSteps )
             candidates.push_back(s);
     }
 

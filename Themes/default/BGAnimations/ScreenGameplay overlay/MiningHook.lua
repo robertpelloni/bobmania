@@ -27,6 +27,10 @@ local function UpdateMissions(pn)
             GYMMAN:LogWorkout("Arcade", dur, cals)
         end
     end
+
+    if MISSIONMAN:IsAnyMissionJustCompleted() then
+        SCREENMAN:SystemMessage("Mission Complete!")
+    end
 end
 
 local t = Def.ActorFrame {
@@ -42,6 +46,15 @@ local t = Def.ActorFrame {
 
                     AwardMining(score, meter)
                     UpdateMissions(pn)
+
+                    -- Check Tournament Result
+                    if TOURNAMENTMAN and TOURNAMENTMAN:IsMatchActive() then
+                        local winner = "Opponent"
+                        if score > 0.8 then winner = "Player" end -- Simple logic for MVP
+                        TOURNAMENTMAN:ReportMatchResult(winner)
+                        TOURNAMENTMAN:SetMatchActive(false)
+                        SCREENMAN:SystemMessage("Tournament Match Complete: " .. winner .. " Wins!")
+                    end
                 end
             end
         end

@@ -6,6 +6,10 @@
 #include "XmlFileUtil.h"
 #include "RageFile.h"
 #include "RageUtil.h"
+#include "SongManager.h"
+#include "GameState.h"
+#include "Game.h"
+#include "Song.h"
 
 TournamentManager* TOURNAMENTMAN = nullptr;
 
@@ -13,6 +17,7 @@ static const RString TOURNAMENT_DAT = "Save/Tournament.xml";
 
 TournamentManager::TournamentManager()
 {
+    m_bMatchActive = false;
 }
 
 TournamentManager::~TournamentManager()
@@ -122,14 +127,34 @@ void TournamentManager::UpdateELO( const RString& sPlayer, int iChange )
 
 bool TournamentManager::StartMatch( const RString& sOpponentName, int iSongID )
 {
-    // 1. Validate Opponent
-    // 2. Load Song (Simulated via ID)
-    // 3. Set GameState to Versus Mode
-    // 4. Set Opponent Name for UI
+    // 1. Validate Opponent (Stub)
 
-    // For MVP, we'll just log and return true.
-    LOG->Trace("Starting match against %s on Song %d", sOpponentName.c_str(), iSongID);
+    // 2. Load Song (Random for now as we don't have a reliable ID map)
+    const std::vector<Song*> &allSongs = SONGMAN->GetAllSongs();
+    if( allSongs.empty() ) return false;
+
+    Song* pSong = allSongs[ RandomInt(allSongs.size()) ];
+
+    // 3. Set GameState
+    GAMESTATE->m_pCurSong.Set( pSong );
+    GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
+    // Ideally set style to Versus if 2 players, but for now single player "vs bot"
+    // GAMESTATE->SetCurrentStyle( GAMESTATE->GetGame(0)->GetStyle( ... ) );
+
+    m_bMatchActive = true;
+
+    LOG->Trace("Starting match against %s on Song %s", sOpponentName.c_str(), pSong->GetMainTitle().c_str());
     return true;
+}
+
+bool TournamentManager::IsMatchActive() const
+{
+    return m_bMatchActive;
+}
+
+void TournamentManager::SetMatchActive( bool bActive )
+{
+    m_bMatchActive = bActive;
 }
 
 void TournamentManager::ReportMatchResult( const RString& sWinner )
@@ -201,12 +226,19 @@ public:
         return 0;
     }
 
+    static int IsMatchActive( T* p, lua_State *L )
+    {
+        lua_pushboolean(L, p->IsMatchActive());
+        return 1;
+    }
+
     LunaTournamentManager()
     {
         ADD_METHOD( GetLadder );
         ADD_METHOD( GetMatches );
         ADD_METHOD( StartMatch );
         ADD_METHOD( ReportMatchResult );
+        ADD_METHOD( IsMatchActive );
     }
 };
 
