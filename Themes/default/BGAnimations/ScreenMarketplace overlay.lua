@@ -1,167 +1,142 @@
-local items = GetMarketplaceItems()
-local current_index = 1
 local t = Def.ActorFrame {}
 
-t[#t+1] = HelpOverlay.Create()
-
--- Helper to get balance
-local function UpdateBalance(self)
-    local balance = GetPlayerBalance(PLAYER_1)
-    self:settext("Balance: " .. balance .. " BOB")
-end
-
-t[#t+1] = Def.ActorFrame {
-    InitCommand=function(self) self:Center() end,
-
-    -- Header
-    LoadFont("Common Normal")..{
-        Text="Marketplace",
-        InitCommand=function(self) self:y(-200):zoom(1.5) end
-    },
-
-    -- Balance Display
-    LoadFont("Common Normal")..{
-        Text="Balance: ...",
-        InitCommand=function(self) self:xy(250, -200):zoom(0.8):diffuse(Color.Green) end,
-        OnCommand=function(self) UpdateBalance(self) end,
-        TransactionMessageCommand=function(self) UpdateBalance(self) end
-    },
-
-    -- Transaction History Button Hint
-    LoadFont("Common Normal")..{
-        Text="Press SELECT for History  |  Hold SELECT for Help",
-        InitCommand=function(self) self:xy(0, 220):zoom(0.6):diffuse(0.7,0.7,0.7,1) end
-    },
-
-    -- Mining Status
-    LoadFont("Common Normal")..{
-        Text="Mining: Active (45 MH/s)",
-        InitCommand=function(self)
-            local status = GetBobcoinStatus()
-            if status.MiningActive then
-                self:xy(250, 220):zoom(0.5):diffuse(Color.Cyan):settext("Mining: Active (" .. status.Hashrate .. ")")
-            else
-                self:xy(250, 220):zoom(0.5):diffuse(0.5,0.5,0.5,1):settext("Mining: Inactive")
-            end
-        end
-    },
-
-    -- Item Grid
-    Def.ActorFrame {
-        InitCommand=function(self) self:y(-50) end,
-        -- Generate Items
-        unpack((function()
-            local children = {}
-            for i, item in ipairs(items) do
-                local col = (i-1) % 3
-                local row = math.floor((i-1) / 3)
-
-                children[#children+1] = Def.ActorFrame {
-                    InitCommand=function(self)
-                        self:xy((col-1)*200, (row-1)*120)
-                    end,
-
-                    -- Background
-                    Def.Quad {
-                        InitCommand=function(self) self:zoomto(180, 100):diffuse(0,0,0,0.5) end,
-                        UpdateSelectionMessageCommand=function(self)
-                            if i == current_index then
-                                self:diffuse(0.2,0.2,0.5,0.8):glow(Color.White)
-                            else
-                                self:diffuse(0,0,0,0.5):glow(0,0,0,0)
-                            end
-                        end
-                    },
-
-                    -- Icon (Placeholder)
-                    Def.Quad {
-                         InitCommand=function(self) self:zoomto(40,40):x(-60):diffuse(Color.Orange) end
-                    },
-
-                    -- Name
-                    LoadFont("Common Normal")..{
-                        Text=item.Name,
-                        InitCommand=function(self) self:xy(0, -20):zoom(0.8):maxwidth(120) end
-                    },
-
-                    -- Price
-                    LoadFont("Common Normal")..{
-                        Text=item.Price .. " BOB",
-                        InitCommand=function(self) self:xy(0, 10):zoom(0.7):diffuse(Color.Yellow) end
-                    },
-
-                    -- Type
-                    LoadFont("Common Normal")..{
-                        Text=item.Type,
-                        InitCommand=function(self) self:xy(0, 30):zoom(0.5):diffuse(0.6,0.6,0.6,1) end
-                    }
-                }
-            end
-            return children
-        end)())
-    }
+-- Background
+t[#t+1] = Def.Quad {
+    InitCommand = function(self) self:zoomto(SCREEN_WIDTH, SCREEN_HEIGHT):Center():diffuse(0,0,0,1) end
 }
 
--- Input Handler
-local function InputHandler(event)
-    if not event.PlayerNumber or not event.button then return false end
-    if event.type ~= "InputEventType_FirstPress" then return false end
+-- Header
+t[#t+1] = LoadFont("Common Large") .. {
+    Text = "MARKETPLACE",
+    InitCommand = function(self) self:xy(SCREEN_CENTER_X, 50):zoom(0.8):diffuse(1,1,0,1) end
+}
 
-    local num_items = #items
-    local cols = 3
-
-    if event.GameButton == "MenuLeft" or event.GameButton == "Left" then
-        if current_index > 1 then current_index = current_index - 1 end
-        MESSAGEMAN:Broadcast("UpdateSelection")
-        SOUND:PlayOnce(THEME:GetPathS("Common", "change"))
-    elseif event.GameButton == "MenuRight" or event.GameButton == "Right" then
-        if current_index < num_items then current_index = current_index + 1 end
-        MESSAGEMAN:Broadcast("UpdateSelection")
-        SOUND:PlayOnce(THEME:GetPathS("Common", "change"))
-    elseif event.GameButton == "MenuUp" or event.GameButton == "Up" then
-        if current_index > cols then current_index = current_index - cols end
-        MESSAGEMAN:Broadcast("UpdateSelection")
-        SOUND:PlayOnce(THEME:GetPathS("Common", "change"))
-    elseif event.GameButton == "MenuDown" or event.GameButton == "Down" then
-        if current_index + cols <= num_items then current_index = current_index + cols end
-        MESSAGEMAN:Broadcast("UpdateSelection")
-        SOUND:PlayOnce(THEME:GetPathS("Common", "change"))
-    elseif event.GameButton == "Start" or event.GameButton == "Center" then
-        local item = items[current_index]
-        if BuyItem(PLAYER_1, item.ID) then
-            SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
-            MESSAGEMAN:Broadcast("Transaction")
-            SCREENMAN:SystemMessage("Bought " .. item.Name)
+-- Balance
+t[#t+1] = LoadFont("Common Normal") .. {
+    Text = "Wallet: ",
+    InitCommand = function(self) self:xy(SCREEN_CENTER_X, 80):zoom(0.7):diffuse(1,1,1,1) end,
+    UpdateBalanceCommand = function(self)
+        if ECONOMYMAN then
+            self:settext("Wallet: " .. ECONOMYMAN:GetBalance() .. " BOBC")
         else
-            SOUND:PlayOnce(THEME:GetPathS("Common", "cancel"))
-            SCREENMAN:SystemMessage("Insufficient Funds")
+            self:settext("Wallet: 1,000 BOBC (Mock)")
         end
-    elseif event.GameButton == "Select" then
-        -- Simple toggle logic: Quick press = History, Long press (simulated here as just another binding for now or handled via HelpToggle broadcast if we want simplicity)
-        -- Since we want both help and history on Select, let's use "EffectUp" or "Coin" for help?
-        -- Or just assume Select toggles help if held... simpler: Select = Help, Start+Select = History?
-        -- For now, let's prioritize Help as per instructions, and move History to a menu option or "EffectDown".
+    end
+}
 
-        -- BUT, the user wants "Help on Select".
-        -- Let's change History to require a different button or be a menu item.
-        -- Actually, let's just make Select toggle Help, and add a specific button for history on the UI.
-        -- Wait, the previous code had Select for Wallet History.
-        -- Let's stick to the convention: Select = Help.
-        -- We will add a "History" button to the grid navigation or a specific key (like MenuUp on top row).
+-- Item Selection
+local items = {}
+if ECONOMYMAN then
+    items = ECONOMYMAN:GetMarketplaceItems()
+else
+    items = {
+        { ID="song_pack_1", Name="Song Pack 1", Price=500 },
+        { ID="avatar_frame_gold", Name="Gold Avatar Frame", Price=2000 },
+        { ID="xp_boost_1h", Name="XP Boost (1 Hour)", Price=100 },
+    }
+end
 
-        -- Revised: Select = Help.
-        MESSAGEMAN:Broadcast("HelpToggle")
-        SOUND:PlayOnce(THEME:GetPathS("Common", "value"))
+local selectedIndex = 1
+
+local function UpdateList(self)
+    self:runcommandonchildren("UpdateSelection")
+end
+
+-- List Container
+local list = Def.ActorFrame {
+    InitCommand = function(self) self:xy(SCREEN_CENTER_X - 150, 150) end
+}
+
+for i, item in ipairs(items) do
+    local yPos = (i-1) * 40
+
+    local row = Def.ActorFrame {
+        InitCommand = function(self) self:y(yPos) end,
+        UpdateSelectionCommand = function(self)
+            if i == selectedIndex then
+                self:diffuse(1,1,0,1):zoom(1.1)
+            else
+                self:diffuse(1,1,1,1):zoom(1.0)
+            end
+        end
+    }
+
+    -- Name
+    row[#row+1] = LoadFont("Common Normal") .. {
+        Text = item.Name,
+        InitCommand = function(self) self:zoom(0.7):halign(0) end
+    }
+
+    -- Price
+    row[#row+1] = LoadFont("Common Normal") .. {
+        Text = item.Price .. " BOBC",
+        InitCommand = function(self) self:x(300):zoom(0.7):halign(1) end
+    }
+
+    list[#list+1] = row
+end
+
+t[#t+1] = list
+list:queuecommand("UpdateSelection")
+
+-- Buy Result Message
+local msg = Def.ActorFrame {
+    InitCommand = function(self) self:xy(SCREEN_CENTER_X, SCREEN_HEIGHT - 100):visible(false) end,
+    ShowMessageCommand = function(self, params)
+        self:visible(true):stoptweening():zoom(0.8):diffuse(params.color)
+        self:runcommandonchildren("SetText", {text=params.text})
+        self:sleep(2):linear(0.5):diffusealpha(0):visible(false)
+    end
+}
+
+msg[#msg+1] = LoadFont("Common Normal") .. {
+    Name = "MessageText",
+    SetTextCommand = function(self, params) self:settext(params.text) end
+}
+t[#t+1] = msg
+
+-- Input Handling
+local function Input(event)
+    if not event.PlayerNumber then return end
+    if event.type ~= "InputEventType_FirstPress" then return end
+
+    if event.GameButton == "MenuDown" then
+        selectedIndex = selectedIndex + 1
+        if selectedIndex > #items then selectedIndex = 1 end
+        list:playcommand("UpdateSelection")
+    elseif event.GameButton == "MenuUp" then
+        selectedIndex = selectedIndex - 1
+        if selectedIndex < 1 then selectedIndex = #items end
+        list:playcommand("UpdateSelection")
+    elseif event.GameButton == "Start" then
+        local item = items[selectedIndex]
+        if ECONOMYMAN then
+            if ECONOMYMAN:HasItem(item.ID) then
+                msg:playcommand("ShowMessage", {text="Already Owned!", color=color("#FFFF00")})
+            else
+                if ECONOMYMAN:BuyItem(item.ID) then
+                    msg:playcommand("ShowMessage", {text="Purchased " .. item.Name .. "!", color=color("#00FF00")})
+                    t:playcommand("UpdateBalance")
+                else
+                    msg:playcommand("ShowMessage", {text="Insufficient Funds!", color=color("#FF0000")})
+                end
+            end
+        else
+            msg:playcommand("ShowMessage", {text="Economy Disconnected", color=color("#FF0000")})
+        end
     elseif event.GameButton == "Back" then
         SCREENMAN:SetNewScreen("ScreenUnifiedDashboard")
     end
-
-    return true
 end
 
-t.OnCommand=function(self)
-    SCREENMAN:GetTopScreen():AddInputCallback(InputHandler)
-    MESSAGEMAN:Broadcast("UpdateSelection")
-end
+t[#t+1] = Def.ActorFrame {
+    OnCommand = function(self)
+        SCREENMAN:GetTopScreen():AddInputCallback(Input)
+        self:queuecommand("UpdateBalance")
+    end
+}
+
+-- Help Overlay
+t[#t+1] = HelpOverlay.Create()
 
 return t

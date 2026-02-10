@@ -19,7 +19,7 @@ EconomyManager::EconomyManager()
 	m_iBalance = 1000000; // Mock start balance
 	m_bConnected = false;
 	m_sWalletAddress = "0xMockAddress123";
-    m_fCurrentHashRate = 0.0f;
+    m_fCurrentHashRate = 10.0f;
 }
 
 EconomyManager::~EconomyManager()
@@ -39,7 +39,18 @@ void EconomyManager::LoadCatalog()
 {
     if( !IsAFile(CATALOG_JSON) )
     {
-        LOG->Warn( "Marketplace Catalog not found at %s", CATALOG_JSON.c_str() );
+        LOG->Warn( "Marketplace Catalog not found at %s. Using default mock data.", CATALOG_JSON.c_str() );
+
+        // Default Catalog
+        EconomyItem item1; item1.ID="song_pack_1"; item1.Name="Starter Pack"; item1.Price=500; item1.Type="Song"; item1.Icon="SongPack";
+        m_MarketplaceCatalog.push_back(item1);
+
+        EconomyItem item2; item2.ID="avatar_frame_gold"; item2.Name="Gold Frame"; item2.Price=2000; item2.Type="Cosmetic"; item2.Icon="FrameGold";
+        m_MarketplaceCatalog.push_back(item2);
+
+        EconomyItem item3; item3.ID="xp_boost_1h"; item3.Name="1h XP Boost"; item3.Price=100; item3.Type="Consumable"; item3.Icon="Potion";
+        m_MarketplaceCatalog.push_back(item3);
+
         return;
     }
 
@@ -250,7 +261,7 @@ const std::vector<Transaction>& EconomyManager::GetHistory() const
 void EconomyManager::LogTransaction( const RString& sDesc, long long iAmount )
 {
     Transaction t;
-    t.Date = DateTime::GetNowDate().GetString();
+    t.Date = DateTime::GetNowDate().GetString(); // Simplified date string
     t.Description = sDesc;
     t.Amount = iAmount;
     m_History.insert( m_History.begin(), t ); // Prepend for newest first
@@ -274,7 +285,7 @@ void EconomyManager::AwardMiningReward( float fScore, float fDifficulty )
     if( amount > 0 )
     {
         m_iBalance += amount;
-        LogTransaction( "Mining Reward (Score: " + ssprintf("%.2f%%", fScore*100) + ")", amount );
+        LogTransaction( "Mining Reward (" + ssprintf("%.2f%%", fScore*100) + ")", amount );
     }
 }
 
@@ -283,7 +294,7 @@ float EconomyManager::GetHashRate() const
     return m_fCurrentHashRate;
 }
 
-// Lua
+// Lua Bindings
 class LunaEconomyManager: public Luna<EconomyManager>
 {
 public:
