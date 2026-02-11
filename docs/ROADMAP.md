@@ -9,19 +9,19 @@ This document tracks the implementation status of all features required for the 
 - [x] Mining Simulation (`AwardMiningReward`).
 - [x] Marketplace Purchasing (`BuyItem`).
 - [x] Persistence (`Save/Economy.xml`).
-- [ ] **Dynamic Catalog:** Load items from `Data/MarketplaceCatalog.json` instead of hardcoding.
+- [x] **Dynamic Catalog:** Load items from `Data/MarketplaceCatalog.json` (fallback implemented).
 - [ ] **Real Blockchain Bridge:** Replace mock with `extern/bobcoin` calls.
 
 ### Gym (GymManager)
 - [x] Profile Management (Weight, BMI, Goals).
 - [x] Lua Bindings (`LogWorkout`, `GetProfile`).
-- [ ] **Persistence:** Save/Load `WorkoutHistory` to disk.
-- [ ] **Playlist Generator:** Implement `GymPlaylistGenerator` to create courses based on intensity/length.
+- [x] **Persistence:** Save/Load `WorkoutHistory` to `Save/Gym.xml`.
+- [x] **Playlist Generator:** `GymPlaylistGenerator` creates workouts based on intensity/length.
 
 ### Tournament (TournamentManager)
 - [x] Ladder Display (Mock Data).
 - [x] Upcoming Matches (Mock Data).
-- [ ] **Match Execution:** Implement `StartMatch` to set up `GAMESTATE`.
+- [ ] **Match Execution:** Implement `StartMatch` to set up `GAMESTATE` for a specific song/mod set.
 - [ ] **Result Reporting:** Implement `ReportMatchResult` to update ELO.
 
 ### Scoring & Replay (Unified)
@@ -43,6 +43,7 @@ This document tracks the implementation status of all features required for the 
 ### Gym UI
 - [x] Welcome Screen (`ScreenGymWelcome`).
 - [x] Workout Screen (`ScreenGymWorkout`).
+- [x] Workout Summary (`ScreenGymSummary`).
 - [x] Help Integration.
 
 ### Tournament UI
@@ -55,7 +56,6 @@ This document tracks the implementation status of all features required for the 
 
 ## 3. Immediate Priorities (Next Steps)
 
-1.  **Gym Persistence:** Ensure workout history is saved.
-2.  **Gym Playlist Generator:** Create the logic to build workouts.
-3.  **Tournament Match Logic:** Allow players to actually "play" a tournament match.
-4.  **Real Blockchain:** Connect `BobcoinBridge`.
+1.  **Tournament Match Logic:** Allow players to actually "play" a tournament match.
+2.  **Real Blockchain:** Connect `BobcoinBridge`.
+3.  **Code Cleanup:** Remove legacy comments and unused files.

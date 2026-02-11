@@ -1,26 +1,22 @@
 #ifndef TOURNAMENT_MANAGER_H
 #define TOURNAMENT_MANAGER_H
 
-#include "RageTypes.h"
-#include "TournamentBracket.h"
+#include "RageUtil.h"
 #include <vector>
 
 struct lua_State;
-class XNode;
 
-struct LadderEntry {
-    int Rank;
-    RString Name;
-    int ELO;
-    int Wins;
-    int Losses;
-};
-
-struct MatchInfo {
-    RString P1;
-    RString P2;
-    RString Time;
-    RString Prize;
+struct TournamentMatch
+{
+	RString MatchID;
+	RString OpponentName;
+	int OpponentELO;
+	RString SongTitle;
+	RString Difficulty;
+	bool bCompleted;
+	int UserScore;
+	int OpponentScore;
+    RString Result; // "Win", "Loss", "Draw"
 };
 
 class TournamentManager
@@ -31,35 +27,19 @@ public:
 
 	void Init();
 
-    // Ladder
-    const std::vector<LadderEntry>& GetLadder() const;
-    void UpdateELO( const RString& sPlayer, int iChange );
+    // API
+	const std::vector<TournamentMatch>& GetLadder() const;
+    void StartMatch(const RString& sMatchID);
+    void ReportMatchResult(const RString& sMatchID, int iUserScore);
 
-    // Matches
-    const std::vector<MatchInfo>& GetUpcomingMatches() const;
-
-    // Logic
-    bool StartMatch( const RString& sOpponentName, int iSongID );
-    void ReportMatchResult( const RString& sWinner );
-    bool IsMatchActive() const;
-    void SetMatchActive( bool bActive );
-
-	// Persistence
-	void LoadFromNode( const XNode *pNode );
-	XNode *CreateNode() const;
-	void ReadFromDisk();
-	void WriteToDisk();
-
-	// Lua
-	void PushSelf( lua_State *L );
+    // Lua
+    void PushSelf(lua_State *L);
 
 private:
-    std::vector<LadderEntry> m_Ladder;
-    std::vector<MatchInfo> m_Matches;
-    TournamentBracket m_CurrentBracket;
-    bool m_bMatchActive;
+    std::vector<TournamentMatch> m_Ladder;
+    RString m_CurrentMatchID;
 };
 
-extern TournamentManager* TOURNAMENTMAN;
+extern TournamentManager *TOURNAMENTMAN;
 
 #endif
