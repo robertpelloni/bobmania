@@ -4,6 +4,7 @@
 #include "RageTypes.h"
 #include <map>
 #include <vector>
+#include "Bridge/BobcoinBridge.h"
 
 struct lua_State;
 class XNode;
@@ -73,6 +74,8 @@ private:
     std::map<RString, bool> m_OwnedItems;
     std::vector<Transaction> m_History;
     std::vector<EconomyItem> m_MarketplaceCatalog;
+
+    BobcoinBridge* m_pBridge;
 };
 
 extern EconomyManager*	ECONOMYMAN;	// global and accessible from anywhere in our program

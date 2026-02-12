@@ -20,16 +20,19 @@ EconomyManager::EconomyManager()
 	m_bConnected = false;
 	m_sWalletAddress = "0xMockAddress123";
     m_fCurrentHashRate = 10.0f;
+    m_pBridge = new BobcoinBridge();
 }
 
 EconomyManager::~EconomyManager()
 {
 	WriteToDisk();
+    SAFE_DELETE( m_pBridge );
 }
 
 void EconomyManager::Init()
 {
 	LOG->Trace( "EconomyManager::Init()" );
+    if( m_pBridge ) m_pBridge->Init();
     LoadCatalog();
 	ReadFromDisk();
 	ConnectToTempo();
