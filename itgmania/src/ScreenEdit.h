@@ -608,7 +608,7 @@ public:
 		bpm,
 		stop,
 		delay,
-//		time_signature,
+		time_signature,
 		label,
 		tickcount,
 		combo,

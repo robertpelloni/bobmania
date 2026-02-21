@@ -106,6 +106,7 @@ AutoScreenMessage( SM_BackFromBeat0Change );
 AutoScreenMessage( SM_BackFromBPMChange );
 AutoScreenMessage( SM_BackFromStopChange );
 AutoScreenMessage( SM_BackFromDelayChange );
+AutoScreenMessage(SM_BackFromTimeSigChange);
 AutoScreenMessage( SM_BackFromTickcountChange );
 AutoScreenMessage( SM_BackFromComboChange );
 AutoScreenMessage( SM_BackFromLabelChange );
@@ -2203,6 +2204,7 @@ bool ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				TapNote tn = m_selectedTap;
 				tn.pn = m_InputPlayerNumber;
 				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
+				m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
 				CheckNumberOfNotesAndUndo();
 			}
 		}
@@ -3690,6 +3692,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->m_pCurSong->m_Attacks.UpdateStartTimes(delta);
 			GAMESTATE->m_pCurSong->m_fMusicSampleStartSeconds += delta;
 		}
+		update_note_occurance();
 
 		SetDirty( true );
 	}
@@ -3698,45 +3701,70 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 
 		if( fBPM > 0 )
+		{
 			GetAppropriateTimingForUpdate().AddSegment( BPMSegment(GetRow(), fBPM) );
-
-		SetDirty( true );
+			update_note_occurance();
+			SetDirty( true );
+		}
 	}
 	else if( SM == SM_BackFromStopChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 
 		if( fStop >= 0 )
+		{
 			GetAppropriateTimingForUpdate().AddSegment( StopSegment(GetRow(), fStop) );
-
-		SetDirty( true );
+			update_note_occurance();
+			SetDirty( true );
+		}
 	}
 	else if( SM == SM_BackFromDelayChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		float fDelay = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 
 		if( fDelay >= 0 )
+		{
 			GetAppropriateTimingForUpdate().AddSegment( DelaySegment(GetRow(), fDelay) );
+			update_note_occurance();
+			SetDirty( true );
+		}
 
-		SetDirty( true );
+	}
+	else if(SM == SM_BackFromTimeSigChange && !ScreenTextEntry::s_bCancelledLast)
+	{
+		// Just ignore invalid input.
+		auto parts= Rage::split(ScreenTextEntry::s_sLastAnswer, "/");
+		if(parts.size() == 2)
+		{
+			int num= StringToInt(parts[0]);
+			int den= StringToInt(parts[1]);
+			if(num > 0 && den > 0)
+			{
+				GetAppropriateTimingForUpdate().AddSegment(TimeSignatureSegment(GetRow(), num, den));
+				update_note_occurance();
+				SetDirty(true);
+			}
+		}
 	}
 	else if ( SM == SM_BackFromTickcountChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		int iTick = StringToInt( ScreenTextEntry::s_sLastAnswer );
 
 		if ( iTick >= 0 && iTick <= ROWS_PER_BEAT )
+		{
 			GetAppropriateTimingForUpdate().AddSegment( TickcountSegment( GetRow(), iTick) );
-
-		SetDirty( true );
+			SetDirty( true );
+		}
 	}
 	else if ( SM == SM_BackFromComboChange && !ScreenTextEntry::s_bCancelledLast )
 	{
 		int iCombo, iMiss;
 
 		if (sscanf(ScreenTextEntry::s_sLastAnswer.c_str(), " %d / %d ", &iCombo, &iMiss) == 2)
+		{
 			GetAppropriateTimingForUpdate().AddSegment( ComboSegment(GetRow(), iCombo, iMiss) );
-
-		SetDirty( true );
+			SetDirty( true );
+		}
 	}
 	else if ( SM == SM_BackFromLabelChange && !ScreenTextEntry::s_bCancelledLast )
 	{
@@ -3757,6 +3785,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		if( fWarp >= 0 ) // allow 0 to kill a warp.
 		{
 			GetAppropriateTimingForUpdate().SetWarpAtBeat( GetBeat(), fWarp );
+			update_note_occurance();
 			SetDirty( true );
 		}
 	}
@@ -4299,8 +4328,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
+			// TODO: Shouldn't this flip whatever flag says to use the step timing?
 			SaveUndo();
 			m_pSteps->m_Timing.Clear();
+			update_note_occurance();
 			SetDirty( true );
 		}
 	}
@@ -5196,6 +5227,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const std::vector<int>
 
 			// bake in the additions
 			NoteDataUtil::ConvertAdditionsToRegular( m_NoteDataEdit );
+			m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
 			break;
 		}
 		case alter:
@@ -5343,6 +5375,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const std::vector<int>
 			float startBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker);
 			float lengthBeat = NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) - startBeat;
 			GetAppropriateTimingForUpdate().SetWarpAtBeat(startBeat,lengthBeat);
+			m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
 			SetDirty(true);
 			break;
 		}
@@ -5399,6 +5432,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const std::vector<int>
 					}
 				}
 			}
+			m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
 			break;
 		}
 		case routine_mirror_1_to_2:
@@ -5450,6 +5484,7 @@ void ScreenEdit::HandleAlterMenuChoice(AlterMenuChoice c, const std::vector<int>
 					}
 				}
 			}
+			m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
 			break;
 		}
 		default: break;
@@ -5504,24 +5539,33 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const std::vector<int> 
 
 				int iRowsToCopy = m_Clipboard.GetLastRow()+1;
 				m_NoteDataEdit.CopyRange( m_Clipboard, 0, iRowsToCopy, iDestFirstRow );
+				m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
 			}
 			break;
 
 		case insert_and_shift:
-			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow(),
-				GetRowsFromAnswers(c, iAnswers));
+			{
+				int move_dist= GetRowsFromAnswers(c, iAnswers);
+				NoteDataUtil::InsertRows(m_NoteDataEdit, GetRow(), move_dist);
+				m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
+			}
 			break;
 		case delete_and_shift:
-			NoteDataUtil::DeleteRows( m_NoteDataEdit, GetRow(),
-				GetRowsFromAnswers(c, iAnswers));
+			{
+				int move_dist= GetRowsFromAnswers(c, iAnswers);
+				NoteDataUtil::DeleteRows(m_NoteDataEdit, GetRow(), move_dist);
+				m_NoteDataEdit.SetOccuranceTimeForAllTaps(&GetAppropriateTimingForUpdate());
+			}
 			break;
 		case shift_pauses_forward:
 			GetAppropriateTimingForUpdate().InsertRows( GetRow(),
 				GetRowsFromAnswers(c, iAnswers));
+			update_note_occurance();
 			break;
 		case shift_pauses_backward:
 			GetAppropriateTimingForUpdate().DeleteRows( GetRow(),
 				GetRowsFromAnswers(c, iAnswers));
+			update_note_occurance();
 			break;
 
 		case convert_pause_to_beat:
@@ -5534,6 +5578,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const std::vector<int> 
 			// don't move the step from where it is, just move everything later
 			NoteDataUtil::InsertRows( m_NoteDataEdit, GetRow() + 1, BeatToNoteRow(fStopBeats) );
 			GetAppropriateTimingForUpdate().InsertRows( GetRow() + 1, BeatToNoteRow(fStopBeats) );
+			update_note_occurance();
 		}
 		break;
 		case convert_delay_to_beat:
@@ -5546,6 +5591,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const std::vector<int> 
 
 			NoteDataUtil::InsertRows(m_NoteDataEdit, GetRow(), BeatToNoteRow(pauseBeats));
 			timing.InsertRows(GetRow(), BeatToNoteRow(pauseBeats));
+			update_note_occurance();
 			break;
 		}
 		case last_second_at_beat:
@@ -5770,6 +5816,7 @@ static LocalizedString ENTER_BEAT_0_OFFSET			( "ScreenEdit", "Enter the offset f
 static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
 static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
 static LocalizedString ENTER_DELAY_VALUE			( "ScreenEdit", "Enter a new Delay value." );
+static LocalizedString ENTER_TIME_SIGNATURE("ScreenEdit", "Enter a new Time Signature.");
 static LocalizedString ENTER_TICKCOUNT_VALUE			( "ScreenEdit", "Enter a new Tickcount value." );
 static LocalizedString ENTER_COMBO_VALUE			( "ScreenEdit", "Enter a new Combo value." );
 static LocalizedString ENTER_LABEL_VALUE			( "ScreenEdit", "Enter a new Label value." );
@@ -5814,6 +5861,14 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			SM_BackFromDelayChange,
 			ENTER_DELAY_VALUE,
 			std::to_string( GetAppropriateTiming().GetDelayAtBeat( GetBeat() ) ),
+			10
+		);
+		break;
+	case time_signature:
+		ScreenTextEntry::TextEntry(
+			SM_BackFromTimeSigChange,
+			ENTER_TIME_SIGNATURE.GetValue(),
+			GetAppropriateTiming().GetTimeSignatureSegmentAtBeat(GetBeat())->to_frac_string(),
 			10
 		);
 		break;
@@ -5917,6 +5972,7 @@ void ScreenEdit::HandleTimingDataInformationChoice( TimingDataInformationChoice 
 			break;
 		case paste_timing_from_clip:
 			clipboardFullTiming.CopyRange(0, MAX_NOTE_ROW, TimingSegmentType_Invalid, GetRow(), GetAppropriateTimingForUpdate());
+			update_note_occurance();
 			break;
 	case copy_full_timing:
 	{
@@ -6002,12 +6058,15 @@ void ScreenEdit::HandleTimingDataChangeChoice(TimingDataChangeChoice choice,
 		case menu_is_for_copying:
 			clipboardFullTiming.Clear();
 			GetAppropriateTiming().CopyRange(begin, end, change_type, 0, clipboardFullTiming);
+			update_note_occurance();
 			break;
 		case menu_is_for_shifting:
 			GetAppropriateTimingForUpdate().ShiftRange(begin, end, change_type, m_timing_rows_being_shitted);
+			update_note_occurance();
 			break;
 		case menu_is_for_clearing:
 			GetAppropriateTimingForUpdate().ClearRange(begin, end, change_type);
+			update_note_occurance();
 			break;
 		default: break;
 	}
