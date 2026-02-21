@@ -41,6 +41,12 @@ else()
   set(BSD FALSE)
 endif()
 
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+  set(ANDROID TRUE)
+else()
+  set(ANDROID FALSE)
+endif()
+
 # Allow for finding our libraries in a standard location.
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}"
             "${SM_CMAKE_DIR}/Modules/")

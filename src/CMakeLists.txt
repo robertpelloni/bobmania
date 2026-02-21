@@ -51,7 +51,7 @@ list(APPEND SMDATA_ALL_FILES_HPP
             ${SMDATA_OS_HPP}
             ${SMDATA_FILE_TYPES_HPP})
 
-if(NOT APPLE)
+if(NOT APPLE AND NOT ANDROID)
   list(APPEND SMDATA_ALL_FILES_SRC "Main.cpp")
   source_group("" FILES "Main.cpp")
 endif()
@@ -124,6 +124,11 @@ if(WITH_PORTABLE_TOMCRYPT)
 endif()
 if(WITH_NO_ROLC_TOMCRYPT)
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ROLC)
+elseif(ANDROID)
+  sm_add_compile_definition("${SM_EXE_NAME}" ENDIAN_32BITWORD)
+  sm_add_compile_definition("${SM_EXE_NAME}" ENDIAN_LITTLE)
+
+  sm_add_compile_definition("${SM_EXE_NAME}" ANDROID_TEST)
 endif()
 
 sm_add_compile_definition("${SM_EXE_NAME}" CMAKE_POWERED)

@@ -1,6 +1,10 @@
 include(CMakeProject-hidapi.cmake)
 include(CMakeProject-lua.cmake)
+
+if(NOT ANDROID)
 include(CMakeProject-glew.cmake)
+endif()
+
 include(CMakeProject-json.cmake)
 include(CMakeProject-mad.cmake)
 include(CMakeProject-zlib.cmake)
