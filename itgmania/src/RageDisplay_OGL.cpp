@@ -969,7 +969,7 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 		delete [] Texture;
 		delete [] Normal;
 		Vertex = new float[Size*3];
-		Color = new GLubyte[Size*4];
+		Color = new float[Size*4];
 		Texture = new float[Size*2];
 		Normal = new float[Size*3];
 	}
@@ -993,7 +993,7 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 	glVertexPointer( 3, GL_FLOAT, 0, Vertex );
 
 	glEnableClientState( GL_COLOR_ARRAY );
-	glColorPointer( 4, GL_UNSIGNED_BYTE, 0, Color );
+	glColorPointer( 4, GL_FLOAT, 0, Color );
 
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer( 2, GL_FLOAT, 0, Texture );

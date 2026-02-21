@@ -754,10 +754,10 @@ void BitmapText::DrawPrimitives() noexcept
 				iEnd = std::min(iEnd, m_aVertices.size()); // clamp to vertex size
 				for (; i < iEnd; i += 4)
 				{
-					m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
-					m_aVertices[i+1].c = m_pTempState->diffuse[2];	// bottom left
-					m_aVertices[i+2].c = m_pTempState->diffuse[3];	// bottom right
-					m_aVertices[i+3].c = m_pTempState->diffuse[1];	// top right
+					m_aVertices[i+0].c = RageVColor(m_pTempState->diffuse[0]);	// top left
+					m_aVertices[i+1].c = RageVColor(m_pTempState->diffuse[2]);	// bottom left
+					m_aVertices[i+2].c = RageVColor(m_pTempState->diffuse[3]);	// bottom right
+					m_aVertices[i+3].c = RageVColor(m_pTempState->diffuse[1]);	// top right
 				}
 				if( iter == m_mAttributes.end() )
 				{
@@ -786,10 +786,10 @@ void BitmapText::DrawPrimitives() noexcept
 				}
 				for( ; i < iEnd; i += 4 )
 				{
-					m_aVertices[i+0].c = temp_attr_diffuse[0];	// top left
-					m_aVertices[i+1].c = temp_attr_diffuse[2];	// bottom left
-					m_aVertices[i+2].c = temp_attr_diffuse[3];	// bottom right
-					m_aVertices[i+3].c = temp_attr_diffuse[1];	// top right
+					m_aVertices[i+0].c = RageVColor(temp_attr_diffuse[0]);	// top left
+					m_aVertices[i+1].c = RageVColor(temp_attr_diffuse[2]);	// bottom left
+					m_aVertices[i+2].c = RageVColor(temp_attr_diffuse[3]);	// bottom right
+					m_aVertices[i+3].c = RageVColor(temp_attr_diffuse[1]);	// top right
 				}
 			}
 		}
@@ -866,11 +866,11 @@ void BitmapText::DrawPrimitives() noexcept
 			{
 				if( m_internalGlow.a > 0 )
 				{
-					m_aVertices[i].c = attr.glow * m_internalGlow;
+					m_aVertices[i].c = RageVColor(attr.glow * m_internalGlow);
 				}
 				else
 				{
-					m_aVertices[i].c = attr.glow;
+					m_aVertices[i].c = RageVColor(attr.glow);
 				}
 			}
 		}
