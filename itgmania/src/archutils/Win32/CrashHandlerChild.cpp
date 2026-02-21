@@ -799,7 +799,7 @@ INT_PTR CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 					XmlFileUtil::Load( &xml, sResult, sError );
 					if( !sError.empty() )
 					{
-						sError = ssprintf( "Error parsing response: %s", sError.c_str() );
+						sLocalError = ssprintf( "Error parsing response: %s", sLocalError.c_str() );
 						xml.Clear();
 					}
 				}
