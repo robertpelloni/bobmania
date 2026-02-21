@@ -11,6 +11,7 @@
 #include "LuaManager.h"
 #include <climits>
 #include "DateTime.h"
+#include "JsonUtil.h"
 
 EconomyManager*	ECONOMYMAN = nullptr;
 
@@ -40,6 +41,7 @@ EconomyManager* EconomyManager::Instance()
 	return s_pInstance;
 }
 static const RString ECONOMY_DAT = "Save/Economy.xml";
+static const RString CATALOG_JSON = "Data/MarketplaceCatalog.json";
 
 EconomyManager::EconomyManager()
 {
@@ -47,13 +49,6 @@ EconomyManager::EconomyManager()
 	m_bConnected = false;
 	m_sWalletAddress = "0xMockAddress123";
     m_fCurrentHashRate = 0.0f;
-
-    // Initialize Mock Catalog
-    m_MarketplaceCatalog.push_back({ "song_pack_1", "Classic Pack 1", 500, "Song", "Graphics/song_pack_icon.png" });
-    m_MarketplaceCatalog.push_back({ "avatar_frame_gold", "Gold Frame", 200, "Item", "Graphics/item_icon.png" });
-    m_MarketplaceCatalog.push_back({ "xp_boost_1h", "1h XP Boost", 100, "Boost", "Graphics/boost_icon.png" });
-    m_MarketplaceCatalog.push_back({ "theme_dark", "Dark Mode Theme", 0, "Theme", "Graphics/theme_icon.png" });
-    m_MarketplaceCatalog.push_back({ "bobcoin_miner", "Bobcoin Miner", 5000, "Hardware", "Graphics/miner_icon.png" });
 }
 
 EconomyManager::~EconomyManager()
@@ -64,8 +59,45 @@ EconomyManager::~EconomyManager()
 void EconomyManager::Init()
 {
 	LOG->Trace( "EconomyManager::Init()" );
+    LoadCatalog();
 	ReadFromDisk();
 	ConnectToTempo();
+}
+
+void EconomyManager::LoadCatalog()
+{
+    if( !IsAFile(CATALOG_JSON) )
+    {
+        LOG->Warn( "Marketplace Catalog not found at %s", CATALOG_JSON.c_str() );
+        return;
+    }
+
+    RString sJson;
+    if( !GetFileContents(CATALOG_JSON, sJson) ) return;
+
+    Json::Value root;
+    RString sError;
+    if( !JsonUtil::LoadFromString(root, sJson, sError) )
+    {
+        LOG->Warn( "Failed to parse Marketplace Catalog: %s", sError.c_str() );
+        return;
+    }
+
+    if( root.isArray() )
+    {
+        m_MarketplaceCatalog.clear();
+        for( unsigned i=0; i<root.size(); ++i )
+        {
+            const Json::Value& item = root[i];
+            EconomyItem ei;
+            ei.ID = item["ID"].asString();
+            ei.Name = item["Name"].asString();
+            ei.Price = item["Price"].asInt64();
+            ei.Type = item["Type"].asString();
+            ei.Icon = item["Icon"].asString();
+            m_MarketplaceCatalog.push_back(ei);
+        }
+    }
 }
 
 void EconomyManager::LoadFromNode( const XNode *pNode )
@@ -114,7 +146,9 @@ void EconomyManager::LoadFromNode( const XNode *pNode )
 		return;
 	}
 
-	pNode->GetChildValue( "Balance", m_iBalance );
+	RString sBalance;
+	pNode->GetChildValue( "Balance", sBalance );
+	m_iBalance = StringToLLong( sBalance );
 	pNode->GetChildValue( "WalletAddress", m_sWalletAddress );
 
     const XNode *pItems = pNode->GetChild( "OwnedItems" );
@@ -136,7 +170,9 @@ void EconomyManager::LoadFromNode( const XNode *pNode )
             Transaction t;
             txn->GetAttrValue( "Date", t.Date );
             txn->GetAttrValue( "Desc", t.Description );
-            txn->GetAttrValue( "Amount", t.Amount );
+            RString sAmt;
+            txn->GetAttrValue( "Amount", sAmt );
+            t.Amount = StringToLLong(sAmt);
             m_History.push_back( t );
         }
     }
@@ -170,7 +206,7 @@ XNode* EconomyManager::CreateNode() const
 
 	ini.WriteFile("Save/Economy.ini");
 	XNode *xml = new XNode( "Economy" );
-	xml->AppendChild( "Balance", (double)m_iBalance );
+	xml->AppendChild( "Balance", ssprintf("%lld", m_iBalance) );
 	xml->AppendChild( "WalletAddress", m_sWalletAddress );
 
     XNode *pItems = xml->AppendChild( "OwnedItems" );
@@ -189,7 +225,7 @@ XNode* EconomyManager::CreateNode() const
         XNode *txn = pHistory->AppendChild( "Transaction" );
         txn->AppendAttr( "Date", it->Date );
         txn->AppendAttr( "Desc", it->Description );
-        txn->AppendAttr( "Amount", it->Amount );
+        txn->AppendAttr( "Amount", ssprintf("%lld", it->Amount) );
     }
 
 	return xml;
@@ -315,6 +351,13 @@ void EconomyManager::LogTransaction( const RString& sDesc, long long iAmount )
     if( m_History.size() > 50 ) m_History.resize( 50 );
 }
 
+void EconomyManager::Deposit( long long iAmount, const RString& sDesc )
+{
+    if( iAmount <= 0 ) return;
+    m_iBalance += iAmount;
+    LogTransaction( sDesc, iAmount );
+}
+
 void EconomyManager::AwardMiningReward( float fScore, float fDifficulty )
 {
     // Basic formula: Score % * Difficulty * Base
@@ -323,7 +366,7 @@ void EconomyManager::AwardMiningReward( float fScore, float fDifficulty )
     if( amount > 0 )
     {
         m_iBalance += amount;
-        LogTransaction( "Mining Reward (Score: " + RString::Format("%.2f%%", fScore*100) + ")", amount );
+        LogTransaction( "Mining Reward (Score: " + ssprintf("%.2f%%", fScore*100) + ")", amount );
     }
 }
 

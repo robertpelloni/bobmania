@@ -231,15 +231,6 @@ static int GetScore(int p, int Z, int64_t S, int n)
 
 }
 
-// Etterna Parity: Simplified Wife3 Calculation
-static float CalculateWifeScore( float fSeconds )
-{
-	// Curve derived to approximate Wife3 J4
-	// Max score 2.0
-	float dev = fabsf(fSeconds);
-	return 2.0f * expf( - (dev*dev) / 0.0036f );
-}
-
 void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 {
 }
@@ -433,7 +424,7 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		if( tns == TNS_Miss )
 			fWifePoints = -8.0f;
 		else if( tns > TNS_Miss && tns != TNS_None )
-			fWifePoints = CalculateWifeScore( tn.result.fTapNoteOffset );
+			fWifePoints = WifeScoring::CalculateWife3( tn.result.fTapNoteOffset );
 		
 		m_pPlayerStageStats->m_fWifeScore += fWifePoints;
 		m_pPlayerStageStats->m_fCurMaxWifeScore += 2.0f;

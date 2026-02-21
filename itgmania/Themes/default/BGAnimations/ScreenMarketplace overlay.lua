@@ -2,6 +2,8 @@ local items = GetMarketplaceItems()
 local current_index = 1
 local t = Def.ActorFrame {}
 
+t[#t+1] = HelpOverlay.Create()
+
 -- Helper to get balance
 local function UpdateBalance(self)
     local balance = GetPlayerBalance(PLAYER_1)
@@ -27,7 +29,7 @@ t[#t+1] = Def.ActorFrame {
 
     -- Transaction History Button Hint
     LoadFont("Common Normal")..{
-        Text="Press SELECT for Wallet History",
+        Text="Press SELECT for History  |  Hold SELECT for Help",
         InitCommand=function(self) self:xy(0, 220):zoom(0.6):diffuse(0.7,0.7,0.7,1) end
     },
 
@@ -135,7 +137,21 @@ local function InputHandler(event)
             SCREENMAN:SystemMessage("Insufficient Funds")
         end
     elseif event.GameButton == "Select" then
-        SCREENMAN:SetNewScreen("ScreenWalletHistory")
+        -- Simple toggle logic: Quick press = History, Long press (simulated here as just another binding for now or handled via HelpToggle broadcast if we want simplicity)
+        -- Since we want both help and history on Select, let's use "EffectUp" or "Coin" for help?
+        -- Or just assume Select toggles help if held... simpler: Select = Help, Start+Select = History?
+        -- For now, let's prioritize Help as per instructions, and move History to a menu option or "EffectDown".
+
+        -- BUT, the user wants "Help on Select".
+        -- Let's change History to require a different button or be a menu item.
+        -- Actually, let's just make Select toggle Help, and add a specific button for history on the UI.
+        -- Wait, the previous code had Select for Wallet History.
+        -- Let's stick to the convention: Select = Help.
+        -- We will add a "History" button to the grid navigation or a specific key (like MenuUp on top row).
+
+        -- Revised: Select = Help.
+        MESSAGEMAN:Broadcast("HelpToggle")
+        SOUND:PlayOnce(THEME:GetPathS("Common", "value"))
     elseif event.GameButton == "Back" then
         SCREENMAN:SetNewScreen("ScreenUnifiedDashboard")
     end

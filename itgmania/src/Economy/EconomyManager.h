@@ -33,6 +33,7 @@ public:
 	~EconomyManager();
 
 	void Init();
+    void LoadCatalog();
 	void Update( float fDeltaTime );
 
 	// Lua
@@ -55,6 +56,7 @@ private:
     // Transaction History
     const std::vector<Transaction>& GetHistory() const;
     void LogTransaction( const RString& sDesc, long long iAmount );
+    void Deposit( long long iAmount, const RString& sDesc );
 
     // Mining
     void AwardMiningReward( float fScore, float fDifficulty );

@@ -33,10 +33,20 @@ local function GetChoiceInfo(choiceName)
     return screen, text, help
 end
 
+-- Help Overlay Integration
+t[#t+1] = HelpOverlay.Create()
+
 t[#t+1] = Def.ActorFrame {
     InitCommand=function(self)
         self:Center()
     end,
+
+    -- Help Prompt
+    LoadFont("Common Normal")..{
+        Text="Press SELECT for Help",
+        InitCommand=function(self) self:xy(300, -220):zoom(0.6):diffuse(0.5,0.5,0.5,1):horizalign(right) end,
+        HelpToggleMessageCommand=function(self) self:visible(not self:GetVisible()) end
+    },
 
     -- Title
     LoadFont("Common Normal")..{
@@ -119,6 +129,10 @@ local function InputHandler(event)
         return true
     elseif event.GameButton == "Back" then
         SCREENMAN:SetNewScreen(THEME:GetMetric("ScreenUnifiedDashboard", "PrevScreen"))
+        return true
+    elseif event.GameButton == "Select" then
+        MESSAGEMAN:Broadcast("HelpToggle")
+        SOUND:PlayOnce(THEME:GetPathS("Common", "value"))
         return true
     end
 

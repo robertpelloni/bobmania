@@ -7,6 +7,8 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "DateTime.h"
+#include "GymPlaylistGenerator.h"
+#include "Song.h"
 
 GymManager*	GYMMAN = nullptr;
 
@@ -45,7 +47,24 @@ void GymManager::LoadFromNode( const XNode *pNode )
     pNode->GetChildValue( "DailyGoal", m_Profile.DailyGoal );
     pNode->GetChildValue( "TotalCalories", m_Profile.TotalCaloriesBurned );
     pNode->GetChildValue( "Streak", m_Profile.StreakDays );
-    pNode->GetChildValue( "LastLogin", m_Profile.LastLoginDate );
+
+    RString sLastLogin;
+    pNode->GetChildValue( "LastLogin", sLastLogin );
+    m_Profile.LastLoginDate = sLastLogin;
+
+    const XNode *pHistory = pNode->GetChild( "History" );
+    if( pHistory )
+    {
+        FOREACH_CONST_Child( pHistory, txn )
+        {
+            WorkoutSession s;
+            txn->GetAttrValue( "Date", s.Date );
+            txn->GetAttrValue( "Playlist", s.PlaylistName );
+            txn->GetAttrValue( "Duration", s.Duration );
+            txn->GetAttrValue( "Calories", s.CaloriesBurned );
+            m_History.push_back( s );
+        }
+    }
 
     RecalculateBMI();
 }
@@ -59,6 +78,16 @@ XNode* GymManager::CreateNode() const
     xml->AppendChild( "TotalCalories", m_Profile.TotalCaloriesBurned );
     xml->AppendChild( "Streak", m_Profile.StreakDays );
     xml->AppendChild( "LastLogin", m_Profile.LastLoginDate );
+
+    XNode *pHistory = xml->AppendChild( "History" );
+    for( const auto& s : m_History )
+    {
+        XNode *txn = pHistory->AppendChild( "Session" );
+        txn->AppendAttr( "Date", s.Date );
+        txn->AppendAttr( "Playlist", s.PlaylistName );
+        txn->AppendAttr( "Duration", s.Duration );
+        txn->AppendAttr( "Calories", s.CaloriesBurned );
+    }
 	return xml;
 }
 
@@ -172,11 +201,25 @@ public:
         return 0;
     }
 
+    static int GeneratePlaylist( T* p, lua_State *L )
+    {
+        float dur = FArg(1);
+        int minM = IArg(2);
+        int maxM = IArg(3);
+        std::vector<Song*> playlist = GymPlaylistGenerator::GeneratePlaylist( dur, minM, maxM );
+
+        bool success = GymPlaylistGenerator::StartPlaylistAsCourse( playlist );
+
+        lua_pushboolean(L, success);
+        return 1;
+    }
+
     LunaGymManager()
     {
         ADD_METHOD( GetProfile );
         ADD_METHOD( UpdateWeight );
         ADD_METHOD( LogWorkout );
+        ADD_METHOD( GeneratePlaylist );
     }
 };
 
