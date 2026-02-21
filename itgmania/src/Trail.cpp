@@ -6,6 +6,7 @@
 #include "PlayerOptions.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"
+#include "StepsUtil.h"
 #include "CommonMetrics.h"
 
 #include <cmath>
@@ -116,6 +117,11 @@ const RadarValues &Trail::GetRadarValues() const
 			// Hack: don't calculate for autogen entries
 			if( !pSteps->IsAutogen() && e.ContainsTransformOrTurn() )
 			{
+				/*
+				 * TODO: See if radar calculations can be done for all players and
+				 * not just for the single player.
+				 */
+				const float songLength = e->pSong->m_fMusicLengthSeconds;
 				NoteData nd;
 				pSteps->GetNoteData( nd );
 				RadarValues rv_orig;

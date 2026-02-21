@@ -7,6 +7,7 @@
 #include "RageSound.h"
 #include "AttackDisplay.h"
 #include "NoteData.h"
+#include "Steps.h"
 #include "ScreenMessage.h"
 #include "ThemeMetric.h"
 #include "InputEventPlus.h"
@@ -44,7 +45,7 @@ class Player: public ActorFrame
 {
 public:
 	// The passed in NoteData isn't touched until Load() is called.
-	Player( NoteData &nd, bool bVisibleParts = true );
+	Player( NoteData &nd, StepsType st, bool bVisibleParts = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -94,6 +95,9 @@ public:
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
+	/**
+	 * @brief Has this Player died in the Oni style gameplay?
+	 * @return true if the player is dead based on Oni rules, false otherwise. */
 	bool IsOniDead() const;
 
 	/**
@@ -119,6 +123,10 @@ public:
 
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
+
+	/**
+	 * @brief Retrieve the latest reference to the Player's NoteData.
+	 * @return the NoteData reference in question. */
 	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasVisibleParts() const { return m_pNoteField != nullptr; }
 
@@ -194,6 +202,7 @@ protected:
 
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
+	Steps			*currentStep;
 
 	std::vector<HoldJudgment*>	m_vpHoldJudgment;
 
@@ -263,7 +272,7 @@ class PlayerPlus
 	Player *m_pPlayer;
 	NoteData m_NoteData;
 public:
-	PlayerPlus() { m_pPlayer = new Player(m_NoteData); }
+	PlayerPlus() { m_pPlayer = new Player(m_NoteData, StepsType_Invalid); }
 	~PlayerPlus() { delete m_pPlayer; }
 	void Load( const NoteData &nd ) { m_NoteData = nd; m_pPlayer->Load(); }
 	Player *operator->() { return m_pPlayer; }

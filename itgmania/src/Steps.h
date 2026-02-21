@@ -322,6 +322,30 @@ private:
 	 * @brief What is the maximum specified BPM?
 	 * If this is a range, then min should not be equal to max. */
 	float	specifiedBPMMax;
+
+	/**
+	* @brief Which PlayerNumber are we dealing with for the purposes of this Steps' TapNote?
+	* 
+	* Note: this function could possibly be abstracted if all of the cases
+	* can be separated between Couple and Routine.
+	* @param track the Track in question. Mainly if it's Couple.
+	* @param tn the TapNote to look at. Mainly if it's Routine.
+	* @return the PlayerNumber that uses this note. */
+	PlayerNumber GetEffectivePlayer(const int track, const TapNote &tn) const;
+
+	/** @brief Get the number of specific holds when comparing TimingData for all players.
+	 * @param holdType the type of hold we are dealing with.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of specific holds for each player. */
+	vector<int> GetNumHoldsOfType(const TapNote::SubType holdType, int start = 0, int end = MAX_NOTE_ROW) const;
+
+
+	vector<int> GetNumTapsOfType(int start,
+		int end,
+		int (NoteData::*NumTapType)(int, int) const, // nd.GetNumWhatever
+		bool (NoteData::*TapType)(const TapNote &) const // nd.IsWhatever
+		) const;
 };
 
 #endif

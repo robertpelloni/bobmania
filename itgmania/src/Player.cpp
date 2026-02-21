@@ -38,6 +38,7 @@
 #include "StatsManager.h"
 #include "Song.h"
 #include "Steps.h"
+#include "StepsWithScoring.h"
 #include "GameCommand.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"
@@ -231,7 +232,7 @@ float Player::GetWindowSeconds( TimingWindow tw )
 	return fSecs;
 }
 
-Player::Player( NoteData &nd, bool bVisibleParts ) : m_NoteData(nd)
+Player::Player( NoteData &nd, StepsType st, bool bVisibleParts ) : m_NoteData(nd)
 {
 	m_drawing_notefield_board= false;
 	m_bLoaded = false;
@@ -282,6 +283,7 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	SAFE_DELETE( currentStep );
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
 	SAFE_DELETE( m_pJudgedRows );
@@ -1830,7 +1832,8 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool /
 
 		while( !iter.IsAtEnd() )
 		{
-			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+			if (StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(),
+				this->currentStep->GetStepsTypeCategory(), this->m_pPlayerState->m_PlayerNumber))
 			{
 				++iter;
 				continue;
@@ -1849,7 +1852,8 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool /
 
 		while( !iter.IsAtEnd() )
 		{
-			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row()) )
+			if (StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(),
+				this->currentStep->GetStepsTypeCategory(), this->m_pPlayerState->m_PlayerNumber))
 			{
 				++iter;
 				continue;
@@ -2405,7 +2409,8 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
 		}
-		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNoteOrRow) )
+		else if (StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNoteOrRow,
+			this->currentStep->GetStepsTypeCategory(), this->m_pPlayerState->m_PlayerNumber))
 		{
 			FlashGhostRow( iRowOfOverlappingNoteOrRow );
 		}
@@ -2519,6 +2524,8 @@ void Player::UpdateJudgedRows()
 	// Look ahead far enough to catch any rows judged early.
 	const int iEndRow = BeatToNoteRow( m_Timing->GetBeatFromElapsedTime( m_pPlayerState->m_Position.m_fMusicSeconds + GetMaxStepDistanceSeconds() ) );
 	bool bAllJudged = true;
+	StepsTypeCategory stc = this->currentStep->GetStepsTypeCategory();
+	PlayerNumber pn = this->m_pPlayerState->m_PlayerNumber;
 	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 
 	{
@@ -2537,7 +2544,8 @@ void Player::UpdateJudgedRows()
 				iLastSeenRow = iRow;
 
 				// crossed a nonempty row
-				if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow) )
+				if (!StepsWithScoring::IsRowCompletelyJudged(m_NoteData, iRow,
+					stc, pn))
 				{
 					bAllJudged = false;
 					continue;
@@ -2546,7 +2554,9 @@ void Player::UpdateJudgedRows()
 					*m_pIterUnjudgedRows = iter;
 				if( m_pJudgedRows->JudgeRow(iRow) )
 					continue;
-				const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result;
+
+				const TapNoteResult &lastTNR = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
+						iRow, stc, pn).result;
 
 				if( lastTNR.tns < TNS_Miss )
 					continue;
@@ -2667,7 +2677,10 @@ void Player::UpdateJudgedRows()
 
 void Player::FlashGhostRow( int iRow )
 {
-	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow ).result.tns;
+	const TapNoteScore lastTNS = StepsWithScoring::LastTapNoteWithResult(m_NoteData,
+		iRow,
+		this->currentStep->GetStepsTypeCategory(),
+		this->GetPlayerState()->m_PlayerNumber).result.tns;
 	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 	const bool bBright = ( m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > (unsigned int)BRIGHT_GHOST_COMBO_THRESHOLD ) || bBlind;
 
@@ -2844,8 +2857,6 @@ void Player::CrossedRows( int iLastRowCrossed, const RageTimer &now )
 						++tn.HoldResult.iCheckpointsMissed;
 					}
 				}
-				GAMESTATE->SetProcessedTimingData(this->m_Timing);
-
 				// TODO: Find a better way of handling hold checkpoints with other taps.
 				if( !viColsWithHold.empty() && ( CHECKPOINTS_TAPS_SEPARATE_JUDGMENT || m_NoteData.GetNumTapNotesInRow( r ) == 0 ) )
 				{

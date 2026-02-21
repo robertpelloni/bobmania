@@ -122,28 +122,24 @@ private:
 	/**
 	 * @brief Determine if the note in question should be counted as a tap.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a tap, false otherwise. */
 	bool IsTap(const TapNote &tn, const int row) const;
 
 	/**
 	 * @brief Determine if the note in question should be counted as a mine.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a mine, false otherwise. */
 	bool IsMine(const TapNote &tn, const int row) const;
 
 	/**
 	 * @brief Determine if the note in question should be counted as a lift.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a lift, false otherwise. */
 	bool IsLift(const TapNote &tn, const int row) const;
 
 	/**
 	 * @brief Determine if the note in question should be counted as a fake.
 	 * @param tn the note in question.
-	 * @param row the row it lives in.
 	 * @return true if it's a fake, false otherwise. */
 	bool IsFake(const TapNote &tn, const int row) const;
 
@@ -299,6 +295,13 @@ public:
 
 	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = nullptr ) const;
 	bool IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const;
+
+	/**
+	 * @brief Get the row that contains the soonest hold head based on the current location.
+	 * @param track the current track.
+	 * @param the current row.
+	 * @return the row that has the soonest hold head. */
+	int GetSoonestHoldHeadAtRow(int track, int row) const;
 
 	// statistics
 	bool IsEmpty() const;

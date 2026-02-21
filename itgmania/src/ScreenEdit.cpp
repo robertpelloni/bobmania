@@ -1380,6 +1380,23 @@ static ThemeMetric<RString> EDIT_MODIFIERS		("ScreenEdit","EditModifiers");
 
 static ThemeMetric<bool> LOOP_ON_CHART_END		("ScreenEdit","LoopOnChartEnd");
 
+/**
+ * @brief Should the right side display some step stats?
+ */
+static ThemeMetric<bool> DISPLAY_SIDE_STATS		("ScreenEdit","DisplaySideStats");
+
+/**
+ * @brief Should the NoteData stats be displayed, or the Steps stats?
+ *
+ * This metric is irrelevant if the Display Side Stats metric is set to false. */
+static ThemeMetric<bool> DISPLAY_NOTEDATA_STATS	("ScreenEdit","DisplayNotedataStats");
+
+/**
+ * @brief Should the Steps Stats be updated on every NoteData change?
+ *
+ * If true, this may slow down the editor speed. */
+static ThemeMetric<bool> UPDATE_STEPS_STATS_LIVE ("ScreenEdit","UpdateStepsStatsLive");
+
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
@@ -1863,14 +1880,6 @@ static ThemeMetric<RString> NUM_HANDS_FORMAT("ScreenEdit", "NumHandsFormat");
 static ThemeMetric<RString> NUM_ROLLS_FORMAT("ScreenEdit", "NumRollsFormat");
 static ThemeMetric<RString> NUM_LIFTS_FORMAT("ScreenEdit", "NumLiftsFormat");
 static ThemeMetric<RString> NUM_FAKES_FORMAT("ScreenEdit", "NumFakesFormat");
-static ThemeMetric<RString> NUM_STEPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumStepsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_JUMPS_FORMAT_TWO_PLAYER("ScreenEdit", "NumJumpsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_HOLDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHoldsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_MINES_FORMAT_TWO_PLAYER("ScreenEdit", "NumMinesFormatTwoPlayer");
-static ThemeMetric<RString> NUM_HANDS_FORMAT_TWO_PLAYER("ScreenEdit", "NumHandsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_ROLLS_FORMAT_TWO_PLAYER("ScreenEdit", "NumRollsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_LIFTS_FORMAT_TWO_PLAYER("ScreenEdit", "NumLiftsFormatTwoPlayer");
-static ThemeMetric<RString> NUM_FAKES_FORMAT_TWO_PLAYER("ScreenEdit", "NumFakesFormatTwoPlayer");
 static ThemeMetric<RString> TIMING_MODE_FORMAT("ScreenEdit", "TimingModeFormat");
 static ThemeMetric<RString> BEAT_0_OFFSET_FORMAT("ScreenEdit", "Beat0OffsetFormat");
 static ThemeMetric<RString> PREVIEW_START_FORMAT("ScreenEdit", "PreviewStartFormat");

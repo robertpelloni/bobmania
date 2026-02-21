@@ -19,6 +19,7 @@
 #include "Song.h"
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
+#include "StepsWithScoring.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -63,6 +64,7 @@ void ScoreKeeperNormal::Load(
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	int iTotalPossibleDancePoints = 0;
 	int iTotalPossibleGradePoints = 0;
+	const PlayerNumber pn = this->m_pPlayerState->m_PlayerNumber;
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
@@ -558,7 +560,13 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	m_iNumNotesHitThisRow = iNumTapsInRow;
 
-	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.tns;
+	PlayerNumber pn = this->m_pPlayerState->m_PlayerNumber;
+	StepsTypeCategory stc = GAMESTATE->m_pCurSteps[pn]->GetStepsTypeCategory();
+	TapNoteScore scoreOfLastTap = StepsWithScoring::LastTapNoteWithResult(nd,
+		iRow,
+		stc,
+		pn).result.tns;
+
 	HandleTapNoteScoreInternal( scoreOfLastTap, TNS_W1, iRow );
 
 	if ( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )

@@ -215,16 +215,6 @@ void GameState::SetMasterPlayerNumber(const PlayerNumber p)
 	this->masterPlayerNumber = p;
 }
 
-TimingData * GameState::GetProcessedTimingData() const
-{
-	return this->processedTiming;
-}
-
-void GameState::SetProcessedTimingData(TimingData * t)
-{
-	this->processedTiming = t;
-}
-
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
 {
 	GameCommand m;
