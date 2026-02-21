@@ -1,8 +1,10 @@
 #include "global.h"
 #include "LightsDriver.h"
+#include "LightsDriver_Export.h"
 #include "RageLog.h"
 
 #include "arch/arch_default.h"
+#include "arch/LuaDriver/LuaDriver.h"
 
 //We explicitly load these drivers as they should always be available.
 #include "arch/Lights/LightsDriver_SystemMessage.h"

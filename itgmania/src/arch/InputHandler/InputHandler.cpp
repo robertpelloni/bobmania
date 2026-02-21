@@ -172,6 +172,8 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 
 DriverList InputHandler::m_pDriverList;
 
+#include "arch/LuaDriver/LuaDriver.h"
+
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void InputHandler::Create( const RString &drivers_, std::vector<InputHandler *> &add )
 {
