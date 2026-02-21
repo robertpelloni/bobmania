@@ -24,6 +24,7 @@ private:
 
 #endif // RAGESOUNDMIXBUFFER_H
 
+
 /*
  * Copyright (c) 2002-2004 Glenn Maynard
  * All rights reserved.
