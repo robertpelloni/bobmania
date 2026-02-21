@@ -5,6 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "Foreach.h"
 #include "RageLog.h"
 
 #include <cmath>
@@ -165,6 +166,13 @@ struct TapNote
 	// also used for hold_head only:
 	int		iDuration;
 	HoldNoteResult	HoldResult;
+	
+	/**
+	 * @brief The pre-applied mods that players must deal with when hitting the arrow.
+	 *
+	 * This takes place regardless of the Type.
+	 * If this is empty, there are no obstacles. */
+	map<RString, float> obstacles;
 
 	// XML
 	XNode* CreateNode() const;
@@ -192,17 +200,47 @@ struct TapNote
 		TapNoteSource source_,
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
-		int iKeysoundIndex_ ):
+		int iKeysoundIndex_):
 		type(type_), subType(subType_), source(source_), result(),
 		pn(PLAYER_INVALID), sAttackModifiers(sAttackModifiers_),
 		fAttackDurationSeconds(fAttackDurationSeconds_),
-		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult()
+		iKeysoundIndex(iKeysoundIndex_), iDuration(0), HoldResult(),
+		obstacles()
 	{
 		if (type_ > TapNoteType_Fake )
 		{
 			LOG->Trace("Invalid tap note type %s (most likely) due to random vanish issues. Assume it doesn't need judging.", TapNoteTypeToString(type_).c_str() );
 			type = TapNoteType_Empty;
 		}
+	}
+	
+	RString ObstaclesToString() const
+	{
+		vector<RString> allInOne;
+		FOREACHM_CONST(RString, float, obstacles, ob)
+		{
+			if (ob->second == 1)
+			{
+				allInOne.push_back(ob->first);
+			}
+			else
+			{
+				allInOne.push_back(ssprintf("%f%% %s",
+											ob->second * 100,
+											ob->first.c_str()));
+			}
+		}
+		return join(",", allInOne);
+	}
+	
+	float ObstacleIntensity(RString ob) const
+	{
+		map<RString, float>::const_iterator it = obstacles.find(ob);
+		if (it != obstacles.end())
+		{
+			return it->second;
+		}
+		return 0;
 	}
 
 	/**
