@@ -70,7 +70,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*>
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( !pSong->NormallyDisplayed()  ||  pSong->IsTutorial() )
+			if( pSong->IsTutorial() )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;
@@ -559,7 +559,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					}
 				}
 			}
-			StripLockedStepsAndDifficulty( m_vpSteps );
 
 			int i = 0;
 			for (StepsAndDifficulty const &s : m_vpSteps)

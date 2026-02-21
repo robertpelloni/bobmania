@@ -7,7 +7,6 @@
 #include "SongManager.h"
 #include "GameManager.h"
 #include "XmlFile.h"
-#include "UnlockManager.h"
 #include "SongUtil.h"
 
 #include <cstddef>
@@ -30,20 +29,6 @@ bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 		return false;
 	if( m_st != StepsType_Invalid  &&  pSteps->m_StepsType != m_st )
 		return false;
-	switch( m_Locked )
-	{
-	DEFAULT_FAIL(m_Locked);
-	case Locked_Locked:
-		if( UNLOCKMAN  &&  !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
-			return false;
-		break;
-	case Locked_Unlocked:
-		if( UNLOCKMAN  &&  UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
-			return false;
-		break;
-	case Locked_DontCare:
-		break;
-	}
 
 	return true;
 }

@@ -54,7 +54,7 @@ public:
 	StepsCriteria(): m_difficulty(Difficulty_Invalid),
 	m_vDifficulties(),
 		m_iLowMeter(-1), m_iHighMeter(-1),
-		m_st(StepsType_Invalid), m_Locked(Locked_DontCare)
+		m_st(StepsType_Invalid)
 	{
 		//m_fLowBPM = -1;
 		//m_fHighBPM = -1;
@@ -74,7 +74,7 @@ public:
 	bool operator==( const StepsCriteria &other ) const
 	{
 #define X(x) (x == other.x)
-		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st) && X(m_Locked);
+		return X(m_difficulty) && X(m_iLowMeter) && X(m_iHighMeter) && X(m_st);
 #undef X
 	}
 	/**

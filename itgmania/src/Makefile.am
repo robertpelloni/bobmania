@@ -61,38 +61,8 @@ PNG = \
 ../extern/libpng/pngwtran.c ../extern/libpng/pngwutil.c
 
 Screens = \
-Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
-ScreenBookkeeping.cpp ScreenBookkeeping.h \
-ScreenContinue.cpp ScreenContinue.h \
-ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
-ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
-ScreenEdit.cpp ScreenEdit.h \
-ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
-ScreenEvaluation.cpp ScreenEvaluation.h \
-ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
-ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
-ScreenGameplay.cpp ScreenGameplay.h \
-ScreenGameplayLesson.cpp ScreenGameplayLesson.h \
-ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
-ScreenGameplayShared.cpp ScreenGameplayShared.h \
-ScreenGameplaySyncMachine.cpp ScreenGameplaySyncMachine.h \
-ScreenHighScores.cpp ScreenHighScores.h \
-ScreenHowToPlay.cpp ScreenHowToPlay.h \
-ScreenInstallOverlay.cpp ScreenInstallOverlay.h \
-ScreenInstructions.cpp ScreenInstructions.h \
-ScreenJukebox.cpp ScreenJukebox.h \
-ScreenMapControllers.cpp ScreenMapControllers.h \
-ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
-ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
-ScreenOptions.cpp ScreenOptions.h \
-ScreenOptionsCourseOverview.cpp ScreenOptionsCourseOverview.h \
-ScreenOptionsEditCourse.cpp ScreenOptionsEditCourse.h \
-ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
-ScreenOptionsExportPackage.cpp ScreenOptionsExportPackage.h \
-ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
-ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
-ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
-ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
+Screen.cpp Screen.h \
+ScreenExit.cpp ScreenExit.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
 ScreenOptionsToggleSongs.cpp ScreenOptionsToggleSongs.h \
 ScreenPackages.cpp ScreenPackages.h \
@@ -451,7 +421,6 @@ MemoryCardDisplay.cpp MemoryCardDisplay.h \
 MenuTimer.cpp MenuTimer.h \
 ModIcon.cpp ModIcon.h ModIconRow.cpp ModIconRow.h \
 MusicWheel.cpp MusicWheel.h \
-MusicWheelItem.cpp MusicWheelItem.h \
 OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
 PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 SnapDisplay.cpp SnapDisplay.h \
@@ -589,11 +558,10 @@ LuaManager.cpp LuaManager.h LightsManager.cpp LightsManager.h \
 MemoryCardManager.cpp MemoryCardManager.h \
 MessageManager.cpp MessageManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
 NoteSkinManager.cpp NoteSkinManager.h \
-PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManager.cpp \
-ScreenManager.h SongManager.cpp SongManager.h \
+PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
+ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h \
 StatsManager.cpp StatsManager.h \
-ThemeManager.cpp ThemeManager.h \
-UnlockManager.cpp UnlockManager.h
+ThemeManager.cpp ThemeManager.h
 
 if !WITHOUT_NETWORKING
  # Compile NetworkSyncManager even if networking is disabled; it'll stub itself.

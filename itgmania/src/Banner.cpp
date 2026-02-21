@@ -10,7 +10,6 @@
 #include "ThemeMetric.h"
 #include "CharacterManager.h"
 #include "ActorUtil.h"
-#include "UnlockManager.h"
 #include "PrefsManager.h"
 
 REGISTER_ACTOR_CLASS( Banner );
@@ -331,8 +330,6 @@ public:
 		ADD_METHOD( LoadFromCachedBanner );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );
-		ADD_METHOD( LoadBannerFromUnlockEntry );
-		ADD_METHOD( LoadBackgroundFromUnlockEntry );
 		ADD_METHOD( LoadFromSongGroup );
 		ADD_METHOD( LoadFromSortOrder );
 		ADD_METHOD( GetScrolling );
