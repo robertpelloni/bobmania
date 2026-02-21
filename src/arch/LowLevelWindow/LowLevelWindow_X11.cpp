@@ -22,6 +22,7 @@ using namespace X11Helper;
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#ifdef HAVE_XRANDR
 #include <X11/extensions/Xrandr.h>
 #if defined(HAVE_XINERAMA)
 #include <X11/extensions/Xinerama.h>
@@ -754,6 +755,33 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 		}
 		XRRFreeScreenResources( scrRes );
 	}
+	else
+#ifndef HAVE_XF86VIDMODE
+		FAIL_M("XRandR not present or too old.");
+#endif
+#endif
+#ifdef HAVE_XF86VIDMODE
+	{
+		int iNumModes = 0;
+		XF86VidModeModeInfo **aModes_;
+		XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes_ );
+		ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
+		XF86VidModeModeInfo *aModes = *aModes_;
+
+		for( int i = 0; i < iNumModes; ++i )
+		{
+			// XXX: bStretched doesn't appear to actually be used anywhere?
+			DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
+			out.insert( res );
+
+			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+			// structs. This isn't actually possible from C++. At all. Period.
+			// Let it leak.
+		}
+
+		XFree( aModes_ );
+	}
+#endif
 }
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()
