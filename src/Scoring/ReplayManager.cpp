@@ -132,18 +132,24 @@ void ReplayManager::Update( float fDeltaTime )
 
     m_fPlaybackTime += fDeltaTime;
 
+    // Real input injection has been moved to GetPlaybackInputAtTime for Ghost Rendering.
+    // The Player.cpp will poll the ReplayManager directly based on the current song time.
+}
+
+bool ReplayManager::GetPlaybackInputAtTime( float fTime, std::vector<GameInput>& vOutInputs, std::vector<bool>& vOutDown )
+{
+    if( !m_bPlaying || m_ReplayData.empty() ) return false;
+
+    bool bGotInput = false;
     while( m_iPlaybackIndex < m_ReplayData.size() )
     {
         const ReplayInput& ri = m_ReplayData[m_iPlaybackIndex];
-        if( ri.fTime <= m_fPlaybackTime )
+        if( ri.fTime <= fTime )
         {
-            // Inject Input
-            INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_F12) ); // Mock device
-            // Ideally we inject into InputFilter directly or GameInput logic.
-            // For MVP, we can't easily inject "real" inputs without deep engine access.
-            // But we can broadcast messages or use a hook in ScreenGameplay.
-
+            vOutInputs.push_back( ri.Input );
+            vOutDown.push_back( ri.bDown );
             m_iPlaybackIndex++;
+            bGotInput = true;
         }
         else
         {
@@ -155,6 +161,8 @@ void ReplayManager::Update( float fDeltaTime )
     {
         StopPlayback();
     }
+
+    return bGotInput;
 }
 
 // Lua

@@ -17,14 +17,14 @@ This document tracks immediate, actionable tasks and missing features identified
 - **Action:** Replace `FileTransfer` with a lightweight libtorrent implementation. The UI should display seeds, leeches, and chunk progress instead of a generic "Downloading..." string.
 
 ### 4. `TournamentManager` - Matchmaking Server
-- **Current State:** `mock_server.js` echoes chat. The Manager simulates an opponent finding and scoring.
-- **Action:** Expand the Node.js backend to manage WebSockets (`ws`). Implement a matchmaking queue, ELO tracking via Redis or PostgreSQL, and real-time score streaming.
+- **Current State:** Node backend implements simple queueing and UUID mapping.
+- **Action:** Expand the Node.js backend to handle PostgreSQL persistence for the ELO database to replace the in-memory array.
 
 ## Immediate UI/Frontend Tasks
 
 ### 1. Ghost Replay Rendering
-- **Current State:** `ReplayManager` saves inputs to a CSV file. `ScreenReplayMenu` loads the mock list.
-- **Action:** Modify `Player.cpp` to accept a `ReplayData` object. If present, instantiate a secondary `NoteField` that consumes those inputs exactly at their recorded timestamps, drawing a translucent "Ghost" player.
+- **Current State:** `ReplayManager` saves inputs to a CSV file. `ScreenReplayMenu` loads the mock list. `ReplayManager::GetPlaybackInputAtTime` exposes a clean array of inputs at any given timestamp.
+- **Action:** Modify `Player.cpp` to query `REPLAYMAN->GetPlaybackInputAtTime()` on every tick. If present, instantiate a secondary `NoteField` that consumes those inputs exactly at their recorded timestamps, drawing a translucent "Ghost" player. *This is fully prepared for the implementor.*
 
 ### 2. Tournament Draft Phase Networking
 - **Current State:** `ScreenTournamentDraft` is a beautiful Lua UI that simulates a CPU opponent taking turns to ban/pick charts.
@@ -43,8 +43,3 @@ This document tracks immediate, actionable tasks and missing features identified
 ### 2. Remove `EzSockets` Dependency
 - **Issue:** StepMania's legacy networking is notoriously crash-prone and blocks the main thread occasionally.
 - **Action:** Rewrite `UnifiedNetwork` using modern C++11 `<thread>` and `<mutex>` alongside a robust library like `libuv` or `asio`.
-
-## Bugs & Edge Cases
-- **Linux X11 Fullscreen:** *Status: Resolved in v5.7.8 via branch merge.*
-- **AssetSyncManager Progress Bar:** The HTTP downloader doesn't always expose total file size, causing the progress bar in `ScreenAssetSync` to hang at 90% until completion. Must parse `Content-Length` headers more aggressively.
-- **Discord RPC Crashes:** If the Discord desktop client crashes, the C++ `DiscordManager` might deadlock. Implement a timeout on the IPC pipe.

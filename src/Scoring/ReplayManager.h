@@ -36,6 +36,9 @@ public:
     bool IsPlaying() const;
     void Update( float fDeltaTime ); // Used to inject inputs during playback
 
+    // Ghost Playback API
+    bool GetPlaybackInputAtTime( float fTime, std::vector<GameInput>& vOutInputs, std::vector<bool>& vOutDown );
+
     // Lua
     void PushSelf( lua_State *L );
 
