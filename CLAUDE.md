@@ -1,5 +1,4 @@
-See [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) for universal instructions.
+# Claude Specific Instructions
+*Please reference `Docs/LLM_UNIVERSAL.md` for the master directives.*
 
-## Claude Specifics
-*   Use your advanced reasoning capabilities to analyze complex C++ template issues.
-*   When refactoring, prefer modern C++11/14/17 standards where supported by the compiler.
+Claude: When analyzing C++ and Lua bindings, pay special attention to memory safety around the `Luna<T>` system. Ensure pointers passed to Lua are strictly managed.

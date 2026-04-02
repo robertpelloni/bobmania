@@ -1,4 +1,6 @@
 local t = Def.ActorFrame {};
+
+-- Original Evaluation Logic
 if not GAMESTATE:IsCourseMode() then
 	t[#t+1] = Def.ActorFrame {
 		LoadActor(THEME:GetPathG("ScreenEvaluation", "StageDisplay")) .. {
@@ -74,5 +76,39 @@ if GAMESTATE:HasEarnedExtraStage() then
 			};
 	}
 end;
+
+-- Tournament Result Reporting Logic
+t[#t+1] = Def.ActorFrame {
+    InitCommand=function(self)
+        if _G.ActiveTournamentMatchID and TOURNAMENTMAN then
+            -- Get Player Score (P1 for now)
+            local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(PLAYER_1)
+            local score = pss:GetScore()
+
+            -- Report to Backend
+            TOURNAMENTMAN:ReportMatchResult(_G.ActiveTournamentMatchID, score)
+
+            -- Clear Flag
+            _G.ActiveTournamentMatchID = nil
+
+            -- Show Message
+            self:playcommand("ShowResult", {score=score})
+        end
+    end,
+
+    ShowResultCommand=function(self, params)
+        SCREENMAN:SystemMessage("Tournament Match Complete! Score: " .. params.score)
+    end,
+
+    LoadFont("Common Normal") .. {
+        Text="Tournament Match Recorded",
+        InitCommand=function(self)
+            self:xy(SCREEN_CENTER_X, SCREEN_TOP + 100):zoom(1.0):diffuse(Color.Green):visible(false)
+        end,
+        ShowResultCommand=function(self)
+            self:visible(true):pulse():effectmagnitude(1.1,1.0,1.0)
+        end
+    }
+}
 
 return t;

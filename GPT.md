@@ -1,5 +1,4 @@
-See [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) for universal instructions.
+# GPT Specific Instructions
+*Please reference `Docs/LLM_UNIVERSAL.md` for the master directives.*
 
-## GPT Specifics
-*   Focus on clear, concise explanations.
-*   When suggesting fixes, provide the exact code block to replace.
+GPT: When building new C++ Singletons (Managers), ensure they do not perform blocking network or file I/O operations on the main thread. Always defer to threaded workers (`FileDownload`, `UnifiedNetwork`).

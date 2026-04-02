@@ -22,6 +22,9 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 #include "Discord/DiscordManager.h"
+#include "Network/UnifiedNetwork.h"
+#include "Unified/AssetSyncManager.h"
+#include "Gym/HeartRateManager.h"
 #include "GrooveStats/GrooveStatsManager.h"
 
 static RageTimer g_GameplayTimer;
@@ -286,6 +289,9 @@ void GameLoop::UpdateAllButDraw(bool bRunningFromVBLANK)
 	SCREENMAN->Update(fDeltaTime);
 	MEMCARDMAN->Update();
 	NSMAN->Update(fDeltaTime);
+	UNIFIED_NET->Update(fDeltaTime);
+	ASSETSYNCMAN->Update(fDeltaTime);
+	HRMAN->Update(fDeltaTime);
 	DISCORD->Update(fDeltaTime);
 	GROOVESTATSMAN->Update(fDeltaTime);
 

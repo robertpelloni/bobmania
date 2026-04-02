@@ -110,13 +110,52 @@ list(APPEND SM_DATA_SCORE_SRC
             "ScoreKeeper.cpp"
             "ScoreKeeperNormal.cpp"
             "ScoreKeeperRave.cpp"
-            "ScoreKeeperShared.cpp")
+            "ScoreKeeperShared.cpp"
+            "Scoring/WifeScoring.cpp"
+            "Scoring/ReplayManager.cpp")
 
 list(APPEND SM_DATA_SCORE_HPP
             "ScoreKeeper.h"
             "ScoreKeeperNormal.h"
             "ScoreKeeperRave.h"
-            "ScoreKeeperShared.h")
+            "ScoreKeeperShared.h"
+            "Scoring/WifeScoring.h"
+            "Scoring/ReplayManager.h")
+
+list(APPEND SM_DATA_GYM_SRC
+            "Gym/GymManager.cpp"
+            "Gym/GymPlaylistGenerator.cpp")
+
+list(APPEND SM_DATA_GYM_HPP
+            "Gym/GymManager.h"
+            "Gym/GymPlaylistGenerator.h")
+
+source_group("Data Structures\\\\Gym"
+             FILES
+             ${SM_DATA_GYM_SRC}
+             ${SM_DATA_GYM_HPP})
+
+list(APPEND SM_DATA_TOURNAMENT_SRC
+            "Tournament/TournamentManager.cpp")
+
+list(APPEND SM_DATA_TOURNAMENT_HPP
+            "Tournament/TournamentManager.h")
+
+source_group("Data Structures\\\\Tournament"
+             FILES
+             ${SM_DATA_TOURNAMENT_SRC}
+             ${SM_DATA_TOURNAMENT_HPP})
+
+list(APPEND SM_DATA_MISSION_SRC
+            "Unified/MissionManager.cpp")
+
+list(APPEND SM_DATA_MISSION_HPP
+            "Unified/MissionManager.h")
+
+source_group("Data Structures\\\\Missions"
+             FILES
+             ${SM_DATA_MISSION_SRC}
+             ${SM_DATA_MISSION_HPP})
 
 source_group("Data Structures\\\\Score Keepers"
              FILES
@@ -286,7 +325,10 @@ list(APPEND SMDATA_ALL_DATA_SRC
             ${SM_DATA_SCORE_SRC}
             ${SM_DATA_SONG_SRC}
             ${SM_DATA_STEPS_SRC}
-            ${SM_DATA_REST_SRC})
+            ${SM_DATA_REST_SRC}
+            ${SM_DATA_GYM_SRC}
+            ${SM_DATA_TOURNAMENT_SRC}
+            ${SM_DATA_MISSION_SRC})
 
 list(APPEND SMDATA_ALL_DATA_HPP
             ${SM_DATA_COURSE_HPP}
@@ -298,4 +340,7 @@ list(APPEND SMDATA_ALL_DATA_HPP
             ${SM_DATA_SCORE_HPP}
             ${SM_DATA_SONG_HPP}
             ${SM_DATA_STEPS_HPP}
-            ${SM_DATA_REST_HPP})
+            ${SM_DATA_REST_HPP}
+            ${SM_DATA_GYM_HPP}
+            ${SM_DATA_TOURNAMENT_HPP}
+            ${SM_DATA_MISSION_HPP})

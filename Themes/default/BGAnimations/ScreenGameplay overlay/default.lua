@@ -233,4 +233,7 @@ t.InitCommand=cmd(SetUpdateFunction,UpdateTime);
 		};
 	end;
 
+-- UNIFIED STEPMANIA HOOK
+t[#t+1] = LoadActor("MiningHook")
+
 return t

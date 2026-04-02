@@ -1,146 +1,116 @@
 #include "global.h"
 #include "GymPlaylistGenerator.h"
 #include "SongManager.h"
-#include "MsdCalculator.h"
-#include "RageUtil.h"
 #include "GameState.h"
-#include "GameManager.h"
+#include "Course.h"
+#include "CourseLoaderCRS.h"
+#include "RageLog.h"
 #include "Steps.h"
-#include "Style.h"
-#include "Song.h"
-#include "LuaManager.h"
-#include "EnumHelper.h"
 
-Course* GymPlaylistGenerator::GenerateCircuit( float targetDurationSeconds, WorkoutIntensity intensity )
+std::vector<Song*> GymPlaylistGenerator::GeneratePlaylist( float fTargetDuration, int iMinMeter, int iMaxMeter )
 {
-	Course* pCourse = new Course;
-	pCourse->m_sMainTitle = "Daily Circuit";
-	pCourse->m_sScripter = "AI Trainer";
-	pCourse->m_bIsAutogen = true;
+    std::vector<Song*> playlist;
+    std::vector<Song*> allSongs = SONGMAN->GetAllSongs();
 
-	// Determine target meter range based on intensity
-	int minMeter = 1;
-	int maxMeter = 3;
+    // Safety check: if no songs loaded, return empty
+    if( allSongs.empty() )
+    {
+        LOG->Warn("GymPlaylistGenerator: No songs loaded!");
+        return playlist;
+    }
 
-	switch( intensity )
-	{
-	case INTENSITY_LIGHT:      minMeter = 1; maxMeter = 3; break;
-	case INTENSITY_MODERATE:   minMeter = 4; maxMeter = 7; break;
-	case INTENSITY_VIGOROUS:   minMeter = 8; maxMeter = 11; break;
-	case INTENSITY_PRO_ATHLETE: minMeter = 12; maxMeter = 16; break;
-	}
+    float currentDuration = 0.0f;
+    int attempts = 0;
 
-	float currentDuration = 0.0f;
-	const std::vector<Song*> &allSongs = SONGMAN->GetAllSongs();
+    // Seed RNG if needed (though usually done in Global)
+    // srand(time(NULL));
 
-	if( allSongs.empty() ) return pCourse;
+    while( currentDuration < fTargetDuration && attempts < 1000 )
+    {
+        attempts++;
 
-	// Filter songs that have at least one stepchart in the range for the current style
-	struct Candidate {
-		Song* pSong;
-		Steps* pSteps;
-	};
-	std::vector<Candidate> candidates;
+        // Random Pick
+        int idx = rand() % allSongs.size();
+        Song* pSong = allSongs[idx];
 
-	const Style* pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-	StepsType st = pStyle ? pStyle->m_StepsType : StepsType_dance_single;
+        // Smart Playlist Logic: Warmup -> Main -> Cooldown
+        float fProgress = currentDuration / fTargetDuration;
+        int targetMin = iMinMeter;
+        int targetMax = iMaxMeter;
 
-	for( Song* pSong : allSongs )
-	{
-		const std::vector<Steps*>& vpSteps = pSong->GetAllSteps();
-		for( Steps* pSteps : vpSteps )
-		{
-			if( pSteps->m_StepsType == st && 
-				pSteps->GetMeter() >= minMeter && 
-				pSteps->GetMeter() <= maxMeter )
-			{
-				candidates.push_back( { pSong, pSteps } );
-			}
-		}
-	}
+        if ( fProgress < 0.15f ) // Warmup (first 15%)
+        {
+            targetMax = max(1, iMinMeter - 1);
+            targetMin = max(1, targetMax - 2);
+        }
+        else if ( fProgress > 0.85f ) // Cooldown (last 15%)
+        {
+            targetMax = max(1, iMinMeter - 1);
+            targetMin = max(1, targetMax - 2);
+        }
 
-	if( candidates.empty() )
-	{
-		// Fallback: Just pick random songs and don't enforce steps
-		for( int i=0; i<10; ++i ) {
-			Song* pSong = allSongs[ RandomInt(allSongs.size()) ];
-			CourseEntry entry;
-			entry.songID.FromSong( pSong );
-			pCourse->m_vEntries.push_back( entry );
-			currentDuration += pSong->m_fMusicLengthSeconds;
-			if( currentDuration >= targetDurationSeconds ) break;
-		}
-		return pCourse;
-	}
+        // Basic Filter: Check if song has steps in range
+        bool bSuitable = false;
+        const std::vector<Steps*>& steps = pSong->GetAllSteps();
+        for( const auto* step : steps )
+        {
+            int meter = step->GetMeter();
+            if( meter >= targetMin && meter <= targetMax )
+            {
+                bSuitable = true;
+                break; // Found a chart that fits
+            }
+        }
 
-	int attempts = 0;
-	while( currentDuration < targetDurationSeconds && attempts < 200 )
-	{
-		const Candidate& cand = candidates[ RandomInt(candidates.size()) ];
+        if( bSuitable )
+        {
+            // Simple duplicate check
+            bool bExists = false;
+            for( auto* s : playlist ) if( s == pSong ) bExists = true;
 
-		CourseEntry entry;
-		entry.songID.FromSong( cand.pSong );
-		entry.stepsCriteria.m_difficulty = cand.pSteps->GetDifficulty();
-		entry.bNoDifficult = true; // Force this difficulty
+            if( !bExists )
+            {
+                playlist.push_back(pSong);
+                currentDuration += pSong->m_fMusicLengthSeconds;
+            }
+        }
+    }
 
-		pCourse->m_vEntries.push_back( entry );
-		currentDuration += cand.pSong->m_fMusicLengthSeconds;
-		attempts++;
-	}
-
-	return pCourse;
+    LOG->Trace("GymPlaylistGenerator: Generated playlist with %d songs, duration %.2f", (int)playlist.size(), currentDuration);
+    return playlist;
 }
 
-float GymPlaylistGenerator::EstimateCalories( Song* pSong, float fRate )
+bool GymPlaylistGenerator::StartPlaylistAsCourse( const std::vector<Song*>& playlist )
 {
-	if(!pSong) return 0.0f;
-	// Rough approximation: Length * Rate * Factor
-	return pSong->m_fMusicLengthSeconds * fRate * 0.20f; 
+    if( playlist.empty() ) return false;
+
+    // Create a temporary course
+    // Note: Course memory management in SM5 is tricky. Usually Courses are owned by SONGMAN.
+    // For dynamic courses, we might need a dedicated cleanup or use "Autogen" flag.
+    Course* pCourse = new Course;
+    pCourse->m_sMainTitle = "Gym Workout";
+    pCourse->m_bIsAutogen = true; // Signals that it's generated
+    pCourse->m_bRepeat = false;
+
+    for( Song* pSong : playlist )
+    {
+        CourseEntry ce;
+        ce.songID.FromSong( pSong );
+        pCourse->m_vEntries.push_back( ce );
+    }
+
+    // We need to register this course so the engine doesn't leak it,
+    // or just pass it to GAMESTATE and hope ScreenGameplay handles it.
+    // GAMESTATE->m_pCurCourse takes a raw pointer.
+
+    GAMESTATE->m_pCurCourse.Set( pCourse );
+
+    // Set PlayMode to Course (In standard SM5, this might be PLAY_MODE_REGULAR with IsCourse set, or similar.
+    // Assuming PLAY_MODE_NONSTOP or ONI for course-like behavior if COURSE doesn't exist)
+    GAMESTATE->m_PlayMode.Set( PLAY_MODE_NONSTOP );
+
+    // Set first song (engine might do this automatically when starting course, but safe to set)
+    GAMESTATE->m_pCurSong.Set( playlist[0] );
+
+    return true;
 }
-
-// Lua bindings for GymPlaylistGenerator
-
-static const char *WorkoutIntensityNames[] = {
-	"Light",
-	"Moderate",
-	"Vigorous",
-	"ProAthlete",
-};
-XBOX360_NAMED_ENUM( WorkoutIntensity, WorkoutIntensityNames );
-
-class LunaGymPlaylistGenerator: public Luna<GymPlaylistGenerator>
-{
-public:
-	static int GenerateCircuit( T* p, lua_State *L )
-	{
-		float duration = FArg(1);
-		WorkoutIntensity intensity = Enum::Check<WorkoutIntensity>(L, 2);
-		
-		Course* pCourse = GymPlaylistGenerator::GenerateCircuit( duration, intensity );
-		if( pCourse )
-			pCourse->PushSelf(L);
-		else
-			lua_pushnil(L);
-		
-		return 1;
-	}
-
-	static int EstimateCalories( T* p, lua_State *L )
-	{
-		Song* pSong = Luna<Song>::check(L, 1);
-		float rate = FArg(2);
-		
-		float calories = GymPlaylistGenerator::EstimateCalories( pSong, rate );
-		lua_pushnumber(L, calories);
-		return 1;
-	}
-
-	LunaGymPlaylistGenerator()
-	{
-		ADD_METHOD( GenerateCircuit );
-		ADD_METHOD( EstimateCalories );
-	}
-};
-
-LUA_REGISTER_CLASS( GymPlaylistGenerator )
-

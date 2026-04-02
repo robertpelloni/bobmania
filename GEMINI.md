@@ -1,5 +1,4 @@
-See [LLM_INSTRUCTIONS.md](LLM_INSTRUCTIONS.md) for universal instructions.
+# Gemini Specific Instructions
+*Please reference `Docs/LLM_UNIVERSAL.md` for the master directives.*
 
-## Gemini Specifics
-*   Leverage your large context window to understand the entire codebase structure.
-*   When generating code, ensure it matches the existing indentation style (tabs vs spaces) exactly.
+Gemini: When designing new UIs in `Themes/default/`, focus heavily on context-awareness using the `HelpOverlay`. Ensure your actor trees are shallow to maintain high FPS on legacy hardware.

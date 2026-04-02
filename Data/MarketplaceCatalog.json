@@ -1,0 +1,44 @@
+[
+    {
+        "ID": "song_pack_1",
+        "Name": "Classic Pack 1",
+        "Price": 500,
+        "Type": "Song",
+        "Icon": "Graphics/song_pack_icon.png"
+    },
+    {
+        "ID": "avatar_frame_gold",
+        "Name": "Gold Frame",
+        "Price": 200,
+        "Type": "Item",
+        "Icon": "Graphics/item_icon.png"
+    },
+    {
+        "ID": "xp_boost_1h",
+        "Name": "1h XP Boost",
+        "Price": 100,
+        "Type": "Boost",
+        "Icon": "Graphics/boost_icon.png"
+    },
+    {
+        "ID": "theme_dark",
+        "Name": "Dark Mode Theme",
+        "Price": 0,
+        "Type": "Theme",
+        "Icon": "Graphics/theme_icon.png"
+    },
+    {
+        "ID": "bobcoin_miner",
+        "Name": "Bobcoin Miner",
+        "Price": 5000,
+        "Type": "Hardware",
+        "Icon": "Graphics/miner_icon.png"
+    },
+    {
+        "ID": "character_robo",
+        "Name": "Robo-Dancer",
+        "Price": 1500,
+        "Type": "Character",
+        "Icon": "Graphics/char_robo.png"
+    }
+]
