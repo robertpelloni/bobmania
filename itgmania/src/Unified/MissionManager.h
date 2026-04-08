@@ -31,6 +31,11 @@ public:
     // Mission Handling
     const std::vector<Mission>& GetMissions() const;
     void ReportMetric( const RString& sType, float fValue ); // Updates progress
+<<<<<<< HEAD:itgmania/src/Unified/MissionManager.h
+=======
+    bool IsAnyMissionJustCompleted() const;
+    void ClearMissionCompletionFlag();
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.h
     bool ClaimReward( const RString& sMissionID );
 
 	// Persistence
@@ -44,6 +49,10 @@ public:
 
 private:
     std::vector<Mission> m_Missions;
+<<<<<<< HEAD:itgmania/src/Unified/MissionManager.h
+=======
+    bool m_bJustCompletedMission;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.h
 
     // Helper to find index
     int GetMissionIndex( const RString& sID );

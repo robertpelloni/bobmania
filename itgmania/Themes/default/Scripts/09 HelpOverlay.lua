@@ -28,6 +28,41 @@ HelpOverlay.Register("ScreenWalletHistory", {
     Description = "Transaction History\n\nView your recent earnings from Mining, Tips, and Tournament wins.\nOutgoing transactions (Purchases) are shown in red."
 })
 
+<<<<<<< HEAD:itgmania/Themes/default/Scripts/09 HelpOverlay.lua
+=======
+HelpOverlay.Register("ScreenSpectate", {
+    Description = "Spectator Mode\n\nWatch live matches from top players or friends.\nUse Chat to interact with other spectators.\nCheer with bits (Bobcoin) to support players."
+})
+
+HelpOverlay.Register("ScreenReplayMenu", {
+    Description = "Replay Browser\n\nReview your past performances or study pro replays.\nSelect a replay file to load it into the game engine.\nCheck timing windows and judgment distribution."
+})
+
+HelpOverlay.Register("ScreenAssetSync", {
+    Description = "Asset Synchronization\n\nSync your profile data (Stats, Items, Songs) across devices or with the cloud.\nRequired for cross-platform progression."
+})
+
+HelpOverlay.Register("ScreenUnifiedDashboard", {
+    Description = "Unified Dashboard\n\nYour central hub for all game modes.\nPress Start to select a mode.\nUse Left/Right to browse: Arcade, Gym, Economy, Tournament, Missions."
+})
+
+HelpOverlay.Register("ScreenMissionSelect", {
+    Description = "Mission Mode\n\nComplete daily and weekly objectives to earn XP and Bobcoin.\nSelect a mission to view details or start the challenge.\nMissions rotate regularly."
+})
+
+HelpOverlay.Register("ScreenContentNetwork", {
+    Description = "Swarm Network\n\nDownload new songs and packs directly from the community.\nSelect a pack to start downloading via Peer-to-Peer."
+})
+
+HelpOverlay.Register("ScreenBettingEntry", {
+    Description = "Wager Bobcoins\n\nBet on the outcome of a competitive match.\nSelect a player and use Up/Down to change the wager amount.\nSTART to confirm your bet."
+})
+
+HelpOverlay.Register("ScreenGymSummary", {
+    Description = "Workout Summary\n\nReview the calories burned during your session.\nStats are automatically saved to your Gym Profile."
+})
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/Scripts/09 HelpOverlay.lua
 function HelpOverlay.Create()
     return Def.ActorFrame {
         Name = "HelpOverlay",
@@ -89,3 +124,14 @@ end
 
 -- Export globally
 _G.HelpOverlay = HelpOverlay
+<<<<<<< HEAD:itgmania/Themes/default/Scripts/09 HelpOverlay.lua
+=======
+
+HelpOverlay.Register("ScreenTournamentDraft", {
+    Description = "Tournament Draft Phase\n\nTake turns with your opponent Banning and Picking charts from the competitive pool.\nUse Up/Down to navigate the pool, START to confirm your action.\nOnce Draft is complete, the match will automatically begin."
+})
+
+HelpOverlay.Register("ScreenUnifiedOptions", {
+    Description = "Unified Settings\n\nConfigure advanced options ported from NotITG, Etterna, and OutFox.\nUse Up/Down to browse, Left/Right to change values.\nPress START to save and return."
+})
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/Scripts/09 HelpOverlay.lua

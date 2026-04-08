@@ -9,6 +9,10 @@
 #include "DateTime.h"
 #include "GymPlaylistGenerator.h"
 #include "Song.h"
+<<<<<<< HEAD:itgmania/src/Gym/GymManager.cpp
+=======
+#include "Unified/MissionManager.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Gym/GymManager.cpp
 
 GymManager*	GYMMAN = nullptr;
 
@@ -161,6 +165,15 @@ void GymManager::LogWorkout( const RString& sPlaylist, float fDuration, float fC
     m_Profile.TotalCaloriesBurned += fCalories;
     m_Profile.CaloriesToday += fCalories;
     m_Profile.StreakDays++; // Increment streak on workout
+<<<<<<< HEAD:itgmania/src/Gym/GymManager.cpp
+=======
+
+    // Unified: Update Mission Goals
+    if( MISSIONMAN )
+    {
+        MISSIONMAN->ReportMetric("Calories", fCalories);
+    }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Gym/GymManager.cpp
 }
 
 const std::vector<WorkoutSession>& GymManager::GetHistory() const
@@ -224,3 +237,23 @@ public:
 };
 
 LUA_REGISTER_CLASS( GymManager )
+<<<<<<< HEAD:itgmania/src/Gym/GymManager.cpp
+=======
+
+/*
+ * ==============================================================================
+ * UNIFIED STEPMANIA ARCHITECTURE NOTES: GymManager
+ * ==============================================================================
+ * The GymManager is responsible for the biometric profile of the user. It is
+ * decoupled from standard "Profiles" (which track high scores) to ensure privacy
+ * and to allow guests to input a temporary weight without polluting the main
+ * high score board.
+ *
+ * NEXT IMPLEMENTOR:
+ * The `UpdateStreak` logic currently relies on the local OS clock
+ * (`DateTime::GetNowDate()`). This is easily spoofable by changing the system
+ * time. If the Daily Goals tie into Bobcoin rewards, this must be synced with
+ * the `UnifiedNetwork` NTP server timestamp instead.
+ * ==============================================================================
+ */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Gym/GymManager.cpp

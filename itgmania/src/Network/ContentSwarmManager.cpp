@@ -1,128 +1,129 @@
 #include "global.h"
 #include "ContentSwarmManager.h"
-#include "EconomyManager.h"
-#include "RageUtil.h"
 #include "RageLog.h"
+#include "LuaBinding.h"
+#include "FileDownload.h"
+#include "ScreenManager.h"
 
-// Local UUID helper
-static std::string MakeUUID()
+ContentSwarmManager* SWARMMAN = nullptr;
+
+ContentSwarmManager::ContentSwarmManager()
 {
-	std::string res = "";
-	for(int i=0; i<32; ++i) res += ssprintf("%x", RandomInt(16));
-	return res;
-}
-
-ContentSwarmManager* ContentSwarmManager::s_pInstance = NULL;
-
-ContentSwarmManager* ContentSwarmManager::Instance()
-{
-	if (s_pInstance == NULL)
-		s_pInstance = new ContentSwarmManager;
-	return s_pInstance;
-}
-
-void ContentSwarmManager::Destroy()
-{
-	delete s_pInstance;
-	s_pInstance = NULL;
-}
-
-ContentSwarmManager::ContentSwarmManager() : m_Mutex("ContentSwarmManager")
-{
-	m_iSessionBandwidthEarnings = 0;
-	m_fSeedingTimer = 0;
+    m_bDiscovering = false;
+    m_pTransfer = nullptr;
 }
 
 ContentSwarmManager::~ContentSwarmManager()
 {
+    SAFE_DELETE( m_pTransfer );
 }
 
-void ContentSwarmManager::Initialize()
+void ContentSwarmManager::Init()
 {
-	LockMut(m_Mutex);
-	LOG->Trace("ContentSwarmManager: Joining Mesh Network...");
-
-	// Mock Discovery: Populate with fake remote packs
-	m_SwarmInventory.push_back({ "PACK_001", "DDR 1st Mix (Remastered)", 150000000, 12, false });
-	m_SwarmInventory.push_back({ "PACK_002", "In The Groove 3", 400000000, 45, false });
-	m_SwarmInventory.push_back({ "PACK_003", "Community Pack 2025", 250000000, 8, false });
-
-	LOG->Trace("ContentSwarmManager: Found %zu packs in swarm.", m_SwarmInventory.size());
+    LOG->Trace("ContentSwarmManager::Init()");
 }
 
-void ContentSwarmManager::Update(float fDeltaTime)
+void ContentSwarmManager::StartDiscovery()
 {
-	LockMut(m_Mutex);
+    if( m_bDiscovering ) return;
 
-	// Simulate Download Progress
-	for (auto it = m_ActiveDownloads.begin(); it != m_ActiveDownloads.end(); )
-	{
-		it->second += fDeltaTime * 0.1f; // 10% per second
-		if (it->second >= 1.0f)
-		{
-			LOG->Trace("ContentSwarmManager: Download Complete - %s", it->first.c_str());
-			// Mark as local
-			for(auto& p : m_SwarmInventory) {
-				if(p.id == it->first) p.isLocal = true;
-			}
-			it = m_ActiveDownloads.erase(it);
-		}
-		else
-		{
-			++it;
-		}
-	}
+    LOG->Trace("ContentSwarmManager: Starting P2P Discovery...");
+    m_bDiscovering = true;
 
-	// Simulate Seeding Rewards (Bandwidth Contribution)
-	m_fSeedingTimer += fDeltaTime;
-	if (m_fSeedingTimer >= 5.0f) // Every 5 seconds
-	{
-		m_fSeedingTimer = 0;
-		// Assume we are seeding random bits
-		long long reward = 2;
-		m_iSessionBandwidthEarnings += reward;
-
-		// Credit Economy
-		EconomyManager::Instance()->AwardBandwidthReward(reward);
-	}
+    // Mock Discovery: Populate with fake remote packs
+    m_AvailablePacks.clear();
+    m_AvailablePacks.push_back({ "p001", "Community Pack 1", "StepArtist_A", 104857600, 5 });
+    m_AvailablePacks.push_back({ "p002", "Hardcore Rave", "DJ_Speed", 209715200, 12 });
+    m_AvailablePacks.push_back({ "p003", "Chillout Mix", "SlowJamz", 52428800, 2 });
 }
 
-std::vector<SwarmPack> ContentSwarmManager::GetAvailablePacks() const
+const std::vector<ContentPack>& ContentSwarmManager::GetAvailablePacks() const
 {
-	return m_SwarmInventory;
+    return m_AvailablePacks;
 }
 
-void ContentSwarmManager::RegisterLocalPack(const std::string& name)
+void ContentSwarmManager::RequestPack( const RString& sPackID )
 {
-	LockMut(m_Mutex);
-	std::string id = "LOC_" + MakeUUID().substr(0,8);
-	m_SwarmInventory.push_back({ id, name, 100000, 1, true });
-	LOG->Trace("ContentSwarmManager: Registered local pack %s", name.c_str());
+    LOG->Trace("ContentSwarmManager: Requesting Pack %s", sPackID.c_str());
+
+    // Check if a transfer is already running
+    if( m_pTransfer != nullptr && !m_pTransfer->IsFinished() )
+    {
+        SCREENMAN->SystemMessage("A download is already in progress.");
+        return;
+    }
+
+    SAFE_DELETE( m_pTransfer );
+    m_pTransfer = new FileTransfer();
+
+    // In a real P2P system, this would resolve to a magnet link or tracker.
+    // For our Unified backend, we construct an HTTP stub.
+    RString sURL = "http://127.0.0.1:8080/packs/" + sPackID + ".smzip";
+    RString sDest = "Packages/" + sPackID + ".smzip";
+
+    m_pTransfer->StartDownload( sURL, sDest );
+    SCREENMAN->SystemMessage("Downloading pack: " + sPackID + "...");
 }
 
-void ContentSwarmManager::PublishLocalPack(const std::string& path)
+void ContentSwarmManager::Update( float fDeltaTime )
 {
-	// Simulate hashing the file at 'path' and broadcasting to mesh
-	std::string name = "User Course (" + path + ")";
-	RegisterLocalPack(name);
-
-	// Bonus for publishing
-	EconomyManager::Instance()->AwardBandwidthReward(50);
+    if( m_pTransfer )
+    {
+        m_pTransfer->Update( fDeltaTime );
+        if( m_pTransfer->IsFinished() )
+        {
+            if( m_pTransfer->GetResponseCode() >= 200 && m_pTransfer->GetResponseCode() < 300 )
+            {
+                SCREENMAN->SystemMessage("Download Complete!");
+                // Trigger reload if we wanted to auto-mount, but StepMania auto-mounts Packages/
+            }
+            else
+            {
+                SCREENMAN->SystemMessage("Download Failed: " + m_pTransfer->GetStatus());
+            }
+            SAFE_DELETE( m_pTransfer );
+        }
+    }
 }
 
-bool ContentSwarmManager::StartDownload(const std::string& packID)
+// Lua Bindings
+class LunaContentSwarmManager: public Luna<ContentSwarmManager>
 {
-	LockMut(m_Mutex);
-	if (m_ActiveDownloads.find(packID) != m_ActiveDownloads.end()) return false;
+public:
+    static int StartDiscovery( T* p, lua_State *L )
+    {
+        p->StartDiscovery();
+        return 0;
+    }
 
-	m_ActiveDownloads[packID] = 0.0f;
-	LOG->Trace("ContentSwarmManager: Started download for %s", packID.c_str());
-	return true;
-}
+    static int GetAvailablePacks( T* p, lua_State *L )
+    {
+        const auto& packs = p->GetAvailablePacks();
+        lua_newtable(L);
+        for( size_t i=0; i<packs.size(); ++i )
+        {
+            lua_newtable(L);
+            lua_pushstring(L, "ID"); lua_pushstring(L, packs[i].ID); lua_settable(L, -3);
+            lua_pushstring(L, "Name"); lua_pushstring(L, packs[i].Name); lua_settable(L, -3);
+            lua_pushstring(L, "Author"); lua_pushstring(L, packs[i].Author); lua_settable(L, -3);
+            lua_pushnumber(L, packs[i].Seeders); lua_setfield(L, -2, "Seeders");
+            lua_rawseti(L, -2, i+1);
+        }
+        return 1;
+    }
 
-float ContentSwarmManager::GetDownloadProgress(const std::string& packID)
-{
-	LockMut(m_Mutex);
-	if (m_ActiveDownloads.find(packID) == m_ActiveDownloads.end()) return 0.0f;
-	return m_ActiveDownloads[packID];
-}
+    static int RequestPack( T* p, lua_State *L )
+    {
+        p->RequestPack(SArg(1));
+        return 0;
+    }
+
+    LunaContentSwarmManager()
+    {
+        ADD_METHOD( StartDiscovery );
+        ADD_METHOD( GetAvailablePacks );
+        ADD_METHOD( RequestPack );
+    }
+};
+
+LUA_REGISTER_CLASS( ContentSwarmManager )

@@ -8,6 +8,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "FontManager.cpp"
             "GameManager.cpp"
             "GameSoundManager.cpp"
+            "Gym/HeartRateManager.cpp"
             "GrooveStats/GrooveStatsManager.cpp"
             "Discord/DiscordManager.cpp"
             "GameState.cpp"
@@ -19,7 +20,16 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "LuaModules/LuaModule_File.cpp"
             "MemoryCardManager.cpp"
             "MessageManager.cpp"
+<<<<<<< HEAD
             "NetworkManager.cpp"
+=======
+            "NetworkSyncManager.cpp"
+            "Network/ChatManager.cpp"
+            "Network/ContentSwarmManager.cpp"
+            "Network/ContentSwarmManager.cpp"
+            "Network/SpectatorManager.cpp"
+            "Network/UnifiedNetwork.cpp"
+>>>>>>> origin/unified-ui-features-13937230807013224518
             "NoteSkinManager.cpp"
             "PrefsManager.cpp"
             "ProfileManager.cpp"
@@ -38,6 +48,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "FontManager.h"
             "GameManager.h"
             "GameSoundManager.h"
+            "Gym/HeartRateManager.h"
             "GrooveStats/GrooveStatsManager.h"
             "GameState.h"
             "InputFilter.h"
@@ -47,7 +58,17 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "LuaManager.h"
             "MemoryCardManager.h"
             "MessageManager.h"
+<<<<<<< HEAD
             "NetworkManager.h"
+=======
+            "Unified/AssetSyncManager.h"
+            "NetworkSyncManager.h"
+            "Network/ChatManager.h"
+            "Network/ContentSwarmManager.h"
+            "Network/ContentSwarmManager.h"
+            "Network/SpectatorManager.h"
+            "Network/UnifiedNetwork.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518
             "NoteSkinManager.h"
             "PrefsManager.h"
             "ProfileManager.h"

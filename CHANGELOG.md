@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Changelog
 
 ## [5.6.1-Maintenance] - 2025-12-27
@@ -105,32 +106,30 @@
 - Initialization bug in `EconomyManager` where the ledger was not properly seeded on first run (fixed in Dashboard init).
 - Compilation error in `ProfileManager.h` due to duplicate function declaration.
 ## [5.1.1] - 2025-12-25
+=======
+# Unified StepMania Changelog
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
+## [5.7.11-Unified-Beta-Matchmaker] - 2026-02-10
 ### Added
-- **Economy UI:** Added wallet balance display to `ScreenGameplay`.
-- **Dashboard Access:** Added "Dashboard" option to `ScreenTitleMenu`.
-- **Documentation:** Added `docs/DASHBOARD.md` with project structure and submodule status.
-- **LLM Instructions:** Consolidated all model instructions into `LLM_INSTRUCTIONS.md`.
+- **Node.js Matchmaking Server:** Completely rewrote `server/mock_server.js` from a simple chat echo server into a robust JSON WebSocket handler.
+- The server now implements a real `matchmakingQueue` that pairs players sending the `JOIN_QUEUE` payload, broadcasts `MATCH_START` events, tracks ELO (mocked) in a `clients` map, and broadcasts `ACTIVE_MATCHES` to populate the `ScreenSpectate` TV list dynamically.
+- Overhauled `Docs/SERVER_SETUP.md` with explicit details on the WebSocket protocol.
 
+## [5.7.10-Unified-Beta-Handoff] - 2026-02-10
 ### Changed
-- **Versioning:** Enforced strict versioning rules in `LLM_INSTRUCTIONS.md`.
-- **Dashboard:** Updated `ScreenUnifiedDashboard` to link to `ScreenWalletHistory`.
+- **Final Handoff Restructuring:** Rebuilt `Docs/ROADMAP.md`, `Docs/TODO.md`, `Docs/IDEAS.md`, and `Docs/SUBMODULES.md` with explicit, prioritized tasks for translating the functional C++ stubs into production-ready network/hardware connections.
+- Generated `Docs/HANDOFF_ANALYSIS.md` summarizing the entire Unified architecture design.
 
-## [5.1.0] - 2025-12-25
-
+## [5.7.9-Unified-Beta-CloudSync] - 2026-02-10
 ### Added
-- **Economy System:** Implemented `EconomyManager` and related classes.
-- **Tournament Mode:** Implemented `ScreenLoginQR` and tournament features.
-- **Unified Dashboard:** Added `ScreenUnifiedDashboard`.
-- **Gym Mode:** Added `ScreenGymWelcome`.
-- **Documentation:** Added `docs/DASHBOARD.md` and `LLM_INSTRUCTIONS.md`.
+- **Cloud Profile Sync:** Revamped `ScreenAssetSync` to display a detailed matrix comparing Local Profile stats vs Cloud Profile stats (Bobcoin, Calories, ELO, Items).
 
-### Changed
-- Merged `economy-tournament-mvp` and `itgmania-features` branches into `5_1-new`.
-- Updated `ProfileManager` to support new economy features.
-- Updated `ScreenGameplay` to integrate with new systems.
-- Consolidated LLM instructions.
+## [5.7.8-Unified-Beta-Merge] - 2026-02-10
+### Added
+- **Feature Branches:** Merged upstream branches `origin/x11_fullscreen` and `origin/merge-itgmania-features-3960352300100248355`.
 
+<<<<<<< HEAD
 ### Fixed
 - Resolved merge conflicts in `ProfileManager.cpp`, `ScreenGameplay.cpp`, and others.
 
@@ -147,3 +146,8 @@
 - **Gameplay:** Added mining rewards hook on stage finish.
 - **Options:** Added 'Judge Scale' modifier (Etterna-style).
 - **Structure:** Added `Simply-Love-SM5` submodule and mocked `bobcoin` dependency.
+=======
+## [5.7.7-Unified-Beta-Settings] - 2026-02-10
+### Added
+- **Unified Options Menu:** Created `ScreenUnifiedOptions` to expose backend modifiers.
+>>>>>>> origin/unified-ui-features-13937230807013224518

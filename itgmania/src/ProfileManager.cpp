@@ -560,6 +560,24 @@ bool ProfileManager::CreateLocalProfile( RString sName, RString &sProfileIDOut )
 	return true;
 }
 
+bool ProfileManager::SelectProfile( PlayerNumber pn, const RString& sProfileID )
+{
+    if( sProfileID.empty() )
+    {
+        // Unjoin / Deselect
+        m_sDefaultLocalProfileID[pn].Set( "" );
+        LoadLocalProfileFromMachine( pn );
+        return true;
+    }
+
+    if( GetLocalProfile( sProfileID ) == nullptr )
+        return false;
+
+    m_sDefaultLocalProfileID[pn].Set( sProfileID );
+    LoadLocalProfileFromMachine( pn );
+    return true;
+}
+
 static void InsertProfileIntoList(DirAndProfile& derp)
 {
 	bool inserted= false;
@@ -1159,6 +1177,25 @@ public:
 		return 1;
 	}
 
+	static int CreateLocalProfile( T* p, lua_State *L )
+	{
+		RString name = SArg(1);
+		RString id;
+		bool result = p->CreateLocalProfile(name, id);
+		lua_pushboolean(L, result);
+		if( result ) lua_pushstring(L, id);
+		else lua_pushnil(L);
+		return 2;
+	}
+
+	static int SelectProfile( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
+		RString id = SArg(2);
+		lua_pushboolean(L, p->SelectProfile(pn, id));
+		return 1;
+	}
+
 	static int NextLocalProfile( T* p, lua_State *L )
 	{
 		p->NextLocalProfile( Enum::Check<PlayerNumber>(L, 1) );
@@ -1192,6 +1229,8 @@ public:
 		ADD_METHOD( GetLocalProfileIDs );
 		ADD_METHOD( GetLocalProfileDisplayNames );
 		ADD_METHOD( LocalProfileIDToDir );
+		ADD_METHOD( CreateLocalProfile );
+		ADD_METHOD( SelectProfile );
 	}
 };
 

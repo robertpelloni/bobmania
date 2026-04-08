@@ -19,12 +19,17 @@
 #include "Song.h"
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
+<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 #include "StepsWithScoring.h"
 
 #include <cstddef>
 #include <cstdint>
 #include <vector>
 
+=======
+#include "Scoring/WifeScoring.h"
+#include "Unified/MissionManager.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperNormal.cpp
 
 static RString PercentScoreWeightName( size_t i ) { return "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i ); }
 static RString GradeWeightName( size_t i ) { return "GradeWeight" + ScoreEventToString( (ScoreEvent)i ); }
@@ -416,6 +421,13 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );
 		MESSAGEMAN->Broadcast( msg );
 	}
+
+    // Unified: Track Notes Hit for Missions
+    if( tns >= TNS_W5 && tns <= TNS_W1 )
+    {
+        if( MISSIONMAN )
+            MISSIONMAN->ReportMetric("NotesHit", 1.0f);
+    }
 
 	// Etterna Parity: Wife Scoring
 	if( tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead || tn.type == TapNoteType_Lift )

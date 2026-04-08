@@ -1,6 +1,6 @@
-# Traditional Compilation File Stuff.
 *.o
 *.obj
+<<<<<<< HEAD
 *.a
 
 # CMake Files/Directories
@@ -106,3 +106,25 @@ BuildLog.htm
 *.pc
 *.d
 *.lastcodeanalysissucceeded
+=======
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.log
+*.tmp
+/build/
+/bin/
+/lib/
+/test/
+/.vscode/
+/.idea/
+__pycache__/
+*.pyc
+node_modules/
+*.swp
+*.orig
+*~
+>>>>>>> origin/unified-ui-features-13937230807013224518

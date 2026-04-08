@@ -32,6 +32,8 @@
 #include "Inventory.h"
 #include "Course.h"
 #include "NoteDataUtil.h"
+#include "Unified/MissionManager.h"
+#include "Scoring/ReplayManager.h"
 #include "UnlockManager.h"
 #include "LightsManager.h"
 #include "ProfileManager.h"
@@ -63,6 +65,8 @@
 #include "RageDisplay.h"
 #include "Gym/ActorCalorieGraph.h" // Added for Gym Integration
 #include "Economy/EconomyManager.h" // Added for Economy Integration
+#include "Scoring/ReplayManager.h"
+#include "Unified/MissionManager.h"
 
 // Defines
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
@@ -1523,14 +1527,6 @@ void ScreenGameplay::LoadLights()
 
 void ScreenGameplay::StartPlayingSong( float fMinTimeToNotes, float fMinTimeToMusic )
 {
-	// Economy Integration: Pay Royalty
-	if (GAMESTATE->m_pCurSong)
-	{
-		EconomyManager::Instance()->PaySongRoyalty(
-			GAMESTATE->m_pCurSong->GetTranslitMainTitle(),
-			GAMESTATE->m_pCurSong->GetTranslitArtist()
-		);
-	}
 
 	ASSERT( fMinTimeToNotes >= 0 );
 	ASSERT( fMinTimeToMusic >= 0 );
@@ -1741,13 +1737,16 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+    // Replay System: Update playback (input injection)
+    if( REPLAYMAN ) REPLAYMAN->Update(fDeltaTime);
+
 	// Economy Integration: Update mining/background tasks
-	EconomyManager::Instance()->Update(fDeltaTime);
+	ECONOMYMAN->Update(fDeltaTime);
 	
 	// Economy Integration: Update UI
-	if (EconomyManager::Instance())
+	if (ECONOMYMAN)
 	{
-		long long balance = EconomyManager::Instance()->GetBalance("WALLET_PLAYER");
+		long long balance = ECONOMYMAN->GetBalance();
 		m_textEconomy.SetText( ssprintf("Coins: %lld", balance) );
 	}
 
@@ -2051,6 +2050,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 			if(bGiveUpTimerFired || bAllHumanHaveBigMissCombo || m_skipped_song)
 			{
+                // Replay System: Stop recording if gave up
+                if( REPLAYMAN ) REPLAYMAN->StopRecording();
+
 				STATSMAN->m_CurStageStats.m_bGaveUp = true;
 				FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 				{
@@ -2525,6 +2527,13 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 	if( m_Codes.InputMessage(input, msg) )
 		this->HandleMessage( msg );
 
+    // Replay System: Record Input
+    if( REPLAYMAN && REPLAYMAN->IsRecording() )
+    {
+        // Record all inputs for fidelity
+        REPLAYMAN->RecordInput( -1, input.GameI, input.type == IET_FIRST_PRESS );
+    }
+
 	if( m_bPaused )
 	{
 		/* If we're paused, only accept GAME_BUTTON_START to unpause. */
@@ -2752,6 +2761,12 @@ void ScreenGameplay::SongFinished()
 
 void ScreenGameplay::StageFinished( bool bBackedOut )
 {
+    // Mission Update: Song Passed
+    if( !bBackedOut && !STATSMAN->m_CurStageStats.AllFailed() && MISSIONMAN )
+    {
+        MISSIONMAN->ReportMetric("SongsPassed", 1.0f);
+    }
+
 	if( GAMESTATE->IsCourseMode() && GAMESTATE->m_PlayMode != PLAY_MODE_ENDLESS )
 	{
 		LOG->Trace("Stage finished at index %i/%i", GAMESTATE->GetCourseSongIndex(), (int) m_apSongsQueue.size() );
@@ -2776,12 +2791,6 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	if( STATSMAN->m_CurStageStats.AllFailed() )
 	{
 		FOREACH_HumanPlayer( p )
-	// Economy Integration: Resolve Bets
-	if (EconomyManager::Instance()->IsBetActive())
-	{
-		bool bAnyPlayerPassed = !STATSMAN->m_CurStageStats.AllFailed();
-		EconomyManager::Instance()->ResolveMatchBet(bAnyPlayerPassed);
-	}
 
 			GAMESTATE->m_iPlayerStageTokens[p] = 0;
 	}
@@ -2796,6 +2805,16 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
 
 	STATSMAN->CalcAccumPlayedStageStats();
+
+    // Replay System: Save Replay
+    if( REPLAYMAN && REPLAYMAN->IsRecording() )
+    {
+        REPLAYMAN->StopRecording();
+        RString sDate = DateTime::GetNowDateTime().GetString();
+        sDate.Replace(":","-"); sDate.Replace(" ","_");
+        REPLAYMAN->SaveReplay("Save/Replays/replay_" + sDate + ".csv");
+    }
+
 	GAMESTATE->FinishStage();
 }
 
@@ -2857,6 +2876,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_DanceStartTime.Touch();
 
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
+        if( REPLAYMAN && !REPLAYMAN->IsPlaying() ) REPLAYMAN->StartRecording();
 		m_DancingState = STATE_DANCING; // STATE CHANGE!  Now the user is allowed to press Back
 	}
 	else if( SM == SM_NotesEnded )	// received while STATE_DANCING

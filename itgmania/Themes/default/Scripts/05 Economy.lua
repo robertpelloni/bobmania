@@ -24,8 +24,20 @@ function GetBobcoinStatus()
     local hashrate = 0
     if ECONOMYMAN then hashrate = ECONOMYMAN:GetHashRate() end
     return {
+<<<<<<< HEAD:itgmania/Themes/default/Scripts/05 Economy.lua
         Rate = 1.25, -- USD/BOB
+=======
+        Rate = 1.25, -- USD/BOB (Mock rate)
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/Scripts/05 Economy.lua
         MiningActive = (hashrate > 0),
         Hashrate = hashrate .. " MH/s"
     }
 end
+<<<<<<< HEAD:itgmania/Themes/default/Scripts/05 Economy.lua
+=======
+
+-- Helper for converting micro-units to display string
+function FormatBobcoin(amount)
+    return string.format("%.2f BOBC", amount) -- Assuming 1:1 for simplicity in Beta
+end
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/Scripts/05 Economy.lua

@@ -1,7 +1,10 @@
 local function AwardMining(score, meter)
     if not ECONOMYMAN then return end
     ECONOMYMAN:AwardMiningReward(score, meter)
+<<<<<<< HEAD:itgmania/Themes/default/BGAnimations/ScreenGameplay overlay/MiningHook.lua
     -- Optional: SystemMessage("Mining: " .. score .. "% Reward")
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/BGAnimations/ScreenGameplay overlay/MiningHook.lua
 end
 
 local function UpdateMissions(pn)
@@ -28,6 +31,7 @@ local function UpdateMissions(pn)
             GYMMAN:LogWorkout("Arcade", dur, cals)
         end
     end
+<<<<<<< HEAD:itgmania/Themes/default/BGAnimations/ScreenGameplay overlay/MiningHook.lua
 end
 
 local t = Def.ActorFrame {
@@ -40,6 +44,17 @@ local t = Def.ActorFrame {
     -- When the screen transitions out (Stage Finished)
     OffCommand=function(self)
         if not GAMESTATE:IsCourseMode() then -- Simplify for now
+=======
+
+    if MISSIONMAN:IsAnyMissionJustCompleted() then
+        SCREENMAN:SystemMessage("Mission Complete!")
+    end
+end
+
+local t = Def.ActorFrame {
+    OffCommand=function(self)
+        if not GAMESTATE:IsCourseMode() then
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/BGAnimations/ScreenGameplay overlay/MiningHook.lua
             for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
                 local pss = STATSMAN:GetCurStageStats():GetPlayerStageStats(pn)
                 if pss and not pss:GetFailed() then
@@ -50,6 +65,18 @@ local t = Def.ActorFrame {
 
                     AwardMining(score, meter)
                     UpdateMissions(pn)
+<<<<<<< HEAD:itgmania/Themes/default/BGAnimations/ScreenGameplay overlay/MiningHook.lua
+=======
+
+                    -- Check Tournament Result
+                    if TOURNAMENTMAN and TOURNAMENTMAN:IsMatchActive() then
+                        local winner = "Opponent"
+                        if score > 0.8 then winner = "Player" end -- Simple logic for MVP
+                        TOURNAMENTMAN:ReportMatchResult(winner)
+                        TOURNAMENTMAN:SetMatchActive(false)
+                        SCREENMAN:SystemMessage("Tournament Match Complete: " .. winner .. " Wins!")
+                    end
+>>>>>>> origin/unified-ui-features-13937230807013224518:Themes/default/BGAnimations/ScreenGameplay overlay/MiningHook.lua
                 end
             end
         end
