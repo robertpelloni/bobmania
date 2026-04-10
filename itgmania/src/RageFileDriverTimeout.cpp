@@ -28,7 +28,15 @@
  * an operation times out, we'll refuse all further access until all operations have
  * finished and exited.  (Load a separate driver for each device, so if one device fails,
  * others continue to function.)
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
  * All operations must run in the thread, including retrieving directory lists, Open()
  * and deleting file objects.  Read/write operations are copied through an intermediate
  * buffer, so we don't clobber stuff if the operation times out, the call returns and the
@@ -47,11 +55,21 @@
 #include "RageUtil_FileDB.h"
 #include "RageUtil_WorkerThread.h"
 #include "RageLog.h"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+>>>>>>> main
 
 #include <cerrno>
 #include <cstddef>
 #include <vector>
 
+<<<<<<< HEAD
+=======
+=======
+#include <errno.h>
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 
 enum ThreadRequest
 {
@@ -105,7 +123,15 @@ private:
 	RageFileDriver *m_pChildDriver;
 
 	/* List of files to delete: */
+<<<<<<< HEAD
 	std::vector<RageFileBasic *> m_apDeletedFiles;
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+	std::vector<RageFileBasic *> m_apDeletedFiles;
+=======
+	vector<RageFileBasic *> m_apDeletedFiles;
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 	RageMutex m_DeletedFilesLock;
 
 	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE, REQ_REMOVE, REQ_MOVE: */
@@ -143,7 +169,15 @@ private:
 	char *m_pRequestBuffer; /* in */
 };
 
+<<<<<<< HEAD
 static std::vector<ThreadedFileWorker *> g_apWorkers;
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+static std::vector<ThreadedFileWorker *> g_apWorkers;
+=======
+static vector<ThreadedFileWorker *> g_apWorkers;
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 static RageMutex g_apWorkersMutex("WorkersMutex");
 
 /* Set the timeout length, and reset the timer. */
@@ -201,7 +235,15 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 {
 	{
 		m_DeletedFilesLock.Lock();
+<<<<<<< HEAD
 		std::vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+		std::vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
+=======
+		vector<RageFileBasic *> apDeletedFiles = m_apDeletedFiles;
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 		m_apDeletedFiles.clear();
 		m_DeletedFilesLock.Unlock();
 
@@ -292,10 +334,23 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 void ThreadedFileWorker::RequestTimedOut()
 {
 	/* The event timed out.  Clean up any residue from the last action. */
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+>>>>>>> main
 	RageUtil::SafeDelete( m_pRequestFile );
 	RageUtil::SafeDelete( m_pResultFile );
 	RageUtil::SafeDeleteArray( m_pRequestBuffer );
 	RageUtil::SafeDeleteArray( m_pResultBuffer );
+<<<<<<< HEAD
+=======
+=======
+	SAFE_DELETE( m_pRequestFile );
+	SAFE_DELETE( m_pResultFile );
+	SAFE_DELETE_ARRAY( m_pRequestBuffer );
+	SAFE_DELETE_ARRAY( m_pResultBuffer );
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 }
 
 RageFileBasic *ThreadedFileWorker::Open( const RString &sPath, int iMode, int &iErr )
@@ -358,7 +413,15 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+
+=======
+	
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
 	{
@@ -386,7 +449,15 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 int ThreadedFileWorker::GetFD( RageFileBasic *&pFile )
 {
 	ASSERT( m_pChildDriver != nullptr ); /* how did you get a file to begin with? */
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+
+=======
+	
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 	/* If we're currently in a timed-out state, fail. */
 	if( IsTimedOut() )
 	{
@@ -920,7 +991,15 @@ bool RageFileDriverTimeout::Move( const RString &sOldPath, const RString &sNewPa
 
 	return true;
 }
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverTimeout.cpp
+
+=======
+	
+>>>>>>> origin/c++11:src/RageFileDriverTimeout.cpp
+>>>>>>> main
 bool RageFileDriverTimeout::Remove( const RString &sPath )
 {
 	int iRet = m_pWorker->Remove( sPath );

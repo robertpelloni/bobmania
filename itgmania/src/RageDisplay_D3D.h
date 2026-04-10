@@ -26,8 +26,22 @@ public:
 	bool SupportsTextureFormat( RagePixelFormat pixfmt, bool realtime=false );
 	bool SupportsThreadedRendering();
 	bool SupportsPerVertexMatrixScale() { return false; }
+<<<<<<< HEAD
 	uintptr_t CreateTexture(
 		RagePixelFormat pixfmt,
+=======
+<<<<<<< HEAD:itgmania/src/RageDisplay_D3D.h
+	uintptr_t CreateTexture(
+		RagePixelFormat pixfmt,
+=======
+	uintptr_t CreateTexture( 
+		RagePixelFormat pixfmt, 
+		RageSurface* img, 
+		bool bGenerateMipMaps );
+	void UpdateTexture( 
+		uintptr_t iTexHandle, 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_D3D.h
+>>>>>>> main
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture(

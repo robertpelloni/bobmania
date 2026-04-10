@@ -4,19 +4,42 @@
 #include "RageThreads.h"
 #include "ProductInfo.h"
 #include "InputFilter.h"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 #include <vector>
 
 #include <CoreFoundation/CoreFoundation.h>
 
 
+<<<<<<< HEAD
+=======
+=======
+#include <CoreFoundation/CoreFoundation.h>
+
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 REGISTER_DIALOG_DRIVER_CLASS( MacOSX );
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
 				CFStringRef alt = nullptr, CFStringRef other = nullptr)
 {
 	CFOptionFlags result;
+<<<<<<< HEAD
 	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage.c_str(), kCFStringEncodingUTF8 );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage.c_str(), kCFStringEncodingUTF8 );
+=======
+	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+=======
+	CFStringRef text = CFStringCreateWithCString( nullptr, sMessage, kCFStringEncodingUTF8 );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 	if( text == nullptr )
 	{
@@ -32,7 +55,15 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	// Flush all input that's accumulated while the dialog box was up.
 	if( INPUTFILTER )
 	{
+<<<<<<< HEAD
 		std::vector<InputEvent> dummy;
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+		std::vector<InputEvent> dummy;
+=======
+		vector<InputEvent> dummy;
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 		INPUTFILTER->Reset();
 		INPUTFILTER->GetInputEvents( dummy );
 	}
@@ -46,7 +77,15 @@ void DialogDriver_MacOSX::OK( RString sMessage, RString sID )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sDSA = LSTRING( bundle, "Don't show again" );
+<<<<<<< HEAD
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), CFSTR("OK"), sDSA );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), CFSTR("OK"), sDSA );
+=======
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, CFSTR("OK"), sDSA );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 	CFRelease( sDSA );
 	if( result == kCFUserNotificationAlternateResponse )
@@ -55,7 +94,15 @@ void DialogDriver_MacOSX::OK( RString sMessage, RString sID )
 
 void DialogDriver_MacOSX::Error( RString sError, RString sID )
 {
+<<<<<<< HEAD
 	ShowAlert( kCFUserNotificationStopAlertLevel, sError.c_str(), CFSTR("OK") );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	ShowAlert( kCFUserNotificationStopAlertLevel, sError.c_str(), CFSTR("OK") );
+=======
+	ShowAlert( kCFUserNotificationStopAlertLevel, sError, CFSTR("OK") );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 }
 
 Dialog::Result DialogDriver_MacOSX::OKCancel( RString sMessage, RString sID )
@@ -63,7 +110,15 @@ Dialog::Result DialogDriver_MacOSX::OKCancel( RString sMessage, RString sID )
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sOK = LSTRING( bundle, "OK" );
 	CFStringRef sCancel = LSTRING( bundle, "Cancel" );
+<<<<<<< HEAD
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sOK, sCancel );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sOK, sCancel );
+=======
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sOK, sCancel );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 	CFRelease( sOK );
 	CFRelease( sCancel );
@@ -85,7 +140,15 @@ Dialog::Result DialogDriver_MacOSX::AbortRetryIgnore( RString sMessage, RString 
 	CFStringRef sIgnore = LSTRING( bundle, "Ignore" );
 	CFStringRef sRetry = LSTRING( bundle, "Retry" );
 	CFStringRef sAbort = LSTRING( bundle, "Abort" );
+<<<<<<< HEAD
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sIgnore, sRetry, sAbort );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sIgnore, sRetry, sAbort );
+=======
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sIgnore, sRetry, sAbort );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 	CFRelease( sIgnore );
 	CFRelease( sRetry );
@@ -110,7 +173,15 @@ Dialog::Result DialogDriver_MacOSX::AbortRetry( RString sMessage, RString sID )
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sRetry = LSTRING( bundle, "Retry" );
 	CFStringRef sAbort = LSTRING( bundle, "Abort" );
+<<<<<<< HEAD
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sRetry, sAbort );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sRetry, sAbort );
+=======
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sRetry, sAbort );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 	CFRelease( sRetry );
 	CFRelease( sAbort );
@@ -131,7 +202,15 @@ Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef sYes = LSTRING( bundle, "Yes" );
 	CFStringRef sNo = LSTRING( bundle, "No" );
+<<<<<<< HEAD
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sYes, sNo );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage.c_str(), sYes, sNo );
+=======
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sYes, sNo );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
 
 	CFRelease( sYes );
 	CFRelease( sNo );
@@ -150,7 +229,15 @@ Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
 /*
  * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -160,7 +247,15 @@ Dialog::Result DialogDriver_MacOSX::YesNo( RString sMessage, RString sID )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_MacOSX.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_MacOSX.cpp
+>>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

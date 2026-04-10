@@ -6,7 +6,14 @@
 #include "WheelNotifyIcon.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
+<<<<<<< HEAD
 #include "Song.h"
+=======
+<<<<<<< HEAD:itgmania/src/MusicWheelItem.h
+#include "Song.h"
+=======
+>>>>>>> origin/c++11:src/MusicWheelItem.h
+>>>>>>> main
 #include "GameCommand.h"
 #include "WheelItemBase.h"
 #include "AutoActor.h"
@@ -63,15 +70,35 @@ private:
 
 struct MusicWheelItemData : public WheelItemBaseData
 {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/MusicWheelItem.h
+>>>>>>> main
 	MusicWheelItemData() : m_pCourse(nullptr), m_pSong(nullptr), m_pGroup(nullptr), m_Flags(),
 		m_iSectionCount(0), m_sLabel(""), m_pAction() { }
 	MusicWheelItemData( WheelItemDataType type, Song* pSong, 
 			   RString sSectionName, Course* pCourse, Group* pGroup, 
+<<<<<<< HEAD
+=======
+=======
+	MusicWheelItemData() : m_pCourse(nullptr), m_pSong(nullptr), m_Flags(),
+		m_iSectionCount(0), m_sLabel(""), m_pAction() { }
+	MusicWheelItemData( WheelItemDataType type, Song* pSong, 
+			   RString sSectionName, Course* pCourse, 
+>>>>>>> origin/c++11:src/MusicWheelItem.h
+>>>>>>> main
 			   RageColor color, int iSectionCount );
 
 	Course*			m_pCourse;
 	Song*			m_pSong;
+<<<<<<< HEAD
 	Group*			m_pGroup;
+=======
+<<<<<<< HEAD:itgmania/src/MusicWheelItem.h
+	Group*			m_pGroup;
+=======
+>>>>>>> origin/c++11:src/MusicWheelItem.h
+>>>>>>> main
 	WheelNotifyIcon::Flags  m_Flags;
 
 	// for TYPE_SECTION

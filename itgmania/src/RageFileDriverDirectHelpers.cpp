@@ -2,6 +2,13 @@
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverDirectHelpers.cpp
+=======
+
+>>>>>>> origin/c++11:src/RageFileDriverDirectHelpers.cpp
+>>>>>>> main
 
 #include <cerrno>
 #include <vector>
@@ -256,8 +263,18 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	 * use absolute paths, which forces the system to re-parse the directory
 	 * for each file.  This isn't a major issue, since most large directory
 	 * scans are I/O-bound. */
+<<<<<<< HEAD
 
 	DIR *pDir = opendir((root+sPath).c_str());
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverDirectHelpers.cpp
+
+	DIR *pDir = opendir((root+sPath).c_str());
+=======
+	 
+	DIR *pDir = opendir(root+sPath);
+>>>>>>> origin/c++11:src/RageFileDriverDirectHelpers.cpp
+>>>>>>> main
 	if( pDir == nullptr )
 		return;
 
@@ -318,13 +335,29 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 		vsFilesToRemove.push_back( iter->name );
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverDirectHelpers.cpp
+
+=======
+	
+>>>>>>> origin/c++11:src/RageFileDriverDirectHelpers.cpp
+>>>>>>> main
 	for (RString const &iter : vsFilesToRemove)
 	{
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;
 		fileToDelete.SetName( iter );
+<<<<<<< HEAD
 		std::set<File>::iterator iter2 = fs.files.find( fileToDelete );
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverDirectHelpers.cpp
+		std::set<File>::iterator iter2 = fs.files.find( fileToDelete );
+=======
+		set<File>::iterator iter2 = fs.files.find( fileToDelete );
+>>>>>>> origin/c++11:src/RageFileDriverDirectHelpers.cpp
+>>>>>>> main
 		if( iter2 != fs.files.end() )
 			fs.files.erase( iter2 );
 	}

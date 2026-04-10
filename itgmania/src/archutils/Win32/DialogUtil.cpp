@@ -4,9 +4,18 @@
 #include "ThemeManager.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+<<<<<<< HEAD
 #include <cmath>
 #include <memory>
 
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
+#include <cmath>
+#include <memory>
+
+=======
+>>>>>>> origin/c++11:src/archutils/Win32/DialogUtil.cpp
+>>>>>>> main
 // Create*Font copied from MFC's CFont
 
 // pLogFont->nHeight is interpreted as PointSize * 10
@@ -23,9 +32,22 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 	::DPtoLP(hDC, &pt, 1);
 	POINT ptOrg = { 0, 0 };
 	::DPtoLP(hDC, &ptOrg, 1);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
+>>>>>>> main
 	logFont.lfHeight = -std::abs(pt.y - ptOrg.y);
 
 	ReleaseDC(nullptr, hDC);
+=======
+	logFont.lfHeight = -abs(pt.y - ptOrg.y);
+
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
+	ReleaseDC(NULL, hDC);
+>>>>>>> origin/c++11:src/archutils/Win32/DialogUtil.cpp
+=======
+	ReleaseDC(nullptr, hDC);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/DialogUtil.cpp
 
 	return ::CreateFontIndirect(&logFont);
 }
@@ -44,6 +66,10 @@ static HFONT CreatePointFont(int nPointSize, LPCTSTR lpszFaceName)
 	return ::CreatePointFontIndirect(&logFont);
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
+>>>>>>> main
 struct FontDeleter
 {
 	void operator()(HFONT font) const
@@ -65,6 +91,22 @@ void DialogUtil::SetHeaderFont(HWND hdlg, int nID)
 	static std::unique_ptr<std::remove_pointer<HFONT>::type, FontDeleter> hfont(CreatePointFont(16 * 10, "Arial Black"));
 
 	::SendMessage(hControl, WM_SETFONT, (WPARAM)hfont.get(), TRUE);
+<<<<<<< HEAD
+=======
+=======
+void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
+{
+	ASSERT( hdlg != nullptr );
+
+	HWND hControl = ::GetDlgItem( hdlg, nID );
+	ASSERT( hControl != nullptr );
+
+	// TODO: Fix font leak
+	const int FONT_POINTS = 16;
+	HFONT hfont = CreatePointFont( FONT_POINTS*10, "Arial Black" );
+	::SendMessage( hControl, WM_SETFONT, (WPARAM)hfont, TRUE );
+>>>>>>> origin/c++11:src/archutils/Win32/DialogUtil.cpp
+>>>>>>> main
 }
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
@@ -97,7 +139,15 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/archutils/Win32/DialogUtil.cpp
+>>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -107,7 +157,15 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Win32/DialogUtil.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/archutils/Win32/DialogUtil.cpp
+>>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

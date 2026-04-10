@@ -40,7 +40,10 @@ namespace
 		-1, //GAME_BUTTON_START
 		-1, //GAME_BUTTON_SELECT
 		-1, //GAME_BUTTON_BACK
+<<<<<<< HEAD
 		-1, //GAME_BUTTON_RESTART
+=======
+>>>>>>> main
 		-1, //GAME_BUTTON_COIN
 		-1, //GAME_BUTTON_OPERATOR
 		-1, //GAME_BUTTON_EFFECT_UP
@@ -74,7 +77,10 @@ namespace
 		-1, //GAME_BUTTON_START
 		-1, //GAME_BUTTON_SELECT
 		-1, //GAME_BUTTON_BACK
+<<<<<<< HEAD
 		-1, //GAME_BUTTON_RESTART
+=======
+>>>>>>> main
 		-1, //GAME_BUTTON_COIN
 		-1, //GAME_BUTTON_OPERATOR
 		-1, //GAME_BUTTON_EFFECT_UP
@@ -108,7 +114,10 @@ namespace
 		-1, //GAME_BUTTON_START
 		-1, //GAME_BUTTON_SELECT
 		-1, //GAME_BUTTON_BACK
+<<<<<<< HEAD
 		-1, //GAME_BUTTON_RESTART
+=======
+>>>>>>> main
 		-1, //GAME_BUTTON_COIN
 		-1, //GAME_BUTTON_OPERATOR
 		-1, //GAME_BUTTON_EFFECT_UP
@@ -142,7 +151,10 @@ namespace
 		-1, //GAME_BUTTON_START
 		-1, //GAME_BUTTON_SELECT
 		-1, //GAME_BUTTON_BACK
+<<<<<<< HEAD
 		-1, //GAME_BUTTON_RESTART
+=======
+>>>>>>> main
 		-1, //GAME_BUTTON_COIN
 		-1, //GAME_BUTTON_OPERATOR
 		-1, //GAME_BUTTON_EFFECT_UP
@@ -215,6 +227,12 @@ void LightsDriver_Linux_PIUIO_Leds::Set(const LightsState *ls)
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+<<<<<<< HEAD
  *
  * i love lamp
  */
+=======
+ * 
+ * i love lamp
+ */
+>>>>>>> main

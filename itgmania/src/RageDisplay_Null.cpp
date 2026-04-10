@@ -10,9 +10,18 @@
 #include "RageUtil.h"
 #include "RageSurface.h"
 #include "DisplaySpec.h"
+<<<<<<< HEAD
 
 #include <vector>
 
+=======
+<<<<<<< HEAD:itgmania/src/RageDisplay_Null.cpp
+
+#include <vector>
+
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_Null.cpp
+>>>>>>> main
 
 static RageDisplay::RagePixelFormatDesc PIXEL_FORMAT_DESC[NUM_RagePixelFormat] = {
 	{

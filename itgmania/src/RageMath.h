@@ -52,6 +52,17 @@ RageMatrix RageLookAt(
 void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles );
 void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn );
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageMath.h
+=======
+float RageFastSin( float x ) CONST_FUNCTION;
+float RageFastCos( float x ) CONST_FUNCTION;
+float RageFastTan( float x ) CONST_FUNCTION;
+float RageFastCsc( float x ) CONST_FUNCTION;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageMath.h
+>>>>>>> main
 float RageSquare( float x) CONST_FUNCTION;
 float RageTriangle( float x) CONST_FUNCTION;
 

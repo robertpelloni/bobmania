@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [submodule "itgmania/bobcoin"]
 	path = itgmania/bobcoin
 	url = https://github.com/robertpelloni/bobcoin
@@ -38,6 +39,11 @@
 [submodule "itgmania/extern/vorbis"]
 	path = itgmania/extern/vorbis
 	url = https://gitlab.xiph.org/xiph/vorbis.git
+=======
+[submodule "bobcoin"]
+	path = bobcoin
+	url = https://github.com/robertpelloni/bobcoin
+>>>>>>> main
 [submodule "Themes/Simply-Love-SM5"]
 	path = Themes/Simply-Love-SM5
 	url = https://github.com/Simply-Love/Simply-Love-SM5.git

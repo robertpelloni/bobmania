@@ -1,8 +1,11 @@
 #include "global.h"
 #include "LightsDriver_Export.h"
 
+<<<<<<< HEAD
 REGISTER_LIGHTS_DRIVER_CLASS(Export);
 
+=======
+>>>>>>> main
 RageMutex LightsDriver_Export::m_Lock( "LightsDriver_Export");
 LightsState LightsDriver_Export::m_State;
 

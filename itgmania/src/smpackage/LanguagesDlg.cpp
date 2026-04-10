@@ -54,7 +54,15 @@ BOOL LanguagesDlg::OnInitDialog()
 	std::vector<RString> vs;
 	GetDirListing( SpecialFiles::THEMES_DIR+"*", vs, true );
 	StripCvsAndSvn( vs );
+<<<<<<< HEAD
 	for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+=======
+<<<<<<< HEAD:itgmania/src/smpackage/LanguagesDlg.cpp
+	for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+=======
+	for (vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+>>>>>>> origin/c++11:src/smpackage/LanguagesDlg.cpp
+>>>>>>> main
 		m_listThemes.AddString( *s );
 	if( !vs.empty() )
 		m_listThemes.SetSel( 0 );
@@ -101,7 +109,15 @@ void LanguagesDlg::OnSelchangeListThemes()
 
 		std::vector<RString> vs;
 		GetDirListing( sLanguagesDir+"*.ini", vs, false );
+<<<<<<< HEAD
 		for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+=======
+<<<<<<< HEAD:itgmania/src/smpackage/LanguagesDlg.cpp
+		for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+=======
+		for (vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
+>>>>>>> origin/c++11:src/smpackage/LanguagesDlg.cpp
+>>>>>>> main
 		{
 			RString sIsoCode = GetFileNameWithoutExtension(*s);
 			RString sLanguage = SMPackageUtil::GetLanguageDisplayString(sIsoCode);
@@ -390,7 +406,15 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	int iNumModified = 0;
 	int iNumUnchanged = 0;
 	int iNumIgnored = 0;
+<<<<<<< HEAD
 	for (std::vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
+=======
+<<<<<<< HEAD:itgmania/src/smpackage/LanguagesDlg.cpp
+	for (std::vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
+=======
+	for (vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
+>>>>>>> origin/c++11:src/smpackage/LanguagesDlg.cpp
+>>>>>>> main
 	{
 		int iLineIndex = line - csv.m_vvs.begin();
 
@@ -463,7 +487,15 @@ void GetAllMatches( const RString &sRegex, const RString &sString, std::vector<R
 void DumpList( const std::vector<RString> &asList, RageFile &file )
 {
 	RString sLine;
+<<<<<<< HEAD
 	for (std::vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
+=======
+<<<<<<< HEAD:itgmania/src/smpackage/LanguagesDlg.cpp
+	for (std::vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
+=======
+	for (vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
+>>>>>>> origin/c++11:src/smpackage/LanguagesDlg.cpp
+>>>>>>> main
 	{
 		if( sLine.size() + s->size() > 100 )
 		{

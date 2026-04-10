@@ -15,10 +15,31 @@ namespace avcodec
 {
 	extern "C"
 	{
+<<<<<<< HEAD
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
 #include <libavutil/pixdesc.h>
+=======
+		#include <libavformat/avformat.h>
+		#include <libswscale/swscale.h>
+		#include <libavutil/pixdesc.h>
+
+		#if LIBAVCODEC_VERSION_MAJOR >= 58
+		#define av_free_packet av_packet_unref
+		#define PixelFormat AVPixelFormat
+		#define PIX_FMT_YUYV422 AV_PIX_FMT_YUYV422
+		#define PIX_FMT_BGRA    AV_PIX_FMT_BGRA
+		#define PIX_FMT_ARGB	AV_PIX_FMT_ARGB
+		#define PIX_FMT_ABGR	AV_PIX_FMT_ABGR
+		#define PIX_FMT_RGBA	AV_PIX_FMT_RGBA
+		#define PIX_FMT_RGB24	AV_PIX_FMT_RGB24
+		#define PIX_FMT_BGR24	AV_PIX_FMT_BGR24
+		#define PIX_FMT_RGB555	AV_PIX_FMT_RGB555
+		#define PIX_FMT_NB		AV_PIX_FMT_NB
+		#define CODEC_ID_NONE   AV_CODEC_ID_NONE
+		#endif
+>>>>>>> main
 	}
 };
 
@@ -85,10 +106,15 @@ public:
 	// and the next frame to display is the first one of the movie.
 	void Rollover();
 
+<<<<<<< HEAD
 	// This draws a frame from the buffer onto the provided RageSurface.
 	// Returns 1 if the last frame of the movie, -1 if there's an issue
 	// with the frame and we should skip.
 	int GetFrame(RageSurface* surface_out);
+=======
+	int GetWidth() const { return m_pStreamCodec->width; }
+	int GetHeight() const { return m_pStreamCodec->height; }
+>>>>>>> main
 
 	// Handles the next packet in decoding.
 	int HandleNextPacket();
@@ -133,9 +159,17 @@ private:
 	void Init();
 	RString OpenCodec();
 
+<<<<<<< HEAD
 	// Read a packet and send it to our frame data buffer.
 	// Returns -2 on cancel, -1 on error, 0 on EOF, 1 on OK.
 	int SendPacketToBuffer();
+=======
+	avcodec::AVStream *m_pStream;
+	avcodec::AVFrame *m_Frame;
+	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
+	avcodec::SwsContext *m_swsctx;
+	avcodec::AVCodecContext *m_pStreamCodec;
+>>>>>>> main
 
 	// Send the packet at packet_buffer_position_ to the frame buffer
 	// at the next open position.
@@ -226,6 +260,32 @@ static struct AVPixelFormat_t
 		true,
 		PixelFormatYCbCr_Invalid,
 	},
+<<<<<<< HEAD
+=======
+	/*
+	{
+		32,
+		{ 0x000000FF,
+		  0x0000FF00,
+		  0x00FF0000,
+		  0xFF000000 },
+		avcodec::PIX_FMT_ABGR,
+		true,
+		true,
+		PixelFormatYCbCr_Invalid,
+	},
+	{
+		32,
+		{ 0xFF000000,
+		  0x00FF0000,
+		  0x0000FF00,
+		  0x000000FF },
+		avcodec::PIX_FMT_RGBA,
+		true,
+		true,
+		PixelFormatYCbCr_Invalid,
+	}, */
+>>>>>>> main
 	{
 		24,
 		{ 0xFF0000,

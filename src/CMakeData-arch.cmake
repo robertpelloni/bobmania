@@ -46,8 +46,24 @@ if(WIN32)
               "arch/Sound/RageSoundDriver_WaveOut.h"
               "arch/Sound/RageSoundDriver_WDMKS.h")
 elseif(APPLE)
+<<<<<<< HEAD
+  list(APPEND SMDATA_ARCH_SOUND_SRC
+    "arch/Sound/RageSoundDriver_AU.cpp"
+  )
+  list(APPEND SMDATA_ARCH_SOUND_HPP
+    "arch/Sound/RageSoundDriver_AU.h"
+  )
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_SOUND_SRC
+    "arch/Sound/RageSoundDriver_Android.cpp"
+  )
+  list(APPEND SMDATA_ARCH_SOUND_HPP
+    "arch/Sound/RageSoundDriver_Android.h"
+  )
+=======
   list(APPEND SMDATA_ARCH_SOUND_SRC "arch/Sound/RageSoundDriver_AU.cpp")
   list(APPEND SMDATA_ARCH_SOUND_HPP "arch/Sound/RageSoundDriver_AU.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
 else() # Unix
   if(HAS_PULSE)
     list(APPEND SMDATA_ARCH_SOUND_SRC
@@ -131,7 +147,19 @@ elseif(APPLE)
   list(APPEND SMDATA_ARCH_MEMORY_SRC
               "arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp")
   list(APPEND SMDATA_ARCH_MEMORY_HPP
+<<<<<<< HEAD
+    "arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.h"
+  )
+elseif(ANDROID)
+  #list(APPEND SMDATA_ARCH_MEMORY_SRC
+  #  "arch/MemoryCard/MemoryCardDriver_Android.cpp"
+  #)
+  #list(APPEND SMDATA_ARCH_MEMORY_HPP
+  #  "arch/MemoryCard/MemoryCardDriver_Android.h"
+  #)
+=======
               "arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
 elseif(LINUX)
   list(APPEND SMDATA_ARCH_MEMORY_SRC
               "arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp")
@@ -156,9 +184,27 @@ elseif(APPLE)
   list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
               "arch/LowLevelWindow/LowLevelWindow_MacOSX.mm")
   list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+<<<<<<< HEAD
+    "arch/LowLevelWindow/LowLevelWindow_MacOSX.h"
+  )
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
+    "arch/LowLevelWindow/LowLevelWindow_EGL.cpp"
+    "arch/LowLevelWindow/EGLProviders/EGLProvider.cpp"
+    "arch/LowLevelWindow/EGLProviders/EGLProvider_Android.cpp"
+  )
+  list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
+    "arch/LowLevelWindow/LowLevelWindow_EGL.h"
+    "arch/LowLevelWindow/EGLProviders/EGLProvider.h"
+    "arch/LowLevelWindow/EGLProviders/EGLProvider_Android.h"
+  )
+elseif(UNIX)
+  if (X11_FOUND)
+=======
               "arch/LowLevelWindow/LowLevelWindow_MacOSX.h")
 else(UNIX)
   if(X11_FOUND)
+>>>>>>> origin/unified-ui-features-13937230807013224518
     list(APPEND SMDATA_ARCH_LOWLEVEL_SRC
                 "arch/LowLevelWindow/LowLevelWindow_X11.cpp")
     list(APPEND SMDATA_ARCH_LOWLEVEL_HPP
@@ -185,7 +231,19 @@ else()
     list(APPEND SMDATA_ARCH_LOADING_SRC
                 "arch/LoadingWindow/LoadingWindow_MacOSX.mm")
     list(APPEND SMDATA_ARCH_LOADING_HPP
+<<<<<<< HEAD
+      "arch/LoadingWindow/LoadingWindow_MacOSX.h"
+    )
+  elseif(ANDROID)
+      list(APPEND SMDATA_ARCH_LOADING_SRC
+        "arch/LoadingWindow/LoadingWindow_Android.cpp"
+      )
+      list(APPEND SMDATA_ARCH_LOADING_HPP
+        "arch/LoadingWindow/LoadingWindow_Android.h"
+      )
+=======
                 "arch/LoadingWindow/LoadingWindow_MacOSX.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
   elseif(LINUX)
     if(GTK3_FOUND)
       list(APPEND SMDATA_ARCH_LOADING_SRC
@@ -206,6 +264,16 @@ list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver.cpp"
 list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver.h"
             "arch/Lights/LightsDriver_SystemMessage.h")
 
+<<<<<<< HEAD
+# TODO: Confirm if Apple can use the export.
+if(NOT APPLE)
+  list(APPEND SMDATA_ARCH_LIGHTS_SRC
+    "arch/Lights/LightsDriver_Export.cpp"
+  )
+  list(APPEND SMDATA_ARCH_LIGHTS_HPP
+    "arch/Lights/LightsDriver_Export.h"
+  )
+=======
 list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_SextetStream.cpp")
 list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_SextetStream.h")
 list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/SextetUtils.h")
@@ -215,6 +283,7 @@ list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_Export.h")
 
 if(NOT APPLE)
 
+>>>>>>> origin/unified-ui-features-13937230807013224518
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
                 "arch/Lights/LightsDriver_Win32Serial.cpp"
@@ -255,12 +324,15 @@ if(NOT APPLE)
         list(APPEND SMDATA_ARCH_LIGHTS_HPP
                     "arch/Lights/LightsDriver_LinuxParallel.h")
       endif()
+<<<<<<< HEAD
+=======
       if(WITH_MINIMAID)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
                     "arch/Lights/LightsDriver_LinuxMinimaid.cpp")
         list(APPEND SMDATA_ARCH_LIGHTS_HPP
                     "arch/Lights/LightsDriver_LinuxMinimaid.h")
       endif()
+>>>>>>> origin/unified-ui-features-13937230807013224518
     endif()
   endif(WIN32)
 endif(NOT APPLE)
@@ -285,6 +357,14 @@ if(WIN32)
               "arch/InputHandler/InputHandler_Win32_RTIO.cpp"
 			  "arch/InputHandler/InputHandler_Win32_ddrio.cpp")
   list(APPEND SMDATA_ARCH_INPUT_HPP
+<<<<<<< HEAD
+    "arch/InputHandler/InputHandler_DirectInput.h"
+    "arch/InputHandler/InputHandler_DirectInputHelper.h"
+    "arch/InputHandler/InputHandler_Win32_MIDI.h"
+    "arch/InputHandler/InputHandler_Win32_Para.h"
+    "arch/InputHandler/InputHandler_Win32_Pump.h"
+  )
+=======
               "arch/InputHandler/InputHandler_DirectInput.h"
               "arch/InputHandler/InputHandler_DirectInputHelper.h"
               "arch/InputHandler/InputHandler_Win32_MIDI.h"
@@ -298,10 +378,43 @@ if(WIN32)
     list(APPEND SMDATA_ARCH_INPUT_HPP
                 "arch/InputHandler/InputHandler_SextetStream.h")
   endif()
+>>>>>>> origin/unified-ui-features-13937230807013224518
 elseif(APPLE)
   list(APPEND SMDATA_ARCH_INPUT_SRC
               "arch/InputHandler/InputHandler_MacOSX_HID.cpp")
   list(APPEND SMDATA_ARCH_INPUT_HPP
+<<<<<<< HEAD
+    "arch/InputHandler/InputHandler_MacOSX_HID.h"
+  )
+elseif(ANDROID)
+  list(APPEND SMDATA_ARCH_INPUT_SRC
+    "arch/InputHandler/InputHandler_Android_Gamepad.cpp"
+  )
+  list(APPEND SMDATA_ARCH_INPUT_HPP
+    "arch/InputHandler/InputHandler_Android_Gamepad.h"
+  )
+elseif(LINUX) # Unix/Linux
+  list(APPEND SMDATA_ARCH_INPUT_SRC
+    "arch/InputHandler/LinuxInputManager.cpp"
+    "arch/InputHandler/InputHandler_Linux_Joystick.cpp"
+    "arch/InputHandler/InputHandler_Linux_Event.cpp"
+    "arch/InputHandler/InputHandler_Linux_PIUIO.cpp"
+  )
+  list(APPEND SMDATA_ARCH_INPUT_SRC
+    "arch/InputHandler/LinuxInputManager.h"
+    "arch/InputHandler/InputHandler_Linux_Joystick.h"
+    "arch/InputHandler/InputHandler_Linux_Event.h"
+    "arch/InputHandler/InputHandler_Linux_PIUIO.h"
+  )
+  if(WITH_TTY)
+    list(APPEND SMDATA_ARCH_INPUT_SRC
+      "arch/InputHandler/InputHandler_Linux_tty.cpp"
+    )
+    list(APPEND SMDATA_ARCH_INPUT_HPP
+      "arch/InputHandler/InputHandler_Linux_tty.h"
+      "arch/InputHandler/InputHandler_Linux_tty_keys.h"
+    )
+=======
               "arch/InputHandler/InputHandler_MacOSX_HID.h")
 else() # Unix/Linux
   if(LINUX)
@@ -324,6 +437,7 @@ else() # Unix/Linux
                   "arch/InputHandler/InputHandler_Linux_tty.h"
                   "arch/InputHandler/InputHandler_Linux_tty_keys.h")
     endif()
+>>>>>>> origin/unified-ui-features-13937230807013224518
   endif()
   if(X11_FOUND)
     list(APPEND SMDATA_ARCH_INPUT_SRC "arch/InputHandler/InputHandler_X11.cpp")
@@ -360,6 +474,38 @@ list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks.h" "arch/ArchHooks/A
 if(NOT APPLE)
   list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooksUtil.cpp")
   if(WIN32)
+<<<<<<< HEAD
+    list(APPEND SMDATA_ARCH_HOOKS_SRC
+      "arch/ArchHooks/ArchHooks_Win32.cpp"
+      "arch/ArchHooks/ArchHooks_Win32Static.cpp"
+    )
+    list(APPEND SMDATA_ARCH_HOOKS_HPP
+      "arch/ArchHooks/ArchHooks_Win32.h"
+    )
+  elseif(ANDROID)
+    list(APPEND SMDATA_ARCH_HOOKS_SRC
+      "arch/ArchHooks/ArchHooks_Android.cpp"
+    )
+    list(APPEND SMDATA_ARCH_HOOKS_HPP
+      "arch/ArchHooks/ArchHooks_Android.h"
+    )
+  elseif(UNIX)
+    list(APPEND SMDATA_ARCH_HOOKS_SRC
+      "arch/ArchHooks/ArchHooks_Unix.cpp"
+    )
+    list(APPEND SMDATA_ARCH_HOOKS_HPP
+      "arch/ArchHooks/ArchHooks_Unix.h"
+    )
+  endif(WIN32)
+else()
+  list(APPEND SMDATA_ARCH_HOOKS_SRC
+    "arch/ArchHooks/ArchHooks_MacOSX.mm"
+  )
+  list(APPEND SMDATA_ARCH_HOOKS_HPP
+    "arch/ArchHooks/ArchHooks_MacOSX.h"
+  )
+endif()
+=======
     list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks_Win32.cpp"
                 "arch/ArchHooks/ArchHooks_Win32Static.cpp")
     list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks_Win32.h")
@@ -371,6 +517,7 @@ else(NOT APPLE)
   list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks_MacOSX.mm")
   list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks_MacOSX.h")
 endif(NOT APPLE)
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 source_group("Arch Specific\\\\Arch Hooks"
              FILES

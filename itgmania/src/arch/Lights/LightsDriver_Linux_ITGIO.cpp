@@ -40,7 +40,10 @@ namespace
 		13, //GAME_BUTTON_START
 		-1, //GAME_BUTTON_SELECT
 		-1, //GAME_BUTTON_BACK
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Linux_ITGIO.cpp
 		-1, //GAME_BUTTON_RESTART
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Linux_ITGIO.cpp
 		-1, //GAME_BUTTON_COIN
 		-1, //GAME_BUTTON_OPERATOR
 		-1, //GAME_BUTTON_EFFECT_UP
@@ -74,7 +77,10 @@ namespace
 		12, //GAME_BUTTON_START
 		-1, //GAME_BUTTON_SELECT
 		-1, //GAME_BUTTON_BACK
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Linux_ITGIO.cpp
 		-1, //GAME_BUTTON_RESTART
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Linux_ITGIO.cpp
 		-1, //GAME_BUTTON_COIN
 		-1, //GAME_BUTTON_OPERATOR
 		-1, //GAME_BUTTON_EFFECT_UP
@@ -135,6 +141,12 @@ void LightsDriver_Linux_ITGIO::Set(const LightsState *ls)
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Linux_ITGIO.cpp
  *
  * i love lamp
  */
+=======
+ * 
+ * i love lamp
+ */
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Linux_ITGIO.cpp

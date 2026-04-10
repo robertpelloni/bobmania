@@ -448,6 +448,13 @@ RageSoundDriver::RageSoundDriver():
 	m_iMaxHardwareFrame = 0;
 	m_iVMaxHardwareFrame = 0;
 	SetDecodeBufferSize( 4096 );
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_Generic_Software.cpp
+=======
+	soundDriverMaxSamples = PREFSMAN->m_iRageSoundSampleCountClamp;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_Generic_Software.cpp
+>>>>>>> main
 	m_DecodeThread.SetName("Decode thread");
 }
 
@@ -472,6 +479,10 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 	 * error, so let's clamp the result here instead. */
 	if( iHardwareFrame < m_iMaxHardwareFrame )
 	{
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_Generic_Software.cpp
+>>>>>>> main
 		/* Clamp the output to one per second, so one underruns don't cascade due to
 		 * output spam. */
 		static int64_t lastTime = 0;
@@ -480,14 +491,66 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 		{
 			LOG->Trace("RageSoundDriver: driver returned a lesser position (%" PRId64 " < %" PRId64 ")", iHardwareFrame, m_iMaxHardwareFrame);
 			lastTime = currentTime;
+<<<<<<< HEAD
+=======
+=======
+		diff = 0;
+		int iMinuteSampleRate = GetSampleRate()*60; //get one minute worth of grace -- if you need more, there is very likely some other problem going on
+		//if we have a sample clamp and the new hardware frame is within a fresh minute of the sample rate max and have 'underrun'
+		if ((soundDriverMaxSamples>0) && (iHardwareFrame<iMinuteSampleRate) && iHardwareFrame >= 0)
+		{
+			LOG->Trace("RageSoundDriver: driver position mask adjustment hardware frame number: %d, last max frame number: %d, soundDriverMaxSamples: %d, iMinuteSampleRate: %d, m_iVMaxHardwareFrame: %d",
+																			(int)iHardwareFrame,    (int)m_iMaxHardwareFrame,  soundDriverMaxSamples,  iMinuteSampleRate, (int) m_iVMaxHardwareFrame);
+			diff = (soundDriverMaxSamples - m_iMaxHardwareFrame) + iHardwareFrame;
+			m_iMaxHardwareFrame = 0;
+		}
+		else
+		{
+			/* Clamp the output to one per second, so one underruns don't cascade due to
+			 * output spam. */
+			static RageTimer last(RageZeroTimer);
+			if (last.IsZero() || last.Ago() > 1.0f)
+			{
+
+				//try to hand hold the user if their audio driver is possibly bad
+				int p = 21; // save some time, assume the buffer has at least a minute of cd quality audio -- 2^21
+				while (pow(2,p) < m_iMaxHardwareFrame)
+				{
+					if (p == 31)  break; //do not want to go beyond signed DWORD size
+					p++;
+				}
+
+				LOG->Trace("RageSoundDriver: driver returned a lesser position (%d < %d). If this is a recurrent driver problem with your sound card and not an underrun, try setting the preference RageSoundSampleCountClamp to %d",
+					(int)iHardwareFrame, (int)m_iMaxHardwareFrame, (int)floor(pow(2.0, p)));
+				last.Touch();
+			}
+
+			//return m_iMaxHardwareFrame;
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_Generic_Software.cpp
+>>>>>>> main
 		}
 		return m_iMaxHardwareFrame;
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver_Generic_Software.cpp
+>>>>>>> main
 	if( iHardwareFrame > m_iMaxHardwareFrame )
 	{
 		m_iMaxHardwareFrame = iHardwareFrame;
 	}
 	return m_iMaxHardwareFrame;
+<<<<<<< HEAD
+=======
+=======
+	
+	m_iMaxHardwareFrame = iHardwareFrame = max( iHardwareFrame, m_iMaxHardwareFrame );
+	//return iHardwareFrame;
+	m_iVMaxHardwareFrame += diff;
+	return m_iVMaxHardwareFrame;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver_Generic_Software.cpp
+>>>>>>> main
 }
 
 int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp=nullptr ) const

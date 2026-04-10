@@ -4,7 +4,15 @@
 void DriverList::Add( const istring &sName, CreateRageDriverFn pfn )
 {
 	if( m_pRegistrees == nullptr )
+<<<<<<< HEAD
 		m_pRegistrees = new std::map<istring, CreateRageDriverFn>;
+=======
+<<<<<<< HEAD:itgmania/src/arch/RageDriver.cpp
+		m_pRegistrees = new std::map<istring, CreateRageDriverFn>;
+=======
+		m_pRegistrees = new map<istring, CreateRageDriverFn>;
+>>>>>>> origin/c++11:src/arch/RageDriver.cpp
+>>>>>>> main
 	
 	ASSERT( m_pRegistrees->find(sName) == m_pRegistrees->end() );
 	(*m_pRegistrees)[sName] = pfn;

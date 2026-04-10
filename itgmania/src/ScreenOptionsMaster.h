@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ifndef SCREEN_OPTIONS_MASTER_H
 #define SCREEN_OPTIONS_MASTER_H
 
@@ -9,10 +10,19 @@
 class OptionRowHandler;
 
 class ScreenOptionsMaster : public ScreenOptions
+=======
+#ifndef SCREEN_NETWORK_OPTIONS_H
+#define SCREEN_NETWORK_OPTIONS_H
+
+#include "ScreenOptions.h"
+
+class ScreenNetworkOptions : public ScreenOptions
+>>>>>>> main
 {
 public:
 	virtual void Init();
 
+<<<<<<< HEAD
 private:
 	int m_iChangeMask;
 
@@ -21,14 +31,29 @@ protected:
 
 	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+=======
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+
+	virtual void MenuStart( const InputEventPlus &input );
+
+private:
+	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
+
+	void UpdateConnectStatus();
+>>>>>>> main
 };
 
 #endif
 
 /*
+<<<<<<< HEAD
  * (c) 2003-2004 Glenn Maynard
+=======
+ * (c) 2004 Charles Lohr
+>>>>>>> main
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -38,7 +63,7 @@ protected:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

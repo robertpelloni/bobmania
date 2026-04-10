@@ -253,7 +253,6 @@ void TimingData::CopyRange(int start_row, int end_row,
 void TimingData::ShiftRange(int start_row, int end_row,
 	TimingSegmentType shift_type, int shift_amount)
 {
-	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType(seg_type)
 	{
 		if(seg_type == shift_type || shift_type == TimingSegmentType_Invalid)
@@ -329,7 +328,6 @@ void TimingData::ShiftRange(int start_row, int end_row,
 
 void TimingData::ClearRange(int start_row, int end_row, TimingSegmentType clear_type)
 {
-	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType(seg_type)
 	{
 		if(seg_type == clear_type || clear_type == TimingSegmentType_Invalid)
@@ -1032,7 +1030,6 @@ float TimingData::GetDisplayedBeat( float fBeat ) const
 
 void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool bAdjustBPM )
 {
-	lookup_updater_for_segment_add lookup_me_senpai(this);
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex >= 0 );
 	ASSERT( iStartIndex < iEndIndex );
@@ -1073,7 +1070,6 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex, bool
 
 void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 {
-	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType( tst )
 	{
 		std::vector<TimingSegment *> &segs = m_avpTimingSegments[tst];
@@ -1099,7 +1095,6 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 // Delete timing changes in [iStartRow, iStartRow + iRowsToDelete) and shift up.
 void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 {
-	lookup_updater_for_segment_add lookup_me_senpai(this);
 	FOREACH_TimingSegmentType( tst )
 	{
 		// Don't delete the indefinite segments that are still in effect

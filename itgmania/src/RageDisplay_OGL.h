@@ -10,8 +10,16 @@
 #include "RageDisplay.h"
 #include "RageTextureRenderTarget.h"
 #include "Sprite.h"
+<<<<<<< HEAD
 
 #include <cstdint>
+=======
+<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.h
+
+#include <cstdint>
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.h
+>>>>>>> main
 
 /* Making an OpenGL call doesn't also flush the error state; if we happen
  * to have an error from a previous call, then the assert below will fail.

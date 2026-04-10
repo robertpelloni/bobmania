@@ -52,10 +52,23 @@ LinuxInputManager::LinuxInputManager()
 	// HACK: If empty, assume both are enabled
 	if( g_sInputDrivers.Get() == "" )
 		{ m_bEventEnabled = true; m_bJoystickEnabled = true; }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/LinuxInputManager.cpp
+>>>>>>> main
 
 	m_EventDriver = nullptr;
 	m_JoystickDriver = nullptr;
 
+<<<<<<< HEAD
+=======
+=======
+	
+	m_EventDriver = nullptr;
+	m_JoystickDriver = nullptr;
+	
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/LinuxInputManager.cpp
+>>>>>>> main
 	// XXX: Can I use RageFile for this?
 	DIR* sysClassInput = opendir("/sys/class/input");
 	if( sysClassInput == nullptr)
@@ -84,6 +97,10 @@ LinuxInputManager::LinuxInputManager()
 			LOG->Info("LinuxInputManager: %s seems to have no eventNN or jsNN.", dName.c_str() );
 	}
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/LinuxInputManager.cpp
+>>>>>>> main
 	// use Presort to sort the devices by unique location (like USB port/hub number.)
 	PresortPhysical(m_vsPendingEventDevices, "event");
 	PresortPhysical(m_vsPendingJoystickDevices, "js");
@@ -143,6 +160,16 @@ void LinuxInputManager::PresortPhysical(std::vector<RString>& sortingArray, RStr
 		// LOG->Info("%s -> %s", dev.DeviceName.c_str(), dev.UniqueString.c_str());
 		sortingArray.push_back(dev.DeviceName);
 	}
+<<<<<<< HEAD
+=======
+=======
+	// Sort devices for more consistent numbering.
+	std::sort(m_vsPendingEventDevices.begin(), m_vsPendingEventDevices.end(), cmpDevices);
+	std::sort(m_vsPendingJoystickDevices.begin(), m_vsPendingJoystickDevices.end(), cmpDevices);
+
+	closedir(sysClassInput);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/LinuxInputManager.cpp
+>>>>>>> main
 }
 
 void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
@@ -153,7 +180,15 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
 	{
 		RString devFile = getDevice(dev, "event");
 		ASSERT( devFile != "" );
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/LinuxInputManager.cpp
+
+=======
+		
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/LinuxInputManager.cpp
+>>>>>>> main
 		if( ! driver->TryDevice(devFile) && m_bJoystickEnabled && getDevice(dev, "js") != "" )
 			m_vsPendingJoystickDevices.push_back(dev);
 	}

@@ -1,11 +1,17 @@
 #include "global.h"
 #include "LightsDriver_Win32Serial.h"
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Serial.cpp
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
 #include "RageUtil.h"
 
 #include <cstdint>
 
+=======
+#include "windows.h"
+#include "RageUtil.h"
+
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Serial.cpp
 REGISTER_LIGHTS_DRIVER_CLASS(Win32Serial);
 
 static Preference<RString> g_sLightsComPort("LightsComPort", "COM54");

@@ -1,7 +1,15 @@
 #!/bin/awk -f
 # scripts/options.awk - library build configuration control
 #
+<<<<<<< HEAD:extern/libpng/include/scripts/options.awk
 # last changed in libpng version 1.5.0 - January 6, 2011
+=======
+<<<<<<< HEAD:extern/libpng/include/scripts/options.awk
+# last changed in libpng version 1.5.0 - January 6, 2011
+=======
+# last changed in libpng version 1.6.11 - June 5, 2014
+>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/scripts/options.awk
+>>>>>>> main:extern/libpng/scripts/options.awk
 #
 # Copyright (c) 1998-2011 Glenn Randers-Pehrson
 #
@@ -33,16 +41,53 @@ BEGIN{
    out="/dev/null"              # intermediate, preprocessed, file
    pre=-1                       # preprocess (first line)
    err=0                        # in-line exit sets this
+<<<<<<< HEAD:extern/libpng/include/scripts/options.awk
+=======
+<<<<<<< HEAD:extern/libpng/include/scripts/options.awk
+>>>>>>> main:extern/libpng/scripts/options.awk
    start="PNG_DEFN_MAGIC-"      # Arbitrary start
    end="-PNG_DEFN_END"          # Arbitrary end
    cx= "/@@@*"                  # Open C comment for output file
    comment=start cx             # Comment start
+<<<<<<< HEAD:extern/libpng/include/scripts/options.awk
    cend="*/" end                # Comment end
    def=start "#define PNG_@@@"  # Arbitrary define
    sup="@@@_SUPPORTED" end      # end supported option
    und=comment "#undef PNG_@@@" # Unsupported option
    une="@@@_SUPPORTED" cend     # end unsupported option
    error=start "ERROR:"         # error message
+=======
+   cend="*/" end                # Comment end
+   def=start "#define PNG_@@@"  # Arbitrary define
+   sup="@@@_SUPPORTED" end      # end supported option
+   und=comment "#undef PNG_@@@" # Unsupported option
+   une="@@@_SUPPORTED" cend     # end unsupported option
+   error=start "ERROR:"         # error message
+=======
+   # The following definitions prevent the C preprocessor noticing the lines
+   # that will be in the final output file.  Some C preprocessors tokenise
+   # the lines, for example by inserting spaces around operators, and all
+   # C preprocessors notice lines that start with '#', most remove comments.
+   # The technique adopted here is to make the final output lines into
+   # C strings (enclosed in double quotes), preceded by PNG_DFN.  As a
+   # consequence the output cannot contain a 'raw' double quote - instead put
+   # @' in, this will be replaced by a single " afterward.  See the parser
+   # script dfn.awk for more capabilities (not required here).  Note that if
+   # you need a " in a 'setting' in pnglibconf.dfa it must also be @'!
+   dq="@'"                      # For a single double quote
+   start=" PNG_DFN \""          # Start stuff to output (can't contain a "!)
+   end="\" "                    # End stuff to output
+   subs="@\" "                  # Substitute start (substitute a C macro)
+   sube=" \"@"                  # Substitute end
+   comment=start "/*"           # Comment start
+   cend="*/" end                # Comment end
+   def=start "#define PNG_"     # Arbitrary define
+   sup="_SUPPORTED" end         # end supported option
+   und=comment "#undef PNG_"    # Unsupported option
+   une="_SUPPORTED" cend        # end unsupported option
+   error=start "ERROR:"         # error message, terminate with 'end'
+>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/scripts/options.awk
+>>>>>>> main:extern/libpng/scripts/options.awk
 
    # Variables
    deb=0                        # debug - set on command line

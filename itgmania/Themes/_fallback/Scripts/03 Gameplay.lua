@@ -330,15 +330,6 @@ local CodeDetectorCodes = {
 	},
 	CloseCurrentFolder = {
 		default = "MenuUp-MenuDown",
-		dance = "Up-Down",
-		pump = "@UpLeft-@UpRight-Center",
-	},
-	-- OptionsList
-	PrevOptionsList = {
-		default = "@MenuUp-MenuDown",
-	},
-	NextOptionsList = {
-		default = "@MenuDown-MenuUp",
 	},
 	-- sorts
 	NextSort1 = {

@@ -4,10 +4,14 @@
 #include "RageUtil.h"
 #include "RageTimer.h"
 
+<<<<<<< HEAD
 #include <cinttypes>
 #include <climits>
 #include <cmath>
 #include <cstdint>
+=======
+
+>>>>>>> main
 #include <list>
 
 // NOTE(sukibaby): The number of frames we should keep pos_map data for.
@@ -51,19 +55,28 @@ pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 
 pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 {
+<<<<<<< HEAD
 	if (this != &rhs)
 	{
 		pos_map_impl* tempImpl = new pos_map_impl(*rhs.m_pImpl);
 		std::swap(m_pImpl, tempImpl);
 		delete tempImpl;
 	}
+=======
+	delete m_pImpl;
+	m_pImpl = new pos_map_impl( *rhs.m_pImpl );
+>>>>>>> main
 	return *this;
 }
 
 void pos_map_queue::Insert(int64_t iSourceFrame, int64_t iFrames, int64_t iDestFrame, double fSourceToDestRatio)
 {
+<<<<<<< HEAD
 	bool merged = false;
 	if (!m_pImpl->m_Queue.empty())
+=======
+	if( m_pImpl->m_Queue.size() )
+>>>>>>> main
 	{
 		// Check if the last entry can be merged with the new entry
 		pos_map_t& last = m_pImpl->m_Queue.back();
@@ -116,11 +129,20 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame ) const
 		return 0;
 	}
 
+<<<<<<< HEAD
 	// iSourceFrame is probably in pos_map.  Search to figure out what position it maps to.
 	int64_t iClosestPosition = 0, iClosestPositionDist = std::numeric_limits<int64_t>::max();
 	for (pos_map_t const &pm : m_pImpl->m_Queue)
 	{
 		// Loop over the queue until we know generally where iSourceFrame is
+=======
+	/* iSourceFrame is probably in pos_map.  Search to figure out what position
+	 * it maps to. */
+	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
+	const pos_map_t *pClosestBlock = &*m_pImpl->m_Queue.begin(); /* print only */
+	for (pos_map_t const &pm : m_pImpl->m_Queue)
+	{
+>>>>>>> main
 		if( iSourceFrame >= pm.m_iSourceFrame &&
 			iSourceFrame < pm.m_iSourceFrame+pm.m_iFrames )
 		{
@@ -157,11 +179,28 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame ) const
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */
+<<<<<<< HEAD
+=======
+#if defined(WIN32)
+#define LI "%I64i"
+#elif defined(PRIi64)
+#define LI "%" PRIi64
+#else
+#define LI "%lli"
+#endif
+>>>>>>> main
 	static RageTimer last;
 	if( last.Ago() >= 1.0f )
 	{
+<<<<<<< HEAD
 		last.Touch();
 		LOG->Trace("Audio frame (%" PRId64 ") was out of range of the data sent - possible buffer underflow? This is not always an error, however if you see it frequently there could be sound buffer problems.", iSourceFrame);
+=======
+		last.GetDeltaTime();
+		LOG->Trace( "Approximate sound time: driver frame " LI ", m_pImpl->m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
+			iSourceFrame, pClosestBlock->m_iDestFrame, pClosestBlock->m_iDestFrame+pClosestBlock->m_iFrames,
+			iClosestPositionDist, iClosestPosition );
+>>>>>>> main
 	}
 
 	return iClosestPosition;

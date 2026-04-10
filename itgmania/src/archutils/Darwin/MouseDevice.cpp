@@ -1,8 +1,17 @@
 #include "global.h"
 #include "MouseDevice.h"
 
+<<<<<<< HEAD
 #include <vector>
 
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/MouseDevice.cpp
+#include <vector>
+
+=======
+using std::unordered_map;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/MouseDevice.cpp
+>>>>>>> main
 
 Mouse::Mouse() : id( InputDevice_Invalid ),
 				x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -95,7 +104,15 @@ void MouseDevice::Open()
 #define ADD(x) if( m.x ) AddElementToQueue( m.x )
 	ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
 #undef ADD
+<<<<<<< HEAD
 	for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/MouseDevice.cpp
+	for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+=======
+	for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i )
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/MouseDevice.cpp
+>>>>>>> main
 		AddElementToQueue( i->first );
 }
 
@@ -125,7 +142,15 @@ void MouseDevice::GetButtonPresses( std::vector<DeviceInput>& vPresses, IOHIDEle
 	}
 	else
 	{
+<<<<<<< HEAD
 		std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+=======
+<<<<<<< HEAD:itgmania/src/archutils/Darwin/MouseDevice.cpp
+		std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+=======
+		unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/MouseDevice.cpp
+>>>>>>> main
 		if( iter != m_Mapping.end() )
 			vPresses.push_back( DeviceInput(DEVICE_MOUSE, iter->second, value, now) );
 	}

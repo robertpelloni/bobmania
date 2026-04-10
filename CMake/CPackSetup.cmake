@@ -12,17 +12,55 @@ endif()
 set(CPACK_PACKAGE_EXECUTABLES "${SM_EXE_NAME}" "ITGmania")
 set(CPACK_RESOURCE_FILE_README "${SM_ROOT_DIR}/README.md")
 set(CPACK_RESOURCE_FILE_LICENSE "${SM_CMAKE_DIR}/license_install.txt")
+<<<<<<< HEAD
 
 if(WIN32)
   set(CPACK_GENERATOR NSIS)
   set(CPACK_SYSTEM_NAME "Windows")
 
+=======
+set(CPACK_PACKAGE_EXECUTABLES "${SM_EXE_NAME}" "StepMania ${SM_VERSION_MAJOR}")
+set(CPACK_NSIS_MUI_ICON "${SM_INSTALLER_DIR}/install.ico")
+set(CPACK_NSIS_MUI_UNIICON "${SM_INSTALLER_DIR}/uninstall.ico")
+set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
+
+# Custom items for nsis go here.
+set(CPACK_SM_NSIS_REPOSITORY "https://github.com/stepmania/stepmania")
+set(CPACK_SM_NSIS_ROOT_DIR "${SM_ROOT_DIR}")
+set(CPACK_SM_NSIS_PRODUCT_ID
+    "StepMania ${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
+set(CPACK_SM_NSIS_PRODUCT_VERSION "${SM_VERSION_TRADITIONAL}.0")
+set(CPACK_SM_NSIS_HEADER_BITMAP "${SM_INSTALLER_DIR}/header-sm5.bmp")
+set(CPACK_SM_NSIS_WELCOME_BITMAP "${SM_INSTALLER_DIR}/welcome-sm5.bmp")
+set(CPACK_SM_NSIS_GIT_VERSION "${SM_VERSION_GIT}")
+
+if(WIN32)
+  # The header and welcome bitmaps require backslashes.
+  string(REGEX
+         REPLACE "/"
+                 "\\\\\\\\"
+                 CPACK_SM_NSIS_HEADER_BITMAP
+                 "${CPACK_SM_NSIS_HEADER_BITMAP}")
+  string(REGEX
+         REPLACE "/"
+                 "\\\\\\\\"
+                 CPACK_SM_NSIS_WELCOME_BITMAP
+                 "${CPACK_SM_NSIS_WELCOME_BITMAP}")
+
+  set(CPACK_PACKAGE_FILE_NAME "${SM_EXE_NAME}-${NSIS_VERSION_FINAL}-win32")
+>>>>>>> main
   # By setting these install keys manually, The default directory of "StepMania
   # major.minor.patch" is lost. This is currently done to maintain backwards
   # compatibility. However, removing these two will allow for multiple versions
   # of StepMania to be installed relatively cleanly.
+<<<<<<< HEAD
   set(CPACK_PACKAGE_INSTALL_DIRECTORY "ITGmania")
   set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "ITGmania")
+=======
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY
+      "StepMania ${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "StepMania ${SM_VERSION_MAJOR}")
+>>>>>>> main
   set(CPACK_NSIS_EXECUTABLES_DIRECTORY "Program")
   set(CPACK_NSIS_INSTALL_ROOT "C:\\\\Games")
 

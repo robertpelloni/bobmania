@@ -26,7 +26,6 @@ enum GameButton
 	GAME_BUTTON_START,
 	GAME_BUTTON_SELECT,
 	GAME_BUTTON_BACK,
-	GAME_BUTTON_RESTART,
 	GAME_BUTTON_COIN, /**< Insert a coin to play. */
 	GAME_BUTTON_OPERATOR, /**< Access the operator menu. */
 	GAME_BUTTON_EFFECT_UP,
@@ -176,6 +175,7 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 /** @brief A special way to loop through each game button. */
 #define FOREACH_GameButton_Custom( gb ) for( GameButton gb=GAME_BUTTON_NEXT; gb<NUM_GameButton; enum_add(gb, +1) )
 
+<<<<<<< HEAD
 #define KICKBOX_BUTTON_DOWN_LEFT_FOOT GAME_BUTTON_CUSTOM_01
 #define KICKBOX_BUTTON_UP_LEFT_FOOT GAME_BUTTON_CUSTOM_02
 #define KICKBOX_BUTTON_UP_LEFT_FIST GAME_BUTTON_CUSTOM_03
@@ -193,6 +193,9 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 #define TAIKO_BUTTON_RIGHT_KA		GAME_BUTTON_CUSTOM_04
 #define NUM_TAIKO_BUTTONS		GAME_BUTTON_CUSTOM_05
 
+=======
+/* XXX: compatibility with older declarations. we should remove this... */
+>>>>>>> main
 #define GAME_BUTTON_LEFT GAME_BUTTON_MENULEFT
 #define GAME_BUTTON_RIGHT GAME_BUTTON_MENURIGHT
 #define GAME_BUTTON_UP GAME_BUTTON_MENUUP

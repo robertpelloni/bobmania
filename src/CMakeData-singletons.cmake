@@ -8,7 +8,10 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "FontManager.cpp"
             "GameManager.cpp"
             "GameSoundManager.cpp"
+<<<<<<< HEAD
             "Gym/HeartRateManager.cpp"
+=======
+>>>>>>> main
             "GrooveStats/GrooveStatsManager.cpp"
             "Discord/DiscordManager.cpp"
             "GameState.cpp"
@@ -21,6 +24,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "MemoryCardManager.cpp"
             "MessageManager.cpp"
 <<<<<<< HEAD
+<<<<<<< HEAD
             "NetworkManager.cpp"
 =======
             "NetworkSyncManager.cpp"
@@ -30,6 +34,9 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "Network/SpectatorManager.cpp"
             "Network/UnifiedNetwork.cpp"
 >>>>>>> origin/unified-ui-features-13937230807013224518
+=======
+            "NetworkSyncManager.cpp"
+>>>>>>> main
             "NoteSkinManager.cpp"
             "PrefsManager.cpp"
             "ProfileManager.cpp"
@@ -48,7 +55,10 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "FontManager.h"
             "GameManager.h"
             "GameSoundManager.h"
+<<<<<<< HEAD
             "Gym/HeartRateManager.h"
+=======
+>>>>>>> main
             "GrooveStats/GrooveStatsManager.h"
             "GameState.h"
             "InputFilter.h"
@@ -58,6 +68,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "LuaManager.h"
             "MemoryCardManager.h"
             "MessageManager.h"
+<<<<<<< HEAD
 <<<<<<< HEAD
             "NetworkManager.h"
 =======
@@ -69,6 +80,9 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "Network/SpectatorManager.h"
             "Network/UnifiedNetwork.h"
 >>>>>>> origin/unified-ui-features-13937230807013224518
+=======
+            "NetworkSyncManager.h"
+>>>>>>> main
             "NoteSkinManager.h"
             "PrefsManager.h"
             "ProfileManager.h"
@@ -78,6 +92,14 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "ThemeManager.h"
             "UnlockManager.h")
 
+<<<<<<< HEAD
+=======
+if(WITH_NETWORKING)
+  list(APPEND SMDATA_GLOBAL_SINGLETON_SRC "ezsockets.cpp")
+  list(APPEND SMDATA_GLOBAL_SINGLETON_HPP "ezsockets.h")
+endif()
+
+>>>>>>> main
 source_group("Global Singletons"
              FILES
              ${SMDATA_GLOBAL_SINGLETON_SRC}

@@ -111,7 +111,15 @@ public:
 - (void) setParams:(NSValue *)params
 {
 	const VideoModeParams &p = *(const VideoModeParams *)[params pointerValue];
+<<<<<<< HEAD
 	NSRect contentRect = { { 0, 0 }, { static_cast<CGFloat>(p.width), static_cast<CGFloat>(p.height) } };
+=======
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+	NSRect contentRect = { { 0, 0 }, { static_cast<CGFloat>(p.width), static_cast<CGFloat>(p.height) } };
+=======
+	NSRect contentRect = { { 0, 0 }, { static_cast<CGFloat>(p.width), static_cast<CGFloat>(p.height) } };	
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 
 	[m_Window setContentSize:contentRect.size];
 	[m_Window setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];
@@ -257,7 +265,15 @@ void RenderTarget_MacOSX::Create( const RenderTargetParam &param, int &iTextureW
 
 	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
 		      iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB,
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 		      GL_UNSIGNED_BYTE, nil);
+=======
+		      GL_UNSIGNED_BYTE, nullptr );
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+=======
+		      GL_UNSIGNED_BYTE, nil);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 	GLenum error = glGetError();
 	ASSERT_M(error == GL_NO_ERROR, RageDisplay_Legacy_Helpers::GLToString(error));
 
@@ -295,7 +311,15 @@ void RenderTarget_MacOSX::FinishRenderingTo()
 }
 
 
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(nil), m_DisplayID(0)
+=======
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(nullptr), m_DisplayID(0)
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+=======
+LowLevelWindow_MacOSX::LowLevelWindow_MacOSX() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(nil), m_DisplayID(0)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 {
 	POOL;
 	m_WindowDelegate = [[SMWindowDelegate alloc] init];
@@ -327,11 +351,27 @@ void *LowLevelWindow_MacOSX::GetProcAddress( RString s )
 	// Both functions mentioned in there are deprecated in 10.4.
 	const RString& symbolName( '_' + s.c_str() );
 	const uint32_t count = _dyld_image_count();
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 	NSSymbol symbol = nil;
+=======
+	NSSymbol symbol = nullptr;
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+=======
+	NSSymbol symbol = nil;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
 
 	for( uint32_t i = 0; i < count && !symbol; ++i )
+<<<<<<< HEAD
 		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName.c_str(), options );
+=======
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName.c_str(), options );
+=======
+		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName, options );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 	return symbol ? NSAddressOfSymbol( symbol ) : nil;
 }
 
@@ -469,13 +509,33 @@ void LowLevelWindow_MacOSX::ShutDownFullScreen()
 	ASSERT( err == kCGErrorSuccess );
 	SetActualParamsFromMode( m_CurrentDisplayMode );
 	// We don't own this so we cannot release it.
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 	m_CurrentDisplayMode = nil;
+=======
+	m_CurrentDisplayMode = nullptr;
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+=======
+	m_CurrentDisplayMode = nil;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 	m_CurrentParams.windowed = true;
 }
 
 int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 {
 	CFDictionaryRef mode = nil;
+=======
+{	
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+	CFDictionaryRef mode = nullptr;
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+=======
+	CFDictionaryRef mode = nil;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 	CFDictionaryRef newMode;
 	CGDisplayErr err;
 
@@ -490,12 +550,28 @@ int LowLevelWindow_MacOSX::ChangeDisplayMode( const VideoModeParams& p )
 	}
 
 	if( p.rate == REFRESH_DEFAULT )
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
 		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, nil);
 	else
 		newMode = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
 									p.width, p.height, p.rate, nil);
 
 
+<<<<<<< HEAD
+=======
+=======
+		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, nullptr );
+=======
+		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, nil);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+	else
+		newMode = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
+									p.width, p.height, p.rate, nil);
+	
+	
+>>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 	err = CGDisplaySwitchToMode( kCGDirectMainDisplay, newMode );
 
 	if( err != kCGErrorSuccess )
@@ -526,7 +602,15 @@ static size_t GetDisplayBitsPerPixel( CGDirectDisplayID displayId )
 
     CFRelease(pixEnc);
     CGDisplayModeRelease(mode);
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+
+=======
+	
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 	return depth;
 
 }
@@ -555,7 +639,15 @@ void LowLevelWindow_MacOSX::SetActualParamsFromMode( CFDictionaryRef mode )
         dispatch_sync(dispatch_get_main_queue(), ^{
             size = [[((SMWindowDelegate *)m_WindowDelegate)->m_Window contentView] frame].size;
         });
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+
+=======
+        
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 		m_CurrentParams.width = int(size.width);
 		m_CurrentParams.height = int(size.height);
 	}
@@ -645,7 +737,15 @@ void LowLevelWindow_MacOSX::Update()
     dispatch_sync(dispatch_get_main_queue(), ^{
         [m_Context update];
     });
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+
+=======
+    
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_MacOSX.mm
+>>>>>>> main
 	DISPLAY->ResolutionChanged();
 }
 

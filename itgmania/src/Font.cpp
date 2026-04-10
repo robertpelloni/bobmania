@@ -31,6 +31,10 @@ void FontPage::Load( const FontPageSettings &cfg )
 		ID1.AdditionalTextureHints = cfg.m_sTextureHints;
 
 	m_FontPageTextures.m_pTextureMain = TEXTUREMAN->LoadTexture( ID1 );
+<<<<<<< HEAD:itgmania/src/Font.cpp
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 	if(m_FontPageTextures.m_pTextureMain == nullptr)
 	{
 		LuaHelpers::ReportScriptErrorFmt(
@@ -39,6 +43,12 @@ void FontPage::Load( const FontPageSettings &cfg )
 		m_FontPageTextures.m_pTextureMain= TEXTUREMAN->LoadTexture(
 			TEXTUREMAN->GetDefaultTextureID());
 	}
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+	ASSERT( m_FontPageTextures.m_pTextureMain != nullptr );
+>>>>>>> origin/c++11:src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 
 	RageTextureID ID2 = ID1;
 	// "arial 20 16x16 [main].png" => "arial 20 16x16 [main-stroke].png"
@@ -48,6 +58,10 @@ void FontPage::Load( const FontPageSettings &cfg )
 		if( IsAFile(ID2.filename) )
 		{
 			m_FontPageTextures.m_pTextureStroke = TEXTUREMAN->LoadTexture( ID2 );
+<<<<<<< HEAD:itgmania/src/Font.cpp
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 			if(m_FontPageTextures.m_pTextureStroke == nullptr)
 			{
 				LuaHelpers::ReportScriptErrorFmt(
@@ -77,6 +91,14 @@ void FontPage::Load( const FontPageSettings &cfg )
 				m_FontPageTextures.m_pTextureStroke=
 					m_FontPageTextures.m_pTextureMain;
 			}
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+			ASSERT( m_FontPageTextures.m_pTextureStroke != nullptr );
+			ASSERT_M( m_FontPageTextures.m_pTextureMain->GetSourceFrameWidth() == m_FontPageTextures.m_pTextureStroke->GetSourceFrameWidth(), ssprintf("'%s' and '%s' must have the same frame widths", ID1.filename.c_str(), ID2.filename.c_str()) );
+			ASSERT_M( m_FontPageTextures.m_pTextureMain->GetNumFrames() == m_FontPageTextures.m_pTextureStroke->GetNumFrames(), ssprintf("'%s' and '%s' must have the same frame dimensions", ID1.filename.c_str(), ID2.filename.c_str()) );
+>>>>>>> origin/c++11:src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 		}
 	}
 
@@ -277,7 +299,15 @@ size_t Font::GetGlyphsThatFit(const std::wstring& line, int* width) const
 }
 
 Font::Font(): m_iRefCount(1), path(""), m_apPages(), m_pDefault(nullptr),
+<<<<<<< HEAD:itgmania/src/Font.cpp
+<<<<<<< HEAD:itgmania/src/Font.cpp
 	m_iCharToGlyph(), m_bRightToLeft(false), m_bDistanceField(false),
+=======
+	m_iCharToGlyph(), m_bRightToLeft(false),
+>>>>>>> origin/c++11:src/Font.cpp
+=======
+	m_iCharToGlyph(), m_bRightToLeft(false), m_bDistanceField(false),
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 	// strokes aren't shown by default, hence the Color.
 	m_DefaultStrokeColor(RageColor(0,0,0,0)), m_sChars("") {}
 Font::~Font()
@@ -414,6 +444,10 @@ void Font::CapsOnly()
 void Font::SetDefaultGlyph( FontPage *pPage )
 {
 	ASSERT( pPage != nullptr );
+<<<<<<< HEAD:itgmania/src/Font.cpp
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 	if(pPage->m_aGlyphs.empty())
 	{
 		LuaHelpers::ReportScriptErrorFmt(
@@ -421,6 +455,12 @@ void Font::SetDefaultGlyph( FontPage *pPage )
 			path.c_str());
 		return;
 	}
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+	ASSERT( !pPage->m_aGlyphs.empty() );
+>>>>>>> origin/c++11:src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 	m_pDefault = pPage;
 }
 
@@ -610,6 +650,10 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				RString row_str = sName.substr(5);
 				TrimLeft(row_str);
 
+<<<<<<< HEAD:itgmania/src/Font.cpp
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 				if(!IsAnInt(row_str))
 				{
 					LuaHelpers::ReportScriptErrorFmt("Line name %s is not a number.",
@@ -618,6 +662,14 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				}
 				const int row = StringToInt(row_str);
 				const int first_frame = row * num_frames_wide;
+<<<<<<< HEAD:itgmania/src/Font.cpp
+=======
+				ASSERT( IsAnInt(sRowStr) );
+				const int iRow = std::stoi( sRowStr );
+				const int iFirstFrame = iRow * iNumFramesWide;
+>>>>>>> origin/c++11:src/Font.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Font.cpp
 
 				if(row >= num_frames_high)
 				{

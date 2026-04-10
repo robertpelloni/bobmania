@@ -5,8 +5,11 @@
 
 #include "arch/Lights/LightsDriver.h"
 
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Linux_Leds.h
 #include <cstdint>
 
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Linux_Leds.h
 class LightsDriver_Linux_Leds : public LightsDriver
 {
 private:
@@ -63,6 +66,10 @@ public:
  * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
+<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Linux_Leds.h
  *
+=======
+ * 
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Linux_Leds.h
  * i love lamp
  */

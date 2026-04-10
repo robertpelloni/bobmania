@@ -71,7 +71,15 @@ struct EventDevice
 	DeviceButton aiAbsMappingLow[ABS_MAX];
 };
 
+<<<<<<< HEAD
 static std::vector<EventDevice *> g_apEventDevices;
+=======
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_Linux_Event.cpp
+static std::vector<EventDevice *> g_apEventDevices;
+=======
+static vector<EventDevice *> g_apEventDevices;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_Linux_Event.cpp
+>>>>>>> main
 
 static bool BitIsSet( const uint8_t *pArray, uint32_t iBit )
 {
@@ -267,11 +275,23 @@ EventDevice::~EventDevice()
 }
 
 InputHandler_Linux_Event::InputHandler_Linux_Event()
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_Linux_Event.cpp
+>>>>>>> main
 	: m_InputMutex("InputHandler_Linux")
 	, m_NextDevice(DEVICE_JOY10)
 	, m_bShutdown(true)
 	, m_bDevicesChanged(false)
 	, m_udev_fd(-1)
+<<<<<<< HEAD
+=======
+=======
+	: m_bShutdown(true)
+	, m_bDevicesChanged(false)
+	, m_NextDevice(DEVICE_JOY10)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_Linux_Event.cpp
+>>>>>>> main
 {
 	if(LINUXINPUT == nullptr) LINUXINPUT = new LinuxInputManager;
 	LINUXINPUT->InitDriver(this);

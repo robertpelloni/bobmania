@@ -5,10 +5,14 @@
 #include "Course.h"
 #include "DynamicActorScroller.h"
 
+<<<<<<< HEAD:itgmania/src/ScreenHighScores.h
 #include <vector>
 
 
 typedef std::pair<Difficulty, StepsType> DifficultyAndStepsType;
+=======
+typedef pair<Difficulty, StepsType> DifficultyAndStepsType;
+>>>>>>> origin/c++11:src/ScreenHighScores.h
 
 enum HighScoresType
 {
@@ -30,13 +34,21 @@ public:
 	void LoadSongs( int iNumRecentScores );
 	void LoadCourses( CourseType ct, int iNumRecentScores );
 	void Load( RString sClassName );
+<<<<<<< HEAD:itgmania/src/ScreenHighScores.h
 	void SetDisplay( const std::vector<DifficultyAndStepsType> &DifficultiesToShow );
+=======
+	void SetDisplay( const vector<DifficultyAndStepsType> &DifficultiesToShow );
+>>>>>>> origin/c++11:src/ScreenHighScores.h
 	bool Scroll( int iDir );
 	void ScrollTop();
 
 protected:
 	virtual void ConfigureActor( Actor *pActor, int iItem );
+<<<<<<< HEAD:itgmania/src/ScreenHighScores.h
 	std::vector<DifficultyAndStepsType> m_DifficultiesToShow;
+=======
+	vector<DifficultyAndStepsType> m_DifficultiesToShow;
+>>>>>>> origin/c++11:src/ScreenHighScores.h
 
 	struct ScoreRowItemData // for all_steps and all_courses
 	{
@@ -45,7 +57,11 @@ protected:
 		Song *m_pSong;
 		Course *m_pCourse;
 	};
+<<<<<<< HEAD:itgmania/src/ScreenHighScores.h
 	std::vector<ScoreRowItemData> m_vScoreRowItemData;
+=======
+	vector<ScoreRowItemData> m_vScoreRowItemData;
+>>>>>>> origin/c++11:src/ScreenHighScores.h
 
 	ThemeMetric<int>	SCROLLER_ITEMS_TO_DRAW;
 	ThemeMetric<float>	SCROLLER_SECONDS_PER_ITEM;
@@ -83,7 +99,11 @@ private:
 /*
  * (c) 2001-2007 Chris Danford, Ben Nordstrom, Glenn Maynard
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/ScreenHighScores.h
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/ScreenHighScores.h
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -93,7 +113,11 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/ScreenHighScores.h
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/ScreenHighScores.h
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

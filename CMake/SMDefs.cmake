@@ -1,6 +1,10 @@
 # Set up version numbers according to the new scheme.
 set(SM_VERSION_MAJOR 5)
+<<<<<<< HEAD
 set(SM_VERSION_MINOR 4)
+=======
+set(SM_VERSION_MINOR 1)
+>>>>>>> main
 set(SM_VERSION_PATCH 0)
 set(SM_VERSION_TRADITIONAL
     "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")

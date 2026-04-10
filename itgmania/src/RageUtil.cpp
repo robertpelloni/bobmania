@@ -3,7 +3,11 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+#include "Foreach.h"
+=======
 #include "RageSoundReader_FileReader.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 #include "LocalizedString.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
@@ -35,7 +39,7 @@ MersenneTwister::MersenneTwister( int iSeed ) : m_iNext(0)
 void MersenneTwister::Reset( int iSeed )
 {
 	if( iSeed == 0 )
-		iSeed = time(nullptr);
+		iSeed = time(NULL);
 
 	m_Values[0] = iSeed;
 	m_iNext = 0;
@@ -47,7 +51,7 @@ void MersenneTwister::Reset( int iSeed )
 
 void MersenneTwister::GenerateValues()
 {
-	static const unsigned mask[] = { 0, 0x9908B0DF };
+	static const int mask[] = { 0, 0x9908B0DF };
 
 	for( int i = 0; i < 227; ++i )
 	{
@@ -102,8 +106,8 @@ namespace
 {
 	MersenneTwister g_LuaPRNG;
 
-	/* To map from [0..2^31-1] to [0..1), we divide by 2^31. */
-	const double DIVISOR = pow( double(2), double(31) );
+	/* To map from [0..2^32-1] to [0..1), we divide by 2^32. */
+	const double DIVISOR = pow( double(2), double(32) );
 
 	static int Seed( lua_State *L )
 	{
@@ -153,7 +157,11 @@ namespace
 	{
 		LIST_METHOD( Seed ),
 		LIST_METHOD( Random ),
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+		{ NULL, NULL }
+=======
 		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 	};
 }
 
@@ -181,25 +189,14 @@ float fmodfp(float x, float y)
 	return x;
 }
 
-int power_of_two( int input )
+int power_of_two( int iInput )
 {
-	int exp = 31, i = input;
-	if (i >> 16)
-		i >>= 16;
-	else exp -= 16;
-	if (i >> 8)
-		i >>= 8;
-	else exp -= 8;
-	if (i >> 4)
-		i >>= 4;
-	else exp -= 4;
-	if (i >> 2)
-		i >>= 2;
-	else exp -= 2;
-	if (i >> 1 == 0)
-		exp -= 1;
-	int value = 1 << exp;
-	return (input == value) ? value : (value << 1);
+	int iValue = 1;
+
+	while( iValue < iInput )
+		iValue <<= 1;
+
+	return iValue;
 }
 
 bool IsAnInt( const RString &s )
@@ -347,46 +344,17 @@ RString Commify( int iNum )
 	return Commify( sNum );
 }
 
-RString Commify(const RString& num, const RString& sep, const RString& dot)
+RString Commify( RString sNum, RString sSeperator ) 
 {
-	size_t num_start= 0;
-	size_t num_end= num.size();
-	size_t dot_pos= num.find(dot);
-	size_t dash_pos= num.find('-');
-	if(dot_pos != string::npos)
+	RString sReturn;
+	for( unsigned i=0; i<sNum.length(); i++ )
 	{
-		num_end= dot_pos;
+		char cDigit = sNum[sNum.length()-1-i];
+		if( i!=0 && i%3 == 0 )
+			sReturn = sSeperator + sReturn;
+		sReturn = cDigit + sReturn;
 	}
-	if(dash_pos != string::npos)
-	{
-		num_start= dash_pos + 1;
-	}
-	size_t num_size= num_end - num_start;
-	size_t commies= (num_size / 3) - (!(num_size % 3));
-	if(commies < 1)
-	{
-		return num;
-	}
-	size_t commified_len= num.size() + (commies * sep.size());
-	RString ret;
-	ret.resize(commified_len);
-	size_t dest= 0;
-	size_t next_comma= (num_size % 3) + (3 * (!(num_size % 3))) + num_start;
-	for(size_t c= 0; c < num.size(); ++c)
-	{
-		if(c == next_comma && c < num_end)
-		{
-			for(size_t s= 0; s < sep.size(); ++s)
-			{
-				ret[dest]= sep[s];
-				++dest;
-			}
-			next_comma+= 3;
-		}
-		ret[dest]= num[c];
-		++dest;
-	}
-	return ret;
+	return sReturn;
 }
 
 static LocalizedString NUM_PREFIX	( "RageUtil", "NumPrefix" );
@@ -414,7 +382,7 @@ RString FormatNumberAndSuffix( int i )
 
 struct tm GetLocalTime()
 {
-	const time_t t = time(nullptr);
+	const time_t t = time(NULL);
 	struct tm tm;
 	localtime_r( &t, &tm );
 	return tm;
@@ -433,8 +401,13 @@ RString vssprintf( const char *szFormat, va_list argList )
 {
 	RString sStr;
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+#if defined(WIN32) && !defined(__MINGW32__)
+	char *pBuf = NULL;
+=======
 #if defined(WIN32)
 	char *pBuf = nullptr;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 	int iChars = 1;
 	int iUsed = 0;
 	int iTry = 0;
@@ -471,24 +444,28 @@ RString vssprintf( const char *szFormat, va_list argList )
 		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 		va_end(tmp);
 
-		char *buf = new char[iNeeded + 1];
-		std::fill(buf, buf + iNeeded + 1, '\0');
+		char *buf = sStr.GetBuffer( iNeeded+1 );
 		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		RString ret(buf);
-		delete [] buf;
-		return ret;
+		sStr.ReleaseBuffer( iNeeded );
+		return sStr;
 	}
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	for (;;)
+	while( 1 )
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = new char[iChars];
-		std::fill(buf, buf + iChars, '\0');
-		int used = vsnprintf( buf, iChars - 1, szFormat, argList );
-		if ( used == -1 )
+		char *buf = sStr.GetBuffer(iChars);
+		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
+
+		if( iUsed == -1 )
 		{
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
+			sStr.ReleaseBuffer();
+			++iTry;
+			continue;
+=======
 			iChars += ( ++iTry * FMT_BLOCK_SIZE );
 		}
 		else
@@ -501,7 +478,12 @@ RString vssprintf( const char *szFormat, va_list argList )
 		if (used != -1)
 		{
 			break;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 		}
+
+		/* OK */
+		sStr.ReleaseBuffer(iUsed);
+		break;
 	}
 #endif
 	return sStr;
@@ -708,7 +690,7 @@ const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 			return &g_langs[i];
 	}
 
-	return nullptr;
+	return NULL;
 }
 
 RString join( const RString &sDeliminator, const vector<RString> &sSource)
@@ -717,14 +699,6 @@ RString join( const RString &sDeliminator, const vector<RString> &sSource)
 		return RString();
 
 	RString sTmp;
-	size_t final_size= 0;
-	size_t delim_size= sDeliminator.size();
-	for(size_t n= 0; n < sSource.size()-1; ++n)
-	{
-		final_size+= sSource[n].size() + delim_size;
-	}
-	final_size+= sSource.back().size();
-	sTmp.reserve(final_size);
 
 	for( unsigned iNum = 0; iNum < sSource.size()-1; iNum++ )
 	{
@@ -741,18 +715,6 @@ RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, 
 		return RString();
 
 	RString sRet;
-	size_t final_size= 0;
-	size_t delim_size= sDelimitor.size();
-	for(vector<RString>::const_iterator curr= begin; curr != end; ++curr)
-	{
-		final_size+= curr->size();
-		if(curr != end)
-		{
-			final_size+= delim_size;
-		}
-	}
-	sRet.reserve(final_size);
-
 	while( begin != end )
 	{
 		sRet += *begin;
@@ -884,7 +846,7 @@ void split( const wstring &sSource, const wstring &sDelimitor, vector<wstring> &
 
 RString str="a,b,c";
 int start = 0, size = -1;
-for(;;)
+while( 1 )
 {
 	do_split( str, ",", start, size );
 	if( start == str.size() )
@@ -1051,49 +1013,8 @@ void MakeValidFilename( RString &sName )
 	sName = WStringToRString( wsName );
 }
 
-bool FindFirstFilenameContaining(const vector<RString>& filenames,
-	RString& out, const vector<RString>& starts_with,
-	const vector<RString>& contains, const vector<RString>& ends_with)
-{
-	for(size_t i= 0; i < filenames.size(); ++i)
-	{
-		RString lower= GetFileNameWithoutExtension(filenames[i]);
-		lower.MakeLower();
-		for(size_t s= 0; s < starts_with.size(); ++s)
-		{
-			if(!lower.compare(0, starts_with[s].size(), starts_with[s]))
-			{
-				out= filenames[i];
-				return true;
-			}
-		}
-		size_t lower_size= lower.size();
-		for(size_t s= 0; s < ends_with.size(); ++s)
-		{
-			if(lower_size >= ends_with[s].size())
-			{
-				size_t end_pos= lower_size - ends_with[s].size();
-				if(!lower.compare(end_pos, string::npos, ends_with[s]))
-				{
-					out= filenames[i];
-					return true;
-				}
-			}
-		}
-		for(size_t s= 0; s < contains.size(); ++s)
-		{
-			if(lower.find(contains[s]) != string::npos)
-			{
-				out= filenames[i];
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
 int g_argc = 0;
-char **g_argv = nullptr;
+char **g_argv = NULL;
 
 void SetCommandlineArguments( int argc, char **argv )
 {
@@ -1149,7 +1070,7 @@ bool GetCommandlineArgument( const RString &option, RString *argument, int iInde
 RString GetCwd()
 {
 	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != nullptr;
+	bool ret = getcwd(buf, PATH_MAX) != NULL;
 	ASSERT(ret);
 	return buf;
 }
@@ -1355,12 +1276,9 @@ RString URLEncode( const RString &sStr )
 	return sOutput;
 }
 
-// remove various version control-related files
 static bool CVSOrSVN( const RString& s )
 {
-	return s.Right(3).EqualsNoCase("CVS") ||
-			s.Right(4) == ".svn" ||
-			s.Right(3).EqualsNoCase(".hg");
+	return s.Right(3).EqualsNoCase("CVS")  ||  s.Right(4) == ".svn";
 }
 
 void StripCvsAndSvn( vector<RString> &vs )
@@ -1464,21 +1382,17 @@ bool GetFileContents( const RString &sFile, vector<RString> &asOut )
 	return true;
 }
 
-#ifndef USE_SYSTEM_PCRE
 #include "../extern/pcre/pcre.h"
-#else
-#include <pcre.h>
-#endif
 void Regex::Compile()
 {
 	const char *error;
 	int offset;
-	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, nullptr );
+	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, NULL );
 
-	if( m_pReg == nullptr )
+	if( m_pReg == NULL )
 		RageException::Throw( "Invalid regex: \"%s\" (%s).", m_sPattern.c_str(), error );
 
-	int iRet = pcre_fullinfo( (pcre *) m_pReg, nullptr, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
+	int iRet = pcre_fullinfo( (pcre *) m_pReg, NULL, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
 	ASSERT( iRet >= 0 );
 
 	++m_iBackrefs;
@@ -1495,16 +1409,16 @@ void Regex::Set( const RString &sStr )
 void Regex::Release()
 {
 	pcre_free( m_pReg );
-	m_pReg = nullptr;
+	m_pReg = NULL;
 	m_sPattern = RString();
 }
 
-Regex::Regex( const RString &sStr ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const RString &sStr ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( sStr );
 }
 
-Regex::Regex( const Regex &rhs ): m_pReg(nullptr), m_iBackrefs(0), m_sPattern(RString())
+Regex::Regex( const Regex &rhs ): m_pReg(NULL), m_iBackrefs(0), m_sPattern(RString())
 {
 	Set( rhs.m_sPattern );
 }
@@ -1524,7 +1438,7 @@ Regex::~Regex()
 bool Regex::Compare( const RString &sStr )
 {
 	int iMat[128*3];
-	int iRet = pcre_exec( (pcre *) m_pReg, nullptr, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
+	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
 		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
@@ -1537,7 +1451,7 @@ bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 	asMatches.clear();
 
 	int iMat[128*3];
-	int iRet = pcre_exec( (pcre *) m_pReg, nullptr, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
+	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
 		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
@@ -1877,22 +1791,51 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+int StringToInt( const RString &sString )
+{
+	int ret;
+	istringstream ( sString ) >> ret;
+	return ret;
+}
+
+RString IntToString( const int &iNum )
+{
+	stringstream ss;
+	ss << iNum;
+	return ss.str();
+}
+
 float StringToFloat( const RString &sString )
 {
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+	float ret = strtof( sString, NULL );
+
+	if( !isfinite(ret) )
+		ret = 0.0f;
+	return ret;
+=======
 	float fOut = std::strtof(sString, nullptr);
 	if (!isfinite(fOut))
 	{
 		fOut = 0.0f;
 	}
 	return fOut;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 }
 
 bool StringToFloat( const RString &sString, float &fOut )
 {
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+	char *endPtr;
+
+	fOut = strtof( sString, &endPtr );
+	return sString.size() && *endPtr == '\0' && isfinite( fOut );
+=======
 	char *endPtr = nullptr;
 
 	fOut = std::strtof(sString, &endPtr);
 	return sString.size() && *endPtr == '\0' && isfinite(fOut);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 }
 
 RString FloatToString( const float &num )
@@ -1902,6 +1845,21 @@ RString FloatToString( const float &num )
 	return ss.str();
 }
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+RString VectorIntToString(const vector<int> &nums, const RString delim)
+{
+	if (nums.size() == 0)
+	{
+		return "";
+	}
+	stringstream ss;
+	ss << nums[0];
+	for (unsigned i = 1; i < nums.size(); ++i)
+	{
+		ss << delim << nums[i];
+	}
+	return ss.str();
+=======
 int StringToInt( const std::string& str, std::size_t* pos, int base, int exceptVal )
 {
   try
@@ -1945,6 +1903,7 @@ long long StringToLLong( const std::string& str, std::size_t* pos, int base, lon
     LOG->Warn( "stoll(%s): %s", str.c_str(), e.what() );
   }
   return exceptVal;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 }
 
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
@@ -2048,8 +2007,8 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 {
 	RString sFind;
 
-	for (std::pair<char, RString> const &c : m)
-		sFind.append( 1, c.first );
+	FOREACHM_CONST( char, RString, m, c )
+		sFind.append( 1, c->first );
 
 	RString sRet;
 
@@ -2201,11 +2160,18 @@ RString Capitalize( const RString &s )
 	if( s.empty() )
 		return RString();
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+	RString s2 = s;
+	char *pBuf = s2.GetBuffer();
+	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
+	s2.ReleaseBuffer();
+=======
 	char *buf = const_cast<char *>(s.c_str());
 
 	UnicodeDoUpper( buf, s.size(), g_UpperCase );
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 
-	return buf;
+	return s2;
 }
 
 unsigned char g_UpperCase[256] =
@@ -2371,7 +2337,11 @@ namespace StringConversion
 		if( sValue.size() == 0 )
 			return false;
 
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+		out = (StringToInt(sValue) != 0);
+=======
 		out = StringToInt(sValue) != 0;
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 		return true;
 	}
 
@@ -2425,30 +2395,34 @@ bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
 
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError )
 {
-	for(;;)
+	while(1)
 	{
 		RString data;
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+			if( bReadError != NULL )
+=======
 			if( bReadError != nullptr )
 			{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 				*bReadError = true;
-			}
 			return false;
 		}
 		if( data.empty() )
-		{
 			break;
-		}
 		int i = out.Write(data);
 		if( i == -1 )
 		{
 			sError = ssprintf( "write error: %s", out.GetError().c_str() );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+			if( bReadError != NULL )
+=======
 			if( bReadError != nullptr )
 			{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 				*bReadError = false;
-			}
 			return false;
 		}
 	}
@@ -2456,10 +2430,13 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 	if( out.Flush() == -1 )
 	{
 		sError = ssprintf( "write error: %s", out.GetError().c_str() );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+		if( bReadError != NULL )
+=======
 		if( bReadError != nullptr )
 		{
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 			*bReadError = false;
-		}
 		return false;
 	}
 
@@ -2482,6 +2459,10 @@ LuaFunction( mbstrlen, (int)RStringToWstring(SArg(1)).length() )
 LuaFunction( URLEncode, URLEncode( SArg(1) ) );
 LuaFunction( PrettyPercent, PrettyPercent( FArg(1), FArg(2) ) );
 //LuaFunction( IsHexVal, IsHexVal( SArg(1) ) );
+<<<<<<< HEAD:itgmania/src/RageUtil.cpp
+static bool UndocumentedFeature( RString s ){ sm_crash(s); return true; }
+LuaFunction( UndocumentedFeature, UndocumentedFeature(SArg(1)) );
+=======
 LuaFunction( lerp, lerp(FArg(1), FArg(2), FArg(3)) );
 
 int LuaFunc_BinaryToHex(lua_State* L);
@@ -2808,6 +2789,7 @@ int LuaFunc_get_music_file_length(lua_State* L)
 	return 1;
 }
 LUAFUNC_REGISTER_COMMON(get_music_file_length);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageUtil.cpp
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

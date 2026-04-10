@@ -32,6 +32,13 @@ void TrailID::FromTrail( const Trail *p )
 		st = p->m_StepsType;
 		cd = p->m_CourseDifficulty;
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/TrailUtil.cpp
+=======
+	m_Cache.Unset();
+>>>>>>> origin/c++11:src/TrailUtil.cpp
+>>>>>>> main
 }
 
 Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
@@ -39,8 +46,22 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 	ASSERT( p != nullptr );
 
 	Trail *pRet = nullptr;
+<<<<<<< HEAD
 	if( st != StepsType_Invalid && cd != Difficulty_Invalid )
 		pRet = p->GetTrail( st, cd );
+=======
+<<<<<<< HEAD:itgmania/src/TrailUtil.cpp
+	if( st != StepsType_Invalid && cd != Difficulty_Invalid )
+		pRet = p->GetTrail( st, cd );
+=======
+	if( !m_Cache.Get(&pRet) )
+	{
+		if( st != StepsType_Invalid && cd != Difficulty_Invalid )
+			pRet = p->GetTrail( st, cd );
+		m_Cache.Set( pRet );
+	}
+>>>>>>> origin/c++11:src/TrailUtil.cpp
+>>>>>>> main
 
 	if( !bAllowNull && pRet == nullptr )
 		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );	
@@ -69,6 +90,13 @@ void TrailID::LoadFromNode( const XNode* pNode )
 
 	pNode->GetAttrValue( "CourseDifficulty", sTemp );
 	cd = StringToDifficulty( sTemp );
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/TrailUtil.cpp
+=======
+	m_Cache.Unset();
+>>>>>>> origin/c++11:src/TrailUtil.cpp
+>>>>>>> main
 }
 
 RString TrailID::ToString() const
@@ -117,7 +145,15 @@ namespace
 	{
 		LIST_METHOD( GetNumSongs ),
 		LIST_METHOD( GetTotalSeconds ),
+<<<<<<< HEAD:itgmania/src/TrailUtil.cpp
+<<<<<<< HEAD:itgmania/src/TrailUtil.cpp
 		{ nullptr, nullptr }
+=======
+		{ NULL, nullptr }
+>>>>>>> origin/c++11:src/TrailUtil.cpp
+=======
+		{ nullptr, nullptr }
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/TrailUtil.cpp
 	};
 }
 

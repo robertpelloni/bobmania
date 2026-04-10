@@ -3,10 +3,19 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/Command.cpp
+>>>>>>> main
 
 #include <cstddef>
 #include <numeric>
 #include <vector>
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> origin/c++11:src/Command.cpp
+>>>>>>> main
 
 
 RString Command::GetName() const
@@ -84,7 +93,19 @@ static void SplitWithQuotes( const RString sSource, const char Delimitor, std::v
 
 RString Commands::GetOriginalCommandString() const
 {
+<<<<<<< HEAD
 	return std::accumulate(v.begin(), v.end(), RString(), [](RString const &res, Command const &c) { return res + c.GetOriginalCommandString(); });
+=======
+<<<<<<< HEAD:itgmania/src/Command.cpp
+<<<<<<< HEAD:itgmania/src/Command.cpp
+	return std::accumulate(v.begin(), v.end(), RString(), [](RString const &res, Command const &c) { return res + c.GetOriginalCommandString(); });
+=======
+	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res + c.GetOriginalCommandString(); });
+>>>>>>> origin/c++11:src/Command.cpp
+=======
+	return std::accumulate(v.begin(), v.end(), RString(), [](RString &res, Command const &c) { return res + c.GetOriginalCommandString(); });
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/Command.cpp
+>>>>>>> main
 }
 
 void ParseCommands( const RString &sCommands, Commands &vCommandsOut, bool bLegacy )

@@ -3,8 +3,16 @@
 #ifndef RAGE_UTIL_AUTO_PTR_H
 #define RAGE_UTIL_AUTO_PTR_H
 
+<<<<<<< HEAD
 #include <utility>
 
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_AutoPtr.h
+#include <utility>
+
+=======
+>>>>>>> origin/c++11:src/RageUtil_AutoPtr.h
+>>>>>>> main
 /*
  * This is a simple copy-on-write refcounted smart pointer.  Once constructed, all read-only
  * access to the object is made without extra copying.  If you need read-write access, you
@@ -45,8 +53,18 @@ public:
 
 	void Swap( AutoPtrCopyOnWrite<T> &rhs )
 	{
+<<<<<<< HEAD
 		std::swap( m_pPtr, rhs.m_pPtr );
 		std::swap( m_iRefCount, rhs.m_iRefCount );
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_AutoPtr.h
+		std::swap( m_pPtr, rhs.m_pPtr );
+		std::swap( m_iRefCount, rhs.m_iRefCount );
+=======
+		swap( m_pPtr, rhs.m_pPtr );
+		swap( m_iRefCount, rhs.m_iRefCount );
+>>>>>>> origin/c++11:src/RageUtil_AutoPtr.h
+>>>>>>> main
 	}
 
 	inline AutoPtrCopyOnWrite<T> &operator=( const AutoPtrCopyOnWrite &rhs )
@@ -152,7 +170,15 @@ public:
 	{
 		HiddenPtrTraits<T>::Delete( m_pPtr );
 	}
+<<<<<<< HEAD
 	void Swap( HiddenPtr<T> &rhs ) { std::swap( m_pPtr, rhs.m_pPtr ); }
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_AutoPtr.h
+	void Swap( HiddenPtr<T> &rhs ) { std::swap( m_pPtr, rhs.m_pPtr ); }
+=======
+	void Swap( HiddenPtr<T> &rhs ) { swap( m_pPtr, rhs.m_pPtr ); }
+>>>>>>> origin/c++11:src/RageUtil_AutoPtr.h
+>>>>>>> main
 
 	HiddenPtr<T> &operator=( T *p )
 	{
@@ -178,8 +204,16 @@ public:
 	}
 #endif
 
+<<<<<<< HEAD
 	bool isNull() const { return m_pPtr == nullptr; }
 
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_AutoPtr.h
+	bool isNull() const { return m_pPtr == nullptr; }
+
+=======
+>>>>>>> origin/c++11:src/RageUtil_AutoPtr.h
+>>>>>>> main
 private:
 	T *m_pPtr;
 

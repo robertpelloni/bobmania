@@ -7,12 +7,23 @@
 
 #include <cstdint>
 
+<<<<<<< HEAD
 #include <gtk/gtk.h>
 
 static GtkWidget *label;
 static GtkWidget *window;
 static GtkWidget *splash;
 static GtkWidget *progressBar;
+=======
+static void *Handle = nullptr;
+static INIT Module_Init;
+static SHUTDOWN Module_Shutdown;
+static SETTEXT Module_SetText;
+static SETICON Module_SetIcon;
+static SETSPLASH Module_SetSplash;
+static SETPROGRESS Module_SetProgress;
+static SETINDETERMINATE Module_SetIndeterminate;
+>>>>>>> main
 
 LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
@@ -20,6 +31,7 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 
 RString LoadingWindow_Gtk::Init()
 {
+<<<<<<< HEAD
 	// Need to use external library to load this image. Native loader seems broken :/
 	const gchar *splash_image_path = "Data/splash.png";
 	GtkWidget *vbox;
@@ -27,6 +39,13 @@ RString LoadingWindow_Gtk::Init()
 	gtk_disable_setlocale();
 	if( !gtk_init_check(&g_argc, &g_argv) )
 		return "Couldn't initialize gtk (cannot open display)";
+=======
+	ASSERT( Handle == nullptr );
+
+	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
+	if( Handle == nullptr )
+		return ssprintf( "dlopen(): %s", dlerror() );
+>>>>>>> main
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS );
@@ -55,17 +74,41 @@ RString LoadingWindow_Gtk::Init()
 	gtk_box_pack_end(GTK_BOX(vbox),progressBar,FALSE,FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),label,TRUE,TRUE,0);
 
+<<<<<<< HEAD
 	gtk_widget_show_all(window);
 	gtk_main_iteration_do(FALSE);
+=======
+	Module_SetProgress = (SETPROGRESS) dlsym(Handle, "SetProgress");
+	if( !Module_SetProgress )
+		return ModuleError("SetProgress");
+
+	Module_SetIndeterminate = (SETINDETERMINATE) dlsym(Handle, "SetIndeterminate");
+	if( !Module_SetIndeterminate )
+		return ModuleError("SetIndeterminate");
+
+	const char *ret = Module_Init( &g_argc, &g_argv );
+	if( ret != nullptr )
+		return ret;
+>>>>>>> main
 	return "";
 }
 
 LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
+<<<<<<< HEAD
 	gtk_widget_hide(window);
 	g_signal_emit_by_name (G_OBJECT (window), "destroy");
 	while( gtk_events_pending() )
 		gtk_main_iteration_do(FALSE);
+=======
+	if( Module_Shutdown != nullptr )
+		Module_Shutdown();
+	Module_Shutdown = nullptr;
+
+	if( Handle )
+		dlclose( Handle );
+	Handle = nullptr;
+>>>>>>> main
 }
 
 void LoadingWindow_Gtk::SetText( RString s )

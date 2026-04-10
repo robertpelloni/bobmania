@@ -6,6 +6,10 @@
 #include "EnumHelper.h"
 #include "LuaManager.h"
 #include "RageUtil.h"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+>>>>>>> main
 
 #include <cstddef>
 #include <vector>
@@ -30,11 +34,26 @@ enum class PreferenceType
 	Deprecated,
 };
 
+<<<<<<< HEAD
+=======
+=======
+class XNode;
+
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 struct lua_State;
 class IPreference
 {
 public:
+<<<<<<< HEAD
 	IPreference( const RString& sName, PreferenceType type );
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+	IPreference( const RString& sName, PreferenceType type );
+=======
+	IPreference( const RString& sName );
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 	virtual ~IPreference();
 	void ReadFrom( const XNode* pNode, bool bIsStatic );
 	void WriteTo( XNode* pNode ) const;
@@ -58,11 +77,24 @@ public:
 	static void ReadAllDefaultsFromNode( const XNode* pNode );
 
 	RString GetName() { return m_sName; }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+>>>>>>> main
 	bool IsImmutable() { return m_bImmutable; }
 private:
 	RString	m_sName;
 	bool m_bDoNotWrite;
 	bool m_bImmutable;
+<<<<<<< HEAD
+=======
+=======
+	void SetStatic( bool b ) { m_bIsStatic = b; }
+private:
+	RString	m_sName;
+	bool m_bIsStatic;	// loaded from Static.ini?  If so, don't write to Preferences.ini
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 };
 
 void BroadcastPreferenceChanged( const RString& sPreferenceName );
@@ -71,8 +103,18 @@ template <class T>
 class Preference : public IPreference
 {
 public:
+<<<<<<< HEAD
 	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr, PreferenceType type = PreferenceType::Mutable ):
 		IPreference( sName, type ),
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr, PreferenceType type = PreferenceType::Mutable ):
+		IPreference( sName, type ),
+=======
+	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr ):
+		IPreference( sName ),
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 		m_currentValue( defaultValue ),
 		m_defaultValue( defaultValue ),
 		m_pfnValidate( pfnValidate )
@@ -85,7 +127,15 @@ public:
 	{
 		if( !StringConversion::FromString<T>(s, m_currentValue) )
 			m_currentValue = m_defaultValue;
+<<<<<<< HEAD
 		if( m_pfnValidate )
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+		if( m_pfnValidate )
+=======
+		if( m_pfnValidate ) 
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 			m_pfnValidate( m_currentValue );
 	}
 	void SetFromStack( lua_State *L )
@@ -114,17 +164,39 @@ public:
 	{
 		return m_currentValue;
 	}
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+
+=======
+	
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 	const T &GetDefault() const
 	{
 		return m_defaultValue;
 	}
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+>>>>>>> main
 	operator const T &() const
 	{
 		return Get();
 	}
 
+<<<<<<< HEAD
+=======
+=======
+	operator const T () const
+	{
+		return Get();
+	}
+	
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 	void Set( const T& other )
 	{
 		m_currentValue = other;
@@ -152,23 +224,51 @@ class Preference1D
 {
 public:
 	typedef Preference<T> PreferenceT;
+<<<<<<< HEAD
 	std::vector<PreferenceT*> m_v;
 
 	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N, PreferenceType type = PreferenceType::Mutable )
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+	std::vector<PreferenceT*> m_v;
+
+	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N, PreferenceType type = PreferenceType::Mutable )
+=======
+	vector<PreferenceT*> m_v;
+	
+	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N )
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 	{
 		for( size_t i=0; i<N; ++i )
 		{
 			RString sName;
 			T defaultValue;
 			pfn( i, sName, defaultValue );
+<<<<<<< HEAD
 			m_v.push_back( new Preference<T>(sName, defaultValue, nullptr, type) );
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+			m_v.push_back( new Preference<T>(sName, defaultValue, nullptr, type) );
+=======
+			m_v.push_back( new Preference<T>(sName, defaultValue) );
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 		}
 	}
 
 	~Preference1D()
 	{
 		for( size_t i=0; i<m_v.size(); ++i )
+<<<<<<< HEAD
 			RageUtil::SafeDelete( m_v[i] );
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+			RageUtil::SafeDelete( m_v[i] );
+=======
+			SAFE_DELETE( m_v[i] );
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
 	}
 	const Preference<T>& operator[]( size_t i ) const
 	{
@@ -185,7 +285,15 @@ public:
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -195,7 +303,15 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/Preference.h
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/Preference.h
+>>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

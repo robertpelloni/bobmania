@@ -48,6 +48,78 @@ source_group("Rage\\\\Misc"
              ${SMDATA_RAGE_MISC_HPP})
 
 list(APPEND SMDATA_RAGE_GRAPHICS_SRC
+<<<<<<< HEAD
+  "RageBitmapTexture.cpp"
+  "RageDisplay.cpp"
+  "RageDisplay_Null.cpp"
+  "RageModelGeometry.cpp"
+  "RageSurface.cpp"
+  "RageSurface_Load.cpp"
+  "RageSurface_Load_BMP.cpp"
+  "RageSurface_Load_GIF.cpp"
+  "RageSurface_Load_JPEG.cpp"
+  "RageSurface_Load_PNG.cpp"
+  "RageSurface_Load_XPM.cpp"
+  "RageSurface_Save_BMP.cpp"
+  "RageSurface_Save_JPEG.cpp"
+  "RageSurface_Save_PNG.cpp"
+  "RageSurfaceUtils.cpp"
+  "RageSurfaceUtils_Dither.cpp"
+  "RageSurfaceUtils_Palettize.cpp"
+  "RageSurfaceUtils_Zoom.cpp"
+  "RageTexture.cpp"
+  "RageTextureID.cpp"
+  "RageTextureManager.cpp"
+  "RageTexturePreloader.cpp"
+  "RageTextureRenderTarget.cpp"
+)
+list(APPEND SMDATA_RAGE_GRAPHICS_HPP
+  "RageBitmapTexture.h"
+  "RageDisplay.h"
+  "RageDisplay_Null.h"
+  "RageModelGeometry.h"
+  "RageSurface.h"
+  "RageSurface_Load.h"
+  "RageSurface_Load_BMP.h"
+  "RageSurface_Load_GIF.h"
+  "RageSurface_Load_JPEG.h"
+  "RageSurface_Load_PNG.h"
+  "RageSurface_Load_XPM.h"
+  "RageSurface_Save_BMP.h"
+  "RageSurface_Save_JPEG.h"
+  "RageSurface_Save_PNG.h"
+  "RageSurfaceUtils.h"
+  "RageSurfaceUtils_Dither.h"
+  "RageSurfaceUtils_Palettize.h"
+  "RageSurfaceUtils_Zoom.h"
+  "RageTexture.h"
+  "RageTextureID.h"
+  "RageTextureManager.h"
+  "RageTexturePreloader.h"
+  "RageTextureRenderTarget.h"
+)
+
+if(ANDROID)
+  list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
+  list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+else()
+  list(APPEND SMDATA_RAGE_GRAPHICS_SRC
+    "RageDisplay_OGL.cpp"
+    "RageDisplay_OGL_Helpers.cpp"
+  )
+  list(APPEND SMDATA_RAGE_GRAPHICS_HPP
+    "RageDisplay_OGL.h"
+    "RageDisplay_OGL_Helpers.h"
+  )
+  if(WIN32)
+    list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_D3D.cpp")
+    list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_D3D.h")
+  elseif(LINUX)
+    if (WITH_GLES2)
+      list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
+      list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+    endif()
+=======
             "RageBitmapTexture.cpp"
             "RageDisplay.cpp"
             "RageDisplay_Null.cpp"
@@ -108,6 +180,7 @@ elseif(LINUX)
   if(WITH_GLES2)
     list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
     list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
   endif()
 endif()
 

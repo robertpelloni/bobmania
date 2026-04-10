@@ -81,6 +81,10 @@ Data/uPrefs
 Data/GamePrefs/*.cfg
 Data/Static.ini
 src/*.so
+<<<<<<< HEAD
+=======
+ffmpeg-*
+>>>>>>> main
 Data/SpeedMods.txt
 crashinfo.txt
 Utils/temp*

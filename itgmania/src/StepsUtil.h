@@ -42,6 +42,10 @@ public:
 	 *
 	 * Don't filter here if the StepsType is StepsType_Invalid. */
 	StepsType m_st;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/StepsUtil.h
+>>>>>>> main
 	/** @brief Check a song's locked status for searching. */
 	enum Locked
 	{
@@ -49,6 +53,11 @@ public:
 		Locked_Unlocked,	/**< We want songs that are unlocked. */
 		Locked_DontCare		/**< We don't care if the songs are locked or not. */
 	} /** @brief The Song's locked status. */ m_Locked;
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> origin/broken:src/StepsUtil.h
+>>>>>>> main
 
 	/** @brief Set up the initial criteria. */
 	StepsCriteria(): m_difficulty(Difficulty_Invalid),
@@ -205,9 +214,20 @@ namespace StepsUtil
 	void SortStepsPointerArrayByNumPlays( std::vector<Steps*> &vpStepsInOut, ProfileSlot slot, bool bDescending );
 	void SortStepsPointerArrayByNumPlays( std::vector<Steps*> &vpStepsInOut, const Profile* pProfile, bool bDescending );
 	bool CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2);
+<<<<<<< HEAD
 	void SortStepsByDescription( std::vector<Steps*> &vpStepsInOut );
 	void RemoveLockedSteps( const Song *pSong, std::vector<Steps*> &vpStepsInOut );
 }
+=======
+<<<<<<< HEAD:itgmania/src/StepsUtil.h
+	void SortStepsByDescription( std::vector<Steps*> &vpStepsInOut );
+	void RemoveLockedSteps( const Song *pSong, std::vector<Steps*> &vpStepsInOut );
+}
+=======
+	void SortStepsByDescription( vector<Steps*> &vpStepsInOut );
+};
+>>>>>>> origin/broken:src/StepsUtil.h
+>>>>>>> main
 
 class StepsID
 {
@@ -223,7 +243,15 @@ public:
 	 * This used to call Unset(), which set the variables to
 	 * the same thing. */
 	StepsID(): st(StepsType_Invalid), dc(Difficulty_Invalid),
+<<<<<<< HEAD
 		sDescription(""), uHash(0) {}
+=======
+<<<<<<< HEAD:itgmania/src/StepsUtil.h
+		sDescription(""), uHash(0) {}
+=======
+		sDescription(""), uHash(0), m_Cache() {}
+>>>>>>> origin/c++11:src/StepsUtil.h
+>>>>>>> main
 	void Unset() { FromSteps(nullptr); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;

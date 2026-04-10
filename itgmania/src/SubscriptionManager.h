@@ -18,6 +18,7 @@ public:
 	// collection ourself on first use.  SubscriptionHandler itself is
 	// a POD type, so a static SubscriptionHandler will always have
 	// m_pSubscribers == nullptr (before any static constructors are called).
+<<<<<<< HEAD
 	std::set<T*>* m_pSubscribers;
 
 	// Use this to access m_pSubscribers, so you don't have to worry about
@@ -26,13 +27,43 @@ public:
 	{
 		if( m_pSubscribers == nullptr )
 			m_pSubscribers = new std::set<T*>;
+=======
+<<<<<<< HEAD:itgmania/src/SubscriptionManager.h
+	std::set<T*>* m_pSubscribers;
+=======
+	set<T*>* m_pSubscribers;
+>>>>>>> origin/c++11:src/SubscriptionManager.h
+
+	// Use this to access m_pSubscribers, so you don't have to worry about
+	// it being nullptr.
+<<<<<<< HEAD:itgmania/src/SubscriptionManager.h
+	std::set<T*> &Get()
+=======
+	set<T*> &Get()
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/SubscriptionManager.h
+	{
+		if( m_pSubscribers == nullptr )
+<<<<<<< HEAD:itgmania/src/SubscriptionManager.h
+			m_pSubscribers = new std::set<T*>;
+=======
+			m_pSubscribers = new set<T*>;
+>>>>>>> origin/c++11:src/SubscriptionManager.h
+>>>>>>> main
 		return *m_pSubscribers;
 	}
 
 	void Subscribe( T* p )
 	{
 		if( m_pSubscribers == nullptr )
+<<<<<<< HEAD
 			m_pSubscribers = new std::set<T*>;
+=======
+<<<<<<< HEAD:itgmania/src/SubscriptionManager.h
+			m_pSubscribers = new std::set<T*>;
+=======
+			m_pSubscribers = new set<T*>;
+>>>>>>> origin/c++11:src/SubscriptionManager.h
+>>>>>>> main
 #ifdef DEBUG
 		typename std::set<T*>::iterator iter = m_pSubscribers->find( p );
 		ASSERT_M( iter == m_pSubscribers->end(), "already subscribed" );

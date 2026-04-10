@@ -3,15 +3,23 @@ list(APPEND SMDATA_SCREEN_GAMEPLAY_SRC
             "ScreenGameplayLesson.cpp"
             "ScreenGameplayNormal.cpp"
             "ScreenGameplayShared.cpp"
+<<<<<<< HEAD
             "ScreenGameplaySyncMachine.cpp"
             "GameplayHelpers.cpp")
+=======
+            "ScreenGameplaySyncMachine.cpp")
+>>>>>>> main
 
 list(APPEND SMDATA_SCREEN_GAMEPLAY_HPP
             "ScreenGameplay.h"
             "ScreenGameplayNormal.h"
             "ScreenGameplayShared.h"
+<<<<<<< HEAD
             "ScreenGameplaySyncMachine.h"
             "GameplayHelpers.h")
+=======
+            "ScreenGameplaySyncMachine.h")
+>>>>>>> main
 
 source_group("Screens\\\\Gameplay"
              FILES
@@ -72,6 +80,10 @@ list(APPEND SMDATA_SCREEN_REST_SRC
             "ScreenMiniMenu.cpp"
             "ScreenNameEntry.cpp"
             "ScreenNameEntryTraditional.cpp"
+<<<<<<< HEAD
+=======
+            "ScreenPackages.cpp"
+>>>>>>> main
             "ScreenPlayerOptions.cpp"
             "ScreenProfileLoad.cpp"
             "ScreenProfileSave.cpp"
@@ -98,7 +110,10 @@ list(APPEND SMDATA_SCREEN_REST_SRC
             "ScreenTestSound.cpp"
             "ScreenTextEntry.cpp"
             "ScreenTitleMenu.cpp"
+<<<<<<< HEAD
             "Network/UI/ScreenContentNetwork.cpp"
+=======
+>>>>>>> main
             "ScreenUnlockBrowse.cpp"
             "ScreenUnlockCelebrate.cpp"
             "ScreenUnlockStatus.cpp"
@@ -125,6 +140,10 @@ list(APPEND SMDATA_SCREEN_REST_HPP
             "ScreenMiniMenu.h"
             "ScreenNameEntry.h"
             "ScreenNameEntryTraditional.h"
+<<<<<<< HEAD
+=======
+            "ScreenPackages.h"
+>>>>>>> main
             "ScreenPlayerOptions.h"
             "ScreenProfileLoad.h"
             "ScreenProfileSave.h"
@@ -151,7 +170,10 @@ list(APPEND SMDATA_SCREEN_REST_HPP
             "ScreenTestSound.h"
             "ScreenTextEntry.h"
             "ScreenTitleMenu.h"
+<<<<<<< HEAD
             "Network/UI/ScreenContentNetwork.h"
+=======
+>>>>>>> main
             "ScreenUnlockBrowse.h"
             "ScreenUnlockCelebrate.h"
             "ScreenUnlockStatus.h"
@@ -161,13 +183,48 @@ source_group("Screens\\\\Others"
              FILES
              ${SMDATA_SCREEN_REST_SRC}
              ${SMDATA_SCREEN_REST_HPP})
+<<<<<<< HEAD
+=======
+
+list(APPEND SMDATA_SCREEN_NET_SRC
+            "ScreenNetEvaluation.cpp"
+            "ScreenNetRoom.cpp"
+            "ScreenNetSelectBase.cpp"
+            "ScreenNetSelectMusic.cpp"
+            "ScreenNetworkOptions.cpp")
+
+list(APPEND SMDATA_SCREEN_NET_HPP
+            "ScreenNetEvaluation.h"
+            "ScreenNetRoom.h"
+            "ScreenNetSelectBase.h"
+            "ScreenNetSelectMusic.h"
+            "ScreenNetworkOptions.h")
+
+if(WITH_NETWORKING)
+  list(APPEND SMDATA_SCREEN_NET_SRC "ScreenSMOnlineLogin.cpp")
+  list(APPEND SMDATA_SCREEN_NET_HPP "ScreenSMOnlineLogin.h")
+endif()
+
+source_group("Screens\\\\Network"
+             FILES
+             ${SMDATA_SCREEN_NET_SRC}
+             ${SMDATA_SCREEN_NET_HPP})
+>>>>>>> main
 
 list(APPEND SMDATA_ALL_SCREENS_SRC
             ${SMDATA_SCREEN_GAMEPLAY_SRC}
             ${SMDATA_SCREEN_OPTION_SRC}
+<<<<<<< HEAD
+=======
+            ${SMDATA_SCREEN_NET_SRC}
+>>>>>>> main
             ${SMDATA_SCREEN_REST_SRC})
 
 list(APPEND SMDATA_ALL_SCREENS_HPP
             ${SMDATA_SCREEN_GAMEPLAY_HPP}
             ${SMDATA_SCREEN_OPTION_HPP}
+<<<<<<< HEAD
+=======
+            ${SMDATA_SCREEN_NET_HPP}
+>>>>>>> main
             ${SMDATA_SCREEN_REST_HPP})

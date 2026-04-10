@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> main
 list(APPEND JPEG_SRC
   "libjpeg/ansi2knr.c"
   "libjpeg/cdjpeg.c"
@@ -52,6 +56,8 @@ list(APPEND JPEG_SRC
   "libjpeg/jquant1.c"
   "libjpeg/jquant2.c"
 )
+<<<<<<< HEAD
+=======
 
 source_group("" FILES ${JPEG_SRC})
 
@@ -66,3 +72,43 @@ if(MSVC)
 elseif(ANDROID)
   sm_add_compile_definition("jpeg" STDC_HEADERS=1)
 endif(MSVC)
+=======
+if(WITH_SYSTEM_JPEG)
+  find_package(JPEG REQUIRED)
+  set(JPEG_LIBRARIES ${JPEG_LIBRARIES} PARENT_SCOPE)
+else()
+  set(JPEG_DIR "${SM_EXTERN_DIR}/libjpeg")
+>>>>>>> main
+
+source_group("" FILES ${JPEG_SRC})
+
+add_library("jpeg" ${JPEG_SRC})
+
+disable_project_warnings("jpeg")
+
+set_property(TARGET "jpeg" PROPERTY FOLDER "External Libraries")
+
+<<<<<<< HEAD
+if(MSVC)
+  sm_add_compile_definition("jpeg" _CRT_SECURE_NO_WARNINGS)
+elseif(ANDROID)
+  sm_add_compile_definition("jpeg" STDC_HEADERS=1)
+endif(MSVC)
+=======
+  source_group("Source Files" FILES ${JPEG_SRC})
+  source_group("Header Files" FILES ${JPEG_HPP})
+
+  add_library("jpeg" ${JPEG_SRC} ${JPEG_HPP})
+
+  disable_project_warnings("jpeg")
+
+  set_property(TARGET "jpeg" PROPERTY FOLDER "External Libraries")
+
+  if(MSVC)
+    sm_add_compile_definition("jpeg" _CRT_SECURE_NO_WARNINGS)
+  endif(MSVC)
+
+  target_include_directories("jpeg" PUBLIC "${JPEG_DIR}")
+endif()
+>>>>>>> origin/unified-ui-features-13937230807013224518
+>>>>>>> main

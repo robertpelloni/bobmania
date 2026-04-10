@@ -16,14 +16,42 @@ namespace NoteDataWithScoring
 	 * @brief Has the current row of NoteData been judged completely?
 	 * @param in the entire Notedata.
 	 * @param iRow the row to check.
-	 * @plnum If valid, only consider notes for that PlayerNumber
 	 * @return true if it has been completley judged, or false otherwise. */
+<<<<<<< HEAD
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, PlayerNumber plnum = PlayerNumber_Invalid );
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow, PlayerNumber plnum = PlayerNumber_Invalid );
 	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber plnum = PlayerNumber_Invalid );
 
 	void GetActualRadarValues(const NoteData &in, const PlayerStageStats &pss,
 		float song_seconds, RadarValues& out);
+=======
+	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
+
+	/**
+	 * @brief Whas is the minimum TapNoteScore for the row given the criteria listed below?
+	 * @param in the entire NoteData.
+	 * @param row the row to check.
+	 * @param start the first track to check, inclusive.
+	 * @param end the last row to check, exclusive.
+	 * @param pn the PlayerNumber to compare for (assuming it's not invalid).
+	 * @return the minimum TapNoteScore.
+	 */
+	TapNoteScore MinTapNoteScore(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn);
+
+	/**
+	 * @brief Retrieve the last scored track based on the criteria below.
+	 * @param in the entire NoteData.
+	 * @param row the row to check.
+	 * @param start the first track to check, inclusive.
+	 * @param end the last row to check, exclusive.
+	 * @param pn the PlayerNumber to compare for (assuming it's not invalid).
+	 * @return the track that was scored last.
+	 */
+	int LastTapNoteScoreTrack(const NoteData &in, unsigned row, int start, int end, PlayerNumber pn);
+
+	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
+	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
+>>>>>>> main
 };
 
 #endif

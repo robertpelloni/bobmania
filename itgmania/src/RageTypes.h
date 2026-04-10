@@ -277,8 +277,18 @@ public:
  * incorrect, the first and/or last values may be biased. */
 inline unsigned char FTOC(float a)
 {
+<<<<<<< HEAD
 	int value = static_cast<int>(a * 256.0f);
 	return static_cast<unsigned char>(std::clamp(value, 0, 255));
+=======
+<<<<<<< HEAD:itgmania/src/RageTypes.h
+	int value = static_cast<int>(a * 256.0f);
+	return static_cast<unsigned char>(std::clamp(value, 0, 255));
+=======
+	const float v = a < 0.0f ? 0.0f : (a > 1.0f ? 1.0f : a);
+	return static_cast<unsigned char>(v * 255.0f);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/RageTypes.h
+>>>>>>> main
 }
 
 /* Color type used only in vertex lists.  OpenGL expects colors in

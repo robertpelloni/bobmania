@@ -9,9 +9,12 @@
 #include "PrefsManager.h"
 #include "MessageManager.h"
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
 #include <vector>
 
 
+=======
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
 // main page (group list)
 REGISTER_SCREEN_CLASS( ScreenOptionsToggleSongs );
 
@@ -19,9 +22,15 @@ void ScreenOptionsToggleSongs::BeginScreen()
 {
 	m_asGroups.clear();
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
 	std::vector<OptionRowHandler*> vHands;
 
 	std::vector<RString> asAllGroups;
+=======
+	vector<OptionRowHandler*> vHands;
+
+	vector<RString> asAllGroups;
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
 	SONGMAN->GetSongGroupNames(asAllGroups);
 	for (RString const &sGroup : asAllGroups)
 	{
@@ -60,11 +69,19 @@ void ScreenOptionsToggleSongs::ProcessMenuStart( const InputEventPlus &input )
 	SCREENMAN->SetNewScreen("ScreenOptionsToggleSongsSubPage");
 }
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
 void ScreenOptionsToggleSongs::ImportOptions( int row, const std::vector<PlayerNumber> &vpns )
 {
 
 }
 void ScreenOptionsToggleSongs::ExportOptions( int row, const std::vector<PlayerNumber> &vpns )
+=======
+void ScreenOptionsToggleSongs::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+{
+
+}
+void ScreenOptionsToggleSongs::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
 {
 
 }
@@ -75,9 +92,15 @@ void ScreenOptionsToggleSongsSubPage::BeginScreen()
 {
 	m_apSongs.clear();
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
 	std::vector<OptionRowHandler*> vHands;
 
 	const std::vector<Song*> &apAllSongs = SONGMAN->GetSongs(ToggleSongs::m_sGroup);
+=======
+	vector<OptionRowHandler*> vHands;
+
+	const vector<Song *> &apAllSongs = SONGMAN->GetSongs(ToggleSongs::m_sGroup);
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
 	for (Song *pSong : apAllSongs)
 	{
 		if( UNLOCKMAN->SongIsLocked(pSong) & ~LOCKED_DISABLED )
@@ -103,7 +126,11 @@ void ScreenOptionsToggleSongsSubPage::BeginScreen()
 	ScreenOptions::BeginScreen();
 }
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
 void ScreenOptionsToggleSongsSubPage::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
+=======
+void ScreenOptionsToggleSongsSubPage::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
 {
 	if( iRow >= (int)m_apSongs.size() )	// exit row
 		return;
@@ -114,7 +141,11 @@ void ScreenOptionsToggleSongsSubPage::ImportOptions( int iRow, const std::vector
 	row.SetOneSharedSelection( iSelection );
 }
 
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
 void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
+=======
+void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
 {
 	if( iRow >= (int)m_apSongs.size() )	// exit row
 		return;
@@ -131,7 +162,11 @@ void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const std::vector
 /*
  * (c) 2007 Glenn Maynard
  * All rights reserved.
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -141,7 +176,11 @@ void ScreenOptionsToggleSongsSubPage::ExportOptions( int iRow, const std::vector
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD:itgmania/src/ScreenOptionsToggleSongs.cpp
  *
+=======
+ * 
+>>>>>>> origin/c++11:src/ScreenOptionsToggleSongs.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

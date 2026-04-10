@@ -11,7 +11,15 @@
 
 # Modeled after libxml-config.
 
+<<<<<<< HEAD:extern/libpng/include/scripts/libpng-config-head.in
 version=1.5.1
+=======
+<<<<<<< HEAD:extern/libpng/include/scripts/libpng-config-head.in
+version=1.5.1
+=======
+version=1.6.37
+>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/scripts/libpng-config-head.in
+>>>>>>> main:extern/libpng/scripts/libpng-config-head.in
 prefix=""
 libdir=""
 libs=""

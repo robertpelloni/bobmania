@@ -6,8 +6,16 @@
 #include "Actor.h"
 #include "RageDisplay.h"
 
+<<<<<<< HEAD
 #include <vector>
 
+=======
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.h
+#include <vector>
+
+=======
+>>>>>>> origin/c++11:src/ActorMultiTexture.h
+>>>>>>> main
 class RageTexture;
 
 class ActorMultiTexture: public Actor
@@ -41,7 +49,15 @@ private:
 		RageTexture *m_pTexture;
 		TextureMode m_TextureMode;
 	};
+<<<<<<< HEAD
 	std::vector<TextureUnitState> m_aTextureUnits;
+=======
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.h
+	std::vector<TextureUnitState> m_aTextureUnits;
+=======
+	vector<TextureUnitState> m_aTextureUnits;
+>>>>>>> origin/c++11:src/ActorMultiTexture.h
+>>>>>>> main
 	RectF m_Rect;
 };
 
@@ -52,7 +68,15 @@ private:
  * @author Chris Danford (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.h
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/ActorMultiTexture.h
+>>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -62,7 +86,15 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/ActorMultiTexture.h
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/ActorMultiTexture.h
+>>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

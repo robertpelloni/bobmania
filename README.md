@@ -3,6 +3,7 @@ ITGmania
 
 ITGmania is a fork of [StepMania 5.1](https://github.com/stepmania/stepmania/tree/5_1-new), an advanced cross-platform rhythm game for home and arcade use.
 
+<<<<<<< HEAD
 [![Continuous integration](https://github.com/itgmania/itgmania/actions/workflows/ci.yml/badge.svg?branch=beta)](https://github.com/itgmania/itgmania/actions/workflows/ci.yml) [![Nightly release](https://github.com/itgmania/itgmania/actions/workflows/nightly.yml/badge.svg?branch=beta&event=push)](https://github.com/itgmania/itgmania/actions/workflows/nightly.yml?query=branch%3Abeta+event%3Apush)
 
 ## Changes to StepMania 5.1
@@ -18,12 +19,23 @@ ITGmania is a fork of [StepMania 5.1](https://github.com/stepmania/stepmania/tre
 - New preference to control note render ordering
 - Increased the Stats.xml file size limit to 100MB
 - Changed the default binding for P2/back from hyphen to backslash
+=======
+[![Continuous integration](https://github.com/stepmania/stepmania/workflows/Continuous%20integration/badge.svg?branch=5_1-new)](https://github.com/stepmania/stepmania/actions?query=workflow%3A%22Continuous+integration%22+branch%3A5_1-new)
+[![Build Status](https://travis-ci.org/stepmania/stepmania.svg?branch=master)](https://travis-ci.org/stepmania/stepmania)
+[![Build status](https://ci.appveyor.com/api/projects/status/uvoplsnyoats81r2?svg=true)](https://ci.appveyor.com/project/Nickito12/stepmania)
+>>>>>>> main
 
 ## Installation
 
 You can choose between using the installer or using the portable build. Using the installer is recommended, because it makes upgrading to new versions easier.
 
+<<<<<<< HEAD
 ### Windows
+=======
+* Windows users are expected to have installed the [Microsoft Visual C++ x86 Redistributable for Visual Studio 2015](http://www.microsoft.com/en-us/download/details.aspx?id=48145) prior to running the game. For those on a 64-bit operating system, grab the x64 redistributable as well. Windows 7 is the minimum supported version.
+* Mac OS X users need to have Mac OS X 10.6.8 or higher to run StepMania.
+* Linux users should receive all they need from the package manager of their choice.
+>>>>>>> main
 
 **Windows 7 is the minimum supported version.**
 
@@ -65,9 +77,15 @@ ITGmania can be compiled using [CMake](http://www.cmake.org/). More information 
 
 ## Resources
 
+<<<<<<< HEAD
 * [ITGmania Website](https://www.itgmania.com/)
 * [StepMania 5.1 to ITGmania Migration Guide](Docs/Userdocs/sm5_migration.md)
 * [Lua for ITGmania](https://quietly-turning.github.io/Lua-For-SM5/LuaAPI?engine=ITGmania)
+=======
+* Website: https://www.stepmania.com/
+* IRC: irc.freenode.net/#stepmania-devs
+* Lua for SM5: https://quietly-turning.github.io/Lua-For-SM5/
+>>>>>>> main
 * Lua API Documentation can be found in the Docs folder.
 
 ## Licensing Terms
@@ -78,10 +96,15 @@ If ITGmania code is used in your project, we would also appreciate it if you lin
 
 For specific information/legalese:
 
+<<<<<<< HEAD
 * All of our source code is under the [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.en.html).
 * Songs included within the 'StepMania 5' folder are under the [<abbr title="Creative Commons Non-Commercial">CC-NC</abbr> license](https://creativecommons.org/).
 * Simply Love is licensed under the GPLv3, or, at your option, any later version.
 * The copyright for songs in the 'Club Fantastic' folders rests with the original authors. The content is explicitly NOT placed under a Creative Commons license (or similar license), but has been provided free of charge, for personal or public use, including online broadcasting, tournaments, and other purposes. Go to the [Club Fantastic](https://www.clubfantastic.com/) website for more information.
+=======
+* All of our source code is under the [MIT license](http://opensource.org/licenses/MIT).
+* Any songs that are included within this repository are under the [<abbr title="Creative Commons Non-Commercial">CC-NC</abbr> license](https://creativecommons.org/).
+>>>>>>> main
 * The [MAD library](http://www.underbit.com/products/mad/) and [FFmpeg codecs](https://www.ffmpeg.org/) when built with our code use the [GPL license](http://www.gnu.org).
 * This software is based in part on the work of the Independent JPEG Group.
 * Check the [Docs/Licenses.txt](Docs/Licenses.txt) for the licenses of the used libraries.

@@ -3,7 +3,11 @@ list(APPEND SMDATA_OS_HPP "archutils/Common/HidDevice.h")
 
 if(APPLE)
   list(APPEND SMDATA_OS_DARWIN_SRC
+<<<<<<< HEAD
               "archutils/Darwin/Crash.mm"
+=======
+              "archutils/Darwin/Crash.cpp"
+>>>>>>> main
               "archutils/Darwin/DarwinThreadHelpers.cpp"
               "archutils/Darwin/HIDDevice.cpp"
               "archutils/Darwin/JoystickDevice.cpp"
@@ -22,8 +26,22 @@ if(APPLE)
               "archutils/Darwin/MouseDevice.h"
               "archutils/Darwin/PumpDevice.h"
               "archutils/Darwin/SpecialDirs.h"
+<<<<<<< HEAD
               "archutils/Darwin/StepMania.pch")
+=======
+              "archutils/Darwin/StepMania.pch" # precompiled header.
+              "archutils/Darwin/VectorHelper.h")
+>>>>>>> main
 
+<<<<<<< HEAD
+
+  list(APPEND SMDATA_OS_SRC
+    ${SMDATA_OS_DARWIN_SRC}
+  )
+  list(APPEND SMDATA_OS_HPP
+    ${SMDATA_OS_DARWIN_HPP}
+  )
+=======
   source_group("OS Specific\\\\Darwin"
                FILES
                ${SMDATA_OS_DARWIN_SRC}
@@ -31,6 +49,7 @@ if(APPLE)
 
   list(APPEND SMDATA_OS_SRC ${SMDATA_OS_DARWIN_SRC})
   list(APPEND SMDATA_OS_HPP ${SMDATA_OS_DARWIN_HPP})
+>>>>>>> origin/unified-ui-features-13937230807013224518
 else()
   if(WIN32)
     configure_file("${SM_SRC_DIR}/archutils/Win32/StepMania.in.manifest"
@@ -89,6 +108,73 @@ else()
                 "archutils/Win32/WindowsDialogBox.h"
                 "archutils/Win32/WindowsResources.h")
   else() # Unix
+<<<<<<< HEAD
+    if(LINUX)
+      list(APPEND SMDATA_OS_SRC # TODO: X11 check, crash handler check
+        "archutils/Unix/AssertionHandler.cpp"
+        "archutils/Unix/EmergencyShutdown.cpp"
+        "archutils/Unix/GetSysInfo.cpp"
+        "archutils/Unix/RunningUnderValgrind.cpp"
+        "archutils/Unix/SignalHandler.cpp"
+        "archutils/Unix/SpecialDirs.cpp"
+        "archutils/Unix/StackCheck.cpp"
+        )
+      list(APPEND SMDATA_OS_HPP
+        "archutils/Unix/arch_setup.h"
+        "archutils/Unix/AssertionHandler.h"
+        "archutils/Unix/EmergencyShutdown.h"
+        "archutils/Unix/GetSysInfo.h"
+        "archutils/Unix/RunningUnderValgrind.h"
+        "archutils/Unix/SignalHandler.h"
+        "archutils/Unix/SpecialDirs.h"
+        "archutils/Common/gcc_byte_swaps.h"
+      )
+      if(X11_FOUND)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Unix/X11Helper.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Unix/X11Helper.h"
+        )
+      endif()
+      if(HAS_PTHREAD)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Common/PthreadHelpers.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Common/PthreadHelpers.h"
+        )
+      endif()
+    elseif(ANDROID)
+      list(APPEND SMDATA_OS_SRC
+        "archutils/Android/Globals.cpp"
+        "archutils/Android/SpecialDirs.cpp"
+        "archutils/Common/PthreadHelpers.cpp"
+        "archutils/Common/EGLHelper.cpp"
+        "archutils/Unix/GetSysInfo.cpp"
+        "archutils/Unix/BacktraceNames.cpp"
+        "archutils/Unix/StackCheck.cpp"
+        "archutils/Unix/EmergencyShutdown.cpp"
+      )
+      list(APPEND SMDATA_OS_HPP
+        "archutils/Android/arch_setup.h"
+        "archutils/Android/Globals.h"
+        "archutils/Android/SpecialDirs.h"
+        "archutils/Common/PthreadHelpers.h"
+        "archutils/Common/EGLHelper.h"
+        "archutils/Unix/GetSysInfo.h"
+        "archutils/Unix/BacktraceNames.h"
+        "archutils/Unix/EmergencyShutdown.h"
+      )
+      if (WITH_CRASH_HANDLER)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Android/CrashHandler.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Android/CrashHandler.h"
+        )
+      endif()
+=======
     list(APPEND SMDATA_OS_SRC # TODO: X11 check, crash handler check
                 "archutils/Unix/AssertionHandler.cpp"
                 "archutils/Unix/EmergencyShutdown.cpp"
@@ -112,6 +198,7 @@ else()
     if(HAS_PTHREAD)
       list(APPEND SMDATA_OS_SRC "archutils/Common/PthreadHelpers.cpp")
       list(APPEND SMDATA_OS_HPP "archutils/Common/PthreadHelpers.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
     endif()
   endif()
   source_group("OS Specific" FILES ${SMDATA_OS_SRC} ${SMDATA_OS_HPP})

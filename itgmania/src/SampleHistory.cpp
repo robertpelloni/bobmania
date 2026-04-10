@@ -3,6 +3,10 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/SampleHistory.cpp
+>>>>>>> main
 #include <cmath>
 
 
@@ -10,6 +14,8 @@ inline float sample_step_size(int samples_per_second)
 {
 	return 1.0f / samples_per_second;
 }
+=======
+>>>>>>> origin/c++11:src/SampleHistory.cpp
 
 SampleHistory::SampleHistory()
 {

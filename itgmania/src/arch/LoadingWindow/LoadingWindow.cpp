@@ -4,9 +4,18 @@
 #include "RageLog.h"
 #include "arch/arch_default.h"
 
+<<<<<<< HEAD
 #include <vector>
 
 
+=======
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
+#include <vector>
+
+
+=======
+>>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow.cpp
+>>>>>>> main
 LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
@@ -14,9 +23,22 @@ LoadingWindow *LoadingWindow::Create()
 #if defined(UNIX) && !defined(HAVE_GTK)
 	return new LoadingWindow_Null;
 #endif
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
 	// Don't load nullptr by default.
 	const RString drivers = "win32,macosx,gtk";
 	std::vector<RString> DriversToTry;
+<<<<<<< HEAD
+=======
+=======
+	// Don't load NULL by default.
+=======
+	// Don't load nullptr by default.
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LoadingWindow/LoadingWindow.cpp
+	const RString drivers = "win32,macosx,gtk";
+	vector<RString> DriversToTry;
+>>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow.cpp
+>>>>>>> main
 	split( drivers, ",", DriversToTry, true );
 
 	ASSERT( DriversToTry.size() != 0 );
@@ -46,7 +68,15 @@ LoadingWindow *LoadingWindow::Create()
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
+<<<<<<< HEAD
 			RageUtil::SafeDelete( ret );
+=======
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
+			RageUtil::SafeDelete( ret );
+=======
+			SAFE_DELETE( ret );
+>>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow.cpp
+>>>>>>> main
 		}
 	}
 
@@ -62,7 +92,15 @@ LoadingWindow *LoadingWindow::Create()
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow.cpp
+>>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -72,7 +110,15 @@ LoadingWindow *LoadingWindow::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/arch/LoadingWindow/LoadingWindow.cpp
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/arch/LoadingWindow/LoadingWindow.cpp
+>>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

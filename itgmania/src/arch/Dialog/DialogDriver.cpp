@@ -1,5 +1,12 @@
 #include "global.h"
 #include "DialogDriver.h"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver.cpp
+=======
+
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver.cpp
+>>>>>>> main
 #include "RageLog.h"
 
 #include <vector>
@@ -9,7 +16,15 @@ std::map<istring, CreateDialogDriverFn> *RegisterDialogDriver::g_pRegistrees;
 RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn )
 {
 	if( g_pRegistrees == nullptr )
+<<<<<<< HEAD
 		g_pRegistrees = new std::map<istring, CreateDialogDriverFn>;
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver.cpp
+		g_pRegistrees = new std::map<istring, CreateDialogDriverFn>;
+=======
+		g_pRegistrees = new map<istring, CreateDialogDriverFn>;
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver.cpp
+>>>>>>> main
 
 	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
 	(*g_pRegistrees)[sName] = pfn;
@@ -27,7 +42,15 @@ DialogDriver *DialogDriver::Create()
 
 	for (RString const &Driver : asDriversToTry)
 	{
+<<<<<<< HEAD
 		std::map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver.c_str()) );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver.cpp
+		std::map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver.c_str()) );
+=======
+		map<istring, CreateDialogDriverFn>::const_iterator iter = RegisterDialogDriver::g_pRegistrees->find( istring(Driver) );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver.cpp
+>>>>>>> main
 
 		if( iter == RegisterDialogDriver::g_pRegistrees->end() )
 			continue;
@@ -40,7 +63,15 @@ DialogDriver *DialogDriver::Create()
 			return pRet;
 		if( LOG )
 			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
+<<<<<<< HEAD
 		RageUtil::SafeDelete( pRet );
+=======
+<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver.cpp
+		RageUtil::SafeDelete( pRet );
+=======
+		SAFE_DELETE( pRet );
+>>>>>>> origin/c++11:src/arch/Dialog/DialogDriver.cpp
+>>>>>>> main
 	}
 	return nullptr;
 }

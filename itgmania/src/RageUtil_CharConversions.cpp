@@ -3,12 +3,24 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_CharConversions.cpp
+>>>>>>> main
 #include <vector>
 
 #if defined(_WIN32)
 
 #include "archutils/Win32/ErrorStrings.h"
 #define WIN32_LEAN_AND_MEAN
+<<<<<<< HEAD
+=======
+=======
+#if defined(_WINDOWS)
+
+#include "archutils/Win32/ErrorStrings.h"
+>>>>>>> origin/c++11:src/RageUtil_CharConversions.cpp
+>>>>>>> main
 #include <windows.h>
 
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
@@ -21,7 +33,15 @@ static bool CodePageConvert( RString &sText, int iCodePage )
 		return false; /* error */
 	}
 
+<<<<<<< HEAD
 	std::wstring sOut;
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_CharConversions.cpp
+	std::wstring sOut;
+=======
+	wstring sOut;
+>>>>>>> origin/c++11:src/RageUtil_CharConversions.cpp
+>>>>>>> main
 	sOut.append( iSize, ' ' );
 	/* Nonportable: */
 	iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), (wchar_t *) sOut.data(), iSize );
@@ -36,7 +56,14 @@ static bool AttemptKoreanConversion( RString &sText ) { return CodePageConvert( 
 static bool AttemptJapaneseConversion( RString &sText ) { return CodePageConvert( sText, 932 ); }
 
 #elif defined(HAVE_ICONV)
+<<<<<<< HEAD
 #include <cstddef>
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_CharConversions.cpp
+#include <cstddef>
+=======
+>>>>>>> origin/c++11:src/RageUtil_CharConversions.cpp
+>>>>>>> main
 #include <errno.h>
 #include <iconv.h>
 
@@ -89,12 +116,23 @@ static bool AttemptKoreanConversion( RString &sText ) { return ConvertFromCharse
 static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromCharset( sText, "CP932" ); }
 
 #elif defined(MACOSX)
+<<<<<<< HEAD
 #include <cstddef>
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_CharConversions.cpp
+#include <cstddef>
+=======
+>>>>>>> origin/c++11:src/RageUtil_CharConversions.cpp
+>>>>>>> main
 #include <CoreFoundation/CoreFoundation.h>
 
 static bool ConvertFromCP( RString &sText, int iCodePage )
 {
 	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( iCodePage );
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_CharConversions.cpp
+>>>>>>> main
 
 	if( encoding == kCFStringEncodingInvalidId )
 		return false;
@@ -105,6 +143,21 @@ static bool ConvertFromCP( RString &sText, int iCodePage )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
 
+<<<<<<< HEAD
+=======
+=======
+	
+	if( encoding == kCFStringEncodingInvalidId )
+		return false;
+	
+	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
+	
+	if( old == nullptr )
+		return false;
+	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
+	
+>>>>>>> origin/c++11:src/RageUtil_CharConversions.cpp
+>>>>>>> main
 	char *buf = new char[size+1];
 	buf[0] = '\0';
 	bool result = CFStringGetCString( old, buf, size, kCFStringEncodingUTF8 );
@@ -132,7 +185,15 @@ bool ConvertString( RString &str, const RString &encodings )
 	if( str.empty() )
 		return true;
 
+<<<<<<< HEAD
 	std::vector<RString> lst;
+=======
+<<<<<<< HEAD:itgmania/src/RageUtil_CharConversions.cpp
+	std::vector<RString> lst;
+=======
+	vector<RString> lst;
+>>>>>>> origin/c++11:src/RageUtil_CharConversions.cpp
+>>>>>>> main
 	split( encodings, ",", lst );
 
 	for(unsigned i = 0; i < lst.size(); ++i)

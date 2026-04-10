@@ -7,10 +7,19 @@
 #include "RageFileBasic.h"
 #include "RageThreads.h"
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverMemory.h
+>>>>>>> main
 #include <cstddef>
 #include <vector>
 
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> origin/c++11:src/RageFileDriverMemory.h
+>>>>>>> main
 struct RageFileObjMemFile;
 class RageFileObjMem: public RageFileObj
 {
@@ -47,7 +56,15 @@ public:
 
 private:
 	RageMutex m_Mutex;
+<<<<<<< HEAD
 	std::vector<RageFileObjMemFile *> m_Files;
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverMemory.h
+	std::vector<RageFileObjMemFile *> m_Files;
+=======
+	vector<RageFileObjMemFile *> m_Files;
+>>>>>>> origin/c++11:src/RageFileDriverMemory.h
+>>>>>>> main
 };
 
 #endif
@@ -55,7 +72,15 @@ private:
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverMemory.h
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/RageFileDriverMemory.h
+>>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -65,7 +90,15 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+<<<<<<< HEAD
  *
+=======
+<<<<<<< HEAD:itgmania/src/RageFileDriverMemory.h
+ *
+=======
+ * 
+>>>>>>> origin/c++11:src/RageFileDriverMemory.h
+>>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
