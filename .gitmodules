@@ -4,6 +4,7 @@
 [submodule "itgmania/Themes/Simply-Love-SM5"]
 	path = itgmania/Themes/Simply-Love-SM5
 	url = https://github.com/Simply-Love/Simply-Love-SM5.git
+	branch = itgmania-release
 [submodule "itgmania/extern/IXWebSocket"]
 	path = itgmania/extern/IXWebSocket
 	url = https://github.com/machinezone/IXWebSocket.git
