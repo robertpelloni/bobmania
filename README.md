@@ -1,5 +1,5 @@
 ITGmania
-========
+
 
 ITGmania is a fork of [StepMania 5.1](https://github.com/stepmania/stepmania/tree/5_1-new), an advanced cross-platform rhythm game for home and arcade use.
 

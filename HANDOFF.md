@@ -149,10 +149,10 @@ The following features from forks were analyzed but explicitly **excluded** from
 
 ## Additional Notes from unified-ui-features Branch
 StepMania Unified - Handoff Notes
-===============================
+
 =======
 StepMania Unified - Handoff Notes
-==============================
+
 >>>>>>> origin/unified-ui-features-13937230807013224518
 Last Session: Implemented MissionManager, Documentation, and Network Helpers.
 Next Steps: Implement ReplayManager, Wife Scoring, and advanced NetPlay features.
