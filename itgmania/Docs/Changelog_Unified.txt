@@ -1,0 +1,7 @@
+2025-05-24 [Core] Initial unification release 5.2.0-Unified.
+2025-05-24 [Feature] Integrated ITGMania features: LoadNewSongs, FastProfileSwitch, RateMods, VisualDelay, GhostTapping.
+2025-05-24 [Feature] Integrated NotITG features: Full GLSL shader support, SetDrawFunction hook, NotePath actor, Window manipulation.
+2025-05-24 [Feature] Integrated Etterna/OutFox features: Discord RPC stub, ToastMessage system, Sandboxed File I/O.
+2025-05-24 [Feature] Added EconomyManager for token/tip research.
+2025-05-24 [Lua] Added GetSongTime/GetSongBeat compatibility aliases.
+2025-05-24 [Build] Updated version info in ProductInfo.h, ProductInfo.inc, configure.ac.
