@@ -9,8 +9,8 @@ This document tracks immediate, actionable tasks and missing features identified
 - **Action:** Replace `BuyItem` and `AwardMiningReward` logic with HTTP RPC calls to a real Bobcoin node (using `extern/bobcoin` or generic `jsoncpp` requests). Remove the dependency on `Economy.xml.sig` in favor of trusting the ledger.
 
 ### 2. `HeartRateManager` - Hardware Drivers
-- **Current State:** Returns a sine wave simulating 80-140 BPM to `ScreenGymWorkout`.
-- **Action:** Implement an abstract `IHeartRateDriver`. Build a Windows implementation using WinRT Bluetooth APIs, and a Linux implementation using BlueZ. Make it poll asynchronously so it doesn't stutter the game loop.
+- **Current State:** The architectural base (IHeartRateDriver, HeartRateManager, and Mock driver) is completed.
+- **Action:** Hook `HEARTRATEMAN->Update()` into `GameLoop::Update()`. Expose `HEARTRATEMAN:GetBPM()` to Lua via `LuaBinding`. Create actual hardware drivers (`BlueZ` / `WinRT`) to replace the Mock driver.
 
 ### 3. `ContentSwarmManager` - BitTorrent Integration
 - **Current State:** Uses legacy `FileDownload.cpp` to fetch an HTTP stub.
@@ -43,8 +43,3 @@ This document tracks immediate, actionable tasks and missing features identified
 ### 2. Remove `EzSockets` Dependency
 - **Issue:** StepMania's legacy networking is notoriously crash-prone and blocks the main thread occasionally.
 - **Action:** Rewrite `UnifiedNetwork` using modern C++11 `<thread>` and `<mutex>` alongside a robust library like `libuv` or `asio`.
-
-## Bugs & Edge Cases
-- **Linux X11 Fullscreen:** *Status: Resolved in v5.7.8 via branch merge.*
-- **AssetSyncManager Progress Bar:** The HTTP downloader doesn't always expose total file size, causing the progress bar in `ScreenAssetSync` to hang at 90% until completion. Must parse `Content-Length` headers more aggressively.
-- **Discord RPC Crashes:** If the Discord desktop client crashes, the C++ `DiscordManager` might deadlock. Implement a timeout on the IPC pipe.
