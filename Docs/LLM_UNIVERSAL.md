@@ -1,5 +1,6 @@
 # Universal LLM Instructions
 
+<<<<<<< HEAD
 <<<<<<< HEAD:docs/LLM_UNIVERSAL.md
 **Version:** 1.0 (2025-12-27)
 **Scope:** Applies to all AI Agents (Claude, Gemini, GPT, Copilot) working on this repository.
@@ -44,6 +45,8 @@
 ## 7. Agent-Specific Notes
 See `AGENTS.md` for specific overrides.
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518
 This document serves as the master guide for all AI Developer models (Jules, Claude, Gemini, GPT) working on the Unified StepMania project. It supersedes any individual agent instruction files.
 
 ## Project Context
@@ -68,4 +71,7 @@ Always use StepMania's `RageFile` wrapper for file operations to ensure cross-pl
 
 ## Commenting Code
 Comment code aggressively but intelligently. Explain *why* a decision was made, what the side effects are, and how it interacts with the Lua layer. If a mock is used, comment exactly how it should be replaced with real API calls.
+<<<<<<< HEAD
 >>>>>>> origin/unified-ui-features-13937230807013224518:Docs/LLM_UNIVERSAL.md
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518

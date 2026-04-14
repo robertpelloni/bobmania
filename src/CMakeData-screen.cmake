@@ -111,9 +111,13 @@ list(APPEND SMDATA_SCREEN_REST_SRC
             "ScreenTextEntry.cpp"
             "ScreenTitleMenu.cpp"
 <<<<<<< HEAD
+<<<<<<< HEAD
             "Network/UI/ScreenContentNetwork.cpp"
 =======
 >>>>>>> main
+=======
+            "Network/UI/ScreenContentNetwork.cpp"
+>>>>>>> origin/unified-ui-features-13937230807013224518
             "ScreenUnlockBrowse.cpp"
             "ScreenUnlockCelebrate.cpp"
             "ScreenUnlockStatus.cpp"
@@ -171,9 +175,13 @@ list(APPEND SMDATA_SCREEN_REST_HPP
             "ScreenTextEntry.h"
             "ScreenTitleMenu.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
             "Network/UI/ScreenContentNetwork.h"
 =======
 >>>>>>> main
+=======
+            "Network/UI/ScreenContentNetwork.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518
             "ScreenUnlockBrowse.h"
             "ScreenUnlockCelebrate.h"
             "ScreenUnlockStatus.h"
