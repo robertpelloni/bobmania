@@ -8,8 +8,9 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "FontManager.cpp"
             "GameManager.cpp"
             "GameSoundManager.cpp"
-<<<<<<< HEAD
             "Gym/HeartRateManager.cpp"
+            "Gym/LuaBinding_HeartRateManager.cpp"
+<<<<<<< HEAD
 =======
 >>>>>>> main
             "GrooveStats/GrooveStatsManager.cpp"
@@ -55,8 +56,9 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "FontManager.h"
             "GameManager.h"
             "GameSoundManager.h"
-<<<<<<< HEAD
             "Gym/HeartRateManager.h"
+            "Gym/LuaBinding_HeartRateManager.h"
+<<<<<<< HEAD
 =======
 >>>>>>> main
             "GrooveStats/GrooveStatsManager.h"
