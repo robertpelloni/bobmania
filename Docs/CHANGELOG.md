@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.7.5-Unified-Beta] - 2025-12-27
+### Added
+- **Documentation:** Sweeping updates to `VISION.md`, `DEPLOY.md`, `SUBMODULES.md`, and `LLM_UNIVERSAL.md`.
+- **Documentation:** Consolidated all agent-specific instruction files (`AGENTS.md`, `CLAUDE.md`, etc.) to point to a single source of truth.
+- **Backend:** (In Progress) Transitioning `EconomyManager` to use `BobcoinBridge` for real RPC integration.
+
+## [5.7.4-Unified-Beta] - 2025-12-27
+### Added
+- **Networking:** Implemented `ContentSwarmManager` singleton stub that mimics a `libtorrent` session.
+- **Lua Bindings:** Exposed `SWARMMAN` methods (`GetDownloadProgress`, `GetSeedCount`, etc.) to frontend via `Luna<T>`.
+- **UI:** Added `ScreenContentNetwork overlay.lua` to visually track P2P swarm progress.
+
 ## [5.7.3-Unified-Beta] - 2026-04-14
 ### Added
 - **Gym Mode:** Complete Lua bindings for `HEARTRATEMAN`.

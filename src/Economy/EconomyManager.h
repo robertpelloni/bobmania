@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+class BlockchainBridge; // Forward declaration
+
 /**
  * Singleton to manage the Economy interactions via Bobcoin RPC.
  */
@@ -20,7 +22,8 @@ public:
     void AwardMiningReward(long long rewardAmount);
 
 private:
-    long long m_iBalance;
+    long long m_iBalance; // Local cache
+    BlockchainBridge* m_pBridge;
 };
 
 extern EconomyManager* ECONOMYMAN;
