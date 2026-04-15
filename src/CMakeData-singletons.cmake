@@ -27,11 +27,11 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
 <<<<<<< HEAD
 <<<<<<< HEAD
             "NetworkManager.cpp"
+            "Network/ContentSwarmManager.cpp"
+            "Network/LuaBinding_ContentSwarmManager.cpp"
 =======
             "NetworkSyncManager.cpp"
             "Network/ChatManager.cpp"
-            "Network/ContentSwarmManager.cpp"
-            "Network/ContentSwarmManager.cpp"
             "Network/SpectatorManager.cpp"
             "Network/UnifiedNetwork.cpp"
 >>>>>>> origin/unified-ui-features-13937230807013224518
@@ -73,12 +73,12 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
 <<<<<<< HEAD
 <<<<<<< HEAD
             "NetworkManager.h"
+            "Network/ContentSwarmManager.h"
+            "Network/LuaBinding_ContentSwarmManager.h"
 =======
             "Unified/AssetSyncManager.h"
             "NetworkSyncManager.h"
             "Network/ChatManager.h"
-            "Network/ContentSwarmManager.h"
-            "Network/ContentSwarmManager.h"
             "Network/SpectatorManager.h"
             "Network/UnifiedNetwork.h"
 >>>>>>> origin/unified-ui-features-13937230807013224518
