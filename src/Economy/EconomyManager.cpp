@@ -4,6 +4,10 @@
 #include "Bridge/BobcoinBridge.h"
 #include "Preference.h"
 
+// Luna includes
+#include "LuaManager.h"
+#include "LuaBinding.h"
+
 EconomyManager* ECONOMYMAN = nullptr;
 
 static Preference<RString> m_sBobcoinAddress("BobcoinAddress", "BOB-DEV-1234");
@@ -86,3 +90,39 @@ void EconomyManager::AwardMiningReward(long long rewardAmount) {
         LOG->Warn("EconomyManager::AwardMiningReward() - Failed to transfer mining reward.");
     }
 }
+
+// ----------------------------------------------------------------------------
+// Lua Bindings
+// ----------------------------------------------------------------------------
+
+class LunaEconomyManager : public Luna<EconomyManager>
+{
+public:
+    static int GetBalance(T* p, lua_State* L) {
+        lua_pushnumber(L, p->GetBalance());
+        return 1;
+    }
+
+    static int BuyItem(T* p, lua_State* L) {
+        RString itemID = SArg(1);
+        long long cost = (long long)IArg(2);
+        bool success = p->BuyItem(itemID, cost);
+        lua_pushboolean(L, success);
+        return 1;
+    }
+
+    static int AwardMiningReward(T* p, lua_State* L) {
+        long long rewardAmount = (long long)IArg(1);
+        p->AwardMiningReward(rewardAmount);
+        return 0;
+    }
+
+    LunaEconomyManager()
+    {
+        ADD_METHOD(GetBalance);
+        ADD_METHOD(BuyItem);
+        ADD_METHOD(AwardMiningReward);
+    }
+};
+
+LUA_REGISTER_CLASS(EconomyManager)

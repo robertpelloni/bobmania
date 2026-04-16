@@ -11,3 +11,18 @@ The `HeartRateManager` (and `IHeartRateDriver`) have been implemented and bound 
    `delete HEARTRATEMAN;`
 2. In `src/GameLoop.cpp` (or equivalent main update loop), you MUST call:
    `HEARTRATEMAN->Update(fDeltaTime);`
+
+## EconomyManager Integration
+To fully integrate the Unified `EconomyManager` (Bobcoin RPC bridge) into the core engine lifecycle:
+
+**1. `src/StepMania.cpp`**
+Inside `sm_main()` during singleton allocation:
+```cpp
+ECONOMYMAN = new EconomyManager;
+ECONOMYMAN->Init();
+```
+During cleanup:
+```cpp
+ECONOMYMAN->Shutdown();
+SAFE_DELETE(ECONOMYMAN);
+```

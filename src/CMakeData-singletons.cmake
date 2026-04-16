@@ -10,9 +10,6 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "GameSoundManager.cpp"
             "Gym/HeartRateManager.cpp"
             "Gym/LuaBinding_HeartRateManager.cpp"
-<<<<<<< HEAD
-=======
->>>>>>> main
             "GrooveStats/GrooveStatsManager.cpp"
             "Discord/DiscordManager.cpp"
             "GameState.cpp"
@@ -24,20 +21,13 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "LuaModules/LuaModule_File.cpp"
             "MemoryCardManager.cpp"
             "MessageManager.cpp"
-<<<<<<< HEAD
-<<<<<<< HEAD
             "NetworkManager.cpp"
+            "NetworkSyncManager.cpp"
             "Network/ContentSwarmManager.cpp"
             "Network/LuaBinding_ContentSwarmManager.cpp"
-=======
-            "NetworkSyncManager.cpp"
             "Network/ChatManager.cpp"
             "Network/SpectatorManager.cpp"
             "Network/UnifiedNetwork.cpp"
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
-            "NetworkSyncManager.cpp"
->>>>>>> main
             "NoteSkinManager.cpp"
             "PrefsManager.cpp"
             "ProfileManager.cpp"
@@ -46,6 +36,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "StatsManager.cpp"
             "ThemeManager.cpp"
             "UnlockManager.cpp")
+
 list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "AnnouncerManager.h"
             "Bookkeeper.h"
@@ -58,9 +49,6 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "GameSoundManager.h"
             "Gym/HeartRateManager.h"
             "Gym/LuaBinding_HeartRateManager.h"
-<<<<<<< HEAD
-=======
->>>>>>> main
             "GrooveStats/GrooveStatsManager.h"
             "GameState.h"
             "InputFilter.h"
@@ -70,21 +58,14 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "LuaManager.h"
             "MemoryCardManager.h"
             "MessageManager.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
             "NetworkManager.h"
+            "NetworkSyncManager.h"
             "Network/ContentSwarmManager.h"
             "Network/LuaBinding_ContentSwarmManager.h"
-=======
             "Unified/AssetSyncManager.h"
-            "NetworkSyncManager.h"
             "Network/ChatManager.h"
             "Network/SpectatorManager.h"
             "Network/UnifiedNetwork.h"
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
-            "NetworkSyncManager.h"
->>>>>>> main
             "NoteSkinManager.h"
             "PrefsManager.h"
             "ProfileManager.h"
@@ -94,14 +75,11 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "ThemeManager.h"
             "UnlockManager.h")
 
-<<<<<<< HEAD
-=======
 if(WITH_NETWORKING)
   list(APPEND SMDATA_GLOBAL_SINGLETON_SRC "ezsockets.cpp")
   list(APPEND SMDATA_GLOBAL_SINGLETON_HPP "ezsockets.h")
 endif()
 
->>>>>>> main
 source_group("Global Singletons"
              FILES
              ${SMDATA_GLOBAL_SINGLETON_SRC}
