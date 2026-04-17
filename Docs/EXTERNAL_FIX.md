@@ -56,3 +56,26 @@ During cleanup:
 MISSIONMAN->Shutdown();
 SAFE_DELETE(MISSIONMAN);
 ```
+
+## ScoreKeeperUnified Integration
+To completely decouple legacy DDR scoring and utilize the new Etterna-parity `ScoreKeeperUnified`, integrators must update `src/ScreenGameplay.cpp`.
+
+When allocating the `ScoreKeeper` for the player, modify the factory check:
+```cpp
+// Inside ScreenGameplay::Init()
+if (GAMESTATE->m_pCurGame->m_szName == RString("unified") || PREFSMAN->m_bEtternaScoring) {
+    m_pScoreKeeper[p] = new ScoreKeeperUnified;
+} else {
+    m_pScoreKeeper[p] = new ScoreKeeperNormal;
+}
+```
+
+Then in `src/Player.cpp` inside the hit logic:
+```cpp
+// Do not pass TNS_W1/W2 buckets. Pass the raw millisecond offset.
+float fNoteOffset = fPositionSeconds - pTN->m_fBeat;
+if (m_pScoreKeeper) {
+    // If it's the Unified keeper, it expects a float offset and J-scale
+    m_pScoreKeeper->HandleTapScore(fNoteOffset, GAMESTATE->GetPlayerState()->m_fJudgeScale);
+}
+```
