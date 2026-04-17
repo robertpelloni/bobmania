@@ -33,6 +33,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "ProfileManager.cpp"
             "ScreenManager.cpp"
             "SongManager.cpp"
+            "Scoring/ReplayManager.cpp"
             "StatsManager.cpp"
             "ThemeManager.cpp"
             "UnlockManager.cpp")
@@ -71,6 +72,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "ProfileManager.h"
             "ScreenManager.h"
             "SongManager.h"
+            "Scoring/ReplayManager.h"
             "StatsManager.h"
             "ThemeManager.h"
             "UnlockManager.h")

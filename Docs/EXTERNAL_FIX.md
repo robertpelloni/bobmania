@@ -26,3 +26,18 @@ During cleanup:
 ECONOMYMAN->Shutdown();
 SAFE_DELETE(ECONOMYMAN);
 ```
+
+## ReplayManager Integration
+To fully integrate the Unified `ReplayManager` into the core engine lifecycle:
+
+**1. `src/StepMania.cpp`**
+Inside `sm_main()` during singleton allocation:
+```cpp
+REPLAYMAN = new ReplayManager;
+REPLAYMAN->Init();
+```
+During cleanup:
+```cpp
+REPLAYMAN->Shutdown();
+SAFE_DELETE(REPLAYMAN);
+```
