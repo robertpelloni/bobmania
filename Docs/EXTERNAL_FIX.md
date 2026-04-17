@@ -41,3 +41,18 @@ During cleanup:
 REPLAYMAN->Shutdown();
 SAFE_DELETE(REPLAYMAN);
 ```
+
+## MissionManager Integration
+To fully integrate the Unified `MissionManager` into the core engine lifecycle:
+
+**1. `src/StepMania.cpp`**
+Inside `sm_main()` during singleton allocation:
+```cpp
+MISSIONMAN = new MissionManager;
+MISSIONMAN->Init();
+```
+During cleanup:
+```cpp
+MISSIONMAN->Shutdown();
+SAFE_DELETE(MISSIONMAN);
+```
