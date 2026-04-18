@@ -51,6 +51,7 @@ source_group("Data Structures\\\\Courses and Trails"
 
 list(APPEND SM_DATA_NOTEDATA_SRC
             "NoteData.cpp"
+            "NotePath.cpp"
             "NoteDataUtil.cpp"
 <<<<<<< HEAD
             "NoteDataWithScoring.cpp"
@@ -66,6 +67,7 @@ list(APPEND SM_DATA_NOTEDATA_SRC
 
 list(APPEND SM_DATA_NOTEDATA_HPP
             "NoteData.h"
+            "NotePath.h"
             "NoteDataUtil.h"
 <<<<<<< HEAD
             "NoteDataWithScoring.h"
