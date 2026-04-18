@@ -2712,3 +2712,27 @@ void RageDisplay_Legacy::SetCelShaded( int stage )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+
+// ----------------------------------------------------------------------------
+// Unified Phase 4: Virtual Reality Rendering Hooks
+// ----------------------------------------------------------------------------
+// The following functions demonstrate how m_bVRMode splits the Open GL pipeline.
+// In the actual rendering loop (BeginFrame/EndFrame), these should be called to submit textures to the headset.
+
+// extern bool g_bVRMode; // This would be polled from PREFSMAN in reality.
+
+void RageDisplay_OGL_VR_BeginFrame() {
+    // ArchHooks_VR::BeginFrame();
+}
+
+void RageDisplay_OGL_VR_EndFrame(unsigned int leftEyeTex, unsigned int rightEyeTex) {
+    // If g_bVRMode is true, submit the offscreen FBO textures to the VR Compositor
+    // ArchHooks_VR::EndFrame(leftEyeTex, rightEyeTex);
+}
+
+void RageDisplay_OGL_VR_SetEyeProjection(int iEye) {
+    // float mat[16];
+    // ArchHooks_VR::GetEyeMatrix(iEye, mat);
+    // glMatrixMode(GL_PROJECTION);
+    // glLoadMatrixf(mat);
+}
