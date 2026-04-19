@@ -9,6 +9,7 @@ struct TransactionRecord; // Forward declaration from Bridge
 
 /**
  * Singleton to manage the Economy interactions via Bobcoin RPC.
+ * Also includes an encrypted XML fallback mechanism for offline play.
  */
 class EconomyManager
 {
@@ -23,12 +24,14 @@ public:
     bool BuyItem(const RString& itemID, long long cost);
     void AwardMiningReward(long long rewardAmount);
 
-    // Phase 2 Completeness: Transaction History
     std::vector<TransactionRecord> GetTransactionHistory() const;
 
 private:
-    long long m_iBalance; // Local cache
+    long long m_iBalance; // Local cache or Fallback
     BlockchainBridge* m_pBridge;
+
+    bool LoadFallbackBalance();
+    void SaveFallbackBalance();
 };
 
 extern EconomyManager* ECONOMYMAN;
