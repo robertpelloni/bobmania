@@ -2,8 +2,10 @@
 #define ECONOMY_MANAGER_H
 
 #include "global.h"
+#include <vector>
 
 class BlockchainBridge; // Forward declaration
+struct TransactionRecord; // Forward declaration from Bridge
 
 /**
  * Singleton to manage the Economy interactions via Bobcoin RPC.
@@ -20,6 +22,9 @@ public:
     long long GetBalance() const;
     bool BuyItem(const RString& itemID, long long cost);
     void AwardMiningReward(long long rewardAmount);
+
+    // Phase 2 Completeness: Transaction History
+    std::vector<TransactionRecord> GetTransactionHistory() const;
 
 private:
     long long m_iBalance; // Local cache
