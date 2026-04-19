@@ -105,10 +105,12 @@ if(ANDROID)
 else()
   list(APPEND SMDATA_RAGE_GRAPHICS_SRC
     "RageDisplay_OGL.cpp"
+    "RageDisplay_Vulkan.cpp"
     "RageDisplay_OGL_Helpers.cpp"
   )
   list(APPEND SMDATA_RAGE_GRAPHICS_HPP
     "RageDisplay_OGL.h"
+    "RageDisplay_Vulkan.h"
     "RageDisplay_OGL_Helpers.h"
   )
   if(WIN32)
@@ -124,6 +126,7 @@ else()
             "RageDisplay.cpp"
             "RageDisplay_Null.cpp"
             "RageDisplay_OGL.cpp"
+    "RageDisplay_Vulkan.cpp"
             "RageDisplay_OGL_Helpers.cpp"
             "RageModelGeometry.cpp"
             "RageSurface.cpp"
@@ -151,6 +154,7 @@ list(APPEND SMDATA_RAGE_GRAPHICS_HPP
             "RageDisplay.h"
             "RageDisplay_Null.h"
             "RageDisplay_OGL.h"
+    "RageDisplay_Vulkan.h"
             "RageDisplay_OGL_Helpers.h"
             "RageModelGeometry.h"
             "RageSurface.h"
