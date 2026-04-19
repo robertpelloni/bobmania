@@ -35,6 +35,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "SongManager.cpp"
             "Scoring/ReplayManager.cpp"
             "Unified/MissionManager.cpp"
+            "Unified/PluginManager.cpp"
             "StatsManager.cpp"
             "ThemeManager.cpp"
             "UnlockManager.cpp")
@@ -75,6 +76,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "SongManager.h"
             "Scoring/ReplayManager.h"
             "Unified/MissionManager.h"
+            "Unified/PluginManager.h"
             "StatsManager.h"
             "ThemeManager.h"
             "UnlockManager.h")

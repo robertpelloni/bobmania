@@ -79,3 +79,26 @@ if (m_pScoreKeeper) {
     m_pScoreKeeper->HandleTapScore(fNoteOffset, GAMESTATE->GetPlayerState()->m_fJudgeScale);
 }
 ```
+
+## PluginManager Integration
+To fully integrate the Unified `PluginManager` into the core engine lifecycle:
+
+**1. `src/StepMania.cpp`**
+Inside `sm_main()` during singleton allocation:
+```cpp
+PLUGINMAN = new PluginManager;
+PLUGINMAN->Init();
+```
+During cleanup:
+```cpp
+PLUGINMAN->Shutdown();
+SAFE_DELETE(PLUGINMAN);
+```
+
+**2. `src/GameLoop.cpp`**
+Inside `GameLoop::Update()`:
+```cpp
+if(PLUGINMAN) {
+    PLUGINMAN->Update(fDeltaTime);
+}
+```
