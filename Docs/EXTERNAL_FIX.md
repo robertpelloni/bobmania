@@ -102,3 +102,26 @@ if(PLUGINMAN) {
     PLUGINMAN->Update(fDeltaTime);
 }
 ```
+
+## TournamentManager Integration
+To fully integrate the Unified `TournamentManager` into the core engine lifecycle:
+
+**1. `src/StepMania.cpp`**
+Inside `sm_main()` during singleton allocation:
+```cpp
+TOURNAMENTMAN = new TournamentManager;
+TOURNAMENTMAN->Init();
+```
+During cleanup:
+```cpp
+TOURNAMENTMAN->Shutdown();
+SAFE_DELETE(TOURNAMENTMAN);
+```
+
+**2. `src/GameLoop.cpp`**
+Inside `GameLoop::Update()`:
+```cpp
+if(TOURNAMENTMAN) {
+    TOURNAMENTMAN->Update();
+}
+```
