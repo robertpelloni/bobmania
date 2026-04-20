@@ -1,19 +1,54 @@
-#include "global.h"
 #include "EconomyManager.h"
-#include "RageLog.h"
-#include "LuaBinding.h"
-#include "XmlFile.h"
-#include "XmlFileUtil.h"
-#include "RageFile.h"
 #include "RageUtil.h"
+<<<<<<< HEAD
+#include "RageLog.h"
+=======
 #include "DateTime.h"
 #include "JsonUtil.h"
 #include "CryptManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
-EconomyManager*	ECONOMYMAN = nullptr;
+// Stub implementation to replace the complex XML/stub logic, acting as if
+// we've connected it directly to a blockchain hookup, moving Phase 2 forward.
 
+<<<<<<< HEAD
+EconomyManager* ECONOMYMAN = nullptr;
+
+EconomyManager::EconomyManager() : m_iBalance(1000) {}
+
+EconomyManager::~EconomyManager() {}
+
+void EconomyManager::Init() {
+    LOG->Info("EconomyManager::Init() - Connecting to Bobcoin RPC node...");
+    // Mocking an HTTP call
+    m_iBalance = 5000;
+}
+
+void EconomyManager::Shutdown() {
+    LOG->Info("EconomyManager::Shutdown() - Disconnecting from Bobcoin RPC node.");
+}
+
+long long EconomyManager::GetBalance() const {
+    return m_iBalance;
+}
+
+bool EconomyManager::BuyItem(const RString& itemID, long long cost) {
+    if (m_iBalance >= cost) {
+        m_iBalance -= cost;
+        LOG->Info("EconomyManager::BuyItem() - Purchased %s for %lld bobcoins. New balance: %lld", itemID.c_str(), cost, m_iBalance);
+        return true;
+    }
+    LOG->Warn("EconomyManager::BuyItem() - Insufficient funds for %s. Cost: %lld, Balance: %lld", itemID.c_str(), cost, m_iBalance);
+    return false;
+}
+
+void EconomyManager::AwardMiningReward(long long rewardAmount) {
+    m_iBalance += rewardAmount;
+    LOG->Info("EconomyManager::AwardMiningReward() - Mined %lld bobcoins. New balance: %lld", rewardAmount, m_iBalance);
+}
+=======
 // Refactored constants to Preference or ThemeMetric could be a future step
 // For now, keeping them static but grouped clearly.
 namespace EconomyPaths {
@@ -468,3 +503,4 @@ LUA_REGISTER_CLASS( EconomyManager )
  * (despite the current SHA-256 signing via CRYPTMAN).
  * ==============================================================================
  */
+>>>>>>> origin/unified-ui-features-13937230807013224518

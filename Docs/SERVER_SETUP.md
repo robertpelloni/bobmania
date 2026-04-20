@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< HEAD:docs/SERVER_SETUP.md
 # Server Setup Guide
 
@@ -31,6 +32,8 @@ The server uses WebSockets (`ws`).
 *   `CHAT`: `{ "type": "CHAT", "msg": "Hello World" }`
 *   `QUEUE_MATCH`: `{ "type": "QUEUE_MATCH" }`
 =======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518
 # Unified StepMania Server Setup Guide
 
 The Unified StepMania platform requires a central backend server to handle matchmaking, chat relay, spectator streams, and economy syncs.
@@ -79,4 +82,7 @@ When moving this mock server to production:
 1.  **Database:** Replace the in-memory `clients` map with a Redis cache or PostgreSQL database to persist ELO and Bobcoin balances.
 2.  **Authentication:** Implement JWT tokens instead of trusting the `"username"` payload.
 3.  **WSS:** Ensure the WebSocket runs over TLS (`wss://`) to prevent packet sniffing.
+<<<<<<< HEAD
 >>>>>>> origin/unified-ui-features-13937230807013224518:Docs/SERVER_SETUP.md
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518

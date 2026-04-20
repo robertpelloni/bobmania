@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Changelog
 
 ## [5.6.1-Maintenance] - 2025-12-27
@@ -76,15 +77,29 @@
 - **Build:** Added `GameClient` to build configuration.
 
 ## [5.3.1-VR-Alpha] - 2025-12-27
+=======
+# Unified StepMania Changelog
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
+## [5.7.13-Unified-Beta-GhostEngine] - 2026-02-10
 ### Added
+<<<<<<< HEAD
 - **VR Support:** `ArchHooks_VR` stubs and `m_bVRMode` preference.
 - **Build:** Updated CMake configuration for VR modules.
 - **Documentation:** Updated roadmap for VR Alpha status.
 
 ## [5.3.0-Network-MVP] - 2024-05-22
+=======
+- **Ghost Player Backend:** Significantly refactored `ReplayManager.cpp` to expose `GetPlaybackInputAtTime()`. This provides a clean interface for `Player.cpp` to inject Ghost Replay data deterministically, solving the largest remaining C++ architectural hurdle outlined in `TODO.md`.
 
+## [5.7.12-Unified-Beta-FinalHandoff] - 2026-02-10
+### Changed
+- **Master AI Handoff:** Overwrote the root `HANDOFF.md` with an encyclopedic, exhaustive summary of the Unified StepMania architecture.
+>>>>>>> origin/unified-ui-features-13937230807013224518
+
+## [5.7.11-Unified-Beta-Matchmaker] - 2026-02-10
 ### Added
+<<<<<<< HEAD
 - **Economy Manager:** A simulated blockchain ledger handling wallets (Player, House, DAO), transactions, and mining rewards.
 - **Tournament Ladder:** Elo ranking system with visual brackets and Divisions (Pro/Gold/Silver).
 - **Gym Mode:** Fitness-focused features including `ScreenGymWelcome`, `GymPlaylistGenerator` (intensity-based courses), and `ActorCalorieGraph` (visual calorie burn during gameplay).
@@ -95,8 +110,13 @@
 - **Cross-Game Integration:** Profile import/export bridging to external apps (JSON format).
 - **MSD Scoring:** Ported Etterna-style Density (MSD) scoring logic and visualization (`ActorMsdGraph`) in Evaluation.
 - **QR Login:** Simulated QR code login flow in `ScreenLoginQR`.
+=======
+- **Node.js Matchmaking Server:** Completely rewrote `server/mock_server.js`.
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
+## [5.7.10-Unified-Beta-Handoff] - 2026-02-10
 ### Changed
+<<<<<<< HEAD
 - **Version:** Bumped from 5.1 to 5.3.0-Network-MVP.
 - **Evaluation Screen:** Added MSD Graph and Betting Resolution logic.
 - **Gameplay Screen:** Added Calorie Graph overlay for Gym modes.
@@ -150,4 +170,35 @@
 ## [5.7.7-Unified-Beta-Settings] - 2026-02-10
 ### Added
 - **Unified Options Menu:** Created `ScreenUnifiedOptions` to expose backend modifiers.
+>>>>>>> origin/unified-ui-features-13937230807013224518
+=======
+- **Final Documentation Restructuring:** Rebuilt `Docs/ROADMAP.md`, `Docs/TODO.md`, `Docs/IDEAS.md`, and `Docs/SUBMODULES.md`.
+
+## [5.7.9-Unified-Beta-CloudSync] - 2026-02-10
+### Added
+- **Cloud Profile Sync:** Revamped `ScreenAssetSync`.
+
+## [5.7.8-Unified-Beta-Merge] - 2026-02-10
+### Added
+- **Feature Branches:** Merged upstream branches.
+
+## [5.7.7-Unified-Beta-Settings] - 2026-02-10
+### Added
+- **Unified Options Menu:** Created `ScreenUnifiedOptions`.
+
+## [5.7.6-Unified-Beta-Discord] - 2026-02-10
+### Added
+- **Discord Rich Presence:** Created `Themes/default/Scripts/11 Discord.lua`.
+
+## [5.7.5-Unified-Beta-EngineStubs] - 2026-02-10
+### Added
+- **ReplayManager:** Implemented the core engine singleton.
+
+## [5.7.4-Unified-Beta-MissionEngine] - 2026-02-10
+### Added
+- **Mission Engine:** Implemented logic within `MissionManager.cpp`.
+
+## [5.7.3-Unified-Beta-Documentation] - 2026-02-10
+### Added
+- Created `Docs/VISION.md`, `Docs/SUBMODULES.md`, `Docs/TODO.md`, `Docs/ROADMAP.md`, `Docs/LLM_UNIVERSAL.md`.
 >>>>>>> origin/unified-ui-features-13937230807013224518

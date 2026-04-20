@@ -133,6 +133,7 @@ list(APPEND SM_DATA_SCORE_SRC
             "ScoreKeeperShared.cpp"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             "Scoring/WifeScoring.cpp")
 =======
             "Scoring/WifeScoring.cpp"
@@ -141,12 +142,17 @@ list(APPEND SM_DATA_SCORE_SRC
 =======
             "Scoring/WifeScoring.cpp")
 >>>>>>> main
+=======
+            "Scoring/WifeScoring.cpp"
+            "Scoring/ReplayManager.cpp")
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 list(APPEND SM_DATA_SCORE_HPP
             "ScoreKeeper.h"
             "ScoreKeeperNormal.h"
             "ScoreKeeperRave.h"
             "ScoreKeeperShared.h"
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
             "Scoring/WifeScoring.h")
@@ -157,6 +163,10 @@ list(APPEND SM_DATA_SCORE_HPP
 =======
             "Scoring/WifeScoring.h")
 >>>>>>> main
+=======
+            "Scoring/WifeScoring.h"
+            "Scoring/ReplayManager.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
 
 list(APPEND SM_DATA_GYM_SRC
             "Gym/GymManager.cpp"

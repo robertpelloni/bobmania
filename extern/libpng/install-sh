@@ -1,11 +1,11 @@
 #!/bin/sh
 # install - install a program, script, or datafile
 
-<<<<<<<< HEAD:itgmania/extern/pcre/install-sh
+
 scriptversion=2020-11-14.01; # UTC
-========
+
 scriptversion=2018-03-11.20; # UTC
->>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/install-sh
+
 
 # This originates from X11R5 (mit/util/scripts/install.sh), which was
 # later released in X11R6 (xc/config/util/install.sh) with the
@@ -155,7 +155,7 @@ while test $# -ne 0; do
 
     -o) chowncmd="$chownprog $2"
         shift;;
-<<<<<<<< HEAD:itgmania/extern/pcre/install-sh
+
 
     -p) cpprog="$cpprog -p";;
 
@@ -173,7 +173,7 @@ while test $# -ne 0; do
         esac
         shift;;
 
-========
+
 
     -s) stripcmd=$stripprog;;
 
@@ -186,7 +186,7 @@ while test $# -ne 0; do
         esac
         shift;;
 
->>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/install-sh
+
     -T) is_target_a_directory=never;;
 
     --version) echo "$0 $scriptversion"; exit $?;;
@@ -344,7 +344,7 @@ do
   if test $dstdir_status != 0; then
     case $posix_mkdir in
       '')
-<<<<<<<< HEAD:itgmania/extern/pcre/install-sh
+
         # With -d, create the new directory with the user-specified mode.
         # Otherwise, rely on $mkdir_umask.
         if test -n "$dir_arg"; then
@@ -397,7 +397,7 @@ do
 	  rmdir ./$mkdir_mode ./-p ./-- "$tmpdir" 2>/dev/null
 	fi
 	trap '' 0;;
-========
+
         # Create intermediate dirs using mode 755 as modified by the umask.
         # This is like FreeBSD 'install' as of 1997-10-28.
         umask=`umask`
@@ -469,7 +469,7 @@ do
             fi
             trap '' 0;;
         esac;;
->>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/install-sh
+
     esac
 
     if
@@ -509,11 +509,11 @@ do
           prefixes=
         else
           if $posix_mkdir; then
-<<<<<<<< HEAD:itgmania/extern/pcre/install-sh
+
             (umask $mkdir_umask &&
-========
+
             (umask=$mkdir_umask &&
->>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/install-sh
+
              $doit_exec $mkdirprog $mkdir_mode -p -- "$dstdir") && break
             # Don't fail if two instances are running concurrently.
             test -d "$prefix" || exit 1
@@ -611,15 +611,15 @@ do
         # file should still install successfully.
         {
           test ! -f "$dst" ||
-<<<<<<<< HEAD:itgmania/extern/pcre/install-sh
+
           $doit $rmcmd "$dst" 2>/dev/null ||
           { $doit $mvcmd -f "$dst" "$rmtmp" 2>/dev/null &&
             { $doit $rmcmd "$rmtmp" 2>/dev/null; :; }
-========
+
           $doit $rmcmd -f "$dst" 2>/dev/null ||
           { $doit $mvcmd -f "$dst" "$rmtmp" 2>/dev/null &&
             { $doit $rmcmd -f "$rmtmp" 2>/dev/null; :; }
->>>>>>>> origin/unified-ui-features-13937230807013224518:extern/libpng/install-sh
+
           } ||
           { echo "$0: cannot unlink or rename $dst" >&2
             (exit 1); exit 1
