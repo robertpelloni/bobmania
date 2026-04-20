@@ -8,11 +8,6 @@ class PlayerState;
 /** @brief An action made against a Player to make things more difficult. */
 struct Attack
 {
-<<<<<<< HEAD
-=======
-	static inline float ATTACK_STARTS_NOW() { return -10000.f; }
-
->>>>>>> main
 	AttackLevel	level;
 	/**
 	 * @brief the starting point of this attack.

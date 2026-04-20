@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/OptionsList.cpp
-<<<<<<< HEAD:itgmania/src/OptionsList.cpp
 #include "global.h"
 #include "OptionsList.h"
 #include "GameState.h"
@@ -773,9 +771,6 @@ bool OptionsList::Start()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionsList.cpp
 #include "global.h"
 #include "OptionsList.h"
 #include "GameState.h"
@@ -978,13 +973,8 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 	vector<RString> asDirectLines;
 	split( DIRECT_LINES, ",", asDirectLines, true );
-<<<<<<< HEAD:itgmania/src/OptionsList.cpp
 	for (RString const &s : asDirectLines)
 		m_setDirectRows.insert( s );
-=======
-	for (RString &s : asDirectLines)
-		m_setDirectRows.insert(s);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionsList.cpp
 
 	vector<RString> setToLoad;
 	split( TOP_MENUS, ",", setToLoad );
@@ -1004,14 +994,7 @@ void OptionsList::Load( RString sType, PlayerNumber pn )
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == nullptr )
-<<<<<<< HEAD:itgmania/src/OptionsList.cpp
 			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%s", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str() );
-=======
-		{
-			LuaHelpers::ReportScriptErrorFmt("Invalid OptionRowHandler '%s' in %s::Line%s", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), sLineName.c_str());
-			continue;
-		}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionsList.cpp
 
 		m_Rows[sLineName] = pHand;
 		m_asLoadedRows.push_back( sLineName );
@@ -1552,7 +1535,3 @@ bool OptionsList::Start()
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-<<<<<<< HEAD:itgmania/src/OptionsList.cpp
->>>>>>> origin/c++11:src/OptionsList.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionsList.cpp

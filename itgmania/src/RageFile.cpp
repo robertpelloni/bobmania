@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageFile.cpp
-<<<<<<< HEAD:itgmania/src/RageFile.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp
 /*
  * This provides an interface to open files in RageFileManager's namespace
  * This is just a simple RageFileBasic wrapper on top of another RageFileBasic;
@@ -146,7 +142,6 @@ RString RageFile::GetError() const
 void RageFile::SetError( const RString &err )
 {
 	if( m_File != nullptr )
-<<<<<<< HEAD:itgmania/src/RageFile.cpp
 		m_File->ClearError();
 	m_sError = err;
 }
@@ -523,149 +518,6 @@ namespace RageFileUtil
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-/*
- * This provides an interface to open files in RageFileManager's namespace
- * This is just a simple RageFileBasic wrapper on top of another RageFileBasic;
- * when a file is open, is acts like the underlying RageFileBasic, except that
- * a few extra sanity checks are made to check file modes.  
- */
-
-#include "global.h"
-#include "RageFileBasic.h"
-#include "RageFile.h"
-#include "RageUtil.h"
-#include "RageFileDriver.h"
-
-RageFile::RageFile()
-{
-	m_File = nullptr;
-}
-	
-RageFile::RageFile( const RageFile &cpy ):
-	RageFileBasic( cpy )
-{
-	/* This will copy the file driver, including its internal file pointer. */
-	m_File = cpy.m_File->Copy();
-	m_Path = cpy.m_Path;
-	m_Mode = cpy.m_Mode;
-}
-
-RageFile *RageFile::Copy() const
-{
-	return new RageFile( *this );
-}
-
-RString RageFile::GetPath() const
-{
-	if ( !IsOpen() )
-		return RString();
-
-	RString sRet = m_File->GetDisplayPath();
-	if( sRet != "" )
-		return sRet;
-
-	return GetRealPath();
-}
-
-bool RageFile::Open( const RString& path, int mode )
-{
-	ASSERT( FILEMAN != nullptr );
-	Close();
-
-	m_Path = path;
-	FixSlashesInPlace(m_Path);
-
-	m_Mode = mode;
-
-	if( (m_Mode&READ) && (m_Mode&WRITE) )
-	{
-		SetError( "Reading and writing are mutually exclusive" );
-		return false;
-	}
-
-	if( !(m_Mode&READ) && !(m_Mode&WRITE) )
-	{
-		SetError( "Neither reading nor writing specified" );
-		return false;
-	}
-
-	int error;
-	m_File = FILEMAN->Open( path, mode, error );
-
-	if( m_File == nullptr )
-	{
-		SetError( strerror(error) );
-		return false;
-	}
-
-	return true;
-}
-
-void RageFile::Close()
-{
-	if( m_File == nullptr )
-		return;
-	delete m_File;
-	if( m_Mode & WRITE )
-		FILEMAN->CacheFile( m_File, m_Path );
-	m_File = nullptr;
-}
-
-#define ASSERT_OPEN ASSERT_M( IsOpen(), ssprintf("\"%s\" is not open.", m_Path.c_str()) );
-#define ASSERT_READ ASSERT_OPEN; ASSERT_M( !!(m_Mode&READ), ssprintf("\"%s\" is not open for reading", m_Path.c_str()) );
-#define ASSERT_WRITE ASSERT_OPEN; ASSERT_M( !!(m_Mode&WRITE), ssprintf("\"%s\" is not open for writing", m_Path.c_str()) );
-int RageFile::GetLine( RString &out )
-{
-	ASSERT_READ;
-	return m_File->GetLine( out );
-}
-
-int RageFile::PutLine( const RString &str )
-{
-	ASSERT_WRITE;
-	return m_File->PutLine( str );
-}
-
-void RageFile::EnableCRC32( bool on )
-{
-	ASSERT_OPEN;
-	m_File->EnableCRC32( on );
-}
-
-bool RageFile::GetCRC32( uint32_t *iRet )
-{
-	ASSERT_OPEN;
-	return m_File->GetCRC32( iRet );
-}
-
-
-bool RageFile::AtEOF() const
-{
-	ASSERT_READ;
-	return m_File->AtEOF();
-}
-
-void RageFile::ClearError()
-{
-	if( m_File != nullptr )
-		m_File->ClearError();
-	m_sError = "";
-}
-
-RString RageFile::GetError() const
-{
-	if( m_File != nullptr && m_File->GetError() != "" )
-		return m_File->GetError();
-	return m_sError;
-}
-
-
-void RageFile::SetError( const RString &err )
-{
-	if( m_File != nullptr )
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp
 		m_File->ClearError();
 	m_sError = err;
 }
@@ -965,11 +817,7 @@ namespace RageFileUtil
 	const luaL_Reg RageFileUtilTable[] =
 	{
 		LIST_METHOD( CreateRageFile ),
-<<<<<<< HEAD:itgmania/src/RageFile.cpp
 		{ NULL, nullptr }
-=======
-		{ nullptr, nullptr }
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp
 	};
 	LUA_REGISTER_NAMESPACE( RageFileUtil );
 }
@@ -998,7 +846,3 @@ namespace RageFileUtil
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageFile.cpp
->>>>>>> origin/c++11:src/RageFile.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFile.cpp

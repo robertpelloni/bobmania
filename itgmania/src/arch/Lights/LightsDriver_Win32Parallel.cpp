@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
-<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Parallel.cpp
 #include "global.h"
 #include "LightsDriver_Win32Parallel.h"
 #define WIN32_LEAN_AND_MEAN
@@ -50,7 +46,6 @@ LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 	// init io.dll
 	hDLL = LoadLibrary("parallel_lights_io.dll");
 	if(hDLL == nullptr)
-<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
 	{
 		MessageBox(nullptr, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;
@@ -141,56 +136,6 @@ void LightsDriver_Win32Parallel::Set( const LightsState *ls )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "LightsDriver_Win32Parallel.h"
-#include "windows.h"
-#include "RageUtil.h"
-
-REGISTER_SOUND_DRIVER_CLASS(Win32Parallel);
-
-HINSTANCE hDLL = nullptr;
-
-typedef void (WINAPI PORTOUT)(short int Port, char Data);
-PORTOUT* PortOut = nullptr;
-typedef short int (WINAPI ISDRIVERINSTALLED)();
-ISDRIVERINSTALLED* IsDriverInstalled = nullptr;
-
-const int LIGHTS_PER_PARALLEL_PORT = 8;
-// xxx: don't hardcode the port addresses. -aj
-const int MAX_PARALLEL_PORTS = 3;
-short LPT_ADDRESS[MAX_PARALLEL_PORTS] = 
-{
-	0x378,	// LPT1
-	0x278,	// LPT2
-	0x3bc,	// LPT3
-};
-
-int CabinetLightToIndex( CabinetLight cl )
-{
-	return cl;
-}
-
-int GameControllerAndGameButtonToIndex( GameController gc, GameButton gb )
-{
-	CLAMP( (int&)gb, 0, 4 );
-	return NUM_CabinetLight + gc*4 + gb;
-}
-
-void IndexToLptAndPin( int index, int &lpt_out, int &pin_out )
-{
-	lpt_out = index / LIGHTS_PER_PARALLEL_PORT;
-	ASSERT( lpt_out >= 0 && lpt_out < MAX_PARALLEL_PORTS );
-	pin_out = index % LIGHTS_PER_PARALLEL_PORT;
-}
-
-LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
-{
-	// init io.dll
-	hDLL = LoadLibrary("parallel_lights_io.dll");
-	if(hDLL == nullptr)
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Parallel.cpp
 	{
 		MessageBox(nullptr, "Could not LoadLibrary( parallel_lights_io.dll ).", "ERROR", MB_OK );
 		return;
@@ -281,7 +226,3 @@ void LightsDriver_Win32Parallel::Set( const LightsState *ls )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver_Win32Parallel.cpp
->>>>>>> origin/c++11:src/arch/Lights/LightsDriver_Win32Parallel.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver_Win32Parallel.cpp

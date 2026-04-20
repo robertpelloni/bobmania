@@ -97,15 +97,8 @@ bool MemoryCardDriverThreaded_MacOSX::USBStorageDevicesChanged()
 static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 
-=======
-	
->>>>>>> origin/c++11:src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
->>>>>>> main
 	if( !t )
 		return -1;
 	if( CFGetTypeID( t ) != CFNumberGetTypeID() )
@@ -124,15 +117,8 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, nullptr, 0 );
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 
-=======
-	
->>>>>>> origin/c++11:src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
->>>>>>> main
 	if( !t )
 		return RString();
 	if( CFGetTypeID( t ) != CFStringGetTypeID() )
@@ -159,15 +145,8 @@ void MemoryCardDriverThreaded_MacOSX::GetUSBStorageDevices( std::vector<UsbStora
 	// First, get all device paths
 	struct statfs *fs;
 	int num = getfsstat( nullptr, 0, MNT_NOWAIT );
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
 
-=======
-	
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MemoryCard/MemoryCardDriverThreaded_MacOSX.cpp
->>>>>>> main
 	fs = new struct statfs[num];
 
 	num = getfsstat( fs, num * sizeof(struct statfs), MNT_NOWAIT );

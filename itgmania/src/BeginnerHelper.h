@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
-<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.h
 #ifndef BEGINNER_HELPER_H
 #define BEGINNER_HELPER_H
 
@@ -43,7 +39,6 @@ protected:
 	Sprite	m_sFlash;
 	AutoActor	m_sBackground;
 	std::array<std::array<Sprite, 4>, NUM_PLAYERS> m_sStepCircle; // More memory, but much easier to manage.
-<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
 
 	int	m_iLastRowChecked;
 	int	m_iLastRowFlashed;
@@ -79,48 +74,6 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#ifndef BEGINNER_HELPER_H
-#define BEGINNER_HELPER_H
-
-#include "ActorFrame.h"
-#include "Character.h"
-#include "Sprite.h"
-#include "AutoActor.h"
-#include "PlayerNumber.h"
-#include "NoteData.h"
-#include "ThemeMetric.h"
-#include <array>
-class Model;
-/** @brief A dancing character that follows the steps of the Song. */
-class BeginnerHelper : public ActorFrame
-{
-public:
-	BeginnerHelper();
-	~BeginnerHelper();
-
-	bool Init( int iDancePadType );
-	bool IsInitialized() { return m_bInitialized; }
-	static bool CanUse();
-	void AddPlayer( PlayerNumber pn, const NoteData &nd );
-	void ShowStepCircle( PlayerNumber pn, int CSTEP );
-	bool m_bShowBackground;
-
-	void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-protected:
-	void Step( PlayerNumber pn, int CSTEP );
-
-	std::array<NoteData, NUM_PLAYERS> m_NoteData;
-	std::array<bool, NUM_PLAYERS> m_bPlayerEnabled;
-	std::array<Model *, NUM_PLAYERS> m_pDancer;
-	Model *m_pDancePad;
-	Sprite	m_sFlash;
-	AutoActor	m_sBackground;
-	std::array<std::array<Sprite, 4>, NUM_PLAYERS> m_sStepCircle; // More memory, but much easier to manage.
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.h
 
 	int	m_iLastRowChecked;
 	int	m_iLastRowFlashed;
@@ -156,7 +109,3 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/BeginnerHelper.h
->>>>>>> origin/c++11:src/BeginnerHelper.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BeginnerHelper.h

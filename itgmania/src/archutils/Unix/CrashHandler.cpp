@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
-<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandler.cpp
 #include "global.h"
 
 #include <csignal>
@@ -455,95 +451,7 @@ void CrashHandler::InitializeCrashHandler()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-
-#include <cstdio>
-#include <cstdlib>
-#include <cstdarg>
-#include <unistd.h>
-#include <cerrno>
-#include <limits.h>
-#include <fcntl.h>
-#include <csignal>
-
-#include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
-#include "RageThreads.h"
-#include "Backtrace.h"
-
-#include <sys/types.h>
-#include <sys/wait.h>
-
-#include "CrashHandler.h"
-#include "CrashHandlerInternal.h"
-
-extern uint64_t GetInvalidThreadId();
-extern const char *g_pCrashHandlerArgv0;
-
-static void safe_print( int fd, ... )
-{
-	va_list ap;
-	va_start( ap, fd );
-
-	while( true )
-	{
-		const char *p = va_arg( ap, const char * );
-		if( p == nullptr )
-			break;
-		size_t len = strlen( p );
-		while( len )
-		{
-			ssize_t result = write( fd, p, strlen(p) );
-			if( result == -1 )
-				_exit( 1 );
-			len -= result;
-			p += result;
-		}
-	}
-	va_end( ap );
-}
-
-#if defined(LINUX)
-static void GetExecutableName( char *buf, int bufsize )
-{
-	/* Reading /proc/self/exe always gives the running binary, even if it no
-	 * longer exists. */
-	strncpy( buf, "/proc/self/exe", bufsize );
-	buf[bufsize-1] = 0;
-}
-#else
-static void GetExecutableName( char *buf, int bufsize )
-{
-	strncpy( buf, g_pCrashHandlerArgv0, bufsize );
-	buf[bufsize-1] = 0;
-}
-#endif
-
-static void NORETURN spawn_child_process( int from_parent )
-{
-	/* We need to re-exec ourself, to get a clean process.  Close all
-	 * FDs except for 0-2 and to_child, and then assign to_child to 3. */
-	for( int fd = 3; fd < 1024; ++fd )
-		if( fd != from_parent ) close(fd);
-
-	if( from_parent != 3 )
-	{
-		dup2( from_parent, 3 );
-		close( from_parent );
-	}
-
-	char path[1024];
-	char magic[32];
-	GetExecutableName( path, sizeof(path) );
-	strncpy( magic, CHILD_MAGIC_PARAMETER, sizeof(magic) );
-
-	/* Use execve; it's the lowest-level of the exec calls.  The others may allocate. */
-	char *argv[3] = { path, magic, nullptr };
-<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
 	char *envp[1] = { NULL };
-=======
-	char *envp[1] = { nullptr };
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandler.cpp
 	execve( path, argv, envp );
 
 	/* If we got here, the exec failed.  We can't call strerror. */
@@ -901,7 +809,3 @@ void CrashHandler::InitializeCrashHandler()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/archutils/Unix/CrashHandler.cpp
->>>>>>> origin/c++11:src/archutils/Unix/CrashHandler.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Unix/CrashHandler.cpp

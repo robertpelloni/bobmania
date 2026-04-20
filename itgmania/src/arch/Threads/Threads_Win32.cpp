@@ -11,10 +11,6 @@
 
 const int MAX_THREADS=128;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
->>>>>>> main
 static std::unique_ptr<MutexImpl_Win32> g_pThreadIdMutex;
 static bool g_ThreadIdMutexInitialized = false;
 static std::mutex g_ThreadIdMutexInitLock;
@@ -29,17 +25,6 @@ static void InitThreadIdMutex()
 	g_ThreadIdMutexInitialized = true;
 
 	g_pThreadIdMutex = std::move(temp);
-<<<<<<< HEAD
-=======
-=======
-static MutexImpl_Win32 *g_pThreadIdMutex = nullptr;
-static void InitThreadIdMutex()
-{
-	if( g_pThreadIdMutex != nullptr )
-		return;
-	g_pThreadIdMutex = new MutexImpl_Win32(nullptr);
->>>>>>> origin/c++11:src/arch/Threads/Threads_Win32.cpp
->>>>>>> main
 }
 
 static uint64_t g_ThreadIds[MAX_THREADS];
@@ -183,15 +168,6 @@ ThreadImpl *MakeThisThread()
 
 	if( !ret )
 	{
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
-=======
-//		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
-//			CurProc, GetCurrentThread() ) );
-
->>>>>>> origin/c++11:src/arch/Threads/Threads_Win32.cpp
->>>>>>> main
 		thread->ThreadHandle = nullptr;
 	}
 
@@ -209,27 +185,12 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
-<<<<<<< HEAD
 	thread->ThreadHandle = CreateThread(nullptr, 0, &StartThread, thread.get(), CREATE_SUSPENDED, &thread->ThreadId);
 	*piThreadID = static_cast<uint64_t>(thread->ThreadId);
 	ASSERT_M(thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str()));
-=======
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
 	thread->ThreadHandle = CreateThread(nullptr, 0, &StartThread, thread.get(), CREATE_SUSPENDED, &thread->ThreadId);
 	*piThreadID = static_cast<uint64_t>(thread->ThreadId);
 	ASSERT_M(thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str()));
-=======
-	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
-	*piThreadID = (uint64_t) thread->ThreadId;
-	ASSERT_M( thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
->>>>>>> origin/c++11:src/arch/Threads/Threads_Win32.cpp
-=======
-	thread->ThreadHandle = CreateThread( nullptr, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
-	*piThreadID = (uint64_t) thread->ThreadId;
-	ASSERT_M( thread->ThreadHandle != nullptr, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread").c_str() ) );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Win32.cpp
->>>>>>> main
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
@@ -244,15 +205,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 MutexImpl_Win32::MutexImpl_Win32( RageMutex *pParent ):
 	MutexImpl( pParent )
 {
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
 	mutex = CreateMutex( nullptr, false, nullptr );
-=======
-	mutex = CreateMutex( NULL, false, nullptr );
->>>>>>> origin/c++11:src/arch/Threads/Threads_Win32.cpp
-=======
-	mutex = CreateMutex( nullptr, false, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Win32.cpp
 	ASSERT_M( mutex != nullptr, werr_ssprintf(GetLastError(), "CreateMutex") );
 }
 
@@ -345,21 +298,9 @@ EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
 {
 	m_pParent = pParent;
 	m_iNumWaiting = 0;
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
 	m_WakeupSema = CreateSemaphore( nullptr, 0, 0x7fffffff, nullptr );
 	InitializeCriticalSection( &m_iNumWaitingLock );
 	m_WaitersDone = CreateEvent( nullptr, FALSE, FALSE, nullptr );
-=======
-	m_WakeupSema = CreateSemaphore( NULL, 0, 0x7fffffff, nullptr );
-	InitializeCriticalSection( &m_iNumWaitingLock );
-	m_WaitersDone = CreateEvent( NULL, FALSE, FALSE, nullptr );
->>>>>>> origin/c++11:src/arch/Threads/Threads_Win32.cpp
-=======
-	m_WakeupSema = CreateSemaphore( nullptr, 0, 0x7fffffff, nullptr );
-	InitializeCriticalSection( &m_iNumWaitingLock );
-	m_WaitersDone = CreateEvent( nullptr, FALSE, FALSE, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Win32.cpp
 }
 
 EventImpl_Win32::~EventImpl_Win32()
@@ -465,15 +406,7 @@ EventImpl *MakeEvent( MutexImpl *pMutex )
 
 SemaImpl_Win32::SemaImpl_Win32( int iInitialValue )
 {
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/Threads/Threads_Win32.cpp
 	sem = CreateSemaphore( nullptr, iInitialValue, 999999999, nullptr );
-=======
-	sem = CreateSemaphore( NULL, iInitialValue, 999999999, nullptr );
->>>>>>> origin/c++11:src/arch/Threads/Threads_Win32.cpp
-=======
-	sem = CreateSemaphore( nullptr, iInitialValue, 999999999, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Threads/Threads_Win32.cpp
 	m_iCounter = iInitialValue;
 }
 

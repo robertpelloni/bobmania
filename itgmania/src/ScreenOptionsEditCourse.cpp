@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsEditCourse.cpp
 #include "global.h"
 
 #include "ScreenOptionsEditCourse.h"
@@ -64,7 +60,6 @@ public:
 		{
 			m_Def.m_vsChoices.push_back( "n/a" );
 			m_vpSteps.push_back(nullptr);
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
 			m_Def.m_vEnabledForPlayers.clear();
 		}
 
@@ -534,68 +529,6 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-
-#include "ScreenOptionsEditCourse.h"
-#include "ScreenMiniMenu.h"
-#include "SongUtil.h"
-#include "SongManager.h"
-#include "OptionRowHandler.h"
-#include "Song.h"
-#include "GameState.h"
-#include "ScreenPrompt.h"
-#include "LocalizedString.h"
-#include "CourseUtil.h"
-#include "Song.h"
-#include "Style.h"
-#include "Steps.h"
-
-static void GetStepsForSong( Song *pSong, vector<Steps*> &vpStepsOut )
-{
-	SongUtil::GetSteps( pSong, vpStepsOut, GAMESTATE->GetCurrentStyle()->m_StepsType );
-	// xxx: If the StepsType isn't valid for the current game, this will cause
-	// a crash when changing songs. -aj
-	StepsUtil::RemoveLockedSteps( pSong, vpStepsOut );
-	StepsUtil::SortNotesArrayByDifficulty( vpStepsOut );
-}
-
-// XXX: very similar to OptionRowHandlerSteps
-class EditCourseOptionRowHandlerSteps : public OptionRowHandler
-{
-public:
-	void Load( int iEntryIndex )
-	{
-		m_iEntryIndex = iEntryIndex;
-	}
-	virtual ReloadChanged Reload()
-	{
-		m_Def.m_vsChoices.clear();
-		m_vpSteps.clear();
-
-		Song *pSong = GAMESTATE->m_pCurSong;
-		if( pSong ) // playing a song
-		{
-			GetStepsForSong( pSong, m_vpSteps );
-			for (Steps const *steps : m_vpSteps)
-			{
-				RString s;
-				if( steps->GetDifficulty() == Difficulty_Edit )
-					s = steps->GetDescription();
-				else
-					s = CustomDifficultyToLocalizedString( StepsToCustomDifficulty(steps) );
-				s += ssprintf( " %d", steps->GetMeter() );
-				m_Def.m_vsChoices.push_back( s );
-			}
-			m_Def.m_vEnabledForPlayers.clear();
-			m_Def.m_vEnabledForPlayers.insert( PLAYER_1 );
-		}
-		else
-		{
-			m_Def.m_vsChoices.push_back( "n/a" );
-			m_vpSteps.push_back(nullptr);
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsEditCourse.cpp
 			m_Def.m_vEnabledForPlayers.clear();
 		}
 
@@ -1065,7 +998,3 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditCourse.cpp
->>>>>>> origin/c++11:src/ScreenOptionsEditCourse.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsEditCourse.cpp

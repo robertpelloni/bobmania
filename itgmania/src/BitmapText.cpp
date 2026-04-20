@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/BitmapText.cpp
-<<<<<<< HEAD:itgmania/src/BitmapText.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp
 #include "global.h"
 #include "BitmapText.h"
 #include "XmlFile.h"
@@ -12,20 +8,11 @@
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/BitmapText.cpp
->>>>>>> main
 #include "RageTimer.h"
 
 #include <cmath>
 #include <cstddef>
 #include <vector>
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp
->>>>>>> main
 
 
 REGISTER_ACTOR_CLASS( BitmapText );
@@ -260,7 +247,6 @@ void BitmapText::BuildChars()
 {
 	// If we don't have a font yet, we'll do this when it loads.
 	if( m_pFont == nullptr )
-<<<<<<< HEAD:itgmania/src/BitmapText.cpp
 		return;
 
 	// calculate line lengths and widths
@@ -1170,187 +1156,6 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "BitmapText.h"
-#include "XmlFile.h"
-#include "FontManager.h"
-#include "RageLog.h"
-#include "RageTimer.h"
-#include "RageDisplay.h"
-#include "ThemeManager.h"
-#include "Font.h"
-#include "ActorUtil.h"
-#include "LuaBinding.h"
-
-
-REGISTER_ACTOR_CLASS( BitmapText );
-
-/* XXX:
- * We need some kind of font modifier string for metrics.  For example,
- * "valign=top;spacing = x+5,y+2"
- *
- * Better, we could go all the way, drop all of the actor-specific font aliases,
- * and do "font=header2;valign=top;...". */
- 
- /* XXX: Changing a whole array of diffuse colors every frame (several times) is
- * a waste, when we're usually setting them all to the same value. Rainbow and
- * fading are annoying to optimize, but rarely used. Iterating over every
- * character in Draw() is dumb. */
-#define NUM_RAINBOW_COLORS	THEME->GetMetricI("BitmapText","NumRainbowColors")
-#define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
-
-static vector<RageColor> RAINBOW_COLORS;
-
-BitmapText::BitmapText()
-{
-	// Loading these theme metrics is slow, so only do it every 20th time.
-	// todo: why not check to see if you need to bother updating this at all? -aj
-	static int iReloadCounter = 0;
-	if( iReloadCounter % 20==0 )
-	{
-		RAINBOW_COLORS.resize( NUM_RAINBOW_COLORS );
-		for( unsigned i = 0; i < RAINBOW_COLORS.size(); ++i )
-			RAINBOW_COLORS[i] = RAINBOW_COLOR(i);
-	}
-	iReloadCounter++;
-
-	m_pFont = nullptr;
-	m_bUppercase = false;
-
-	m_bRainbowScroll = false;
-	m_bJitter = false;
-
-	m_iWrapWidthPixels = -1;
-	m_fMaxWidth = 0;
-	m_fMaxHeight = 0;
-	m_iVertSpacing = 0;
-	m_bHasGlowAttribute = false;
-	// We'd be better off not adding strokes to things we can't control
-	// themewise (ScreenDebugOverlay for example). -Midiman
-	m_StrokeColor = RageColor(0,0,0,0);
-	// Never, this way we dont have awkward settings between themes. -Midiman
-	SetShadowLength( 0 );
-	// SM4SVN r28328, "draw glow using stroke texture" forces the BitmapText to
-	// glow both the inner and stroke elements. This makes BitmapText elements
-	// with an invisible stroke have a glowing stroke instead. Not good. -aj
-	m_TextGlowMode = TextGlowMode_Both; // Both used for compatibility with SM4
-}
-
-BitmapText::~BitmapText()
-{
-	if( m_pFont )
-		FONT->UnloadFont( m_pFont );
-}
-
-BitmapText & BitmapText::operator=(const BitmapText &cpy)
-{
-	Actor::operator=(cpy);
-
-#define CPY(a) a = cpy.a
-	CPY( m_bUppercase );
-	CPY( m_sText );
-	CPY( m_wTextLines );
-	CPY( m_iLineWidths );
-	CPY( m_iWrapWidthPixels );
-	CPY( m_fMaxWidth );
-	CPY( m_fMaxHeight );
-	CPY( m_bRainbowScroll );
-	CPY( m_bJitter );
-	CPY( m_iVertSpacing );
-	CPY( m_aVertices );
-	CPY( m_vpFontPageTextures );
-	CPY( m_mAttributes );
-	CPY( m_bHasGlowAttribute );
-	CPY( m_StrokeColor );
-#undef CPY
-
-	if( m_pFont )
-		FONT->UnloadFont( m_pFont );
-
-	if( cpy.m_pFont != nullptr )
-		m_pFont = FONT->CopyFont( cpy.m_pFont );
-	else
-		m_pFont = nullptr;
-
-	return *this;
-}
-
-BitmapText::BitmapText( const BitmapText &cpy ):
-	Actor( cpy )
-{
-	m_pFont = nullptr;
-
-	*this = cpy;
-}
-
-void BitmapText::LoadFromNode( const XNode* pNode )
-{
-	RString sText;
-	pNode->GetAttrValue( "Text", sText );
-	RString sAltText;
-	pNode->GetAttrValue( "AltText", sAltText );
-
-	ThemeManager::EvaluateString( sText );
-	ThemeManager::EvaluateString( sAltText );
-
-	RString sFont;
-	if( !ActorUtil::GetAttrPath(pNode, "File", sFont) )
-	{
-		if( !pNode->GetAttrValue("Font", sFont) ) // accept "File" for backward compatibility
-			RageException::Throw( "%s: BitmapText: missing the File attribute",
-					      ActorUtil::GetWhere(pNode).c_str() );
-		sFont = THEME->GetPathF( "", sFont );
-	}
-
-	LoadFromFont( sFont );
-
-	SetText( sText, sAltText );
-	Actor::LoadFromNode( pNode );
-}
-
-bool BitmapText::LoadFromFont( const RString& sFontFilePath )
-{
-	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
-
-	if( m_pFont )
-	{
-		FONT->UnloadFont( m_pFont );
-		m_pFont = nullptr;
-	}
-
-	m_pFont = FONT->LoadFont( sFontFilePath );
-
-	this->SetStrokeColor( m_pFont->GetDefaultStrokeColor() );
-
-	BuildChars();
-
-	return true;
-}
-
-bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars )
-{
-	CHECKPOINT_M( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
-
-	if( m_pFont )
-	{
-		FONT->UnloadFont( m_pFont );
-		m_pFont = nullptr;
-	}
-
-	m_pFont = FONT->LoadFont( sTexturePath, sChars );
-
-	BuildChars();
-
-	return true;
-}
-
-void BitmapText::BuildChars()
-{
-	// If we don't have a font yet, we'll do this when it loads.
-	if( m_pFont == nullptr )
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp
 		return;
 
 	// calculate line lengths and widths
@@ -2071,7 +1876,3 @@ LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/BitmapText.cpp
->>>>>>> origin/c++11:src/BitmapText.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BitmapText.cpp

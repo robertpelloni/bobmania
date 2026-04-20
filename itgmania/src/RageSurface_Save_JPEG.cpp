@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_JPEG.cpp
 #include "global.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
@@ -78,7 +74,6 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
 static void jpeg_RageFile_dest( jpeg::j_compress_ptr cinfo, RageFile &f )
 {
 	ASSERT( cinfo->dest == nullptr );
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
 
 	cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
 		(*cinfo->mem->alloc_small) ( (jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
@@ -178,91 +173,6 @@ bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQu
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "RageSurface.h"
-#include "RageSurfaceUtils.h"
-#include "RageSurface_Save_JPEG.h"
-
-#include "RageUtil.h"
-#include "RageFile.h"
-
-#undef FAR // fix for VC
-/** @brief A helper to get the jpeg lib. */
-namespace jpeg
-{
-	extern "C"
-	{
-#if defined(MACOSX)
-#include <../extern/libjpeg/jpeglib.h>
-#else
-#include "jpeglib.h"
-#endif
-	}
-}
-
-// Pull in JPEG library here.
-#if defined _MSC_VER
-#pragma comment(lib, "jpeg.lib")
-#endif
-
-#define OUTPUT_BUFFER_SIZE	4096
-typedef struct
-{
-	struct jpeg::jpeg_destination_mgr pub;
-
-	RageFile *f;
-	uint8_t buffer[OUTPUT_BUFFER_SIZE];
-} my_destination_mgr;
-
-
-/*
- * Initialize source --- called by jpeg_read_header
- * before any data is actually read.
- */
-static void init_destination( jpeg::j_compress_ptr cinfo )
-{
-	/* nop */
-	return;
-}
-
-/* Empty the output buffer; called whenever buffer is full. */
-static jpeg::boolean empty_output_buffer( jpeg::j_compress_ptr cinfo )
-{
-	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
-	dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE );
-	// XXX err
-	dest->pub.next_output_byte = dest->buffer;
-	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE;
-
-	return TRUE;
-}
-
-
-/*
- * Terminate source --- called by jpeg_finish_decompress
- * after all data has been read.
- */
-static void term_destination (jpeg::j_compress_ptr cinfo)
-{
-	/* Write data remaining in the buffer */
-	my_destination_mgr *dest = (my_destination_mgr *) cinfo->dest;
-	dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE - dest->pub.free_in_buffer );
-	// XXX err
-	dest->pub.next_output_byte = dest->buffer;
-	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE;
-}
-
-/*
- * Prepare for output to a stdio stream.
- * The caller must have already opened the stream, and is responsible
- * for closing it after finishing decompression.
- */
-static void jpeg_RageFile_dest( jpeg::j_compress_ptr cinfo, RageFile &f )
-{
-	ASSERT( cinfo->dest == nullptr );
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_JPEG.cpp
 
 	cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
 		(*cinfo->mem->alloc_small) ( (jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
@@ -362,7 +272,3 @@ bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQu
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_JPEG.cpp
->>>>>>> origin/c++11:src/RageSurface_Save_JPEG.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_JPEG.cpp

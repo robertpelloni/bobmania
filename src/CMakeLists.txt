@@ -1,6 +1,5 @@
 file(MAKE_DIRECTORY "${SM_SRC_DIR}/generated")
 
-<<<<<<< HEAD
 # Version Stub generation
 add_custom_command(
   OUTPUT ${SM_SRC_DIR}/generated/verstub.cpp
@@ -35,27 +34,12 @@ list(APPEND SMDATA_GLOBAL_FILES_HPP
 )
 
 source_group("Global Files" FILES ${SMDATA_GLOBAL_FILES_SRC} ${SMDATA_GLOBAL_FILES_HPP})
-=======
-if(MSVC)
-  # Add the mapconv program of the past to allow for debugging information.
-  include("CMakeProject-mapconv.cmake")
-  if(WITH_IRC_POST_HOOK)
-    include("CMakeProject-irc.cmake")
-  endif()
-  if(WITH_TEXTURE_GENERATOR OR WITH_FULL_RELEASE)
-    include("CMakeProject-texture.cmake")
-  endif()
-endif()
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 # Keep the module path local for easier grabbing.
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-<<<<<<< HEAD
 # Main project is below.
 
-=======
->>>>>>> main
 include(CMakeData-arch.cmake)
 include(CMakeData-rage.cmake)
 include(CMakeData-os.cmake)
@@ -63,7 +47,6 @@ include(CMakeData-actor.cmake)
 include(CMakeData-screen.cmake)
 include(CMakeData-data.cmake)
 include(CMakeData-gtk.cmake)
-<<<<<<< HEAD
 
 list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
   "AnnouncerManager.cpp"
@@ -160,24 +143,6 @@ list(APPEND SMDATA_ALL_FILES_SRC
   ${SMDATA_OS_SRC}
   ${SMDATA_FILE_TYPES_SRC}
 )
-=======
-include(CMakeData-file-types.cmake)
-include(CMakeData-globals.cmake)
-include(CMakeData-singletons.cmake)
-include(CMakeData-economy.cmake)
-
-list(APPEND SMDATA_ALL_FILES_SRC
-            ${SMDATA_GLOBAL_FILES_SRC}
-            ${SMDATA_GLOBAL_SINGLETON_SRC}
-            ${SMDATA_ECONOMY_SRC}
-            ${SMDATA_ALL_ACTORS_SRC}
-            ${SMDATA_ALL_ARCH_SRC}
-            ${SMDATA_ALL_DATA_SRC}
-            ${SMDATA_ALL_RAGE_SRC}
-            ${SMDATA_ALL_SCREENS_SRC}
-            ${SMDATA_OS_SRC}
-            ${SMDATA_FILE_TYPES_SRC})
->>>>>>> origin/unified-ui-features-13937230807013224518
 list(APPEND SMDATA_ALL_FILES_HPP
             ${SMDATA_GLOBAL_FILES_HPP}
             ${SMDATA_GLOBAL_SINGLETON_HPP}
@@ -209,7 +174,6 @@ configure_file("${SM_XCODE_DIR}/plistHelper.in.hpp"
 # TODO: Make this actually be data and not an executable.
 if(APPLE)
   set(MACOSX_BUNDLE_BUNDLE_NAME ${SM_EXE_NAME})
-<<<<<<< HEAD
   add_executable("${SM_EXE_NAME}" MACOSX_BUNDLE ${SMDATA_ALL_FILES_SRC} ${SMDATA_ALL_FILES_HPP})
   set_target_properties("${SM_EXE_NAME}" PROPERTIES MACOSX_BUNDLE TRUE)
 else()
@@ -217,54 +181,6 @@ else()
 endif()
 
 if (WITH_PORTABLE_TOMCRYPT)
-=======
-  add_executable("${SM_EXE_NAME}"
-                 MACOSX_BUNDLE
-                 ${SMDATA_ALL_FILES_SRC}
-                 ${SMDATA_ALL_FILES_HPP})
-  set_target_properties("${SM_EXE_NAME}" PROPERTIES MACOSX_BUNDLE TRUE)
-else()
-  if(MSVC)
-    foreach(sm_src_file ${SMDATA_ALL_FILES_SRC})
-      get_filename_component(sm_src_raw "${sm_src_file}" NAME_WE)
-      if(${sm_src_raw} MATCHES "global")
-        set_source_files_properties("${sm_src_raw}.cpp"
-                                    PROPERTIES
-                                    COMPILE_FLAGS
-                                    "/Ycglobal.h")
-      elseif(NOT (${sm_src_raw} MATCHES "verstub"))
-        set_source_files_properties("${sm_src_raw}.cpp"
-                                    PROPERTIES
-                                    COMPILE_FLAGS
-                                    "/Yuglobal.h")
-      endif()
-    endforeach()
-  endif()
-  add_executable("${SM_EXE_NAME}" ${SMDATA_ALL_FILES_SRC}
-                 ${SMDATA_ALL_FILES_HPP})
-endif()
-
-set_target_properties("${SM_EXE_NAME}"
-                      PROPERTIES OUTPUT_NAME
-                                 "${SM_NAME_RELEASE}"
-                                 RELEASE_OUTPUT_NAME
-                                 "${SM_NAME_RELEASE}"
-                                 DEBUG_OUTPUT_NAME
-                                 "${SM_NAME_DEBUG}"
-                                 MINSIZEREL_OUTPUT_NAME
-                                 "${SM_NAME_MINSIZEREL}"
-                                 RELWITHDEBINFO_OUTPUT_NAME
-                                 "${SM_NAME_RELWITHDEBINFO}")
-
-# Required for usage of tomcrypt and tommath.
-sm_add_compile_definition("${SM_EXE_NAME}" LTM_DESC)
-sm_add_compile_definition("${SM_EXE_NAME}" LTM_HMAC)
-
-if(WITH_PORTABLE_TOMCRYPT)
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
->>>>>>> main
   sm_add_compile_definition("${SM_EXE_NAME}" LTC_NO_ASM)
 endif()
 if(WITH_NO_ROLC_TOMCRYPT)
@@ -318,16 +234,11 @@ if(MSVC)
   set(SM_COMPILE_FLAGS "${SM_COMPILE_FLAGS} /MP2")
 endif()
 
-<<<<<<< HEAD
 if(${SM_COMPILE_FLAGS})
 set_target_properties("${SM_EXE_NAME}" PROPERTIES
   COMPILE_FLAGS ${SM_COMPILE_FLAGS}
 )
 endif()
-=======
-set_target_properties("${SM_EXE_NAME}"
-                      PROPERTIES COMPILE_FLAGS "${SM_COMPILE_FLAGS}")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 set_target_properties("${SM_EXE_NAME}"
                       PROPERTIES OUTPUT_NAME_DEBUG
@@ -338,7 +249,6 @@ set_target_properties("${SM_EXE_NAME}"
                                  "${SM_NAME_RELWITHDEBINFO}")
 
 list(APPEND SM_WINDOWS_PROGRAM_DLLS
-<<<<<<< HEAD
   "${SM_PROGRAM_DIR}/avcodec-53.dll"
   "${SM_PROGRAM_DIR}/avformat-53.dll"
   "${SM_PROGRAM_DIR}/avutil-51.dll"
@@ -352,13 +262,6 @@ list(APPEND SM_WINDOWS_PROGRAM_DLLS
   "${SM_PROGRAM_DIR}/vccorlib110.dll"
   "${SM_PROGRAM_DIR}/zlib1.dll"
 )
-=======
-            "${SM_PROGRAM_DIR}/avcodec-55.dll"
-            "${SM_PROGRAM_DIR}/avformat-55.dll"
-            "${SM_PROGRAM_DIR}/avutil-52.dll"
-            "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
-            "${SM_PROGRAM_DIR}/swscale-2.dll")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" WINDOWS)
@@ -367,9 +270,6 @@ if(WIN32)
   sm_add_compile_definition("${SM_EXE_NAME}" _CRT_SECURE_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" _WINSOCK_DEPRECATED_NO_WARNINGS)
   sm_add_compile_definition("${SM_EXE_NAME}" GLEW_STATIC)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
   
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${SM_PROGRAM_DIR}"
@@ -397,8 +297,6 @@ elseif(APPLE)
     XCODE_ATTRIBUTE_GCC_ENABLE_CPP_EXCEPTIONS "NO"
     XCODE_ATTRIBUTE_LIBRARY_SEARCH_PATHS "${SM_XCODE_DIR}/ffmpeg/lib ${SM_XCODE_DIR}/Libraries"
     XCODE_ATTRIBUTE_OTHER_LDFLAGS "-lbz2"
-=======
->>>>>>> main
 
   set_target_properties("${SM_EXE_NAME}"
                         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
@@ -480,27 +378,14 @@ elseif(APPLE)
     "${SM_ROOT_DIR}/Scripts"
     "${SM_ROOT_DIR}/Songs"
     "${SM_ROOT_DIR}/Themes"
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
->>>>>>> main
   )
   
   target_sources("${SM_EXE_NAME}" PUBLIC ${APPLE_BUNDLE_RESOURCES})
   set_source_files_properties(${APPLE_BUNDLE_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
   sm_add_compile_definition("${SM_EXE_NAME}" _XOPEN_SOURCE)
-<<<<<<< HEAD
   
   if (CMAKE_BUILD_TYPE EQUAL "Debug")
-=======
-
-  if(${HAS_FFMPEG})
-    sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
-  endif()
-
-  if(CMAKE_BUILD_TYPE EQUAL "Debug")
->>>>>>> origin/unified-ui-features-13937230807013224518
     set(SM_APP_RELEASE_NAME "${SM_NAME_DEBUG}")
   elseif(CMAKE_BUILD_TYPE EQUAL "MinSizeRel")
     set(SM_APP_RELEASE_NAME "${SM_NAME_MINSIZEREL}")
@@ -560,7 +445,6 @@ elseif(APPLE)
                              "${SM_XCODE_DIR}/Hardware.plist"
                              "$<TARGET_FILE_DIR:StepMania>/../Resources/")
 else() # Linux
-<<<<<<< HEAD
   # TODO: Have this compile definition be used all over. Currently fixed for Windows and Mac, but in headers.
   sm_add_compile_definition("${SM_EXE_NAME}" "${ENDIANNESS}")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES
@@ -570,47 +454,14 @@ else() # Linux
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${SM_ROOT_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${SM_ROOT_DIR}"
   )
-=======
-  set_target_properties("${SM_EXE_NAME}"
-                        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                                   "${SM_ROOT_DIR}"
-                                   RUNTIME_OUTPUT_DIRECTORY_RELEASE
-                                   "${SM_ROOT_DIR}"
-                                   RUNTIME_OUTPUT_DIRECTORY_DEBUG
-                                   "${SM_ROOT_DIR}"
-                                   RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL
-                                   "${SM_ROOT_DIR}"
-                                   RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO
-                                   "${SM_ROOT_DIR}")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
   if(${WITH_CRASH_HANDLER})
     sm_add_compile_definition("${SM_EXE_NAME}" CRASH_HANDLER)
     if(LINUX)
       # used only in the ArchHooks_Unix.cpp file
-<<<<<<< HEAD
       sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
       sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_TEXT="x86 custom backtrace")
       sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
-=======
-      if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86" OR CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-        sm_add_compile_definition("${SM_EXE_NAME}" BACKTRACE_METHOD_X86_LINUX)
-        sm_add_compile_definition("${SM_EXE_NAME}"
-                                BACKTRACE_METHOD_TEXT="x86 custom backtrace")
-      else()
-        sm_add_compile_definition("${SM_EXE_NAME}"
-                                BACKTRACE_METHOD_TEXT="no backtrace")
-      endif()
-      sm_add_compile_definition(
-        "${SM_EXE_NAME}" BACKTRACE_LOOKUP_METHOD_TEXT="backtrace_symbols")
-      if(${DL_FOUND})
-        sm_add_compile_definition("${SM_EXE_NAME}"
-                                  BACKTRACE_LOOKUP_METHOD_DLADDR)
-      else()
-        sm_add_compile_definition("${SM_EXE_NAME}"
-                                  BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS)
-      endif()
->>>>>>> origin/unified-ui-features-13937230807013224518
     endif()
   endif()
   if(${HAS_PTHREAD})
@@ -620,32 +471,15 @@ else() # Linux
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
       message("Host processor is 64bit X86")
       sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86_64)
-<<<<<<< HEAD
-=======
-    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86"
-           OR CMAKE_SYSTEM_PROCESSOR MATCHES "i686")
-      message("Host processor is 32bit X86")
-      sm_add_compile_definition("${SM_EXE_NAME}" CPU_X86)
-    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
-      message("Host processor is 64bit ARM")
-      sm_add_compile_definition("${SM_EXE_NAME}" CPU_AARCH64)
-    else()
-      message("Unrecognized host processor type")
->>>>>>> origin/unified-ui-features-13937230807013224518
     endif()
   endif()
   if(${HAS_FFMPEG})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_FFMPEG)
   endif()
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
   if (${HAS_X11})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_X11)
   endif()
   if (BSD)
-=======
->>>>>>> main
   if(${HAS_XRANDR})
     sm_add_compile_definition("${SM_EXE_NAME}" HAVE_XRANDR)
   endif()
@@ -657,10 +491,6 @@ else() # Linux
   endif()
 
   if(BSD)
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
->>>>>>> main
     sm_add_compile_definition("${SM_EXE_NAME}" BSD)
   endif()
 
@@ -678,9 +508,6 @@ endif()
 
 set_property(TARGET "${SM_EXE_NAME}" PROPERTY FOLDER "Internal Libraries")
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 list(APPEND SMDATA_LINK_LIB
   "lua-5.1"
   "tomcrypt"
@@ -723,8 +550,6 @@ if (WIN32)
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/mad-0.15.1b/msvc++/Release\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/vorbis/win32\"")
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
-=======
->>>>>>> main
 list(APPEND SMDATA_LINK_LIB "lua-5.1")
 include(../extern/CMakeProject-mmmagic.cmake)
 
@@ -821,10 +646,6 @@ if(WIN32)
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_EXTERN_DIR}/ffmpeg/${SM_WIN32_ARCH}/lib\"")
   sm_add_link_flag("${SM_EXE_NAME}"
                    "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk/${SM_WIN32_ARCH}\"")
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
->>>>>>> main
   sm_add_link_flag("${SM_EXE_NAME}" "/ERRORREPORT:SEND")
   sm_add_link_flag("${SM_EXE_NAME}" "/MAPINFO:EXPORTS")
   sm_add_link_flag("${SM_EXE_NAME}" "/SAFESEH:NO")
@@ -833,9 +654,6 @@ if(WIN32)
   sm_add_link_flag("${SM_EXE_NAME}" "/NODEFAULTLIB:wininet.lib")
   sm_add_link_flag("${SM_EXE_NAME}" "/NODEFAULTLIB:msimg32.lib")
   sm_add_link_flag("${SM_EXE_NAME}" "/NODEFAULTLIB:libci.lib")
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
   set_target_properties("${SM_EXE_NAME}" PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
@@ -883,8 +701,6 @@ elseif(APPLE)
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
   if (HAS_FFMPEG)
-=======
->>>>>>> main
   set_target_properties("${SM_EXE_NAME}"
                         PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}"
@@ -922,7 +738,6 @@ elseif(APPLE)
   endif()
 else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   if(HAS_FFMPEG)
->>>>>>> origin/unified-ui-features-13937230807013224518
     if(WITH_SYSTEM_FFMPEG)
       list(APPEND SMDATA_LINK_LIB
                   "${FFMPEG_avformat_LIBRARY}"
@@ -947,15 +762,9 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
     endif()
   endif()
 
-<<<<<<< HEAD
   list(APPEND SMDATA_LINK_LIB
     "${DL_LIBRARY}"
   )
-=======
-  if(${DL_FOUND})
-    list(APPEND SMDATA_LINK_LIB ${DL_LIBRARIES})
-  endif()
->>>>>>> origin/unified-ui-features-13937230807013224518
 
   list(APPEND SMDATA_LINK_LIB "${OPENGL_LIBRARY}")
 
@@ -963,7 +772,6 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
     list(APPEND SMDATA_LINK_LIB "${GTK3_LIBRARIES}")
   endif()
 
-<<<<<<< HEAD
   if(HAS_MP3)
     list(APPEND SMDATA_LINK_LIB
       "${LIBMAD_LIBRARY}"
@@ -973,9 +781,6 @@ else() # Unix / Linux TODO: Remember to find and locate the zip archive files.
   list(APPEND SMDATA_LINK_LIB
     "${OPENGL_LIBRARY}"
   )
-=======
-  list(APPEND SMDATA_LINK_LIB "${BZIP2_LIBRARIES}" "${CMAKE_THREAD_LIBS_INIT}")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
   if(HAS_ALSA)
     list(APPEND SMDATA_LINK_LIB ${ALSA_LIBRARIES})
@@ -1024,9 +829,6 @@ endif()
 
 target_link_libraries("${SM_EXE_NAME}" ${SMDATA_LINK_LIB} bobcoin)
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 list(APPEND SM_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
   "${SM_EXTERN_DIR}/vorbis"
@@ -1039,14 +841,11 @@ if(NOT APPLE)
     "${SM_EXTERN_DIR}/zlib"
   )
   if(MSVC)
-=======
->>>>>>> main
 list(APPEND SM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
             "${SM_SRC_DIR}/generated")
 list(APPEND SM_INCLUDE_DIRS "${JPEG_INCLUDE_DIR}")
 if(NOT APPLE)
   if(NOT WITH_SYSTEM_GLEW)
->>>>>>> origin/unified-ui-features-13937230807013224518
     list(APPEND SM_INCLUDE_DIRS
                 "${SM_EXTERN_DIR}/glew-1.5.8/include")
   endif()
@@ -1054,34 +853,8 @@ if(NOT APPLE)
   if(WITH_SYSTEM_JSONCPP)
     list(APPEND SM_INCLUDE_DIRS ${JSONCPP_INCLUDE_DIRS})
   else()
-<<<<<<< HEAD
     if (HAS_FFMPEG)
       if (WITH_SYSTEM_FFMPEG)
-=======
-    list(APPEND SM_INCLUDE_DIRS
-                "${SM_EXTERN_DIR}/jsoncpp/include")
-  endif()
-
-  if(NOT WITH_SYSTEM_ZLIB)
-    list(APPEND SM_INCLUDE_DIRS
-                "${SM_EXTERN_DIR}/zlib")
-  endif()
-
-  if(MSVC)
-    if(WITH_OGG)
-      list(APPEND SM_INCLUDE_DIRS
-                  "${SM_EXTERN_DIR}/newogg/include"
-                  "${SM_EXTERN_DIR}/newvorbis/lib"
-                  "${SM_EXTERN_DIR}/newvorbis/include")
-    endif()
-    list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/ffmpeg/include")
-  else()
-    if(WITH_OGG AND NOT WITH_SYSTEM_OGG)
-      list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/vorbis")
-    endif()
-    if(HAS_FFMPEG)
-      if(WITH_SYSTEM_FFMPEG)
->>>>>>> origin/unified-ui-features-13937230807013224518
         list(APPEND SM_INCLUDE_DIRS "${FFMPEG_INCLUDE_DIR}")
       else()
         add_dependencies("${SM_EXE_NAME}" "ffmpeg")
@@ -1097,29 +870,12 @@ if(NOT APPLE)
     if(PCRE_FOUND)
       list(APPEND SM_INCLUDE_DIRS "${PCRE_INCLUDE_DIR}")
     endif()
-<<<<<<< HEAD
   endif()
 else()
   list(APPEND SM_INCLUDE_DIRS
     "${SM_XCODE_DIR}/ffmpeg/include"
     "archutils/Unix"
   )
-=======
-    if(DL_FOUND)
-      list(APPEND SM_INCLUDE_DIRS "${DL_INCLUDE_DIR}")
-    endif()
-  endif()
-else()
-  if(WITH_OGG)
-    list(APPEND SM_INCLUDE_DIRS "${SM_EXTERN_DIR}/newogg/include"
-                "${SM_EXTERN_DIR}/newvorbis/include")
-  endif()
-  list(APPEND SM_INCLUDE_DIRS "archutils/Unix")
-  if(HAS_FFMPEG)
-    add_dependencies("${SM_EXE_NAME}" "ffmpeg")
-    list(APPEND SM_INCLUDE_DIRS "${SM_FFMPEG_SRC_DIR}" "${SM_FFMPEG_ROOT}")
-  endif()
->>>>>>> origin/unified-ui-features-13937230807013224518
 endif()
 
 if(WIN32)
@@ -1150,7 +906,6 @@ if(NOT APPLE)
     # Hardcoding the values for now since the foreach loop is not working as
     # intended.
     install(TARGETS "${SM_EXE_NAME}" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-<<<<<<< HEAD
     install(FILES "${SM_PROGRAM_DIR}/avcodec-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avformat-53.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/avutil-51.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
@@ -1163,24 +918,6 @@ if(NOT APPLE)
     install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/vccorlib110.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
     install(FILES "${SM_PROGRAM_DIR}/zlib1.dll" DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-=======
-    if(WITH_FULL_RELEASE OR WITH_TEXTURE_GENERATOR)
-      install(FILES "${SM_PROGRAM_DIR}/Texture Font Generator.exe"
-              DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    endif()
-    install(FILES "${SM_PROGRAM_DIR}/avcodec-55.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avformat-55.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/avutil-52.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/parallel_lights_io.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/swscale-2.dll"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
-    install(FILES "${SM_PROGRAM_DIR}/StepMania.vdi"
-            DESTINATION "${SM_FULL_INSTALLATION_PATH}")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
     # foreach(SM_WINDOW_DLL "${SM_WINDOWS_PROGRAM_DLLS}") install(FILES
     # "${SM_WINDOW_DLL}" DESTINATION "${SM_INSTALL_DESTINATION}") endforeach()

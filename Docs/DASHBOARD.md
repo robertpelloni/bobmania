@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 # Unified StepMania Dashboard & Project Structure
 
@@ -59,6 +59,7 @@ This document provides a comprehensive overview of the Unified StepMania project
 *   **Gym:** 95% Complete. Persistence, Playlists, and Heart Rate done.
 *   **Tournament:** 80% Complete. Network requests wired.
 *   **Network:** 90% Complete. Chat and UnifiedNetwork added.
+<<<<<<< Updated upstream
 =======
 # StepMania 5.2 Unified - Project Dashboard
 
@@ -166,3 +167,5 @@ This document provides a comprehensive overview of the Unified StepMania project
 *   **Tournament:** 80% Complete. Network requests wired.
 *   **Network:** 90% Complete. Chat and UnifiedNetwork added.
 >>>>>>> origin/unified-ui-features-13937230807013224518
+=======
+>>>>>>> Stashed changes

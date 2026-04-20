@@ -205,13 +205,6 @@ private:
 	int64_t ClampHardwareFrame( int64_t iHardwareFrame ) const;
 	mutable int64_t m_iMaxHardwareFrame;
 	mutable int64_t m_iVMaxHardwareFrame;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/arch/Sound/RageSoundDriver.h
-=======
-	mutable int32_t soundDriverMaxSamples = 0;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Sound/RageSoundDriver.h
->>>>>>> main
 
 	bool m_bShutdownDecodeThread;
 

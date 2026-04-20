@@ -2,19 +2,12 @@
 #include "JoystickDevice.h"
 #include "RageLog.h"
 
-<<<<<<< HEAD
 #include <cstdint>
 #include <vector>
 
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Darwin/JoystickDevice.cpp
 #include <cstdint>
 #include <vector>
 
-=======
-using std::unordered_map;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/JoystickDevice.cpp
->>>>>>> main
 
 Joystick::Joystick() :	id( InputDevice_Invalid ),
 			x_axis( 0 ), y_axis( 0 ), z_axis( 0 ),
@@ -146,15 +139,8 @@ void JoystickDevice::Open()
 		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
 		ADD( hat );
 #undef ADD
-<<<<<<< HEAD
 		for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Darwin/JoystickDevice.cpp
 		for( std::unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
-=======
-		for( unordered_map<IOHIDElementCookie,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/JoystickDevice.cpp
->>>>>>> main
 			AddElementToQueue( j->first );
 	}
 }
@@ -251,15 +237,8 @@ void JoystickDevice::GetButtonPresses( std::vector<DeviceInput>& vPresses, IOHID
 		else
 		{
 			// hash_map<T,U>::operator[] is not const
-<<<<<<< HEAD
 			std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Darwin/JoystickDevice.cpp
 			std::unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
-=======
-			unordered_map<IOHIDElementCookie, DeviceButton>::const_iterator iter;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/JoystickDevice.cpp
->>>>>>> main
 
 			iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )

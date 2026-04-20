@@ -43,11 +43,7 @@
 #include <ctime>
 #include <set>
 
-<<<<<<< HEAD
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
-=======
-GameState*	GAMESTATE = nullptr;	// global and accessible from anywhere in our program
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 #define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.txt"
 
@@ -112,10 +108,6 @@ static Preference<Premium> g_Premium( "Premium", Premium_Off );
 Preference<bool> GameState::m_bAutoJoin( "AutoJoin", false );
 
 GameState::GameState() :
-<<<<<<< HEAD
-=======
-	processedTiming(nullptr),
->>>>>>> origin/unified-ui-features-13937230807013224518
 	m_pCurGame(				Message_CurrentGameChanged ),
 	m_pCurStyle(			Message_CurrentStyleChanged ),
 	m_PlayMode(				Message_PlayModeChanged ),
@@ -143,15 +135,7 @@ GameState::GameState() :
 {
 	g_pImpl = new GameStateImpl;
 
-<<<<<<< HEAD
 	SetCurrentStyle( NULL );
-=======
-	m_pCurStyle.Set(nullptr);
-	FOREACH_PlayerNumber(rpn)
-	{
-		m_SeparatedStyles[rpn]= nullptr;
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 	m_pCurGame.Set(nullptr);
 	m_iCoins.Set( 0 );
@@ -283,17 +267,10 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( pn )
 		UnjoinPlayer( pn );
 
-<<<<<<< HEAD
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
 	SetCurrentStyle( NULL );
-=======
-	ASSERT( THEME != nullptr );
-
-	m_timeGameStarted.SetZero();
-	SetCurrentStyle( nullptr, PLAYER_INVALID );
->>>>>>> origin/unified-ui-features-13937230807013224518
 	FOREACH_MultiPlayer( p )
 		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
 	FOREACH_PlayerNumber( pn )
@@ -350,11 +327,7 @@ void GameState::Reset()
 			m_pCurCharacters[p] = CHARMAN->GetRandomCharacter();
 		else
 			m_pCurCharacters[p] = CHARMAN->GetDefaultCharacter();
-<<<<<<< HEAD
 		ASSERT( m_pCurCharacters[p] );
-=======
-		ASSERT( m_pCurCharacters[p] != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 
 	m_bTemporaryEventMode = false;
@@ -376,30 +349,6 @@ void GameState::Reset()
 
 void GameState::JoinPlayer( PlayerNumber pn )
 {
-<<<<<<< HEAD
-=======
-	// Make sure the join will be successful before doing it. -Kyz
-	{
-		int players_joined= 0;
-		for(int i= 0; i < NUM_PLAYERS; ++i)
-		{
-			players_joined+= m_bSideIsJoined[i];
-		}
-		if(players_joined > 0)
-		{
-			const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
-			if(cur_style)
-			{
-				const Style* new_style= GAMEMAN->GetFirstCompatibleStyle(m_pCurGame,
-					players_joined + 1, cur_style->m_StepsType);
-				if(new_style == nullptr)
-				{
-					return;
-				}
-			}
-		}
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518
 	/* If joint premium and we're not taking away a credit for the 2nd join,
 	 * give the new player the same number of stage tokens that the old player
 	 * has. */
@@ -424,20 +373,7 @@ void GameState::JoinPlayer( PlayerNumber pn )
 	}
 
 	// Set the current style to something appropriate for the new number of joined players.
-<<<<<<< HEAD
 	if( ALLOW_LATE_JOIN  &&  m_pCurStyle != NULL )
-=======
-	// beat gametype's versus styles use a different stepstype from its single
-	// styles, so when GameCommand tries to join both players for a versus
-	// style, it hits the assert when joining the first player.  So if the first
-	// player is being joined and the current styletype is for two players,
-	// assume that the second player will be joined immediately afterwards and
-	// don't try to change the style. -Kyz
-	const Style* cur_style= GetCurrentStyle(PLAYER_INVALID);
-	if(cur_style != nullptr && !(pn == PLAYER_1 &&
-			(cur_style->m_StyleType == StyleType_TwoPlayersTwoSides ||
-				cur_style->m_StyleType == StyleType_TwoPlayersSharedSides)))
->>>>>>> origin/unified-ui-features-13937230807013224518
 	{
 		const Style *pStyle;
 		// Only use one player for StyleType_OnePlayerTwoSides and StepsTypes
@@ -681,11 +617,7 @@ int GameState::GetNumStagesMultiplierForSong( const Song* pSong )
 {
 	int iNumStages = 1;
 
-<<<<<<< HEAD
 	ASSERT( pSong );
-=======
-	ASSERT( pSong != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 	if( pSong->IsMarathon() )
 		iNumStages *= 3;
 	if( pSong->IsLong() )
@@ -929,240 +861,6 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 		pProfile->m_lastCourse.FromCourse( m_pPreferredCourse );
 }
 
-<<<<<<< HEAD
-=======
-bool GameState::CanSafelyEnterGameplay(RString& reason)
-{
-	if(!IsCourseMode())
-	{
-		Song const* song= m_pCurSong;
-		if(song == nullptr)
-		{
-			reason= "Current song is null.";
-			return false;
-		}
-	}
-	else
-	{
-		Course const* song= m_pCurCourse;
-		if(song == nullptr)
-		{
-			reason= "Current course is null.";
-			return false;
-		}
-	}
-	FOREACH_EnabledPlayer(pn)
-	{
-		Style const* style= GetCurrentStyle(pn);
-		if(style == nullptr)
-		{
-			reason= ssprintf("Style for player %d is null.", pn+1);
-			return false;
-		}
-		if(!IsCourseMode())
-		{
-			Steps const* steps= m_pCurSteps[pn];
-			if(steps == nullptr)
-			{
-				reason= ssprintf("Steps for player %d is null.", pn+1);
-				return false;
-			}
-			if(steps->m_StepsType != style->m_StepsType)
-			{
-				reason= ssprintf("Player %d StepsType %s for steps does not equal "
-					"StepsType %s for style.", pn+1,
-					GAMEMAN->GetStepsTypeInfo(steps->m_StepsType).szName,
-					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).szName);
-				return false;
-			}
-			if(steps->m_pSong != m_pCurSong)
-			{
-				reason= ssprintf("Steps for player %d are not for the current song.",
-					pn+1);
-				return false;
-			}
-			NoteData ndtemp;
-			steps->GetNoteData(ndtemp);
-			if(ndtemp.GetNumTracks() != style->m_iColsPerPlayer)
-			{
-				reason= ssprintf("Steps for player %d have %d columns, style has %d "
-					"columns.", pn+1, ndtemp.GetNumTracks(), style->m_iColsPerPlayer);
-				return false;
-			}
-		}
-		else
-		{
-			Trail const* steps= m_pCurTrail[pn];
-			if(steps == nullptr)
-			{
-				reason= ssprintf("Steps for player %d is null.", pn+1);
-				return false;
-			}
-			if(steps->m_StepsType != style->m_StepsType)
-			{
-				reason= ssprintf("Player %d StepsType %s for steps does not equal "
-					"StepsType %s for style.", pn+1,
-					GAMEMAN->GetStepsTypeInfo(steps->m_StepsType).szName,
-					GAMEMAN->GetStepsTypeInfo(style->m_StepsType).szName);
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-void GameState::SetCompatibleStylesForPlayers()
-{
-	bool style_set= false;
-	if(IsCourseMode())
-	{
-		if(m_pCurCourse != nullptr)
-		{
-			const Style* style= m_pCurCourse->GetCourseStyle(m_pCurGame, GetNumSidesJoined());
-			if(style != nullptr)
-			{
-				style_set= true;
-				SetCurrentStyle(style, PLAYER_INVALID);
-			}
-		}
-		else if(GetCurrentStyle(PLAYER_INVALID) == nullptr)
-		{
-			vector<StepsType> vst;
-			GAMEMAN->GetStepsTypesForGame(m_pCurGame, vst);
-			const Style *style = GAMEMAN->GetFirstCompatibleStyle(
-				m_pCurGame, GetNumSidesJoined(), vst[0]);
-			SetCurrentStyle(style, PLAYER_INVALID);
-		}
-	}
-	if(!style_set)
-	{
-		FOREACH_EnabledPlayer(pn)
-		{
-			StepsType st= StepsType_Invalid;
-			if(m_pCurSteps[pn] != nullptr)
-			{
-				st= m_pCurSteps[pn]->m_StepsType;
-			}
-			else if(m_pCurTrail[pn] != nullptr)
-			{
-				st= m_pCurTrail[pn]->m_StepsType;
-			}
-			else
-			{
-				vector<StepsType> vst;
-				GAMEMAN->GetStepsTypesForGame(m_pCurGame, vst);
-				st= vst[0];
-			}
-			const Style *style = GAMEMAN->GetFirstCompatibleStyle(
-				m_pCurGame, GetNumSidesJoined(), st);
-			SetCurrentStyle(style, pn);
-		}
-	}
-}
-
-void GameState::ForceSharedSidesMatch()
-{
-	PlayerNumber pn_with_shared= PLAYER_INVALID;
-	const Style* shared_style= nullptr;
-	FOREACH_EnabledPlayer(pn)
-	{
-		const Style* style= GetCurrentStyle(pn);
-		ASSERT_M(style != nullptr, "Style being null should not be possible.");
-		if(style->m_StyleType == StyleType_TwoPlayersSharedSides)
-		{
-			pn_with_shared= pn;
-			shared_style= style;
-		}
-	}
-	if(pn_with_shared != PLAYER_INVALID)
-	{
-		ASSERT_M(GetNumPlayersEnabled() == 2, "2 players must be enabled for shared sides.");
-		PlayerNumber other_pn= OPPOSITE_PLAYER[pn_with_shared];
-		const Style* other_style= GetCurrentStyle(other_pn);
-		ASSERT_M(other_style != nullptr, "Other player's style being null should not be possible.");
-		if(other_style->m_StyleType != StyleType_TwoPlayersSharedSides)
-		{
-			SetCurrentStyle(shared_style, other_pn);
-			if(IsCourseMode())
-			{
-				m_pCurTrail[other_pn].Set(m_pCurTrail[pn_with_shared]);
-			}
-			else
-			{
-				m_pCurSteps[other_pn].Set(m_pCurSteps[pn_with_shared]);
-			}
-		}
-	}
-}
-
-void GameState::ForceOtherPlayersToCompatibleSteps(PlayerNumber main)
-{
-	if(IsCourseMode())
-	{
-		Trail* steps_to_match= m_pCurTrail[main].Get();
-		if(steps_to_match == nullptr) { return; }
-		int num_players= GAMESTATE->GetNumPlayersEnabled();
-		StyleType styletype_to_match= GAMEMAN->GetFirstCompatibleStyle(
-			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType)
-			->m_StyleType;
-		FOREACH_EnabledPlayer(pn)
-		{
-			Trail* pn_steps= m_pCurTrail[pn].Get();
-			bool match_failed= pn_steps == nullptr;
-			if(steps_to_match != pn_steps && pn_steps != nullptr)
-			{
-				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
-					GAMESTATE->GetCurrentGame(), num_players, pn_steps->m_StepsType)
-					->m_StyleType;
-				if(styletype_to_match == StyleType_TwoPlayersSharedSides ||
-					pn_styletype == StyleType_TwoPlayersSharedSides)
-				{
-					match_failed= true;
-				}
-			}
-			if(match_failed)
-			{
-				m_pCurTrail[pn].Set(steps_to_match);
-			}
-		}
-	}
-	else
-	{
-		Steps* steps_to_match= m_pCurSteps[main].Get();
-		if(steps_to_match == nullptr) { return; }
-		int num_players= GAMESTATE->GetNumPlayersEnabled();
-		StyleType styletype_to_match= GAMEMAN->GetFirstCompatibleStyle(
-			GAMESTATE->GetCurrentGame(), num_players, steps_to_match->m_StepsType)
-			->m_StyleType;
-		RString music_to_match= steps_to_match->GetMusicFile();
-		FOREACH_EnabledPlayer(pn)
-		{
-			Steps* pn_steps= m_pCurSteps[pn].Get();
-			bool match_failed= pn_steps == nullptr;
-			if(steps_to_match != pn_steps && pn_steps != nullptr)
-			{
-				StyleType pn_styletype= GAMEMAN->GetFirstCompatibleStyle(
-					GAMESTATE->GetCurrentGame(), num_players, pn_steps->m_StepsType)
-					->m_StyleType;
-				if(styletype_to_match == StyleType_TwoPlayersSharedSides ||
-					pn_styletype == StyleType_TwoPlayersSharedSides)
-				{
-					match_failed= true;
-				}
-				if(music_to_match != pn_steps->GetMusicFile())
-				{
-					match_failed= true;
-				}
-			}
-			if(match_failed)
-			{
-				m_pCurSteps[pn].Set(steps_to_match);
-			}
-		}
-	}
-}
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 void GameState::Update( float fDelta )
 {
 	m_SongOptions.Update( fDelta );
@@ -1302,39 +1000,6 @@ bool GameState::IsFinalStageForAnyHumanPlayer() const
 	return GetSmallestNumStagesLeftForAnyHumanPlayer() == 1;
 }
 
-<<<<<<< HEAD
-=======
-bool GameState::IsFinalStageForEveryHumanPlayer() const
-{
-	int song_cost= 1;
-	if(m_pCurSong != nullptr)
-	{
-		if(m_pCurSong->IsLong())
-		{
-			song_cost= 2;
-		}
-		else if(m_pCurSong->IsMarathon())
-		{
-			song_cost= 3;
-		}
-	}
-	// If we're on gameplay or evaluation, they set this to false because those
-	// screens have already had the stage tokens subtracted.
-	song_cost*= m_AdjustTokensBySongCostForFinalStageCheck;
-	int num_on_final= 0;
-	int num_humans= 0;
-	FOREACH_HumanPlayer(p)
-	{
-		if(m_iPlayerStageTokens[p] - song_cost <= 0)
-		{
-			++num_on_final;
-		}
-		++num_humans;
-	}
-	return num_on_final >= num_humans;
-}
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 bool GameState::IsAnExtraStage() const
 {
 	if( this->GetMasterPlayerNumber() == PlayerNumber_Invalid )
@@ -1492,51 +1157,12 @@ RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-<<<<<<< HEAD
 	bool b = GetNumSidesJoined() == 0 || GetCurrentStyle() == NULL;	// selecting a style finalizes the players
 	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
 	{
 		Screen *pScreen = SCREENMAN->GetTopScreen();
 		if( pScreen )
 			b |= pScreen->AllowLateJoin();
-=======
-	if(GetNumSidesJoined() == 0)
-	{
-		return true;
-	}
-	// If we check the style and it comes up nullptr, either the style has not been
-	// chosen, or we're on ScreenSelectMusic with AutoSetStyle.
-	// If the style does not come up nullptr, we might be on a screen in a custom
-	// theme that wants to allow joining after the style is set anyway.
-	// Either way, we can't use the existence of a style to decide.
-	// -Kyz
-	if( ALLOW_LATE_JOIN.IsLoaded()  &&  ALLOW_LATE_JOIN )
-	{
-		Screen *pScreen = SCREENMAN->GetTopScreen();
-		if(pScreen)
-		{
-			if(!pScreen->AllowLateJoin())
-			{
-				return false;
-			}
-		}
-		// We can't use FOREACH_EnabledPlayer because that uses PlayersCanJoin
-		// in part of its logic chain. -Kyz
-		FOREACH_PlayerNumber(pn)
-		{
-			const Style* style= GetCurrentStyle(pn);
-			if(style)
-			{
-				const Style* compat_style= GAMEMAN->GetFirstCompatibleStyle(
-					m_pCurGame, 2, style->m_StepsType);
-				if(compat_style == nullptr)
-				{
-					return false;
-				}
-			}
-		}
-		return true;
->>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 	return b;
 }
@@ -1558,24 +1184,7 @@ const Game* GameState::GetCurrentGame()
 
 const Style* GameState::GetCurrentStyle() const
 {
-<<<<<<< HEAD
 	return m_pCurStyle;
-=======
-	if(GetCurrentGame() == nullptr) { return nullptr; }
-	if(!GetCurrentGame()->m_PlayersHaveSeparateStyles)
-	{
-		return m_pCurStyle;
-	}
-	else
-	{
-		if(pn >= NUM_PLAYERS)
-		{
-			return m_SeparatedStyles[PLAYER_1] == nullptr ? m_SeparatedStyles[PLAYER_2]
-				: m_SeparatedStyles[PLAYER_1];
-		}
-		return m_SeparatedStyles[pn];
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518
 }
 
 void GameState::SetCurrentStyle( const Style *pStyle )
@@ -1632,36 +1241,10 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 
 	if( GetCurrentStyle() == NULL )	// no style chosen
 	{
-<<<<<<< HEAD
 		if( PlayersCanJoin() )
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
 		else
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
-=======
-		if( GetCurrentStyle(pn) == nullptr )	// no style chosen
-		{
-			return m_bSideIsJoined[pn];
-		}
-		else
-		{
-			StyleType type = GetCurrentStyle(pn)->m_StyleType;
-			switch( type )
-			{
-				case StyleType_TwoPlayersTwoSides:
-				case StyleType_TwoPlayersSharedSides:
-					return true;
-				case StyleType_OnePlayerOneSide:
-				case StyleType_OnePlayerTwoSides:
-					return pn == this->GetMasterPlayerNumber();
-				default:
-					FAIL_M(ssprintf("Invalid style type: %i", type));
-			}
-		}
-	}
-	if( GetCurrentStyle(pn) == nullptr )	// no style chosen
-	{
-		return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
->>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 
 	switch( GetCurrentStyle()->m_StyleType )
@@ -1910,11 +1493,7 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 		if( IsCourseMode() )
 		{
 			const Trail *pTrail = m_pCurTrail[pn];
-<<<<<<< HEAD
 			ASSERT( pTrail );
-=======
-			ASSERT( pTrail != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 			for (TrailEntry const &e : pTrail->m_vEntries)
 			{
@@ -2043,19 +1622,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				SongAndSteps sas;
 				ASSERT( !STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.empty() );
 				sas.pSong = STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs[0];
-<<<<<<< HEAD
 				ASSERT( sas.pSong );
 				if( STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps.empty() )
 					continue;
 				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps[0];
 				ASSERT( sas.pSteps );
-=======
-				ASSERT( sas.pSong != nullptr );
-				if( STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps.empty() )
-					continue;
-				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPossibleSteps[0];
-				ASSERT( sas.pSteps != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 				vSongAndSteps.push_back( sas );
 			}
 			CHECKPOINT;
@@ -2193,15 +1764,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 		{
 			CHECKPOINT;
 			Course* pCourse = m_pCurCourse;
-<<<<<<< HEAD
 			ASSERT( pCourse );
 			Trail *pTrail = m_pCurTrail[pn];
 			ASSERT( pTrail );
-=======
-			ASSERT( pCourse != nullptr );
-			Trail *pTrail = m_pCurTrail[pn];
-			ASSERT( pTrail != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 			CourseDifficulty cd = pTrail->m_CourseDifficulty;
 
 			// Find Machine Records
@@ -2689,7 +2254,6 @@ public:
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-<<<<<<< HEAD
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), p->m_pCurSteps[pn]->m_StepsType ));
@@ -2697,20 +2261,6 @@ public:
 		// Why Broadcast again?  This is double-broadcasting. -Chris
 		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentStepsP1Changed+pn) );
 		return 0;
-=======
-		if(lua_isnil(L,2))
-		{
-			p->m_pCurSteps[pn].Set(nullptr);
-		}
-		else
-		{
-			Steps *pS = Luna<Steps>::check(L,2);
-			SetCompatibleStyleOrError(p, L, pS->m_StepsType, pn);
-			p->m_pCurSteps[pn].Set(pS);
-			p->ForceOtherPlayersToCompatibleSteps(pn);
-		}
-		COMMON_RETURN_SELF;
->>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentCourse( T* p, lua_State *L )
@@ -2730,25 +2280,10 @@ public:
 	static int SetCurrentTrail( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
-<<<<<<< HEAD
 		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
 		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
 		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentTrailP1Changed+pn) );
 		return 0;
-=======
-		if(lua_isnil(L,2))
-		{
-			p->m_pCurTrail[pn].Set(nullptr);
-		}
-		else
-		{
-			Trail *pS = Luna<Trail>::check(L,2);
-			SetCompatibleStyleOrError(p, L, pS->m_StepsType, pn);
-			p->m_pCurTrail[pn].Set(pS);
-			p->ForceOtherPlayersToCompatibleSteps(pn);
-		}
-		COMMON_RETURN_SELF;
->>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetPreferredSong( T* p, lua_State *L )
@@ -2996,220 +2531,6 @@ public:
 		return 1;
 	}
 
-<<<<<<< HEAD
-=======
-	static int LoadProfiles( T* p, lua_State *L )
-	{
-		bool LoadEdits = true;
-		if(lua_isboolean(L, 1))
-		{
-			LoadEdits = BArg(1);
-		}
-		p->LoadProfiles( LoadEdits );
-		SCREENMAN->ZeroNextUpdate();
-		COMMON_RETURN_SELF;
-	}
-
-	static int SaveProfiles( T* p, lua_State *L )
-	{
-		p->SavePlayerProfiles();
-		SCREENMAN->ZeroNextUpdate();
-		COMMON_RETURN_SELF;
-	}
-
-	static int SetFailTypeExplicitlySet(T* p, lua_State* L)
-	{
-		p->m_bFailTypeWasExplicitlySet= true;
-		COMMON_RETURN_SELF;
-	}
-
-	static int StoreRankingName( T* p, lua_State *L )
-	{
-		p->StoreRankingName(Enum::Check<PlayerNumber>(L, 1), SArg(2));
-		COMMON_RETURN_SELF;
-	}
-
-	DEFINE_METHOD( HaveProfileToLoad, HaveProfileToLoad() )
-	DEFINE_METHOD( HaveProfileToSave, HaveProfileToSave() )
-
-	static bool AreStyleAndPlayModeCompatible( T* p, lua_State* L, const Style *style, PlayMode pm )
-	{
-		if( pm != PLAY_MODE_BATTLE && pm != PLAY_MODE_RAVE )
-		{
-			return true;
-		}
-
-		// Do not allow styles with StepsTypes with shared sides or that are one player only with Battle or Rave.
-		if( style->m_StyleType != StyleType_TwoPlayersSharedSides )
-		{
-			vector<const Style*> vpStyles;
-			GAMEMAN->GetCompatibleStyles( p->m_pCurGame, 2, vpStyles );
-			for (const Style *s : vpStyles)
-			{
-				if( s->m_StepsType == style->m_StepsType )
-				{
-					return true;
-				}
-			}
-		}
-		luaL_error( L, "Style %s is incompatible with PlayMode %s",
-			style->m_szName, PlayModeToString( pm ).c_str() );
-		return false;
-	}
-
-	static void ClearIncompatibleStepsAndTrails( T *p, lua_State* L )
-	{
-		FOREACH_HumanPlayer( pn )
-		{
-			const Style *style = p->GetCurrentStyle(pn);
-			if( p->m_pCurSteps[pn] && ( !style || style->m_StepsType != p->m_pCurSteps[pn]->m_StepsType ) )
-			{
-				p->m_pCurSteps[pn].Set( nullptr );
-			}
-			if( p->m_pCurTrail[pn] && ( !style || style->m_StepsType != p->m_pCurTrail[pn]->m_StepsType ) )
-			{
-				p->m_pCurTrail[pn].Set( nullptr );
-			}
-		}
-	}
-
-	static int SetCurrentStyle( T* p, lua_State *L )
-	{
-		const Style* pStyle = nullptr;
-		if( lua_isstring(L,1) )
-		{
-			RString style = SArg(1);
-			pStyle = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, style );
-			if( !pStyle )
-			{
-				luaL_error( L, "SetCurrentStyle: %s is not a valid style.", style.c_str() );
-			}
-		}
-		else
-		{
-			pStyle = Luna<Style>::check(L,1);
-		}
-
-		StyleType st = pStyle->m_StyleType;
-		if( p->GetNumSidesJoined() == 2 &&
-			( st == StyleType_OnePlayerOneSide || st == StyleType_OnePlayerTwoSides ) )
-		{
-			luaL_error( L, "Too many sides joined for style %s", pStyle->m_szName );
-		}
-		else if( p->GetNumSidesJoined() == 1 &&
-			( st == StyleType_TwoPlayersTwoSides || st == StyleType_TwoPlayersSharedSides ) )
-		{
-			luaL_error( L, "Too few sides joined for style %s", pStyle->m_szName );
-		}
-
-		if( !AreStyleAndPlayModeCompatible( p, L, pStyle, p->m_PlayMode ) )
-		{
-			COMMON_RETURN_SELF;
-		}
-		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 2, true, true);
-
-		p->SetCurrentStyle(pStyle, pn);
-		ClearIncompatibleStepsAndTrails( p, L );
-
-		COMMON_RETURN_SELF;
-	}
-
-	static int SetCurrentPlayMode( T* p, lua_State *L )
-	{
-		PlayMode pm = Enum::Check<PlayMode>( L, 1 );
-		if( AreStyleAndPlayModeCompatible( p, L, p->GetCurrentStyle(PLAYER_INVALID), pm ) )
-		{
-			p->m_PlayMode.Set( pm );
-		}
-		COMMON_RETURN_SELF;
-	}
-
-	static int SetStepsForEditMode(T* p, lua_State *L)
-	{
-		// Arg forms:
-		// 1.  Edit existing steps:
-		//    song, steps
-		// 2.  Create new steps to edit:
-		//    song, nil, stepstype, difficulty
-		// 3.  Copy steps to new difficulty to edit:
-		//    song, steps, stepstype, difficulty
-		Song* song= Luna<Song>::check(L, 1);
-		Steps* steps= nullptr;
-		if(!lua_isnil(L, 2))
-		{
-			steps= Luna<Steps>::check(L, 2);
-		}
-		// Form 1.
-		if(steps != nullptr && lua_gettop(L) == 2)
-		{
-			p->m_pCurSong.Set(song);
-			p->m_pCurSteps[PLAYER_1].Set(steps);
-			p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
-					steps->m_StepsType), PLAYER_INVALID);
-			p->m_pCurCourse.Set(nullptr);
-			return 0;
-		}
-		StepsType stype= Enum::Check<StepsType>(L, 3);
-		Difficulty diff= Enum::Check<Difficulty>(L, 4);
-		Steps* new_steps= song->CreateSteps();
-		RString edit_name;
-		// Form 2.
-		if(steps == nullptr)
-		{
-			new_steps->CreateBlank(stype);
-			new_steps->SetMeter(1);
-			edit_name= "";
-		}
-		// Form 3.
-		else
-		{
-			new_steps->CopyFrom(steps, stype, song->m_fMusicLengthSeconds);
-			edit_name= steps->GetDescription();
-		}
-		SongUtil::MakeUniqueEditDescription(song, stype, edit_name);
-		steps->SetDescription(edit_name);
-		song->AddSteps(new_steps);
-		p->m_pCurSong.Set(song);
-		p->m_pCurSteps[PLAYER_1].Set(steps);
-		p->SetCurrentStyle(GAMEMAN->GetEditorStyleForStepsType(
-				steps->m_StepsType), PLAYER_INVALID);
-		p->m_pCurCourse.Set(nullptr);
-		return 0;
-	}
-
-	static int GetAutoGenFarg(T* p, lua_State *L)
-	{
-		int i= IArg(1) - 1;
-		if(i < 0) { lua_pushnil(L); return 1; }
-		size_t si= static_cast<size_t>(i);
-		if(si >= p->m_autogen_fargs.size()) { lua_pushnil(L); return 1; }
-		lua_pushnumber(L, p->GetAutoGenFarg(si));
-		return 1;
-	}
-	static int SetAutoGenFarg(T* p, lua_State* L)
-	{
-		int i= IArg(1) - 1;
-		if(i < 0)
-		{
-			luaL_error(L, "%i is not a valid autogen arg index.", i);
-		}
-		float v= FArg(2);
-		size_t si= static_cast<size_t>(i);
-		while(si >= p->m_autogen_fargs.size())
-		{
-			p->m_autogen_fargs.push_back(0.0f);
-		}
-		p->m_autogen_fargs[si]= v;
-		COMMON_RETURN_SELF;
-	}
-	static int prepare_song_for_gameplay(T* p, lua_State* L)
-	{
-		int result= p->prepare_song_for_gameplay();
-		lua_pushstring(L, prepare_song_failures[result]);
-		return 1;
-	}
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	LunaGameState()
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -3320,21 +2641,6 @@ public:
 		ADD_METHOD( ResetPlayerOptions );
 		ADD_METHOD( RefreshNoteSkinData );
 		ADD_METHOD( Dopefish );
-<<<<<<< HEAD
-=======
-		ADD_METHOD( LoadProfiles );
-		ADD_METHOD( SaveProfiles );
-		ADD_METHOD( HaveProfileToLoad );
-		ADD_METHOD( HaveProfileToSave );
-		ADD_METHOD( SetFailTypeExplicitlySet );
-		ADD_METHOD( StoreRankingName );
-		ADD_METHOD( SetCurrentStyle );
-		ADD_METHOD( SetCurrentPlayMode );
-		ADD_METHOD( SetStepsForEditMode );
-		ADD_METHOD( GetAutoGenFarg );
-		ADD_METHOD( SetAutoGenFarg );
-		ADD_METHOD(prepare_song_for_gameplay);
->>>>>>> origin/unified-ui-features-13937230807013224518
 	}
 };
 

@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/NotesLoaderDWI.cpp
-<<<<<<< HEAD:itgmania/src/NotesLoaderDWI.cpp
 #include "global.h"
 #include "NotesLoaderDWI.h"
 #include "RageLog.h"
@@ -795,9 +793,6 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, std::set<RString>
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderDWI.cpp
 #include "global.h"
 #include "NotesLoaderDWI.h"
 #include "RageLog.h"
@@ -1562,7 +1557,3 @@ bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &Bla
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/NotesLoaderDWI.cpp
->>>>>>> origin/c++11:src/NotesLoaderDWI.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderDWI.cpp

@@ -218,12 +218,6 @@ public:
 	virtual void HandleMessage( const Message &msg );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-<<<<<<< HEAD
-=======
-	void InitNoteFieldConfig();
-	void update_note_occurance();
-
->>>>>>> main
 	void SetDirty(bool dirty);
 	bool IsDirty() const { return m_dirty; }
 
@@ -322,11 +316,7 @@ protected:
 	 * @brief Allow for copying and pasting a song's (or steps's) full Timing Data.
 	 */
 	TimingData		clipboardFullTiming;
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> main
 	/** @brief The current TapNote that would be inserted. */
 	TapNote			m_selectedTap;
 

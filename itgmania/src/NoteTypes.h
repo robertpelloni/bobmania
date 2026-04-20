@@ -142,19 +142,12 @@ struct TapNote
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-<<<<<<< HEAD
 	// Lua
 	void PushSelf( lua_State *L );
 
 	TapNote(): type(TapNoteType_Empty), subType(TapNoteSubType_Invalid),
 		source(TapNoteSource_Original),	result(), pn(PLAYER_INVALID),  sAttackModifiers(""),
 		fAttackDurationSeconds(0), iKeysoundIndex(-1), iDuration(0), HoldResult() {}
-=======
-	TapNote(): type(empty), subType(SubType_Invalid), source(original),
-		result(), pn(PLAYER_INVALID), bHopoPossible(false), 
-		sAttackModifiers(""), fAttackDurationSeconds(0), 
-		iKeysoundIndex(-1), iDuration(0), HoldResult(), obstacles() {}
->>>>>>> main
 	void Init()
 	{
 		type = empty;

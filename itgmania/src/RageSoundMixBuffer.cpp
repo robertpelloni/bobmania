@@ -6,27 +6,10 @@
 #include <algorithm>
 #include <vector>
 
-<<<<<<< HEAD
 RageSoundMixBuffer::RageSoundMixBuffer() : m_iOffset(0) {}
 RageSoundMixBuffer::~RageSoundMixBuffer() {}
-=======
-<<<<<<< HEAD:itgmania/src/RageSoundMixBuffer.cpp
 RageSoundMixBuffer::RageSoundMixBuffer() : m_iOffset(0) {}
 RageSoundMixBuffer::~RageSoundMixBuffer() {}
-=======
-RageSoundMixBuffer::RageSoundMixBuffer()
-{
-	m_iBufSize = m_iBufUsed = 0;
-	m_pMixbuf = nullptr;
-	m_iOffset = 0;
-}
-
-RageSoundMixBuffer::~RageSoundMixBuffer()
-{
-	free( m_pMixbuf );
-}
->>>>>>> origin/c++11:src/RageSoundMixBuffer.cpp
->>>>>>> main
 
 /* write() will start mixing iOffset samples into the buffer.  Be careful; this is
  * measured in samples, not frames, so if the data is stereo, multiply by two. */

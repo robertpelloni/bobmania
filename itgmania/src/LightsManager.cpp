@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/LightsManager.cpp
-<<<<<<< HEAD:itgmania/src/LightsManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 #include "global.h"
 #include "LightsManager.h"
 #include "GameState.h"
@@ -14,7 +10,6 @@
 #include "PrefsManager.h"
 #include "Actor.h"
 #include "Preference.h"
-<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 #include "GameManager.h"
 #include "PlayerState.h"
 #include "GameState.h"
@@ -608,22 +603,6 @@ void LightsManager::TurnOffAllLights()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "LightsManager.h"
-#include "GameState.h"
-#include "RageTimer.h"
-#include "arch/Lights/LightsDriver.h"
-#include "RageUtil.h"
-#include "GameInput.h"	// for GameController
-#include "InputMapper.h"
-#include "Game.h"
-#include "PrefsManager.h"
-#include "Actor.h"
-#include "Preference.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 #include "GameManager.h"
 #include "CommonMetrics.h"
 #include "Style.h"
@@ -694,14 +673,8 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		{
 			for( int iCol=0; iCol < style->m_iColsPerPlayer; ++iCol )
 			{
-<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 				GameInput gi = style->StyleInputToGameInput( iCol, pn );
 				if( gi.IsValid() )
-=======
-				vector<GameInput> gi;
-				style->StyleInputToGameInput( iCol, pn, gi );
-				for(size_t i= 0; i < gi.size(); ++i)
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 				{
 					vGIs.insert( gi );
 				}
@@ -713,11 +686,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		vGameInputsOut.push_back( input );
 }
 
-<<<<<<< HEAD:itgmania/src/LightsManager.cpp
 LightsManager*	LIGHTSMAN = nullptr;	// global and accessable from anywhere in our program
-=======
-LightsManager*	LIGHTSMAN = nullptr;	// global and accessible from anywhere in our program
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp
 
 LightsManager::LightsManager()
 {
@@ -1159,7 +1128,3 @@ void LightsManager::TurnOffAllLights()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/LightsManager.cpp
->>>>>>> origin/c++11:src/LightsManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LightsManager.cpp

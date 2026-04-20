@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
-<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplaySyncMachine.cpp
 #include "global.h"
 #include "ScreenGameplaySyncMachine.h"
 #include "NotesLoaderSSC.h"
@@ -106,10 +102,6 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
 		GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
 		GAMESTATE->m_pCurSong.Set( nullptr );
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
->>>>>>> main
 	}
 }
 
@@ -166,106 +158,6 @@ void ScreenGameplaySyncMachine::RefreshText()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "ScreenGameplaySyncMachine.h"
-#include "NotesLoaderSSC.h"
-#include "NotesLoaderSM.h"
-#include "GameState.h"
-#include "GameManager.h"
-#include "PrefsManager.h"
-#include "GamePreferences.h"
-#include "AdjustSync.h"
-#include "ScreenDimensions.h"
-#include "InputEventPlus.h"
-#include "SongUtil.h"
-
-REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
-
-void ScreenGameplaySyncMachine::Init()
-{
-	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
-	AdjustSync::ResetOriginalSyncData();
-
-	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music");
-	// Allow themers to use either a .ssc or .sm file for this. -aj
-	SSCLoader loaderSSC;
-	SMLoader loaderSM;
-	if(sFile.Right(4) == ".ssc")
-		loaderSSC.LoadFromSimfile( sFile, m_Song );
-	else
-		loaderSM.LoadFromSimfile( sFile, m_Song );
-
-	m_Song.SetSongDir( Dirname(sFile) );
-	m_Song.TidyUpData();
-
-	GAMESTATE->m_pCurSong.Set( &m_Song );
-	// Needs proper StepsType -freem
-	vector<Steps*> vpSteps;
-	SongUtil::GetPlayableSteps( &m_Song, vpSteps );
-	ASSERT_M(vpSteps.size() > 0, "No playable steps for ScreenGameplaySyncMachine");
-	Steps *pSteps = vpSteps[0];
-	GAMESTATE->m_pCurSteps[GAMESTATE->GetFirstHumanPlayer()].Set( pSteps );
-
-	GamePreferences::m_AutoPlay.Set( PC_HUMAN );
-
-	ScreenGameplayNormal::Init();
-
-	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_AutosyncType, SongOptions::AUTOSYNC_MACHINE );
-
-	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
-
-	GAMESTATE->m_bGameplayLeadIn.Set( false );
-
-	m_DancingState = STATE_DANCING;
-
-	m_textSyncInfo.SetName( "SyncInfo" );
-	m_textSyncInfo.LoadFromFont( THEME->GetPathF(m_sName,"SyncInfo") );
-	ActorUtil::LoadAllCommands( m_textSyncInfo, m_sName );
-	this->AddChild( &m_textSyncInfo );
-
-	this->SubscribeToMessage( Message_AutosyncChanged );
-
-	RefreshText();
-}
-
-void ScreenGameplaySyncMachine::Update( float fDelta )
-{
-	ScreenGameplayNormal::Update( fDelta );
-	RefreshText();
-}
-
-bool ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
-{
-	// Hack to make this work from Player2's controls
-	InputEventPlus _input = input;
-
-	if( _input.GameI.controller != GameController_Invalid )
-		_input.GameI.controller = GameController_1;
-	if( _input.pn != PLAYER_INVALID )
-		_input.pn = PLAYER_1;
-
-	return ScreenGameplay::Input( _input );
-}
-
-void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
-{
-	if( SM == SM_NotesEnded )
-	{
-		ResetAndRestartCurrentSong();
-		return;	// handled
-	}
-
-	ScreenGameplayNormal::HandleScreenMessage( SM );
-
-	if( SM == SM_GoToPrevScreen || SM == SM_GoToNextScreen )
-	{
-		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
-		GAMESTATE->SetCurrentStyle(nullptr);
-		GAMESTATE->m_pCurSong.Set(nullptr);
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplaySyncMachine.cpp
 	}
 }
 
@@ -322,7 +214,3 @@ void ScreenGameplaySyncMachine::RefreshText()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ScreenGameplaySyncMachine.cpp
->>>>>>> origin/c++11:src/ScreenGameplaySyncMachine.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplaySyncMachine.cpp

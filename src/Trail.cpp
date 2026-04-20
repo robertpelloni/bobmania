@@ -108,13 +108,8 @@ const RadarValues &Trail::GetRadarValues() const
 
 		for (TrailEntry const &e : m_vEntries)
 		{
-<<<<<<< HEAD
 			const Steps *pSteps = e->pSteps;
 			ASSERT( pSteps );
-=======
-			const Steps *pSteps = e.pSteps;
-			ASSERT( pSteps != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 			// Hack: don't calculate for autogen entries
 			if( !pSteps->IsAutogen() && e.ContainsTransformOrTurn() )
 			{
@@ -125,36 +120,19 @@ const RadarValues &Trail::GetRadarValues() const
 				const float songLength = e->pSong->m_fMusicLengthSeconds;
 				NoteData nd;
 				pSteps->GetNoteData( nd );
-<<<<<<< HEAD
 				Steps radarSteps;
 				radarSteps.SetNoteData(nd);
 				radarSteps.m_StepsType = pSteps->m_StepsType;
 				StepsUtil::CalculateRadarValues(&radarSteps, songLength);
 				
-=======
-				RadarValues rv_orig;
-				GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(pSteps->GetTimingData()));
-				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, rv_orig );
->>>>>>> origin/unified-ui-features-13937230807013224518
 				PlayerOptions po;
 				po.FromString( e.Modifiers );
 				if( po.ContainsTransformOrTurn() )
-<<<<<<< HEAD
 					NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
 				NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
 				radarSteps.SetNoteData(nd);
 				StepsUtil::CalculateRadarValues(&radarSteps, songLength);
 				rv += radarSteps.GetRadarValues(PLAYER_1);
-=======
-				{
-					NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), po, pSteps->m_StepsType);
-				}
-				NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), e.Attacks, pSteps->m_StepsType, e.pSong);
-				RadarValues transformed_rv;
-				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, transformed_rv );
-				GAMESTATE->SetProcessedTimingData(nullptr);
-				rv += transformed_rv;
->>>>>>> origin/unified-ui-features-13937230807013224518
 			}
 			else
 			{
@@ -208,13 +186,8 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 			continue;
 		}
 
-<<<<<<< HEAD
 		Song *pSong = e->pSong;
 		ASSERT( pSong );
-=======
-		Song *pSong = e.pSong;
-		ASSERT( pSong != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518
 		switch( pSong->m_DisplayBPMType )
 		{
 		case DISPLAY_BPM_ACTUAL:

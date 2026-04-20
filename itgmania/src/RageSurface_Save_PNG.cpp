@@ -90,15 +90,7 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 	png_info *pInfo = png_create_info_struct(pPng);
 	if( pInfo == nullptr )
 	{
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_PNG.cpp
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_PNG.cpp
 		png_destroy_write_struct( &pPng, nullptr );
-=======
-		png_destroy_read_struct( &pPng, nullptr, nullptr );
->>>>>>> origin/c++11:src/RageSurface_Save_PNG.cpp
-=======
-		png_destroy_write_struct( &pPng, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_PNG.cpp
 		if( bDeleteImg )
 			delete pImg;
 		sprintf( szErrorbuf, "creating png_create_info_struct failed");
@@ -107,15 +99,7 @@ static bool RageSurface_Save_PNG( RageFile &f, char szErrorbuf[1024], RageSurfac
 
 	if( setjmp(png_jmpbuf(pPng)) )
 	{
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_PNG.cpp
-<<<<<<< HEAD:itgmania/src/RageSurface_Save_PNG.cpp
 		png_destroy_write_struct( &pPng, &pInfo );
-=======
-		png_destroy_read_struct( &pPng, &pInfo, nullptr );
->>>>>>> origin/c++11:src/RageSurface_Save_PNG.cpp
-=======
-		png_destroy_write_struct( &pPng, &pInfo );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Save_PNG.cpp
 		return false;
 	}
 

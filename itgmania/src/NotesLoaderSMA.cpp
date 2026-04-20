@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/NotesLoaderSMA.cpp
-<<<<<<< HEAD:itgmania/src/NotesLoaderSMA.cpp
 #include "global.h"
 #include "NotesLoaderSMA.h"
 #include "BackgroundUtil.h"
@@ -507,9 +505,6 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderSMA.cpp
 #include "global.h"
 #include "NotesLoaderSMA.h"
 #include "BackgroundUtil.h"
@@ -673,10 +668,7 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
 	out.m_SongTiming.m_sFile = sPath; // songs still have their fallback timing.
 	out.m_sSongFileName = sPath;
 	
-<<<<<<< HEAD:itgmania/src/NotesLoaderSMA.cpp
 	int state = SMA_GETTING_SONG_INFO;
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderSMA.cpp
 	Steps* pNewNotes = nullptr;
 	int iRowsPerBeat = -1; // Start with an invalid value: needed for checking.
 	
@@ -1004,7 +996,3 @@ bool SMALoader::LoadFromSimfile( const RString &sPath, Song &out, bool bFromCach
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/NotesLoaderSMA.cpp
->>>>>>> origin/c++11:src/NotesLoaderSMA.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderSMA.cpp

@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/NoteSkinManager.h
-<<<<<<< HEAD:itgmania/src/NoteSkinManager.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NoteSkinManager.h
 #ifndef NOTE_SKIN_MANAGER_H
 #define NOTE_SKIN_MANAGER_H
 
@@ -41,7 +37,6 @@ public:
 	RString GetPath( const RString &sButtonName, const RString &sElement );
 	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );
 	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = nullptr, bool bSpriteOnly = false );
-<<<<<<< HEAD:itgmania/src/NoteSkinManager.h
 
 	RString		GetMetric( const RString &sButtonName, const RString &sValue );
 	int		GetMetricI( const RString &sButtonName, const RString &sValueName );
@@ -104,42 +99,6 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#ifndef NOTE_SKIN_MANAGER_H
-#define NOTE_SKIN_MANAGER_H
-
-#include "Actor.h"
-#include "RageTypes.h"
-#include "PlayerNumber.h"
-#include "GameInput.h"
-#include "IniFile.h"
-
-class Game;
-struct NoteSkinData;
-
-/** @brief Loads note skins. */
-class NoteSkinManager
-{
-public:
-	NoteSkinManager();
-	~NoteSkinManager();
-
-	void RefreshNoteSkinData( const Game* game );
-	void GetNoteSkinNames( const Game* game, vector<RString> &AddTo );
-	void GetNoteSkinNames( vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
-	bool DoesNoteSkinExist( const RString &sNoteSkin );	// looks up current const Game* in GAMESTATE
-	bool DoNoteSkinsExistForGame( const Game *pGame );
-
-	void SetCurrentNoteSkin( const RString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
-	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
-
-	void SetPlayerNumber( PlayerNumber pn ) { m_PlayerNumber = pn; }
-	void SetGameController( GameController gc ) { m_GameController = gc; }
-	RString GetPath( const RString &sButtonName, const RString &sElement );
-	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );
-	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = nullptr, bool bSpriteOnly = false );
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NoteSkinManager.h
 
 	RString		GetMetric( const RString &sButtonName, const RString &sValue );
 	int		GetMetricI( const RString &sButtonName, const RString &sValueName );
@@ -202,7 +161,3 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/NoteSkinManager.h
->>>>>>> origin/c++11:src/NoteSkinManager.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NoteSkinManager.h

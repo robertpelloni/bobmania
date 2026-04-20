@@ -18,15 +18,8 @@ public:
 	void FinishLoading();
 	RageSound *GetSound() { return &m_sSound; }
 	RageSoundReader *GetSharedSound() { return m_pSharedSound; }
-<<<<<<< HEAD
 	RageSoundReader *GetPlayerSound( PlayerNumber pn ) { if( pn == PLAYER_INVALID ) return nullptr; return m_pPlayerSounds[pn]; }
-=======
-<<<<<<< HEAD:itgmania/src/AutoKeysounds.h
 	RageSoundReader *GetPlayerSound( PlayerNumber pn ) { if( pn >= NUM_PlayerNumber ) return NULL; return m_pPlayerSounds[pn]; }
-=======
-	RageSoundReader *GetPlayerSound( PlayerNumber pn ) { if( pn == PLAYER_INVALID ) return nullptr; return m_pPlayerSounds[pn]; }
->>>>>>> origin/c++11:src/AutoKeysounds.h
->>>>>>> main
 
 protected:	
 	void LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain );

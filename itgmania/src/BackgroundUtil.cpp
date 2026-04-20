@@ -1,13 +1,8 @@
-<<<<<<< HEAD:itgmania/src/BackgroundUtil.cpp
-<<<<<<< HEAD:itgmania/src/BackgroundUtil.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BackgroundUtil.cpp
 #include "global.h"
 #include "BackgroundUtil.h"
 #include "RageUtil.h"
 #include "Song.h"
 
-<<<<<<< HEAD:itgmania/src/BackgroundUtil.cpp
 #include "IniFile.h"
 #include "RageLog.h"
 #include "Background.h"
@@ -410,14 +405,6 @@ void BackgroundUtil::BakeAllBackgroundChanges( Song *pSong )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "BackgroundUtil.h"
-#include "RageUtil.h"
-#include "Song.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BackgroundUtil.cpp
 #include "IniFile.h"
 #include "RageLog.h"
 #include <set>
@@ -819,7 +806,3 @@ void BackgroundUtil::BakeAllBackgroundChanges( Song *pSong )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/BackgroundUtil.cpp
->>>>>>> origin/c++11:src/BackgroundUtil.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/BackgroundUtil.cpp

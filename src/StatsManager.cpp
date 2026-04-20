@@ -1,15 +1,8 @@
-<<<<<<< HEAD
 #include "global.h"
 #include "StatsManager.h"
 #include "RageFileManager.h"
 #include "GameState.h"
 
-=======
-﻿#include "global.h"
-#include "StatsManager.h"
-#include "RageFileManager.h"
-#include "GameState.h"
->>>>>>> origin/unified-ui-features-13937230807013224518
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
@@ -27,11 +20,7 @@
 #include "PlayerState.h"
 #include "Player.h"
 
-<<<<<<< HEAD
 StatsManager*	STATSMAN = nullptr;	// global object accessable from anywhere in the program
-=======
-StatsManager*	STATSMAN = nullptr;	// global object accessible from anywhere in the program
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp );
@@ -269,7 +258,6 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 				AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
 			}
 
-<<<<<<< HEAD
 			CHECKPOINT;
 		}
 	}
@@ -286,38 +274,6 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 			recent = xml->AppendChild( new XNode("RecentSongScores") );
 
 		if(!GAMESTATE->m_bMultiplayer)
-=======
-			// No marathons etc for now...
-			if ( g_PadmissEnabled.Get() && pSS->m_playMode == PLAY_MODE_REGULAR )
-				SavePadmissScore( pSS, pn );
-		}
-	}
-
-	// Not sure what the Save/Upload folder was originally for, but the files
-	// in it just accumulate uselessly, wasting several seconds when finishing
-	// a song.  So this pref disables it. -Kyz
-	if(!PREFSMAN->m_DisableUploadDir)
-		SaveUploadFile( pSS );
-
-	//FileCopy( "Data/TempTestGroups.xml", "Save/Upload/data.xml" );
-}
-
-void StatsManager::SaveUploadFile( const StageStats *pSS )
-{
-	// Save recent scores
-	unique_ptr<XNode> xml( new XNode("Stats") );
-	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
-
-	XNode *recent = nullptr;
-	if( GAMESTATE->IsCourseMode() )
-		recent = xml->AppendChild( new XNode("RecentCourseScores") );
-	else
-		recent = xml->AppendChild( new XNode("RecentSongScores") );
-
-	if(!GAMESTATE->m_bMultiplayer)
-	{
-		FOREACH_HumanPlayer( p )
->>>>>>> origin/unified-ui-features-13937230807013224518
 		{
 			if( pSS->m_player[p].m_HighScore.IsEmpty() )
 				continue;

@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
-<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp
 #include "global.h"
 #include "ModIconRow.h"
 #include "ThemeManager.h"
@@ -12,18 +8,12 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
-<<<<<<< HEAD
 
 #include <vector>
 
-=======
-<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
 
 #include <vector>
 
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp
->>>>>>> main
 
 int OptionToPreferredColumn( RString sOptionText );
 
@@ -40,10 +30,6 @@ ModIconRow::~ModIconRow()
 {
 	for (ModIcon *p : m_vpModIcon)
 	{
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
->>>>>>> main
 		RageUtil::SafeDelete( p );
 	}
 	this->RemoveAllChildren();
@@ -238,36 +224,6 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "ModIconRow.h"
-#include "ThemeManager.h"
-#include "PlayerOptions.h"
-#include "GameState.h"
-#include "RageLog.h"
-#include "PlayerState.h"
-#include "ActorUtil.h"
-#include "XmlFile.h"
-#include "LuaManager.h"
-
-
-int OptionToPreferredColumn( RString sOptionText );
-
-REGISTER_ACTOR_CLASS( ModIconRow );
-
-ModIconRow::ModIconRow()
-{
-	m_pn = PlayerNumber_Invalid;
-
-	this->SubscribeToMessage( "PlayerOptionsChanged" );
-}
-
-ModIconRow::~ModIconRow()
-{
-	for (ModIcon *p : m_vpModIcon)
-	{
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp
 		SAFE_DELETE( p );
 	}
 	this->RemoveAllChildren();
@@ -463,7 +419,3 @@ LUA_REGISTER_DERIVED_CLASS( ModIconRow, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ModIconRow.cpp
->>>>>>> origin/c++11:src/ModIconRow.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ModIconRow.cpp

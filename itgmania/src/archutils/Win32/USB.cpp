@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 #include "global.h"
 #include "USB.h"
 #include "RageLog.h"
@@ -45,15 +41,8 @@ static RString GetUSBDevicePath( int iNum )
 
 	RString sRet;
 	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
-<<<<<<< HEAD
 		DeviceDetail, iSize, &iSize, nullptr) )
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 		DeviceDetail, iSize, &iSize, nullptr) )
-=======
-		DeviceDetail, iSize, &iSize, nullptr) ) 
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
->>>>>>> main
 		sRet = DeviceDetail->DevicePath;
 	free( DeviceDetail );
 
@@ -68,15 +57,8 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 	RString path;
 	while( (path = GetUSBDevicePath(iIndex++)) != "" )
 	{
-<<<<<<< HEAD
 		HANDLE h = CreateFile( path.c_str(), GENERIC_READ,
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 		HANDLE h = CreateFile( path.c_str(), GENERIC_READ,
-=======
-		HANDLE h = CreateFile( path, GENERIC_READ,
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
->>>>>>> main
 			FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
 
 		if( h == INVALID_HANDLE_VALUE )
@@ -137,7 +119,6 @@ WindowsFileIO::WindowsFileIO()
 	ZeroMemory( &m_Overlapped, sizeof(m_Overlapped) );
 	m_Handle = INVALID_HANDLE_VALUE;
 	m_pBuffer = nullptr;
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 }
 
 WindowsFileIO::~WindowsFileIO()
@@ -266,127 +247,6 @@ bool WindowsFileIO::IsOpen() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "USB.h"
-#include "RageLog.h"
-#include "RageUtil.h"
-#include "archutils/Win32/ErrorStrings.h"
-
-#if defined(_MSC_VER)
-#pragma comment(lib, "archutils/Win32/ddk/setupapi.lib") 
-#pragma comment(lib, "archutils/Win32/ddk/hid.lib") 
-#endif
-
-extern "C" {
-#include "archutils/Win32/ddk/setupapi.h"
-/* Quiet header warning: */
-#include "archutils/Win32/ddk/hidsdi.h"
-}
-
-static RString GetUSBDevicePath( int iNum )
-{
-	GUID guid;
-	HidD_GetHidGuid( &guid );
-
-	HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, nullptr, nullptr, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
-
-	SP_DEVICE_INTERFACE_DATA DeviceInterface;
-	DeviceInterface.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
-
-	if( !SetupDiEnumDeviceInterfaces (DeviceInfo,
-		NULL, &guid, iNum, &DeviceInterface) )
-	{
-		SetupDiDestroyDeviceInfoList( DeviceInfo );
-		return RString();
-	}
-
-	unsigned long iSize;
-	SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, nullptr, 0, &iSize, 0 );
-
-	PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
-	DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
-
-	RString sRet;
-	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
-		DeviceDetail, iSize, &iSize, nullptr) ) 
-		sRet = DeviceDetail->DevicePath;
-	free( DeviceDetail );
-
-	SetupDiDestroyDeviceInfoList( DeviceInfo );
-	return sRet;
-}
-
-bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnInit)(HANDLE) )
-{
-	DWORD iIndex = 0;
-
-	RString path;
-	while( (path = GetUSBDevicePath(iIndex++)) != "" )
-	{
-		HANDLE h = CreateFile( path, GENERIC_READ,
-			FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr );
-
-		if( h == INVALID_HANDLE_VALUE )
-			continue;
-
-		HIDD_ATTRIBUTES attr;
-		if( !HidD_GetAttributes(h, &attr) )
-		{
-			CloseHandle( h );
-			continue;
-		}
-
-		if( (iVID != -1 && attr.VendorID != iVID) ||
-			(iPID != -1 && attr.ProductID != iPID) )
-		{
-			CloseHandle( h );
-			continue; /* This isn't it. */
-		}
-
-		/* The VID and PID match. */
-		if( iNum-- > 0 )
-		{
-			CloseHandle( h );
-			continue;
-		}
-
-		if( pfnInit )
-			pfnInit( h );
-		CloseHandle(h);
-
-		m_IO.Open( path, iBlockSize );
-		return true;
-	}
-
-	return false;
-}
-
-bool USBDevice::IsOpen() const
-{
-	return m_IO.IsOpen();
-}
-
-
-int USBDevice::GetPadEvent()
-{
-	if( !IsOpen() )
-		return -1;
-
-	long iBuf;
-	if( m_IO.read(&iBuf) <= 0 )
-		return -1;
-
-	return iBuf;
-}
-
-WindowsFileIO::WindowsFileIO()
-{
-	ZeroMemory( &m_Overlapped, sizeof(m_Overlapped) );
-	m_Handle = INVALID_HANDLE_VALUE;
-	m_pBuffer = nullptr;
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 }
 
 WindowsFileIO::~WindowsFileIO()
@@ -409,11 +269,7 @@ bool WindowsFileIO::Open( RString path, int iBlockSize )
 		CloseHandle( m_Handle );
 
 	m_Handle = CreateFile( path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
 		NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
-=======
-		nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp
 
 	if( m_Handle == INVALID_HANDLE_VALUE )
 		return false;
@@ -519,7 +375,3 @@ bool WindowsFileIO::IsOpen() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/archutils/Win32/USB.cpp
->>>>>>> origin/c++11:src/archutils/Win32/USB.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/USB.cpp

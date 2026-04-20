@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageDisplay_GLES2.cpp
-<<<<<<< HEAD:itgmania/src/RageDisplay_GLES2.cpp
 #include "global.h"
 
 #include "RageDisplay.h"
@@ -1009,9 +1007,6 @@ RageDisplay_GLES2::SupportsSurfaceFormat( RagePixelFormat pixfmt )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_GLES2.cpp
 #include "global.h"
 
 #include "RageDisplay.h"
@@ -2017,7 +2012,3 @@ RageDisplay_GLES2::SupportsSurfaceFormat( RagePixelFormat pixfmt )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageDisplay_GLES2.cpp
->>>>>>> origin/c++11:src/RageDisplay_GLES2.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_GLES2.cpp

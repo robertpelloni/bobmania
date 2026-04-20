@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 #ifndef NetworkSyncManager_H
 #define NetworkSyncManager_H
 
@@ -221,9 +219,6 @@ extern NetworkSyncManager *NSMAN;
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
 #ifndef NetworkSyncManager_H
 #define NetworkSyncManager_H
 
@@ -310,30 +305,6 @@ struct NetServerInfo
 class EzSockets;
 class StepManiaLanServer;
 
-<<<<<<< HEAD
-=======
-class PacketFunctions
-{
-public:
-	unsigned char Data[NETMAXBUFFERSIZE];	//Data
-	int Position;				//Other info (Used for following functions)
-	int size;					//When sending these pacs, Position should
-								//be used; NOT size.
-
-	//Commands used to operate on NetPackets
-	uint8_t Read1();
-	uint16_t Read2();
-	uint32_t Read4();
-	RString ReadNT();
-
-	void Write1( uint8_t Data );
-	void Write2( uint16_t Data );
-	void Write4( uint32_t Data );
-	void WriteNT( const RString& Data );
-
-	void ClearPacket();
-};
->>>>>>> main
 /** @brief Uses ezsockets for primitive song syncing and score reporting. */
 class NetworkSyncManager 
 {
@@ -341,7 +312,6 @@ public:
 	NetworkSyncManager( LoadingWindow *ld = NULL );
 	~NetworkSyncManager();
 
-<<<<<<< HEAD
 	void CloseConnection();
 	void PostStartUp( const RString& ServerIP );
 	bool Connect( const RString& addy, unsigned short port );
@@ -360,15 +330,9 @@ public:
 	void ReportNSSOnOff( int i );	// Report song selection screen on/off
 	// If "useSMserver" then send score to server
 	void ReportScore( int playerID, int step, int score, int combo, float offset );
-=======
-    // If "useSMserver" then send score to server
-	void ReportScore( int playerID, int step, int score, int combo, float offset );	
-	void ReportScore(int playerID, int step, int score, int combo, float offset, int numNotes);
->>>>>>> main
 	void ReportSongOver();
 	void ReportStyle(); // Report style, players, and names
 	void StartRequest( short position );	// Request a start; Block until granted.
-<<<<<<< HEAD
 
 	// (Legacy) SMOnline stuff;
 	void SendSMOnline();
@@ -377,35 +341,11 @@ public:
 	int m_playerLife[NUM_PLAYERS];	// Life (used for sending to server)
 
 	// (legacy?) user list:
-=======
-	RString GetServerName();
-
-	// SMOnline stuff
-	void SendSMOnline( );
-
-	bool Connect( const RString& addy, unsigned short port );
-
-	void PostStartUp( const RString& ServerIP );
-
-	void CloseConnection();
-
-	void DisplayStartupStatus();	// Notify user if connect attempt was successful or not.
-
-	int m_playerLife[NUM_PLAYERS];	// Life (used for sending to server)
-
-	void Update( float fDeltaTime );
-
-	bool useSMserver;
-	bool isSMOnline;
-	bool isSMOLoggedIn[NUM_PLAYERS];
-
->>>>>>> main
 	vector<int> m_PlayerStatus;
 	int m_ActivePlayers;
 	vector<int> m_ActivePlayer;
 	vector<RString> m_PlayerNames;
 
-<<<<<<< HEAD
 	// (Legacy) Used for ScreenNetEvaluation
 	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
@@ -417,64 +357,24 @@ public:
 	void SendChat(const RString& message);
 	RString m_WaitingChat;
 	RString m_sChatText;	// chatroom text buffer
-=======
-	//friendlist
-	std::vector<RString> fl_PlayerNames;
-	std::vector<int> fl_PlayerStates;
-	
-	// Used for ScreenNetEvaluation
-	vector<EndOfGame_PlayerData> m_EvalPlayerData;
-
-	// Used together: 
-	bool ChangedScoreboard(int Column);	// Returns true if scoreboard changed since function was last called.
-	RString m_Scoreboard[NUM_NSScoreBoardColumn];
-
-	// Used for chatting
-	void SendChat(const RString& message);
-	RString m_WaitingChat;
->>>>>>> main
 
 	// (Legacy) Used for options
 	void ReportPlayerOptions();
 
-<<<<<<< HEAD
 	// (Legacy) Used for song checking/changing
-=======
-	// Used for song checking/changing
->>>>>>> main
 	RString m_sMainTitle;
 	RString m_sArtist;
 	RString m_sSubTitle;
 	int m_iSelectMode;
 	void SelectUserSong();
 
-<<<<<<< HEAD
 	// (common) LAN-related
-=======
-	int GetServerVersion();
-
-	RString m_sChatText;
-
-	PacketFunctions	m_SMOnlinePacket;
-
->>>>>>> main
 	StepManiaLanServer *LANserver;
 	void GetListOfLANServers( vector<NetServerInfo>& AllServers );
 
 	// new code
 	void SendPacket(NetworkPacket *p);
 
-<<<<<<< HEAD
-=======
-	RString MD5Hex( const RString &sInput );
-
-	void GetListOfLANServers( vector<NetServerInfo>& AllServers );
-
-	// Aldo: Please move this method to a new class, I didn't want to create new files because I don't know how to properly update the files for each platform.
-	// I preferred to misplace code rather than cause unneeded headaches to non-windows users, although it would be nice to have in the wiki which files to
-	// update when adding new files.
-	static unsigned long GetCurrentSMBuild( LoadingWindow* ld );
->>>>>>> main
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -501,7 +401,6 @@ private:
 	int m_step;
 	int m_score;
 	int m_combo;
-<<<<<<< HEAD
 	*/
 
 	// (legacy) scoreboard
@@ -510,24 +409,6 @@ private:
 	// (common) LAN
 	EzSockets *BroadcastReception;
 	vector<NetServerInfo> m_vAllLANServers;
-=======
-    
-	int m_startupStatus;	// Used to see if attempt was successful or not.
-	int m_iSalt;
-
-	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
-
-	RString m_ServerName;
- 
-	EzSockets *NetPlayerClient;
-	EzSockets *BroadcastReception;
-
-	vector<NetServerInfo> m_vAllLANServers;
-
-	int m_ServerVersion; // ServerVersion
-
-	PacketFunctions m_packet;
->>>>>>> main
 #endif
 };
 
@@ -559,7 +440,3 @@ extern NetworkSyncManager *NSMAN;
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD
->>>>>>> origin/c++11
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518

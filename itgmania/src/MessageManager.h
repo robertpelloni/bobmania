@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/MessageManager.h
-<<<<<<< HEAD:itgmania/src/MessageManager.h
 #ifndef MessageManager_H
 #define MessageManager_H
 
@@ -316,9 +314,6 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/MessageManager.h
 #ifndef MessageManager_H
 #define MessageManager_H
 
@@ -616,7 +611,3 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/MessageManager.h
->>>>>>> origin/c++11:src/MessageManager.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/MessageManager.h

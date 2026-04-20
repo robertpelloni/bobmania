@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/EnumHelper.h
-<<<<<<< HEAD:itgmania/src/EnumHelper.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
 #ifndef ENUM_HELPER_H
 #define ENUM_HELPER_H
 
@@ -80,30 +76,16 @@ namespace Enum
 	}
 };
 
-<<<<<<< HEAD
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
-=======
-<<<<<<< HEAD:itgmania/src/EnumHelper.h
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, std::unique_ptr<RString> *pNameCache ); // XToString helper
-=======
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, unique_ptr<RString> *pNameCache ); // XToString helper
->>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
->>>>>>> main
 
 #define XToString(X) \
 const RString& X##ToString(X x); \
 static_assert( NUM_##X == ARRAYLEN(X##Names) ); \
 const RString& X##ToString( X x ) \
 {	\
-<<<<<<< HEAD
 	static std::unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
-=======
-<<<<<<< HEAD:itgmania/src/EnumHelper.h
 	static std::unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
-=======
-	static unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
->>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
->>>>>>> main
 	return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 } \
 namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
@@ -112,10 +94,6 @@ namespace StringConversion { template<> RString ToString<X>( const X &value ) { 
 const RString &X##ToLocalizedString(X x); \
 const RString &X##ToLocalizedString( X x ) \
 {       \
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/EnumHelper.h
->>>>>>> main
 	static std::unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
 	if( g_##X##Name[0].get() == nullptr ) { \
 		for( unsigned i = 0; i < NUM_##X; ++i ) \
@@ -231,99 +209,6 @@ namespace LuaHelpers \
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#ifndef ENUM_HELPER_H
-#define ENUM_HELPER_H
-
-#include "LuaReference.h"
-#include "RageUtil.h"
-#include <memory>
-
-extern "C"
-{
-#include "../extern/lua-5.1/src/lua.h"
-}
-
-/** @brief A general foreach loop for enumerators, going up to a max value. */
-#define FOREACH_ENUM_N( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
-/** @brief A general foreach loop for enumerators. */
-#define FOREACH_ENUM( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
-
-int CheckEnum(lua_State *L,
-	      LuaReference &table,
-	      int iPos,
-	      int iInvalid,
-	      const char *szType,
-	      bool bAllowInvalid);
-
-template<typename T>
-struct EnumTraits
-{
-	static LuaReference StringToEnum;
-	static LuaReference EnumToString;
-	static T Invalid;
-	static const char *szName;
-};
-template<typename T> LuaReference EnumTraits<T>::StringToEnum;
-template<typename T> LuaReference EnumTraits<T>::EnumToString;
-/** @brief Lua helpers for Enumerators. */
-namespace Enum
-{
-	template<typename T>
-	static T Check( lua_State *L, int iPos, bool bAllowInvalid = false )
-	{
-		return (T) CheckEnum(L,
-				     EnumTraits<T>::StringToEnum,
-				     iPos,
-				     EnumTraits<T>::Invalid,
-				     EnumTraits<T>::szName,
-				     bAllowInvalid);
-	}
-	template<typename T>
-	static void Push( lua_State *L, T iVal )
-	{
-		/* Enum_Invalid values are nil in Lua. */
-		if( iVal == EnumTraits<T>::Invalid )
-		{
-			lua_pushnil( L );
-			return;
-		}
-
-		/* Look up the string value. */
-		EnumTraits<T>::EnumToString.PushSelf( L );
-		lua_rawgeti( L, -1, iVal + 1 );
-		lua_remove( L, -2 );
-	}
-
-	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName );
-};
-
-const RString &EnumToString( int iVal, int iMax, const char **szNameArray, unique_ptr<RString> *pNameCache ); // XToString helper
-
-#define XToString(X) \
-const RString& X##ToString(X x); \
-COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
-const RString& X##ToString( X x ) \
-{	\
-	static unique_ptr<RString> as_##X##Name[NUM_##X+2]; \
-	return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
-} \
-namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
-
-#define XToLocalizedString(X)      \
-const RString &X##ToLocalizedString(X x); \
-const RString &X##ToLocalizedString( X x ) \
-{       \
-	static unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
-	if( g_##X##Name[0].get() == nullptr ) { \
-		for( unsigned i = 0; i < NUM_##X; ++i ) \
-		{ \
-=======
-	static unique_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
-	if( g_##X##Name[0].get() == nullptr ) { \
-		for( unsigned i = 0; i < NUM_##X; ++i ) \
-		{ \
->>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h
 			unique_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
 			g_##X##Name[i] = move(ap); \
 		} \
@@ -427,7 +312,3 @@ namespace LuaHelpers \
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/EnumHelper.h
->>>>>>> origin/c++11:src/EnumHelper.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/EnumHelper.h

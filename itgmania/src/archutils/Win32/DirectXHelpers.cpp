@@ -8,16 +8,10 @@
 #include <dsound.h>
 #include <stdexcept>
 
-<<<<<<< HEAD
 RString GetErrorString(HRESULT hr);
 
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/DirectXHelpers.cpp
 RString GetErrorString(HRESULT hr);
 
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/DirectXHelpers.cpp
->>>>>>> main
 RString hr_ssprintf( int hr, const char *fmt, ... )
 {
 	va_list	va;
@@ -25,10 +19,6 @@ RString hr_ssprintf( int hr, const char *fmt, ... )
 	RString s = vssprintf( fmt, va );
 	va_end(va);
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/DirectXHelpers.cpp
->>>>>>> main
 	RString szError = GetErrorString(hr);
 	return s + ssprintf(" (%s)", szError.c_str());
 }
@@ -42,12 +32,6 @@ RString GetErrorString(HRESULT hr)
 #include "DirectXErrorList.h"
 	default: return ssprintf("unknown HRESULT 0x%8.8X", hr);
 	}
-<<<<<<< HEAD
-=======
-=======
-	const char *szError = GetErrorString( hr );
-	return s + ssprintf( " (%s)", szError );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/DirectXHelpers.cpp
 }
 
 // needed for defines
@@ -67,7 +51,6 @@ RString GetErrorString(HRESULT hr)
 #include "DirectXErrorList.h"
 	default: return ssprintf("unknown HRESULT 0x%8.8X", hr);
 	}
->>>>>>> main
 }
 
 /*

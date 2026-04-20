@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Win32.cpp
 #include "global.h"
 #include "ArchHooks_Win32.h"
 #include "RageUtil.h"
@@ -246,9 +244,6 @@ RString ArchHooks_Win32::GetClipboard()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_Win32.cpp
 #include "global.h"
 #include "ArchHooks_Win32.h"
 #include "RageUtil.h"
@@ -353,11 +348,7 @@ bool ArchHooks_Win32::CheckForMultipleInstances(int argc, char* argv[])
 	 * name, which should match the loading window. */
 	HWND hWnd = FindWindow( PRODUCT_ID, nullptr );
 	if( hWnd == nullptr )
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Win32.cpp
 		hWnd = FindWindow( NULL, PRODUCT_ID );
-=======
-		hWnd = FindWindow( nullptr, PRODUCT_ID );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_Win32.cpp
 
 	if( hWnd != nullptr )
 	{
@@ -463,49 +454,6 @@ float ArchHooks_Win32::GetDisplayAspectRatio()
 	return dm.dmPelsWidth / (float)dm.dmPelsHeight;
 }
 
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Win32.cpp
-=======
-RString ArchHooks_Win32::GetClipboard()
-{
-	HGLOBAL hgl;
-	LPTSTR lpstr;
-	RString ret;
-
-	// First make sure that the clipboard actually contains a string
-	// (or something stringifiable)
-	if(unlikely( !IsClipboardFormatAvailable( CF_TEXT ) )) return "";
-	
-	// Yes. All this mess just to gain access to the string stored by the clipboard.
-	// I'm having flashbacks to Berkeley sockets.
-	if(unlikely( !OpenClipboard( nullptr ) ))
-		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: OpenClipboard() failed" )); return ""; }
-	
-	hgl = GetClipboardData( CF_TEXT );
-	if(unlikely( hgl == nullptr ))
-		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: GetClipboardData() failed" )); CloseClipboard(); return ""; }
-
-	lpstr = (LPTSTR) GlobalLock( hgl );
-	if(unlikely( lpstr == nullptr ))
-		{ LOG->Warn(werr_ssprintf( GetLastError(), "InputHandler_DirectInput: GlobalLock() failed" )); CloseClipboard(); return ""; }
-
-	// And finally, we have a char (or wchar_t) array of the clipboard contents,
-	// pointed to by sToPaste.
-	// (Hopefully.)
-
-#ifdef UNICODE
-	ret = WStringToRString( wstring()+*lpstr );
-#else
-	ret = RString( lpstr );
-#endif
-	
-	// And now we clean up.
-	GlobalUnlock( hgl );
-	CloseClipboard();
-	
-	return ret;
-}
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_Win32.cpp
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
@@ -530,7 +478,3 @@ RString ArchHooks_Win32::GetClipboard()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_Win32.cpp
->>>>>>> origin/c++11:src/arch/ArchHooks/ArchHooks_Win32.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_Win32.cpp

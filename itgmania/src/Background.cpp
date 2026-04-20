@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/Background.cpp
-<<<<<<< HEAD:itgmania/src/Background.cpp
 #include "global.h"
 #include "Background.h"
 #include "RageUtil.h"
@@ -1019,9 +1017,6 @@ void Background::GetLoadedBackgroundChanges( std::vector<BackgroundChange> *pBac
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp
 #include "global.h"
 #include "Background.h"
 #include "RageUtil.h"
@@ -1397,12 +1392,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 
-<<<<<<< HEAD:itgmania/src/Background.cpp
 	ASSERT( pActor != nullptr );
-=======
-	if( pActor == nullptr )
-		pActor = new Actor;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp
 	m_BGAnimations[bd] = pActor;
 
 	for( unsigned i=0; i<vsResolvedRef.size(); i++ )
@@ -1461,11 +1451,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 
 		for(int j=max(ts->GetRow(),iStartRow);
 			j<min(iEndRow,iSegmentEndRow);
-<<<<<<< HEAD:itgmania/src/Background.cpp
 			j+=4*ts->GetNoteRowsPerMeasure())
-=======
-			j+= int(RAND_BG_CHANGE_MEASURES * ts->GetNoteRowsPerMeasure()))
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp
 		{
 			// Don't fade. It causes frame rate dip, especially on slower machines.
 			BackgroundDef bd = m_Layer[0].CreateRandomBGA(m_pSong,
@@ -2014,7 +2000,3 @@ void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgrou
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/Background.cpp
->>>>>>> origin/c++11:src/Background.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Background.cpp

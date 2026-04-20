@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/GrooveRadar.cpp
-<<<<<<< HEAD:itgmania/src/GrooveRadar.cpp
 #include "global.h"
 #include "GrooveRadar.h"
 #include "RageUtil.h"
@@ -283,9 +281,6 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GrooveRadar.cpp
 #include "global.h"
 #include "GrooveRadar.h"
 #include "RageUtil.h"
@@ -566,7 +561,3 @@ LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/GrooveRadar.cpp
->>>>>>> origin/c++11:src/GrooveRadar.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GrooveRadar.cpp

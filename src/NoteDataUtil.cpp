@@ -8,11 +8,7 @@
 #include "Style.h"
 #include "GameState.h"
 #include "RadarValues.h"
-<<<<<<< HEAD
 #include "Foreach.h"
-=======
-#include "TimingData.h"
->>>>>>> origin/unified-ui-features-13937230807013224518
 #include <utility>
 
 // TODO: Remove these constants that aren't time signature-aware
@@ -480,13 +476,8 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			 occuring to begin with, but at this time, I am unsure how to deal with it.
 			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
 			 */
-<<<<<<< HEAD
 			const Style *curStyle = GAMESTATE->GetCurrentStyle();
 			if( (curStyle == NULL || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
-=======
-			const Style *curStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-			if( (curStyle == nullptr || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
->>>>>>> origin/unified-ui-features-13937230807013224518
 				&& int( tn.pn ) > NUM_PlayerNumber )
 			{
 				tn.pn = PLAYER_1;

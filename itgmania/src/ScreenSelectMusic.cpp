@@ -21,13 +21,6 @@
 #include "MenuTimer.h"
 #include "StatsManager.h"
 #include "StepsUtil.h"
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
-
->>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 #include "Style.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
@@ -246,10 +239,6 @@ void ScreenSelectMusic::BeginScreen()
 		GAMESTATE->SetCompatibleStylesForPlayers();
 	}
 
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 	if( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
 	{
 		LuaHelpers::ReportScriptError("The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic.");
@@ -266,13 +255,6 @@ void ScreenSelectMusic::BeginScreen()
 		}
 		GAMESTATE->SetCurrentStyle( pStyle, PLAYER_INVALID );
 	}
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
-	if( GAMESTATE->GetCurrentStyle() == nullptr )
-		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
->>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 	{
@@ -1508,44 +1490,10 @@ bool ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 			}
 		}
 
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 		// Now that Steps have been chosen, set a Style that can play them.
 		GAMESTATE->SetCompatibleStylesForPlayers();
 		GAMESTATE->ForceSharedSidesMatch();
 		GAMESTATE->prepare_song_for_gameplay();
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
-		if( CommonMetrics::AUTO_SET_STYLE )
-		{
-			// Now that Steps have been chosen, set a Style that can play them.
-			const Style *pStyle = nullptr;
-			if( GAMESTATE->IsCourseMode() )
-				pStyle = GAMESTATE->m_pCurCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
-			if( pStyle == nullptr )
-			{
-				StepsType stCurrent;
-				PlayerNumber pn = GAMESTATE->GetMasterPlayerNumber();
-				if( GAMESTATE->IsCourseMode() )
-				{
-					ASSERT( GAMESTATE->m_pCurTrail[pn] != nullptr );
-					stCurrent = GAMESTATE->m_pCurTrail[pn]->m_StepsType;
-				}
-				else
-				{
-					ASSERT( GAMESTATE->m_pCurSteps[pn] != nullptr );
-					stCurrent = GAMESTATE->m_pCurSteps[pn]->m_StepsType;
-				}
-				vector<StepsType> vst;
-				pStyle = GAMEMAN->GetFirstCompatibleStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined(), stCurrent );
-			}
-			GAMESTATE->SetCurrentStyle( pStyle );
-		}
->>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 
 		/* If we're currently waiting on song assets, abort all except the music
 		 * and start the music, so if we make a choice quickly before background
@@ -1777,88 +1725,16 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	{
 		FOREACH_HumanPlayer( pn )
 		{
-<<<<<<< HEAD
 			SwitchPlayerStepDifficulty(pn, GAMESTATE->m_PreferredDifficulty[pn]);
-=======
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 			SwitchPlayerStepDifficulty(pn, GAMESTATE->m_PreferredDifficulty[pn]);
-=======
-			// Find the closest match to the user's preferred difficulty and StepsType.
-			int iCurDifference = -1;
-			int &iSelection = m_iSelection[pn];
-			int i = 0;
-			for (Steps *s : m_vpSteps)
-			{
-				// If the current steps are listed, use them.
-				if( GAMESTATE->m_pCurSteps[pn] == s )
-				{
-					iSelection = i;
-					break;
-				}
-
-				if( GAMESTATE->m_PreferredDifficulty[pn] != Difficulty_Invalid  )
-				{
-					int iDifficultyDifference = abs( s->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn] );
-					int iStepsTypeDifference = 0;
-					if( GAMESTATE->m_PreferredStepsType != StepsType_Invalid )
-						iStepsTypeDifference = abs( s->m_StepsType - GAMESTATE->m_PreferredStepsType );
-					int iTotalDifference = iStepsTypeDifference * NUM_Difficulty + iDifficultyDifference;
-
-					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
-					{
-						iSelection = i;
-						iCurDifference = iTotalDifference;
-					}
-				}
-				i += 1;
-			}
-
-			CLAMP( iSelection, 0, m_vpSteps.size()-1 );
->>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
->>>>>>> main
 		}
 	}
 	else
 	{
 		FOREACH_HumanPlayer( pn )
 		{
-<<<<<<< HEAD
 			SwitchPlayerCourseDifficulty(pn, GAMESTATE->m_PreferredCourseDifficulty[pn]);
-=======
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 			SwitchPlayerCourseDifficulty(pn, GAMESTATE->m_PreferredCourseDifficulty[pn]);
-=======
-			// Find the closest match to the user's preferred difficulty.
-			int iCurDifference = -1;
-			int &iSelection = m_iSelection[pn];
-			int i = 0;
-			for (Trail *t : m_vpTrails)
-			{
-				// If the current trail is listed, use it.
-				if( GAMESTATE->m_pCurTrail[pn] == m_vpTrails[i] )
-				{
-					iSelection = i;
-					break;
-				}
-
-				if( GAMESTATE->m_PreferredCourseDifficulty[pn] != Difficulty_Invalid  &&  GAMESTATE->m_PreferredStepsType != StepsType_Invalid  )
-				{
-					int iDifficultyDifference = abs( t->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn] );
-					int iStepsTypeDifference = abs( t->m_StepsType - GAMESTATE->m_PreferredStepsType );
-					int iTotalDifference = iStepsTypeDifference * NUM_CourseDifficulty + iDifficultyDifference;
-
-					if( iCurDifference == -1 || iTotalDifference < iCurDifference )
-					{
-						iSelection = i;
-						iCurDifference = iTotalDifference;
-					}
-				}
-				i += 1;
-			}
-
-			CLAMP( iSelection, 0, m_vpTrails.size()-1 );
->>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
->>>>>>> main
 		}
 	}
 
@@ -2074,25 +1950,14 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		const Course *lCourse = m_MusicWheel.GetSelectedCourse();
 		const Style *pStyle = nullptr;
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 		if(CommonMetrics::AUTO_SET_STYLE)
 		{
 			pStyle = pCourse->GetCourseStyle(GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled());
 			if(pStyle == nullptr)
 			{
 				lCourse->GetAllTrails(m_vpTrails);
-<<<<<<< HEAD
 				std::vector<Trail*>::iterator tra= m_vpTrails.begin();
-=======
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
 				std::vector<Trail*>::iterator tra= m_vpTrails.begin();
-=======
-				vector<Trail*>::iterator tra= m_vpTrails.begin();
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
->>>>>>> main
 				Game const* cur_game= GAMESTATE->GetCurrentGame();
 				int num_players= GAMESTATE->GetNumPlayersEnabled();
 				while(tra != m_vpTrails.end())
@@ -2118,16 +1983,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			pStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 			lCourse->GetTrails(m_vpTrails, pStyle->m_StepsType);
 		}
-<<<<<<< HEAD:itgmania/src/ScreenSelectMusic.cpp
-=======
-		if( CommonMetrics::AUTO_SET_STYLE )
-			pStyle = pCourse->GetCourseStyle( GAMESTATE->m_pCurGame, GAMESTATE->GetNumSidesJoined() );
-		if( pStyle == nullptr )
-			pStyle = GAMESTATE->GetCurrentStyle();
-		lCourse->GetTrails( m_vpTrails, pStyle->m_StepsType );
->>>>>>> origin/c++11:src/ScreenSelectMusic.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSelectMusic.cpp
 
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;

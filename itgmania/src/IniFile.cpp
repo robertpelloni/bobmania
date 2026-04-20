@@ -10,16 +10,10 @@ http://en.wikipedia.org/wiki/INI_file
 #include "RageLog.h"
 #include "RageFile.h"
 
-<<<<<<< HEAD
 #include <cstddef>
 
-=======
-<<<<<<< HEAD:itgmania/src/IniFile.cpp
 #include <cstddef>
 
-=======
->>>>>>> origin/c++11:src/IniFile.cpp
->>>>>>> main
 
 IniFile::IniFile(): XNode("IniFile")
 {
@@ -184,19 +178,12 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 {
 	XNode* pNode = GetChild( keyname );
-<<<<<<< HEAD
 	if ( pNode == nullptr )
 	{
 		LOG->Warn("Key '%s' not found when attempting to delete a value.", keyname.c_str());
-=======
-<<<<<<< HEAD:itgmania/src/IniFile.cpp
 	if ( pNode == nullptr )
 	{
 		LOG->Warn("Key '%s' not found when attempting to delete a value.", keyname.c_str());
-=======
-	if( pNode == nullptr )
->>>>>>> origin/c++11:src/IniFile.cpp
->>>>>>> main
 		return false;
 	}
 	bool result = pNode->RemoveAttr(valuename);
@@ -211,16 +198,10 @@ bool IniFile::DeleteKey(const RString &keyname)
 {
 	XNode* pNode = GetChild( keyname );
 	if( pNode == nullptr )
-<<<<<<< HEAD
 	{
 		LOG->Warn("Key '%s' not found when attempting to delete a key.", keyname.c_str());
-=======
-<<<<<<< HEAD:itgmania/src/IniFile.cpp
 	{
 		LOG->Warn("Key '%s' not found when attempting to delete a key.", keyname.c_str());
-=======
->>>>>>> origin/c++11:src/IniFile.cpp
->>>>>>> main
 		return false;
 	}
 	bool result = RemoveChild(pNode);
@@ -239,16 +220,10 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 
 	XNode* pNode = GetChild( from );
 	if( pNode == nullptr )
-<<<<<<< HEAD
 	{
 		LOG->Warn("Key '%s' not found.", from.c_str());
-=======
-<<<<<<< HEAD:itgmania/src/IniFile.cpp
 	{
 		LOG->Warn("Key '%s' not found.", from.c_str());
-=======
->>>>>>> origin/c++11:src/IniFile.cpp
->>>>>>> main
 		return false;
 	}
 

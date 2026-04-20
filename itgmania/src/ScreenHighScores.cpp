@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ScreenHighScores.cpp
-<<<<<<< HEAD:itgmania/src/ScreenHighScores.cpp
 #include "global.h"
 #include "ScreenHighScores.h"
 #include "ScreenManager.h"
@@ -356,9 +354,6 @@ void ScreenHighScores::DoScroll( int iDir )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenHighScores.cpp
 #include "global.h"
 #include "ScreenHighScores.h"
 #include "ScreenManager.h"
@@ -549,12 +544,7 @@ void ScoreScroller::Load( RString sMetricsGroup )
 	for( int i=0; i<iNumCopies; ++i )
 	{
 		Actor *pActor = ActorUtil::MakeActor( THEME->GetPathG(sMetricsGroup,"ScrollerItem") );
-<<<<<<< HEAD:itgmania/src/ScreenHighScores.cpp
 		this->AddChild( pActor );
-=======
-		if( pActor != nullptr )
-			this->AddChild( pActor );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenHighScores.cpp
 	}
 
 	DynamicActorScroller::SetTransformFromReference( THEME->GetMetricR(sMetricsGroup,"ScrollerItemTransformFunction") );
@@ -716,7 +706,3 @@ void ScreenHighScores::DoScroll( int iDir )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ScreenHighScores.cpp
->>>>>>> origin/c++11:src/ScreenHighScores.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenHighScores.cpp

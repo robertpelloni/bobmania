@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp
 #include "global.h"
 #include "PrefsManager.h"
 #include "IniFile.h"
@@ -24,7 +20,6 @@
 //TYPE_TXT_FILE	= "Data/Type.txt";
 
 PrefsManager*	PREFSMAN = nullptr;	// global and accessible from anywhere in our program
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
 
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
@@ -657,28 +652,6 @@ LUA_REGISTER_CLASS( PrefsManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "PrefsManager.h"
-
-#include "IniFile.h"
-#include "LuaManager.h"
-#include "Preference.h"
-#include "ProductInfo.h"
-#include "RageDisplay.h"
-#include "RageFile.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "SpecialFiles.h"
-
-//DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
-//PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
-//STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
-//TYPE_TXT_FILE	= "Data/Type.txt";
-
-PrefsManager*	PREFSMAN = nullptr;	// global and accessable from anywhere in our program
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp
 
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
@@ -817,7 +790,6 @@ PrefsManager::PrefsManager() :
 	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
 	m_sDefaultModifiers	( "DefaultModifiers",		"" ), 
 
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
 	m_bWindowed		( "Windowed",			true ),
 	m_iDisplayWidth		( "DisplayWidth",		854 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
@@ -843,36 +815,6 @@ PrefsManager::PrefsManager() :
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
 	//m_BackgroundCache		( "BackgroundCache",		BGCACHE_LOW_RES_PRELOAD ),
 	m_bFastLoad		( "FastLoad",			true ),
-=======
-	m_bWindowed			( "Windowed",			true ),
-	m_sDisplayId			( "DisplayId", "" ),
-	m_iDisplayWidth			( "DisplayWidth",		854 ),
-	m_iDisplayHeight		( "DisplayHeight",		480 ),
-	m_fDisplayAspectRatio		( "DisplayAspectRatio",		16/9.f, ValidateDisplayAspectRatio ),
-	m_iDisplayColorDepth		( "DisplayColorDepth",		32 ),
-	m_iTextureColorDepth		( "TextureColorDepth",		32 ),
-	m_iMovieColorDepth		( "MovieColorDepth",		32 ),
-	m_bStretchBackgrounds		( "StretchBackgrounds",		false ),
-	m_BGFitMode			( "BackgroundFitMode",		BFM_CoverPreserve),
-	m_HighResolutionTextures	( "HighResolutionTextures",	HighResolutionTextures_Auto ),
-	m_iMaxTextureResolution		( "MaxTextureResolution",	2048 ),
-	m_iRefreshRate			( "RefreshRate",		REFRESH_DEFAULT ),
-	m_bAllowMultitexture		( "AllowMultitexture",		true ),
-	m_bFullscreenIsBorderlessWindow( "FullscreenIsBorderlessWindow", true ),
-	m_bShowStats			( "ShowStats",			TRUE_IF_DEBUG),
-	m_bShowBanners			( "ShowBanners",		true ),
-	m_bShowMouseCursor		( "ShowMouseCursor",		false ),
-
-	m_bHiddenSongs			( "HiddenSongs",		false ),
-	m_bVsync			( "Vsync",			true ),
-	m_FastNoteRendering		( "FastNoteRendering",		false),
-	m_bInterlaced			( "Interlaced",			false ),
-	m_bPAL				( "PAL",			false ),
-	m_bDelayedTextureDelete		( "DelayedTextureDelete",	false ),
-	m_bDelayedModelDelete		( "DelayedModelDelete",		false ),
-	m_ImageCache			( "ImageCache",		IMGCACHE_LOW_RES_PRELOAD ),
-	m_bFastLoad			( "FastLoad",			true ),
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    true ),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
@@ -901,16 +843,8 @@ PrefsManager::PrefsManager() :
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode			( "EventMode",			true ),
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
 	m_bDancePointsForOni		( "DancePointsForOni",		true ),
-=======
-	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
-	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_AllowMultipleToasties		("AllowMultipleToasties",	true ),
-	m_MinTNSToHideNotes		("MinTNSToHideNotes",		TNS_W3 ),
-	m_ShowSongOptions		( "ShowSongOptions",		Maybe_NO ),
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp
 	m_bPercentageScoring		( "PercentageScoring",		false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.0001f ), // This is for home, who cares how bad you do?
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
@@ -1054,11 +988,7 @@ void PrefsManager::StoreGamePrefs()
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
 	GamePrefs &gp = m_mapGameNameToGamePrefs.at(m_sCurrentGame);
-=======
-	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame.Get()];
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp
 	gp.m_sAnnouncer = m_sAnnouncer;
 	gp.m_sTheme = m_sTheme;
 	gp.m_sDefaultModifiers = m_sDefaultModifiers;
@@ -1295,11 +1225,6 @@ public:
 		return 1;
 	}
 
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
-=======
-	static int SavePreferences( T* p, lua_State *L ) { p->SavePrefsToDisk(); COMMON_RETURN_SELF; }
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp
 	LunaPrefsManager()
 	{
 		ADD_METHOD( GetPreference );
@@ -1336,7 +1261,3 @@ LUA_REGISTER_CLASS( PrefsManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/PrefsManager.cpp
->>>>>>> origin/c++11:src/PrefsManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/PrefsManager.cpp

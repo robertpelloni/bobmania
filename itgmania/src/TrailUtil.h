@@ -31,16 +31,8 @@ class TrailID
 	CourseDifficulty cd;
 
 public:
-<<<<<<< HEAD
 	TrailID(): st(StepsType_Invalid), cd(Difficulty_Invalid) {}
-=======
-<<<<<<< HEAD:itgmania/src/TrailUtil.h
 	TrailID(): st(StepsType_Invalid), cd(Difficulty_Invalid) {}
-=======
-	TrailID(): st(StepsType_Invalid), cd(Difficulty_Invalid),
-		m_Cache() { m_Cache.Unset(); }
->>>>>>> origin/c++11:src/TrailUtil.h
->>>>>>> main
 	void Unset() { FromTrail(nullptr); }
 	void FromTrail( const Trail *p );
 	Trail *ToTrail( const Course *p, bool bAllowNull ) const;

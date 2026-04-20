@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ScreenGameplayLesson.cpp
-<<<<<<< HEAD:itgmania/src/ScreenGameplayLesson.cpp
 #include "global.h"
 #include "ScreenGameplayLesson.h"
 #include "RageLog.h"
@@ -223,9 +221,6 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplayLesson.cpp
 #include "global.h"
 #include "ScreenGameplayLesson.h"
 #include "RageLog.h"
@@ -243,11 +238,7 @@ ScreenGameplayLesson::ScreenGameplayLesson()
 
 void ScreenGameplayLesson::Init()
 {
-<<<<<<< HEAD:itgmania/src/ScreenGameplayLesson.cpp
 	ASSERT( GAMESTATE->GetCurrentStyle() != nullptr );
-=======
-	ASSERT( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()) != nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplayLesson.cpp
 	ASSERT( GAMESTATE->m_pCurSong != nullptr );
 
 	/* Now that we've set up, init the base class. */
@@ -450,7 +441,3 @@ void ScreenGameplayLesson::ResetAndRestartCurrentSong()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ScreenGameplayLesson.cpp
->>>>>>> origin/c++11:src/ScreenGameplayLesson.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplayLesson.cpp

@@ -173,15 +173,10 @@ bool NoteData::IsComposite() const
 {
 	for( int track = 0; track < GetNumTracks(); ++track )
 	{
-<<<<<<< HEAD
 		for (auto const &tn: m_TapNotes[track])
 		{
 			if (tn.second.pn != PLAYER_INVALID)
 			{
-=======
-		for (std::pair<int, TapNote> const &tn : m_TapNotes[track])
-			if( tn.second.pn != PLAYER_INVALID )
->>>>>>> origin/unified-ui-features-13937230807013224518
 				return true;
 			}
 		}

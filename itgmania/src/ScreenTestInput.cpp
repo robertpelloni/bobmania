@@ -10,12 +10,9 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-<<<<<<< HEAD:itgmania/src/ScreenTestInput.cpp
 #include <vector>
 
 
-=======
->>>>>>> origin/c++11:src/ScreenTestInput.cpp
 class DeviceList: public BitmapText
 {
 public:
@@ -42,15 +39,9 @@ class InputList: public BitmapText
 	void Update( float fDeltaTime )
 	{
 		// Update input texts
-<<<<<<< HEAD:itgmania/src/ScreenTestInput.cpp
 		std::vector<RString> asInputs;
 
 		std::vector<DeviceInput> DeviceInputs;
-=======
-		vector<RString> asInputs;
-
-		vector<DeviceInput> DeviceInputs;
->>>>>>> origin/c++11:src/ScreenTestInput.cpp
 		INPUTFILTER->GetPressedButtons( DeviceInputs );
 		for (DeviceInput const &di : DeviceInputs)
 		{
@@ -63,11 +54,7 @@ class InputList: public BitmapText
 				sTemp += ssprintf(" - 1 " );
 			else
 				sTemp += ssprintf(" - %.3f ", di.level );
-<<<<<<< HEAD:itgmania/src/ScreenTestInput.cpp
 
-=======
-			
->>>>>>> origin/c++11:src/ScreenTestInput.cpp
 			GameInput gi;
 			if( INPUTMAPPER->DeviceToGame(di,gi) )
 			{
@@ -151,11 +138,7 @@ bool ScreenTestInput::MenuBack( const InputEventPlus &input )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
-<<<<<<< HEAD:itgmania/src/ScreenTestInput.cpp
  *
-=======
- * 
->>>>>>> origin/c++11:src/ScreenTestInput.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -165,11 +148,7 @@ bool ScreenTestInput::MenuBack( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
-<<<<<<< HEAD:itgmania/src/ScreenTestInput.cpp
  *
-=======
- * 
->>>>>>> origin/c++11:src/ScreenTestInput.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -7,18 +7,12 @@
 #include "StepsDisplay.h"
 #include "ThemeMetric.h"
 
-<<<<<<< HEAD
 #include <vector>
 
 
-=======
-<<<<<<< HEAD:itgmania/src/DifficultyList.h
 #include <vector>
 
 
-=======
->>>>>>> origin/c++11:src/DifficultyList.h
->>>>>>> main
 class Song;
 class Steps;
 
@@ -59,15 +53,8 @@ private:
 	{
 		StepsDisplay m_Meter;
 	};
-<<<<<<< HEAD
 	std::vector<Line>	m_Lines;
-=======
-<<<<<<< HEAD:itgmania/src/DifficultyList.h
 	std::vector<Line>	m_Lines;
-=======
-	vector<Line>	m_Lines;
->>>>>>> origin/c++11:src/DifficultyList.h
->>>>>>> main
 
 	const Song		*m_CurSong;
 	bool			m_bShown;
@@ -88,15 +75,8 @@ private:
 		bool m_bHidden; // currently off screen
 	};
 
-<<<<<<< HEAD
 	std::vector<Row>		m_Rows;
-=======
-<<<<<<< HEAD:itgmania/src/DifficultyList.h
 	std::vector<Row>		m_Rows;
-=======
-	vector<Row>		m_Rows;
->>>>>>> origin/c++11:src/DifficultyList.h
->>>>>>> main
 
 };
 
@@ -105,15 +85,8 @@ private:
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
-<<<<<<< HEAD
  *
-=======
-<<<<<<< HEAD:itgmania/src/DifficultyList.h
  *
-=======
- * 
->>>>>>> origin/c++11:src/DifficultyList.h
->>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -123,15 +96,8 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
-<<<<<<< HEAD
  *
-=======
-<<<<<<< HEAD:itgmania/src/DifficultyList.h
  *
-=======
- * 
->>>>>>> origin/c++11:src/DifficultyList.h
->>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

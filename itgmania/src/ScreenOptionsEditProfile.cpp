@@ -11,12 +11,9 @@
 #include "CharacterManager.h"
 #include "OptionRowHandler.h"
 
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
 #include <vector>
 
 
-=======
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
 enum EditProfileRow
 {
 	ROW_CHARACTER,
@@ -33,11 +30,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 {
 	m_Original = *GAMESTATE->GetEditLocalProfile();
 
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
 	std::vector<OptionRowHandler*> vHands;
-=======
-	vector<OptionRowHandler*> vHands;
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile != nullptr );
@@ -53,11 +46,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 		def.m_bExportOnChange = true;
 		def.m_sName = "Character";
 		def.m_vsChoices.clear();
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
 		std::vector<Character*> vpCharacters;
-=======
-		vector<Character*> vpCharacters;
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
 		CHARMAN->GetCharacters( vpCharacters );
 		for (Character const *c : vpCharacters)
 			def.m_vsChoices.push_back( c->GetDisplayName() );
@@ -75,11 +64,7 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 
 }
 
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
 void ScreenOptionsEditProfile::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
-=======
-void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
 {
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile != nullptr );
@@ -93,11 +78,7 @@ void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumbe
 	}
 }
 
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
 void ScreenOptionsEditProfile::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
-=======
-void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
 {
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile != nullptr );
@@ -169,11 +150,7 @@ void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
  *
-=======
- * 
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -183,11 +160,7 @@ void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
-<<<<<<< HEAD:itgmania/src/ScreenOptionsEditProfile.cpp
  *
-=======
- * 
->>>>>>> origin/c++11:src/ScreenOptionsEditProfile.cpp
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

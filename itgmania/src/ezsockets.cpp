@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp
 /*******************************************************************\
 | ezsockets.cpp: EzSockets Class Source                             |
 |   Designed by Josh Allen, Charles Lohr and Adam Lowman.           |
@@ -112,7 +108,6 @@ uint32_t EzSockets::sm_htonl(uint32_t in)
 uint16_t EzSockets::sm_htons(uint16_t in) {
 	return htons(in);
 }
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
 
 EzSockets::EzSockets()
 {
@@ -615,43 +610,6 @@ int EzSockets::pWriteData(const char* data, int dataSize)
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-/*******************************************************************\
-| ezsockets.cpp: EzSockets Class Source                             |
-|   Designed by Josh Allen, Charles Lohr and Adam Lowman.           |
-|   Socket programming methods based on Charles Lohr's EZW progam.  |
-|   Modified by Charles Lohr for use with Windows-Based OSes.       |
-|   UDP/NON-TCP Support by Adam Lowman.                             |
-\*******************************************************************/
-
-#include "global.h"
-
-#include "ezsockets.h"
-
-#if defined(_MSC_VER) // We need the WinSock32 Library on Windows
-#pragma comment(lib,"wsock32.lib")
-#elif !defined(__MINGW32__)
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#endif
-
-#if !defined(SOCKET_ERROR)
-#define SOCKET_ERROR -1
-#endif
-
-//There are cases where 0 isn't a proper socket
-#if !defined(SOCKET_NONE)
-#define SOCKET_NONE 0
-#endif
-
-#if !defined(INVALID_SOCKET)
-#define INVALID_SOCKET -1
-#endif
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp
 
 EzSockets::EzSockets()
 {
@@ -810,10 +768,6 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
 	if (phe == nullptr)
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
-=======
-	{
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp
 		return false;
 	}
 
@@ -832,35 +786,12 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 	return true;
 }
 
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
 bool EzSockets::CanRead()
 {
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 
 	return select(sock+1,scks,NULL,NULL,times) > 0;
-=======
-inline bool checkCanRead(int sock, timeval& timeout)
-{
-	fd_set fds;
-	FD_ZERO(&fds);
-	FD_SET((unsigned)sock, &fds);
-
-	return select(sock+1, &fds, nullptr, nullptr, &timeout) > 0;
-}
-
-bool EzSockets::CanRead()
-{
-	ezs_internal *data = (ezs_internal*)(this->opaque);
-	return checkCanRead(data->sock, *data->times);
-}
-
-bool EzSockets::CanRead(unsigned int msTimeout)
-{
-	ezs_internal *data = (ezs_internal*)(this->opaque);
-	timeval tv = timevalFromMs(msTimeout);
-	return checkCanRead(data->sock, tv);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp
 }
 
 bool EzSockets::IsError()
@@ -872,46 +803,19 @@ bool EzSockets::IsError()
 	FD_ZERO(data->scks);
 	FD_SET((unsigned)data->sock, data->scks);
 
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
 	if (select(sock+1, nullptr, nullptr, scks, times) >=0 )
-=======
-	if (select(data->sock+1, nullptr, nullptr, data->scks, data->times) >=0 )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp
 		return false;
 
 	state = skERROR;
 	return true;
 }
 
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
 bool EzSockets::CanWrite()
 {
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock, scks);
 
 	return select(sock+1, nullptr, scks, nullptr, times) > 0;
-=======
-inline bool checkCanWrite(int sock, timeval& timeout)
-{
-	fd_set fds;
-	FD_ZERO(&fds);
-	FD_SET((unsigned)sock, &fds);
-
-	return select(sock+1, nullptr, &fds, nullptr, &timeout) > 0;
-}
-
-bool EzSockets::CanWrite()
-{
-	ezs_internal *data = (ezs_internal*)(this->opaque);
-	return checkCanWrite(data->sock, *data->times);
-}
-
-bool EzSockets::CanWrite(unsigned int msTimeout)
-{
-	ezs_internal *data = (ezs_internal*)(this->opaque);
-	timeval tv = timevalFromMs(msTimeout);
-	return checkCanWrite(data->sock, tv);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp
 }
 
 void EzSockets::update()
@@ -1179,7 +1083,3 @@ int EzSockets::pWriteData(const char* data, int dataSize)
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ezsockets.cpp
->>>>>>> origin/c++11:src/ezsockets.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ezsockets.cpp

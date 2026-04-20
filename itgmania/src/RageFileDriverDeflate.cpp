@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageFileDriverDeflate.cpp
-<<<<<<< HEAD:itgmania/src/RageFileDriverDeflate.cpp
 #include "global.h"
 #include "RageFileDriverDeflate.h"
 #include "RageFileDriverSlice.h"
@@ -581,9 +579,6 @@ bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileDriverDeflate.cpp
 #include "global.h"
 #include "RageFileDriverDeflate.h"
 #include "RageFileDriverSlice.h"
@@ -1152,7 +1147,3 @@ bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-<<<<<<< HEAD:itgmania/src/RageFileDriverDeflate.cpp
->>>>>>> origin/c++11:src/RageFileDriverDeflate.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageFileDriverDeflate.cpp

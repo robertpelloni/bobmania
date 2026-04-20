@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageSoundReader_MP3.cpp
-<<<<<<< HEAD:itgmania/src/RageSoundReader_MP3.cpp
 /* MAD is available from: http://www.underbit.com/products/mad/ */
 
 #include "global.h"
@@ -1053,9 +1051,6 @@ fail:
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_MP3.cpp
 /* MAD is available from: http://www.underbit.com/products/mad/ */
 
 #include "global.h"
@@ -2233,7 +2228,3 @@ fail:
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-<<<<<<< HEAD:itgmania/src/RageSoundReader_MP3.cpp
->>>>>>> origin/c++11:src/RageSoundReader_MP3.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_MP3.cpp

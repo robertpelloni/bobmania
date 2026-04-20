@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+<<<<<<< Updated upstream
 <<<<<<< HEAD:docs/SUBMODULES.md
 # Unified StepMania Submodules & Dependencies
 
@@ -45,6 +45,7 @@ This document lists all external libraries and submodules used in the Unified St
 
 3.  **Documentation:**
     Any change to a submodule version must be recorded in `CHANGELOG.md` and the `VERSION` file.
+<<<<<<< Updated upstream
 =======
 =======
 >>>>>>> origin/unified-ui-features-13937230807013224518
@@ -99,7 +100,6 @@ git submodule update --init --recursive
 git submodule update --remote --merge
 ```
 *Note: Due to the size of the repository and the mock environment constraints during automated CI/LLM passes, large submodules (like ffmpeg) may be shallow-cloned or stubbed in the build system (`CMakeLists.txt`) using `-DWITH_FFMPEG=OFF`.*
-<<<<<<< HEAD
 >>>>>>> origin/unified-ui-features-13937230807013224518:Docs/SUBMODULES.md
 =======
->>>>>>> origin/unified-ui-features-13937230807013224518
+>>>>>>> Stashed changes

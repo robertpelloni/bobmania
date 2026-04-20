@@ -4,18 +4,12 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface.h"
-<<<<<<< HEAD
 
 #include <cstdint>
 
-=======
-<<<<<<< HEAD:itgmania/src/RageSurface_Load_BMP.cpp
 
 #include <cstdint>
 
-=======
->>>>>>> origin/c++11:src/RageSurface_Load_BMP.cpp
->>>>>>> main
 using namespace FileReading;
 
 /* Tested with http://entropymine.com/jason/bmpsuite/. */
@@ -91,15 +85,8 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		FATAL_ERROR( ssprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
 
 	int iFileBPP = iBPP;
-<<<<<<< HEAD
 	iBPP = std::max( iBPP, 8u );
-=======
-<<<<<<< HEAD:itgmania/src/RageSurface_Load_BMP.cpp
 	iBPP = std::max( iBPP, 8u );
-=======
-	iBPP = max( iBPP, 8u );
->>>>>>> origin/c++11:src/RageSurface_Load_BMP.cpp
->>>>>>> main
 
 	int Rmask = 0, Gmask = 0, Bmask = 0, Amask = 0;
 	switch( iBPP )

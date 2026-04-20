@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/FadingBanner.cpp
-<<<<<<< HEAD:itgmania/src/FadingBanner.cpp
 #include "global.h"
 #include "FadingBanner.h"
 #include "RageTextureManager.h"
@@ -353,9 +351,6 @@ LUA_REGISTER_DERIVED_CLASS( FadingBanner, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/FadingBanner.cpp
 #include "global.h"
 #include "FadingBanner.h"
 #include "RageTextureManager.h"
@@ -715,7 +710,3 @@ LUA_REGISTER_DERIVED_CLASS( FadingBanner, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/FadingBanner.cpp
->>>>>>> origin/c++11:src/FadingBanner.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/FadingBanner.cpp

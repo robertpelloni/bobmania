@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
-<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/Dialog.cpp
 #include "global.h"
 #include "Dialog.h"
 #include "DialogDriver.h"
@@ -45,7 +41,6 @@ DialogDriver *MakeDialogDriver()
 #endif
 
 		if( pRet == nullptr )
-<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
 		{
 			continue;
 		}
@@ -288,51 +283,6 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "Dialog.h"
-#include "DialogDriver.h"
-#if !defined(SMPACKAGE)
-#include "PrefsManager.h"
-#endif
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "arch/arch.h"
-#include "RageThreads.h"
-
-#if !defined(SMPACKAGE)
-static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
-#endif
-
-#include "Selector_Dialog.h"
-DialogDriver *MakeDialogDriver()
-{
-	RString sDrivers = "win32,cocoa,null";
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
-
-	ASSERT( asDriversToTry.size() != 0 );
-
-	RString sDriver;
-	DialogDriver *pRet = nullptr;
-
-	for( unsigned i = 0; pRet == nullptr && i < asDriversToTry.size(); ++i )
-	{
-		sDriver = asDriversToTry[i];
-
-#ifdef USE_DIALOG_DRIVER_COCOA
-		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_MacOSX;
-#endif
-#ifdef USE_DIALOG_DRIVER_WIN32
-		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
-#endif
-#ifdef USE_DIALOG_DRIVER_NULL
-		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
-#endif
-
-		if( pRet == nullptr )
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/Dialog.cpp
 		{
 			continue;
 		}
@@ -575,7 +525,3 @@ Dialog::Result Dialog::YesNo( RString sMessage, RString sID )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/Dialog/Dialog.cpp
->>>>>>> origin/c++11:src/arch/Dialog/Dialog.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/Dialog.cpp

@@ -331,148 +331,16 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 			}
 		}
 
-<<<<<<< HEAD
 		int iCharLength = min( utf8_get_char_len(m_sText[i]), iCharsLeft + 1 );
 		RString curCharStr = m_sText.substr( i, iCharLength );
 		wchar_t curChar = utf8_get_char( curCharStr );
 		i += iCharLength - 1;
 		int iCharWidth = m_pFont->GetLineWidthInSourcePixels( wstring() + curChar );
-=======
-		char curChar = m_sText[i];
-		int iCharLen = m_pFont->GetLineWidthInSourcePixels( wstring(1, curChar) );
->>>>>>> main
 
 		switch( curChar )
 		{
-<<<<<<< HEAD
 		case ' ':
 			if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
-=======
-			case L' ':
-				if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
-					break;
-				sCurrentLine += sCurrentWord + " ";
-				iLineWidth += iWordWidth + iCharWidth;
-				sCurrentWord = "";
-				iWordWidth = 0;
-				iGlyphsSoFar++;
-				break;
-			case L'\n':
-				if( iLineWidth + iWordWidth > iWrapWidthPixels )
-				{
-					SimpleAddLine( sCurrentLine, iLineWidth );
-					if( iWordWidth > 0 )
-						iLineWidth = iWordWidth +	//Add the width of a space
-							m_pFont->GetLineWidthInSourcePixels( L" " );
-					sCurrentLine = sCurrentWord + " ";
-					iWordWidth = 0;
-					sCurrentWord = "";
-					iGlyphsSoFar++;
-				} 
-				else
-				{
-					SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
-					sCurrentLine = "";	iLineWidth = 0;
-					sCurrentWord = "";	iWordWidth = 0;
-				}
-				break;
-			default:
-				if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
-				{
-					SimpleAddLine( sCurrentWord, iWordWidth );
-					sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
-				}
-				else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
-				{
-					SimpleAddLine( sCurrentLine, iLineWidth );
-					sCurrentLine = ""; 
-					iLineWidth = 0;
-					sCurrentWord += curCharStr;
-					iWordWidth += iCharWidth;
-				}
-				else
-				{
-					sCurrentWord += curCharStr;
-					iWordWidth += iCharWidth;
-				}
-				iGlyphsSoFar++;
-				break;
-		}
-	}
-
-	if( iWordWidth > 0 )
-	{
-		sCurrentLine += sCurrentWord;
-		iLineWidth += iWordWidth;
-	}
-
-	if( iLineWidth > 0 )
-		SimpleAddLine( sCurrentLine, iLineWidth );
-
-	lines = m_wTextLines.size();
-
-	BuildChars();
-	UpdateBaseZoom();
-}
-
-void ColorBitmapText::ResetText()
-{
-	ASSERT(m_pFont != nullptr);
-
-	int iWrapWidthPixels = m_iWrapWidthPixels;
-
-	// Set up the first color.
-	m_vColors.clear();
-	ColorChange change;
-	change.c = RageColor(1, 1, 1, 1);
-	change.l = 0;
-	m_vColors.push_back(change);
-
-	m_wTextLines.clear();
-
-	RString sCurrentLine = "";
-	int		iLineWidth = 0;
-
-	RString sCurrentWord = "";
-	int		iWordWidth = 0;
-	int		iGlyphsSoFar = 0;
-
-	for (unsigned i = 0; i < m_sText.length(); i++)
-	{
-		int iCharsLeft = m_sText.length() - i - 1;
-
-		// First: Check for the special (color) case.
-
-		if (m_sText.length() > 8 && i < m_sText.length() - 9)
-		{
-			RString FirstThree = m_sText.substr(i, 3);
-			if (FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8)
-			{
-				ColorChange cChange;
-				unsigned int r, g, b;
-				sscanf(m_sText.substr(i, 9).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b);
-				cChange.c = RageColor(r / 255.f, g / 255.f, b / 255.f, 1.f);
-				cChange.l = iGlyphsSoFar;
-				if (iGlyphsSoFar == 0)
-					m_vColors[0] = cChange;
-				else
-					m_vColors.push_back(cChange);
-				i += 8;
-				continue;
-			}
-		}
-
-		int iCharLength = min(utf8_get_char_len(m_sText[i]), iCharsLeft + 1);
-		RString curCharStr = m_sText.substr(i, iCharLength);
-		wchar_t curChar = utf8_get_char(curCharStr);
-		i += iCharLength - 1;
-		int iCharWidth = m_pFont->GetLineWidthInSourcePixels(wstring() + curChar);
-
-		switch (curChar)
-		{
-		case L' ':
-			if ( /* iLineWidth == 0 &&*/ iWordWidth == 0)
->>>>>>> origin/unified-ui-features-13937230807013224518
 				break;
 			sCurrentLine += sCurrentWord + " ";
 			iLineWidth += iWordWidth + iCharLen;
@@ -480,13 +348,8 @@ void ColorBitmapText::ResetText()
 			iWordWidth = 0;
 			iGlyphsSoFar++;
 			break;
-<<<<<<< HEAD
 		case '\n':
 			if( iLineWidth + iWordWidth > iWrapWidthPixels )
-=======
-		case L'\n':
-			if (iLineWidth + iWordWidth > iWrapWidthPixels)
->>>>>>> origin/unified-ui-features-13937230807013224518
 			{
 				SimpleAddLine(sCurrentLine, iLineWidth);
 				if (iWordWidth > 0)
@@ -505,21 +368,12 @@ void ColorBitmapText::ResetText()
 			}
 			break;
 		default:
-<<<<<<< HEAD
 			if( iWordWidth + iCharLen > iWrapWidthPixels && iLineWidth == 0 )
 			{
 				SimpleAddLine( sCurrentWord, iWordWidth );
 				sCurrentWord = curChar;	iWordWidth = iCharLen;
 			}
 			else if( iWordWidth + iLineWidth + iCharLen > iWrapWidthPixels )
-=======
-			if (iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0)
-			{
-				SimpleAddLine(sCurrentWord, iWordWidth);
-				sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
-			}
-			else if (iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels)
->>>>>>> origin/unified-ui-features-13937230807013224518
 			{
 				SimpleAddLine(sCurrentLine, iLineWidth);
 				sCurrentLine = "";
@@ -632,11 +486,7 @@ void ColorBitmapText::DrawPrimitives( )
 			RageColor c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-<<<<<<< HEAD
 				m_aVertices[i].c = RageVColor(c);
-=======
-				m_aVertices[i].c = c;
->>>>>>> main
 			DrawChars( true );
 
 			DISPLAY->PopMatrix();
@@ -658,11 +508,7 @@ void ColorBitmapText::DrawPrimitives( )
 				}
 			}
 			for( unsigned j=0; j<4; j++ )
-<<<<<<< HEAD
 				m_aVertices[i+j].c = RageVColor(c);
-=======
-				m_aVertices[i+j].c = c;
->>>>>>> main
 		}
 
 		DrawChars( false );
@@ -674,11 +520,7 @@ void ColorBitmapText::DrawPrimitives( )
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		for( unsigned i=0; i<m_aVertices.size(); i++ )
-<<<<<<< HEAD
 			m_aVertices[i].c = RageVColor(m_pTempState->glow);
-=======
-			m_aVertices[i].c = m_pTempState->glow;
->>>>>>> main
 		DrawChars( false );
 	}
 }

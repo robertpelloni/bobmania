@@ -5,11 +5,6 @@
 #include "Preference.h"
 #include "PrefsManager.h" // XXX: only used for m_bShowMouseCursor -aj
 
-<<<<<<< HEAD
-=======
-#include <X11/extensions/dpms.h>
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 Display *X11Helper::Dpy = nullptr;
 Window X11Helper::Win = None;
 

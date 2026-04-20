@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageSoundReader_Preload.cpp
-<<<<<<< HEAD:itgmania/src/RageSoundReader_Preload.cpp
 /* This reader simply precaches all of the data from another reader. This
  * reduces CPU usage for sounds that are played several times at once. */
 
@@ -200,9 +198,6 @@ int RageSoundReader_Preload::GetReferenceCount() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_Preload.cpp
 /* This reader simply precaches all of the data from another reader. This
  * reduces CPU usage for sounds that are played several times at once. */
 
@@ -394,7 +389,3 @@ int RageSoundReader_Preload::GetReferenceCount() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageSoundReader_Preload.cpp
->>>>>>> origin/c++11:src/RageSoundReader_Preload.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_Preload.cpp

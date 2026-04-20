@@ -28,7 +28,6 @@ MovieTexture_Generic::MovieTexture_Generic(RageTextureID ID, std::unique_ptr<Mov
 
 	decoder_ = std::move(pDecoder);
 
-<<<<<<< HEAD
 	texture_handle_ = 0;
 	render_target_ = nullptr;
 	intermediate_texture_ = nullptr;
@@ -38,20 +37,6 @@ MovieTexture_Generic::MovieTexture_Generic(RageTextureID ID, std::unique_ptr<Mov
 	rate_ = 1;
 	clock_ = 0;
 	sprite_ = std::make_unique<Sprite>();
-=======
-	m_uTexHandle = 0;
-	m_pRenderTarget = nullptr;
-	m_pTextureIntermediate = nullptr;
-	m_bLoop = true;
-	m_pSurface = nullptr;
-	m_pTextureLock = nullptr;
-	m_ImageWaiting = FRAME_NONE;
-	m_fRate = 1;
-	m_bWantRewind = false;
-	m_fClock = 0;
-	m_bFrameSkipMode = false;
-	m_pSprite = new Sprite;
->>>>>>> main
 }
 
 RString MovieTexture_Generic::Init()
@@ -105,19 +90,11 @@ MovieTexture_Generic::~MovieTexture_Generic()
  * is normally done after destroying the decoder. */
 void MovieTexture_Generic::DestroyTexture()
 {
-<<<<<<< HEAD
 	delete surface_;
 	surface_ = nullptr;
 
 	delete texture_lock_;
 	texture_lock_ = nullptr;
-=======
-	delete m_pSurface;
-	m_pSurface = nullptr;
-
-	delete m_pTextureLock;
-	m_pTextureLock = nullptr;
->>>>>>> main
 
 	if (texture_handle_)
 	{
@@ -125,14 +102,7 @@ void MovieTexture_Generic::DestroyTexture()
 		texture_handle_ = 0;
 	}
 
-<<<<<<< HEAD
 	intermediate_texture_ = nullptr;
-=======
-	delete m_pRenderTarget;
-	m_pRenderTarget = nullptr;
-	delete m_pTextureIntermediate;
-	m_pTextureIntermediate = nullptr;
->>>>>>> main
 }
 
 class RageMovieTexture_Generic_Intermediate : public RageTexture
@@ -186,45 +156,27 @@ private:
 			m_SurfaceFormat.Mask[0],
 			m_SurfaceFormat.Mask[1],
 			m_SurfaceFormat.Mask[2],
-<<<<<<< HEAD
 			m_SurfaceFormat.Mask[3], nullptr, 1);
-=======
-			m_SurfaceFormat.Mask[3], nullptr, 1 );
->>>>>>> main
 
 		texture_handle_ = DISPLAY->CreateTexture(m_PixFmt, pSurface, false);
 		delete pSurface;
 	}
 
-<<<<<<< HEAD
 	uintptr_t texture_handle_;
-=======
-	uintptr_t m_uTexHandle;
->>>>>>> main
 	RageSurfaceFormat m_SurfaceFormat;
 	RagePixelFormat m_PixFmt;
 };
 
 void MovieTexture_Generic::Invalidate()
 {
-<<<<<<< HEAD
 	texture_handle_ = 0;
 	if (intermediate_texture_ != nullptr)
 		intermediate_texture_->Invalidate();
-=======
-	m_uTexHandle = 0;
-	if( m_pTextureIntermediate != nullptr )
-		m_pTextureIntermediate->Invalidate();
->>>>>>> main
 }
 
 void MovieTexture_Generic::CreateTexture()
 {
-<<<<<<< HEAD
 	if (texture_handle_ || render_target_ != nullptr)
-=======
-	if( m_uTexHandle || m_pRenderTarget != nullptr )
->>>>>>> main
 		return;
 
 	CHECKPOINT;
@@ -248,7 +200,6 @@ void MovieTexture_Generic::CreateTexture()
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 	MovieDecoderPixelFormatYCbCr fmt = PixelFormatYCbCr_Invalid;
-<<<<<<< HEAD
 	if (surface_ == nullptr)
 	{
 		ASSERT(texture_lock_ == nullptr);
@@ -261,20 +212,6 @@ void MovieTexture_Generic::CreateTexture()
 		{
 			delete[] surface_->pixels;
 			surface_->pixels = nullptr;
-=======
-	if( m_pSurface == nullptr )
-	{
-		ASSERT( m_pTextureLock == nullptr );
-		if( g_bMovieTextureDirectUpdates )
-			m_pTextureLock = DISPLAY->CreateTextureLock();
-
-		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iImageWidth, m_iImageHeight,
-			TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32, fmt );
-		if( m_pTextureLock != nullptr )
-		{
-			delete [] m_pSurface->pixels;
-			m_pSurface->pixels = nullptr;
->>>>>>> main
 		}
 
 	}
@@ -353,69 +290,7 @@ void MovieTexture_Generic::CreateTexture()
 		return;
 	}
 
-<<<<<<< HEAD
 	texture_handle_ = DISPLAY->CreateTexture(pixfmt, surface_, false);
-=======
-	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_pSurface, false );
-}
-
-/* Handle decoding for a frame.  Return true if a frame was decoded, false if not
- * (due to quit, error, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
-bool MovieTexture_Generic::DecodeFrame()
-{
-	bool bTriedRewind = false;
-	do
-	{
-		if( m_bWantRewind )
-		{
-			if( bTriedRewind )
-			{
-				LOG->Trace( "File \"%s\" looped more than once in one frame", GetID().filename.c_str() );
-				return false;
-			}
-			m_bWantRewind = false;
-			bTriedRewind = true;
-
-			/* When resetting the clock, set it back by the length of the last frame,
-			 * so it has a proper delay. */
-			float fDelay = m_pDecoder->GetFrameDuration();
-
-			/* Restart. */
-			m_pDecoder->Rewind();
-
-			m_fClock = -fDelay;
-		}
-
-		CHECKPOINT;
-
-		/* Read a frame. */
-		float fTargetTime = -1;
-		if( m_bFrameSkipMode && m_fClock > m_pDecoder->GetTimestamp() )
-			fTargetTime = m_fClock;
-
-		int ret = m_pDecoder->DecodeFrame( fTargetTime );
-		if( ret == -1 )
-			return false;
-
-		if( m_bWantRewind && m_pDecoder->GetTimestamp() == 0 )
-			m_bWantRewind = false; /* ignore */
-
-		if( ret == 0 )
-		{
-			/* EOF. */
-			if( !m_bLoop )
-				return false;
-
-			LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
-			m_bWantRewind = true;
-			continue;
-		}
-
-		/* We got a frame. */
-	} while( m_bWantRewind );
-
-	return true;
->>>>>>> main
 }
 
 /*
@@ -433,39 +308,8 @@ float MovieTexture_Generic::CheckFrameTime()
 
 void MovieTexture_Generic::UpdateMovie(float seconds)
 {
-<<<<<<< HEAD
 	// Quick exit in case we failed to decode the movie.
 	if (failure_) {
-=======
-	m_fClock += fSeconds * m_fRate;
-
-	/* We might need to decode more than one frame per update.  However, there
-	 * have been bugs in ffmpeg that cause it to not handle EOF properly, which
-	 * could make this never return, so let's play it safe. */
-	int iMax = 4;
-	while( --iMax )
-	{
-		/* If we don't have a frame decoded, decode one. */
-		if( m_ImageWaiting == FRAME_NONE )
-		{
-			if( !DecodeFrame() )
-				break;
-
-			m_ImageWaiting = FRAME_DECODED;
-		}
-
-		/* If we have a frame decoded, see if it's time to display it. */
-		float fTime = CheckFrameTime();
-		if( fTime > 0 )
-			return;
-
-		CHECKPOINT;
-
-		UpdateFrame();
-
-		m_ImageWaiting = FRAME_NONE;
-
->>>>>>> main
 		return;
 	}
 	clock_ += seconds * rate_;
@@ -489,7 +333,6 @@ void MovieTexture_Generic::UpdateFrame()
 	/* Just in case we were invalidated: */
 	CreateTexture();
 
-<<<<<<< HEAD
 	if (texture_lock_ != nullptr)
 	{
 		uintptr_t iHandle = intermediate_texture_ != nullptr ? intermediate_texture_->GetTexHandle() : this->GetTexHandle();
@@ -516,14 +359,7 @@ void MovieTexture_Generic::UpdateFrame()
 			texture_lock_->Unlock(surface_, true);
 		}
 		return;
-=======
-	if( m_pTextureLock != nullptr )
-	{
-<<<<<<< HEAD
 		int iHandle = m_pTextureIntermediate != nullptr? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
-=======
-		uintptr_t iHandle = m_pTextureIntermediate != nullptr? m_pTextureIntermediate->GetTexHandle(): this->GetTexHandle();
->>>>>>> origin/unified-ui-features-13937230807013224518
 		m_pTextureLock->Lock( iHandle, m_pSurface );
 	}
 
@@ -537,10 +373,6 @@ void MovieTexture_Generic::UpdateFrame()
 
 		/* If we have no m_pTextureLock, we still have to upload the texture. */
 		if( m_pTextureLock == nullptr )
-<<<<<<< HEAD
-=======
-		{
->>>>>>> origin/unified-ui-features-13937230807013224518
 			DISPLAY->UpdateTexture(
 				m_pTextureIntermediate->GetTexHandle(),
 				m_pSurface,
@@ -551,7 +383,6 @@ void MovieTexture_Generic::UpdateFrame()
 		m_pRenderTarget->BeginRenderingTo( false );
 		m_pSprite->Draw();
 		m_pRenderTarget->FinishRenderingTo();
->>>>>>> main
 	}
 
 	if (texture_lock_ != nullptr) {
@@ -560,25 +391,16 @@ void MovieTexture_Generic::UpdateFrame()
 
 	if (render_target_ != nullptr)
 	{
-<<<<<<< HEAD
 		CHECKPOINT_M("About to upload the texture.");
 
 		/* If we have no texture_lock_, we still have to upload the texture. */
 		if (texture_lock_ == nullptr) {
-=======
-<<<<<<< HEAD
 		CHECKPOINT;
 		if( m_pTextureLock == nullptr )
-=======
-		if( m_pTextureLock == nullptr )
-		{
->>>>>>> origin/unified-ui-features-13937230807013224518
->>>>>>> main
 			DISPLAY->UpdateTexture(
 				intermediate_texture_->GetTexHandle(),
 				surface_,
 				0, 0,
-<<<<<<< HEAD
 				surface_->w, surface_->h);
 		}
 		render_target_->BeginRenderingTo(false);
@@ -593,10 +415,6 @@ void MovieTexture_Generic::UpdateFrame()
 				0, 0,
 				m_iImageWidth, m_iImageHeight);
 		}
-=======
-				m_iImageWidth, m_iImageHeight );
-		CHECKPOINT;
->>>>>>> main
 	}
 }
 
@@ -634,13 +452,8 @@ void MovieTexture_Generic::SetPosition(float seconds)
 
 uintptr_t MovieTexture_Generic::GetTexHandle() const
 {
-<<<<<<< HEAD
 	if (render_target_ != nullptr)
 		return render_target_->GetTexHandle();
-=======
-	if( m_pRenderTarget != nullptr )
-		return m_pRenderTarget->GetTexHandle();
->>>>>>> main
 
 	return texture_handle_;
 }

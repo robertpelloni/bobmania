@@ -21,18 +21,9 @@ bool GetFileVersion(const RString &sFile, RString &sOut)
 		if( !iSize )
 			break;
 
-<<<<<<< HEAD
 		std::vector<char> VersionBuffer(iSize);
 		if (!GetFileVersionInfo(sFile.c_str(), 0, iSize, VersionBuffer.data()))
-=======
-		RString VersionBuffer( iSize, ' ' );
-		// Also VC6:
-<<<<<<< HEAD
 		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), NULL, iSize, VersionBuffer.GetBuffer() ) )
-=======
-		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), 0, iSize, const_cast<char *>(VersionBuffer.c_str()) ) )
->>>>>>> origin/unified-ui-features-13937230807013224518
->>>>>>> main
 			break;
 
 		WORD *iTrans;
@@ -75,19 +66,11 @@ RString FindSystemFile(const RString& sFile)
 
 	const char *szPaths[] =
 	{
-<<<<<<< HEAD
 		"\\system32\\",
 		"\\system32\\drivers\\",
 		"\\system\\",
 		"\\system\\drivers\\",
 		"\\",
-=======
-		"/system32/",
-		"/system32/drivers/",
-		"/system/",
-		"/system/drivers/",
-		"/",
->>>>>>> main
 		nullptr
 	};
 
@@ -106,7 +89,6 @@ RString FindSystemFile(const RString& sFile)
  * returned and an error message is placed in sName. */
 bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 {
-<<<<<<< HEAD
 	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, iProcessID);
 	if (hSnap == INVALID_HANDLE_VALUE)
 	{
@@ -122,85 +104,6 @@ bool GetProcessFileName( uint32_t iProcessID, RString &sName )
 		CloseHandle(hSnap);
 		return true;
 	}
-=======
-	/* This method works in everything except for NT4, and only uses
-	 * kernel32.lib functions. */
-	do {
-		HANDLE hSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, iProcessID );
-		if( hSnap == nullptr )
-		{
-			sName = werr_ssprintf( GetLastError(), "CreateToolhelp32Snapshot" );
-			break;
-		}
-
-		MODULEENTRY32 me;
-		ZERO( me );
-		me.dwSize = sizeof(MODULEENTRY32);
-		bool bRet = !!Module32First( hSnap, &me );
-		CloseHandle( hSnap );
-
-		if( bRet )
-		{
-			sName = me.szExePath;
-			return true;
-		}
-
-		sName = werr_ssprintf( GetLastError(), "Module32First" );
-	} while(0);
-
-	// This method only works in NT/2K/XP.
-	do {
-		static HINSTANCE hPSApi = nullptr;
-		typedef DWORD (WINAPI* pfnGetProcessImageFileNameA)(HANDLE hProcess, LPSTR lpImageFileName, DWORD nSize);
-		static pfnGetProcessImageFileNameA pGetProcessImageFileName = nullptr;
-		static bool bTried = false;
-
-		if( !bTried )
-		{
-			bTried = true;
-
-			hPSApi = LoadLibrary("psapi.dll");
-			if( hPSApi == nullptr )
-			{
-				sName = werr_ssprintf( GetLastError(), "LoadLibrary" );
-				break;
-			}
-			else
-			{
-				pGetProcessImageFileName = (pfnGetProcessImageFileNameA) GetProcAddress( hPSApi, "GetProcessImageFileNameA" );
-				if( pGetProcessImageFileName == nullptr )
-				{
-					sName = werr_ssprintf( GetLastError(), "GetProcAddress" );
-					break;
-				}
-			}
-		}
-
-		if( pGetProcessImageFileName != nullptr )
-		{
-			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, FALSE, iProcessID );
-			if( hProc == nullptr )
-			{
-				sName = werr_ssprintf( GetLastError(), "OpenProcess" );
-				break;
-			}
-
-			char buf[1024];
-			int iRet = pGetProcessImageFileName( hProc, buf, sizeof(buf) );
-			CloseHandle( hProc );
-
-			if( iRet )
-			{
-				if( iRet == sizeof(buf) )
-					buf[iRet-1] = 0;
-				sName = buf;
-				return true;
-			}
-
-			sName = werr_ssprintf( GetLastError(), "GetProcessImageFileName" );
-		}
-	} while(0);
->>>>>>> main
 
 	CloseHandle(hSnap);
 	sName = werr_ssprintf(GetLastError(), "Module32First");

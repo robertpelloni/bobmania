@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp
 #include "global.h"
 #include "ScreenDimensions.h"
 #include "ScreenOptionsManageProfiles.h"
@@ -87,7 +83,6 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
 		return true; // unchanged
 
 	std::vector<RString> vsProfileNames;
@@ -536,72 +531,6 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "ScreenOptionsManageProfiles.h"
-#include "ScreenManager.h"
-#include "RageLog.h"
-#include "GameState.h"
-#include "CommonMetrics.h"
-#include "ScreenTextEntry.h"
-#include "ScreenPrompt.h"
-#include "ScreenMiniMenu.h"
-#include "ProfileManager.h"
-#include "Profile.h"
-#include "OptionRowHandler.h"
-#include "LocalizedString.h"
-
-static LocalizedString NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", "NewProfileDefaultName" );
-
-#define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
-
-AutoScreenMessage( SM_BackFromEnterNameForNew );
-AutoScreenMessage( SM_BackFromRename );
-AutoScreenMessage( SM_BackFromDeleteConfirm );
-AutoScreenMessage( SM_BackFromClearConfirm );
-AutoScreenMessage( SM_BackFromContextMenu );
-
-enum ProfileAction
-{
-	ProfileAction_SetDefaultP1,
-	ProfileAction_SetDefaultP2,
-	ProfileAction_Edit,
-	ProfileAction_Rename,
-	ProfileAction_Delete,
-	ProfileAction_Clear,
-	NUM_ProfileAction
-};
-static const char *ProfileActionNames[] = {
-	"SetDefaultP1",
-	"SetDefaultP2",
-	"Edit",
-	"Rename",
-	"Delete",
-	"Clear",
-};
-XToString( ProfileAction );
-XToLocalizedString( ProfileAction );
-/** @brief Loop through each ProfileAction. */
-#define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, i )
-
-static MenuDef g_TempMenu(
-	"ScreenMiniMenuContext"
-);
-
-static LocalizedString PROFILE_NAME_BLANK	( "ScreenEditMenu", "Profile name cannot be blank." );
-static LocalizedString PROFILE_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another profile. Please use a different name." );
-static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut )
-{
-	if( sAnswer == "" )
-	{
-		sErrorOut = PROFILE_NAME_BLANK;
-		return false;
-	}
-
-	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	if( pProfile != nullptr && sAnswer == pProfile->m_sDisplayName )
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp
 		return true; // unchanged
 
 	vector<RString> vsProfileNames;
@@ -654,11 +583,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( s );
 		ASSERT( pProfile != nullptr );
 
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
 		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,dummy", s.c_str() );
-=======
-		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsCustomizeProfile;profileid,%s;name,dummy", s.c_str() );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		OptionRowDefinition &def = pHand->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -996,7 +921,3 @@ RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageProfiles.cpp
->>>>>>> origin/c++11:src/ScreenOptionsManageProfiles.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageProfiles.cpp

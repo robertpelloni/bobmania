@@ -546,15 +546,6 @@ class TZip
 {
 public:
 	TZip() : pfout(nullptr),ooffset(0),oerr(false),writ(0),hasputcen(false),zfis(0),hfin(0)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
-=======
-	{
-	}
-	~TZip()
->>>>>>> origin/c++11:src/CreateZip.cpp
->>>>>>> main
 	{
 	}
 	~TZip() = default;
@@ -637,17 +628,8 @@ unsigned TZip::swrite(void *param,const char *buf, unsigned size)
 	TZip *zip=(TZip*)param;
 	return zip->write(buf,size);
 }
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
 unsigned int TZip::write(const char *srcbuf,unsigned int size)
 {
-<<<<<<< HEAD
-=======
-=======
-unsigned int TZip::write(const char *buf,unsigned int size)
-{ 
-	const char *srcbuf=buf;
->>>>>>> origin/c++11:src/CreateZip.cpp
->>>>>>> main
 	if (pfout != nullptr)
 	{
 		return pfout->Write( srcbuf, size );
@@ -951,25 +933,6 @@ ZRESULT TZip::Add(const TCHAR *odstzn, const TCHAR *src,unsigned long flags)
 	// Keep a copy of the zipfileinfo, for our end-of-zip directory
 	char *cextra = new char[zfi.cext]; memcpy(cextra,zfi.cextra,zfi.cext); zfi.cextra=cextra;
 	TZipFileInfo *pzfi = new TZipFileInfo; memcpy(pzfi,&zfi,sizeof(zfi));
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
-	if (zfis==nullptr)
-=======
-	if (zfis== nullptr) 
->>>>>>> origin/c++11:src/CreateZip.cpp
-		zfis=pzfi;
-	else
-	{
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
-		TZipFileInfo *z=zfis;
-		while (z->nxt!=nullptr)
-			z=z->nxt;
-=======
-		TZipFileInfo *z=zfis; 
-		while (z->nxt!= nullptr) 
-			z=z->nxt; 
->>>>>>> origin/c++11:src/CreateZip.cpp
-=======
 	if (zfis==nullptr)
 		zfis=pzfi;
 	else
@@ -977,7 +940,6 @@ ZRESULT TZip::Add(const TCHAR *odstzn, const TCHAR *src,unsigned long flags)
 		TZipFileInfo *z=zfis;
 		while (z->nxt!=nullptr)
 			z=z->nxt;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CreateZip.cpp
 		z->nxt=pzfi;
 	}
 	return ZR_OK;
@@ -1010,15 +972,7 @@ ZRESULT TZip::AddCentral()
 	}
 	ulg center_size = writ - pos_at_start_of_central;
 	if (okay)
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
 	{
-=======
-	{ 
->>>>>>> origin/c++11:src/CreateZip.cpp
-=======
-	{
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CreateZip.cpp
 		int res = putend(numentries, center_size, pos_at_start_of_central+ooffset, 0, nullptr, swrite,this);
 		if (res!=ZE_OK)
 			okay=false;
@@ -1060,15 +1014,8 @@ bool CreateZip::AddFile(RString fn)
 }
 bool CreateZip::AddDir(RString fn)
 {
-<<<<<<< HEAD
 	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),nullptr,ZIP_FOLDER);
-=======
-<<<<<<< HEAD:itgmania/src/CreateZip.cpp
 	lasterrorZ = hz->Add(MakeDestZipFileName(fn).c_str(),nullptr,ZIP_FOLDER);
-=======
-	lasterrorZ = hz->Add(MakeDestZipFileName(fn),nullptr,ZIP_FOLDER);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CreateZip.cpp
->>>>>>> main
 	return lasterrorZ == ZR_OK;
 }
 bool CreateZip::Finish()

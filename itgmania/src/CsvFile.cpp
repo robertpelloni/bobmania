@@ -3,18 +3,12 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "RageLog.h"
-<<<<<<< HEAD
 
 #include <vector>
 
-=======
-<<<<<<< HEAD:itgmania/src/CsvFile.cpp
 
 #include <vector>
 
-=======
->>>>>>> origin/c++11:src/CsvFile.cpp
->>>>>>> main
 
 CsvFile::CsvFile()
 {
@@ -125,24 +119,10 @@ bool CsvFile::WriteFile( const RString &sPath ) const
 
 bool CsvFile::WriteFile( RageFileBasic &f ) const
 {
-<<<<<<< HEAD:itgmania/src/CsvFile.cpp
-<<<<<<< HEAD:itgmania/src/CsvFile.cpp
 	for (StringVector const &line : m_vvs)
 	{
 		RString sLine;
 		for (auto value = line.begin(); value != line.end(); ++value)
-=======
-	for (StringVector &line : m_vvs)
-	{
-		RString sLine;
-		for (RString sVal : line) // explicitly don't use a reference.
->>>>>>> origin/c++11:src/CsvFile.cpp
-=======
-	for (StringVector const &line : m_vvs)
-	{
-		RString sLine;
-		for (auto value = line.begin(); value != line.end(); ++value)
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CsvFile.cpp
 		{
 			RString sVal = *value;
 			sVal.Replace( "\"", "\"\"" );	// escape quotes to double-quotes

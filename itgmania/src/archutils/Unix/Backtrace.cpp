@@ -558,15 +558,8 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	if( ctx == nullptr )
 	{
 		ctx = &CurrentCtx;
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Unix/Backtrace.cpp
 
-=======
-		
->>>>>>> origin/c++11:src/archutils/Unix/Backtrace.cpp
->>>>>>> main
 		CurrentCtx.ip = nullptr;
 		CurrentCtx.bp = __builtin_frame_address(0);
 		CurrentCtx.sp = __builtin_frame_address(0);
@@ -655,15 +648,8 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 		frame = frame->link;
 	}
 
-<<<<<<< HEAD
 	buf[i] = nullptr;
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Unix/Backtrace.cpp
 	buf[i] = nullptr;
-=======
-	buf[i] = nullptr;	
->>>>>>> origin/c++11:src/archutils/Unix/Backtrace.cpp
->>>>>>> main
 }
 #undef PROT_RW
 #undef PROT_EXE

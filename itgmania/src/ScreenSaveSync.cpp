@@ -58,25 +58,11 @@ void ScreenSaveSync::Init()
 	ScreenPrompt::Init();
 
 	ScreenPrompt::SetPromptSettings(
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenSaveSync.cpp
->>>>>>> main
 		GetPromptText(),
 		PROMPT_YES_NO,
 		ANSWER_YES,
 		SaveSyncChanges,
 		RevertSyncChanges,
-<<<<<<< HEAD
-=======
-=======
-		GetPromptText(), 
-		PROMPT_YES_NO, 
-		ANSWER_YES, 
-		SaveSyncChanges, 
-		RevertSyncChanges, 
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSaveSync.cpp
->>>>>>> main
 		nullptr );
 }
 
@@ -84,25 +70,11 @@ void ScreenSaveSync::PromptSaveSync( ScreenMessage sm )
 {
 	ScreenPrompt::Prompt(
 		sm,
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenSaveSync.cpp
->>>>>>> main
 		GetPromptText(),
 		PROMPT_YES_NO,
 		ANSWER_YES,
 		SaveSyncChanges,
 		RevertSyncChanges,
-<<<<<<< HEAD
-=======
-=======
-		GetPromptText(), 
-		PROMPT_YES_NO, 
-		ANSWER_YES, 
-		SaveSyncChanges, 
-		RevertSyncChanges, 
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenSaveSync.cpp
->>>>>>> main
 		nullptr );
 }
 

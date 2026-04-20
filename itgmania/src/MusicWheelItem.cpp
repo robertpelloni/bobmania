@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/MusicWheelItem.cpp
-<<<<<<< HEAD:itgmania/src/MusicWheelItem.cpp
 #include "global.h"
 #include "MusicWheelItem.h"
 #include "RageUtil.h"
@@ -483,9 +481,6 @@ void MusicWheelItem::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/MusicWheelItem.cpp
 #include "global.h"
 #include "MusicWheelItem.h"
 #include "RageUtil.h"
@@ -949,7 +944,3 @@ void MusicWheelItem::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/MusicWheelItem.cpp
->>>>>>> origin/c++11:src/MusicWheelItem.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/MusicWheelItem.cpp

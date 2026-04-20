@@ -6,18 +6,12 @@
 #include "ScreenOptions.h"
 #include "GameConstantsAndTypes.h"
 
-<<<<<<< HEAD
 #include <vector>
 
 
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 #include <vector>
 
 
-=======
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 typedef bool (*MenuRowUpdateEnabled)();
 
 struct MenuRowDef
@@ -25,34 +19,19 @@ struct MenuRowDef
 	int			iRowCode;
 	RString		sName;
 	bool		bEnabled;
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 	MenuRowUpdateEnabled	pfnEnabled;	// if ! nullptr, used instead of bEnabled
 	EditMode	emShowIn;
 	int			iDefaultChoice;
 	std::vector<RString>		choices;
-<<<<<<< HEAD
-=======
-=======
-	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used instead of bEnabled
-=======
-	MenuRowUpdateEnabled	pfnEnabled;	// if ! nullptr, used instead of bEnabled
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenMiniMenu.h
 	EditMode	emShowIn;
 	int			iDefaultChoice;
 	vector<RString>		choices;
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 	bool		bThemeTitle;
 	bool		bThemeItems;
 
 	MenuRowDef(): iRowCode(0), sName(""), bEnabled(false),
 		pfnEnabled(), emShowIn(), iDefaultChoice(0),
 		choices(), bThemeTitle(false), bThemeItems(false) {}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
->>>>>>> main
 	MenuRowDef( int r, RString n, MenuRowUpdateEnabled pe, EditMode s,
 		   bool bTT, bool bTI, int d, const char *c0=nullptr,
 		   const char *c1=nullptr, const char *c2=nullptr,
@@ -67,12 +46,6 @@ struct MenuRowDef
 		   const char *c19=nullptr, const char *c20=nullptr,
 		   const char *c21=nullptr, const char *c22=nullptr,
 		   const char *c23=nullptr, const char *c24=nullptr,
-<<<<<<< HEAD
-=======
-		   const char *c25=nullptr ): iRowCode(r), sName(n),
-=======
-	MenuRowDef( int r, RString n, MenuRowUpdateEnabled pe, EditMode s, 
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 		   bool bTT, bool bTI, int d, const char *c0=NULL, 
 		   const char *c1=NULL, const char *c2=NULL, 
 		   const char *c3=NULL, const char *c4=NULL, 
@@ -87,24 +60,7 @@ struct MenuRowDef
 		   const char *c21=NULL, const char *c22=NULL, 
 		   const char *c23=NULL, const char *c24=NULL, 
 		   const char *c25=NULL ): iRowCode(r), sName(n),
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
-=======
-		   bool bTT, bool bTI, int d, const char *c0=nullptr, 
-		   const char *c1=nullptr, const char *c2=nullptr, 
-		   const char *c3=nullptr, const char *c4=nullptr, 
-		   const char *c5=nullptr, const char *c6=nullptr, 
-		   const char *c7=nullptr, const char *c8=nullptr, 
-		   const char *c9=nullptr, const char *c10=nullptr, 
-		   const char *c11=nullptr, const char *c12=nullptr, 
-		   const char *c13=nullptr, const char *c14=nullptr, 
-		   const char *c15=nullptr, const char *c16=nullptr, 
-		   const char *c17=nullptr, const char *c18=nullptr, 
-		   const char *c19=nullptr, const char *c20=nullptr, 
-		   const char *c21=nullptr, const char *c22=nullptr, 
-		   const char *c23=nullptr, const char *c24=nullptr, 
->>>>>>> main
 		   const char *c25=nullptr ): iRowCode(r), sName(n),
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenMiniMenu.h
 			bEnabled(true), pfnEnabled(pe), emShowIn(s),
 			iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
@@ -117,21 +73,12 @@ struct MenuRowDef
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
 	}
-<<<<<<< HEAD
 
 	MenuRowDef(int r, RString n, bool e, EditMode s,
 			   bool bTT, bool bTI, int d, std::vector<RString> options):
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 
 	MenuRowDef(int r, RString n, bool e, EditMode s,
 			   bool bTT, bool bTI, int d, std::vector<RString> options):
-=======
-	
-	MenuRowDef(int r, RString n, bool e, EditMode s,
-			   bool bTT, bool bTI, int d, vector<RString> options):
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 			iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 			emShowIn(s), iDefaultChoice(d), choices(),
 			bThemeTitle(bTT), bThemeItems(bTI)
@@ -141,10 +88,6 @@ struct MenuRowDef
 			if (str != "") choices.push_back(str);
 		}
 	}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
->>>>>>> main
 
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
 		   int d, const char *c0=nullptr, const char *c1=nullptr,
@@ -159,13 +102,6 @@ struct MenuRowDef
 		   const char *c18=nullptr, const char *c19=nullptr,
 		   const char *c20=nullptr, const char *c21=nullptr,
 		   const char *c22=nullptr, const char *c23=nullptr,
-<<<<<<< HEAD
-=======
-		   const char *c24=nullptr, const char *c25=nullptr ):
-=======
-	
-	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI, 
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 		   int d, const char *c0=NULL, const char *c1=NULL, 
 		   const char *c2=NULL, const char *c3=NULL, 
 		   const char *c4=NULL, const char *c5=NULL, 
@@ -179,23 +115,7 @@ struct MenuRowDef
 		   const char *c20=NULL, const char *c21=NULL, 
 		   const char *c22=NULL, const char *c23=NULL, 
 		   const char *c24=NULL, const char *c25=NULL ):
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
-=======
-		   int d, const char *c0=nullptr, const char *c1=nullptr, 
-		   const char *c2=nullptr, const char *c3=nullptr, 
-		   const char *c4=nullptr, const char *c5=nullptr, 
-		   const char *c6=nullptr, const char *c7=nullptr, 
-		   const char *c8=nullptr, const char *c9=nullptr, 
-		   const char *c10=nullptr, const char *c11=nullptr, 
-		   const char *c12=nullptr, const char *c13=nullptr, 
-		   const char *c14=nullptr, const char *c15=nullptr, 
-		   const char *c16=nullptr, const char *c17=nullptr, 
-		   const char *c18=nullptr, const char *c19=nullptr, 
-		   const char *c20=nullptr, const char *c21=nullptr, 
-		   const char *c22=nullptr, const char *c23=nullptr, 
->>>>>>> main
 		   const char *c24=nullptr, const char *c25=nullptr ):
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenMiniMenu.h
 		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
 		bThemeTitle(bTT), bThemeItems(bTI)
@@ -208,15 +128,8 @@ struct MenuRowDef
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
 	}
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 
-=======
-	
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
 		   int d, int low, int high ):
 		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
@@ -253,10 +166,6 @@ struct MenuRowDef
 struct MenuDef
 {
 	RString sClassName;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
->>>>>>> main
 	std::vector<MenuRowDef> rows;
 
 	MenuDef( RString c, MenuRowDef r0=MenuRowDef(),
@@ -273,27 +182,6 @@ struct MenuDef
 		MenuRowDef r21=MenuRowDef(), MenuRowDef r22=MenuRowDef(),
 		MenuRowDef r23=MenuRowDef(), MenuRowDef r24=MenuRowDef(),
 		MenuRowDef r25=MenuRowDef(), MenuRowDef r26=MenuRowDef(),
-<<<<<<< HEAD
-=======
-=======
-	vector<MenuRowDef> rows;
-
-	MenuDef( RString c, MenuRowDef r0=MenuRowDef(), 
-		MenuRowDef r1=MenuRowDef(), MenuRowDef r2=MenuRowDef(), 
-		MenuRowDef r3=MenuRowDef(), MenuRowDef r4=MenuRowDef(), 
-		MenuRowDef r5=MenuRowDef(), MenuRowDef r6=MenuRowDef(), 
-		MenuRowDef r7=MenuRowDef(), MenuRowDef r8=MenuRowDef(), 
-		MenuRowDef r9=MenuRowDef(), MenuRowDef r10=MenuRowDef(), 
-		MenuRowDef r11=MenuRowDef(), MenuRowDef r12=MenuRowDef(), 
-		MenuRowDef r13=MenuRowDef(), MenuRowDef r14=MenuRowDef(), 
-		MenuRowDef r15=MenuRowDef(), MenuRowDef r16=MenuRowDef(), 
-		MenuRowDef r17=MenuRowDef(), MenuRowDef r18=MenuRowDef(), 
-		MenuRowDef r19=MenuRowDef(), MenuRowDef r20=MenuRowDef(), 
-		MenuRowDef r21=MenuRowDef(), MenuRowDef r22=MenuRowDef(), 
-		MenuRowDef r23=MenuRowDef(), MenuRowDef r24=MenuRowDef(), 
-		MenuRowDef r25=MenuRowDef(), MenuRowDef r26=MenuRowDef(), 
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 		MenuRowDef r27=MenuRowDef(), MenuRowDef r28=MenuRowDef(),
 		MenuRowDef r29=MenuRowDef() ): sClassName(c), rows()
 	{
@@ -311,18 +199,10 @@ struct MenuDef
 class ScreenMiniMenu : public ScreenOptions
 {
 public:
-<<<<<<< HEAD
 	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK,
 			     ScreenMessage smSendOnCancel = SM_None,
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK,
 			     ScreenMessage smSendOnCancel = SM_None,
-=======
-	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK, 
-			     ScreenMessage smSendOnCancel = SM_None, 
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 			     float fX = 0, float fY = 0 );
 
 	void Init();
@@ -331,18 +211,10 @@ public:
 
 protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
-<<<<<<< HEAD
 	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
 	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
-=======
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 
 	virtual bool FocusedItemEndsScreen( PlayerNumber pn ) const;
 
@@ -351,10 +223,6 @@ protected:
 	ScreenMessage		m_SMSendOnOK;
 	ScreenMessage		m_SMSendOnCancel;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
->>>>>>> main
 	std::vector<MenuRowDef>	m_vMenuRows;
 
 public:
@@ -363,19 +231,6 @@ public:
 	static bool s_bCancelled;
 	static int s_iLastRowCode;
 	static std::vector<int>	s_viLastAnswers;
-<<<<<<< HEAD
-=======
-=======
-	vector<MenuRowDef>	m_vMenuRows;
-
-public:
-	ScreenMiniMenu(): m_SMSendOnOK(), m_SMSendOnCancel(), m_vMenuRows() {}
-	
-	static bool s_bCancelled;
-	static int s_iLastRowCode;
-	static vector<int>	s_viLastAnswers;
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
 };
 
 #endif
@@ -383,15 +238,8 @@ public:
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
-<<<<<<< HEAD
  *
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
  *
-=======
- * 
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -401,15 +249,8 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
-<<<<<<< HEAD
  *
-=======
-<<<<<<< HEAD:itgmania/src/ScreenMiniMenu.h
  *
-=======
- * 
->>>>>>> origin/c++11:src/ScreenMiniMenu.h
->>>>>>> main
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

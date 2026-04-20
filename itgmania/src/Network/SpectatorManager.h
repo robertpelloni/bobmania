@@ -1,7 +1,6 @@
 #ifndef SPECTATOR_MANAGER_H
 #define SPECTATOR_MANAGER_H
 
-<<<<<<< HEAD:itgmania/src/Network/SpectatorManager.h
 #include <string>
 #include <vector>
 #include "RageUtil.h"
@@ -52,42 +51,4 @@ private:
 	std::vector<SpectatorPacket> m_ReplayBuffer;
 };
 
-=======
-#include "RageUtil.h"
-#include "json/json.h"
-
-struct lua_State;
-
-class SpectatorManager
-{
-public:
-	SpectatorManager();
-	~SpectatorManager();
-
-	// Singleton instance
-	static SpectatorManager *Instance() { return m_pInstance; }
-
-	// API
-	void ConnectToMatch(const RString& sMatchID);
-	void StartBroadcasting(const RString& sStreamKey);
-	bool IsConnected() const { return m_bConnected; }
-	bool IsBroadcasting() const { return m_bBroadcasting; }
-	RString GetCurrentMatchID() const { return m_sCurrentMatchID; }
-
-    // Callbacks
-    void HandleSpectateStatus(const Json::Value& payload);
-
-	// Lua
-	void PushSelf(lua_State *L);
-
-private:
-	static SpectatorManager *m_pInstance;
-	bool m_bConnected;
-	bool m_bBroadcasting;
-	RString m_sCurrentMatchID;
-};
-
-extern SpectatorManager *SPECTATORMAN;
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Network/SpectatorManager.h
 #endif

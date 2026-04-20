@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_X11.cpp
-<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_X11.cpp
 #include "global.h"
 #include "InputHandler_X11.h"
 #include "RageUtil.h"
@@ -304,9 +302,6 @@ void InputHandler_X11::RegisterKeyEvent( unsigned long timestamp, bool keyDown, 
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_X11.cpp
 #include "global.h"
 #include "InputHandler_X11.h"
 #include "RageUtil.h"
@@ -607,7 +602,3 @@ void InputHandler_X11::RegisterKeyEvent( unsigned long timestamp, bool keyDown, 
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler_X11.cpp
->>>>>>> origin/c++11:src/arch/InputHandler/InputHandler_X11.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler_X11.cpp

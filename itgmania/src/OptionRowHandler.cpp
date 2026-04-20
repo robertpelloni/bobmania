@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 #include "global.h"
 #include "OptionRowHandler.h"
 #include "LuaManager.h"
@@ -20,7 +16,6 @@
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "GameManager.h"
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
 #include "CharacterManager.h"
@@ -465,17 +460,10 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 
 			std::vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
-<<<<<<< HEAD
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
-=======
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
-=======
-			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
->>>>>>> origin/broken:src/OptionRowHandler.cpp
->>>>>>> main
 			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
 			for( unsigned i=0; i<vpSteps.size(); i++ )
 			{
@@ -1586,17 +1574,11 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		else if( sParam.CompareNoCase("StepsLocked")==0 )
 		{
 			MAKE( OptionRowHandlerListSteps );
 			pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		}
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/broken:src/OptionRowHandler.cpp
->>>>>>> main
 		else if( sParam.CompareNoCase("Characters")==0 )	MAKE( OptionRowHandlerListCharacters )
 		else if( sParam.CompareNoCase("Styles")==0 )		MAKE( OptionRowHandlerListStyles )
 		else if( sParam.CompareNoCase("Groups")==0 )		MAKE( OptionRowHandlerListGroups )
@@ -1704,28 +1686,6 @@ LuaXType( ReloadChanged );
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "OptionRowHandler.h"
-#include "LuaManager.h"
-#include "ScreenOptionsMasterPrefs.h"
-#include "NoteSkinManager.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "GameState.h"
-#include "Course.h"
-#include "Steps.h"
-#include "Style.h"
-#include "Song.h"
-#include "SongManager.h"
-#include "Character.h"
-#include "PrefsManager.h"
-#include "SongUtil.h"
-#include "StepsUtil.h"
-#include "GameManager.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
 #include "CharacterManager.h"
@@ -1927,11 +1887,8 @@ public:
 				}
 
 				m_aListEntries.push_back( mc );
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 
 				RString sName = mc.m_sName;
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 				RString sChoice = mc.m_sName;
 				m_Def.m_vsChoices.push_back( sChoice );
 			}
@@ -2527,142 +2484,6 @@ public:
 		m_pLuaTable->Unset();
 	}
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
-=======
-	bool SanityCheckTable(lua_State* L, RString& RowName)
-	{
-		if(m_pLuaTable->GetLuaType() != LUA_TTABLE)
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  Result of \"%s\" is not a table.", RowName.c_str());
-			return false;
-		}
-		m_pLuaTable->PushSelf(L);
-		lua_getfield(L, -1, "Name");
-		const char *pStr = lua_tostring(L, -1);
-		if( pStr == nullptr )
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Name\" entry is not a string.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "LayoutType");
-		pStr = lua_tostring(L, -1);
-		if(pStr == nullptr || StringToLayoutType(pStr) == LayoutType_Invalid)
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LayoutType\" entry is not a string.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "SelectType");
-		pStr = lua_tostring(L, -1);
-		if(pStr == nullptr || StringToSelectType(pStr) == SelectType_Invalid)
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SelectType\" entry is not a string.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "Choices");
-		if(!lua_istable(L, -1))
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Choices\" is not a table.", RowName.c_str());
-			return false;
-		}
-		if(!TableContainsOnlyStrings(L, lua_gettop(L)))
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Choices\" table contains a non-string.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "EnabledForPlayers");
-		if(!lua_isnil(L, -1))
-		{
-			if(!lua_isfunction(L, -1))
-			{
-				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" is not a function.", RowName.c_str());
-				return false;
-			}
-			m_pLuaTable->PushSelf( L );
-			RString error= RowName + " \"EnabledForPlayers\": ";
-			LuaHelpers::RunScriptOnStack(L, error, 1, 1, true);
-			if(!lua_istable(L, -1))
-			{
-				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" did not return a table.", RowName.c_str());
-				return false;
-			}
-			lua_pushnil(L);
-			while(lua_next(L, -2) != 0)
-			{
-				PlayerNumber pn= Enum::Check<PlayerNumber>(L, -1, true, true);
-				if(pn == PlayerNumber_Invalid)
-				{
-					LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"EnabledForPlayers\" contains a non-PlayerNumber.", RowName.c_str());
-					return false;
-				}
-				lua_pop(L, 1);
-			}
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "ReloadRowMessages");
-		if(!lua_isnil(L, -1))
-		{
-			if(!lua_istable(L, -1))
-			{
-				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" is not a table.", RowName.c_str());
-				return false;
-			}
-			if(!TableContainsOnlyStrings(L, lua_gettop(L)))
-			{
-				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"ReloadRowMessages\" table contains a non-string.", RowName.c_str());
-				return false;
-			}
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "Reload");
-		if(!lua_isnil(L, -1))
-		{
-			if(!lua_isfunction(L, -1))
-			{
-				LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"Reload\" entry is not a function.", RowName.c_str());
-				return false;
-			}
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "LoadSelections");
-		if(!lua_isfunction(L, -1))
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"LoadSelections\" entry is not a function.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "SaveSelections");
-		if(!lua_isfunction(L, -1))
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"SaveSelections\" entry is not a function.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "NotifyOfSelection");
-		if(!lua_isnil(L, -1) && !lua_isfunction(L, -1))
-		{
-			LuaHelpers::ReportScriptErrorFmt("LUA_ERROR:  \"%s\" \"NotifyOfSelection\" entry is not a function.", RowName.c_str());
-			return false;
-		}
-		lua_pop(L, 1);
-
-		lua_pop(L, 1);
-		return true;
-	}
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 	void SetEnabledForPlayers()
 	{
 		Lua *L = LUA->Get();
@@ -2699,27 +2520,7 @@ public:
 		LUA->Release(L);
 	}
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 	virtual void LoadInternal( const Commands &cmds )
-=======
-	void LoadChoices( Lua *L )
-	{
-		// Iterate over the "Choices" table.
-		lua_getfield(L, -1, "Choices");
-		lua_pushnil( L );
-		while( lua_next(L, -2) != 0 )
-		{
-			// `key' is at index -2 and `value' at index -1
-			const char *pValue = lua_tostring( L, -1 );
-			//LOG->Trace( "choice: '%s'", pValue);
-			m_Def.m_vsChoices.push_back( pValue );
-			lua_pop( L, 1 ); // removes `value'; keeps `key' for next iteration
-		}
-		lua_pop( L, 1 ); // pop choices table
-	}
-
-	virtual bool LoadInternal( const Commands &cmds )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 	{
 		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
@@ -2747,7 +2548,6 @@ public:
 		m_Def.m_sName = pStr;
 		lua_pop( L, 1 );
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		lua_pushstring( L, "OneChoiceForAllPlayers" );
 		lua_gettable( L, -2 );
 		m_Def.m_bOneChoiceForAllPlayers = !!lua_toboolean( L, -1 );
@@ -2756,18 +2556,6 @@ public:
 		lua_pushstring( L, "ExportOnChange" );
 		lua_gettable( L, -2 );
 		m_Def.m_bExportOnChange = !!lua_toboolean( L, -1 );
-=======
-		lua_getfield(L, -1, "GoToFirstOnStart");
-		m_GoToFirstOnStart = lua_toboolean(L, -1) > 0;
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "OneChoiceForAllPlayers"); 
-		m_Def.m_bOneChoiceForAllPlayers = lua_toboolean( L, -1 ) > 0;
-		lua_pop( L, 1 );
-
-		lua_getfield(L, -1, "ExportOnChange");
-		m_Def.m_bExportOnChange = lua_toboolean( L, -1 ) > 0;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 		lua_pop( L, 1 );
 
 		lua_pushstring( L, "LayoutType" );
@@ -2788,7 +2576,6 @@ public:
 		ASSERT( m_Def.m_selectType != SelectType_Invalid );
 		lua_pop( L, 1 );
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		// Iterate over the "Choices" table.
 		lua_pushstring( L, "Choices" );
 		lua_gettable( L, -2 );
@@ -2810,9 +2597,6 @@ public:
 		}
 
 		lua_pop( L, 1 ); // pop choices table
-=======
-		LoadChoices( L );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 
 		// Set the EnabledForPlayers function.
 		lua_pushstring( L, "EnabledForPlayers" );
@@ -2846,7 +2630,6 @@ public:
 		}
 		lua_pop( L, 1 ); // pop ReloadRowMessages table
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		// Look for "ExportOnChange" value.
 		lua_pushstring( L, "ExportOnChange" );
 		lua_gettable( L, -2 );
@@ -2855,11 +2638,6 @@ public:
 			m_Def.m_bExportOnChange = !!MyLua_checkboolean( L, -1 );
 		}
 		lua_pop( L, 1 ); // pop ExportOnChange value
-=======
-		// Set the Reload function
-		lua_getfield(L, -1, "Reload");
-		m_ReloadFunc.SetFromStack( L );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 
 		lua_pop( L, 1 ); // pop main table
 		ASSERT( lua_gettop(L) == 0 );
@@ -2973,10 +2751,6 @@ public:
 
 		ASSERT( lua_gettop(L) == 0 );
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
-=======
-		int effects = 0;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 		for (PlayerNumber const &p : vpns)
 		{
 			const vector<bool> &vbSel = vbSelected[p];
@@ -3010,18 +2784,8 @@ public:
 
 			ASSERT( lua_gettop(L) == 6 ); // vbSelectedOut, m_iLuaTable, function, self, arg, arg
 
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 			lua_call( L, 3, 0 ); // call function with 3 arguments and 0 results
 			ASSERT( lua_gettop(L) == 2 );
-=======
-			RString error= "SaveSelections: ";
-			LuaHelpers::RunScriptOnStack( L, error, 3, 1, true );
-			ASSERT( lua_gettop(L) == 3 ); // SaveSelections *may* return effects flags, otherwise nil
-			double ret = lua_tonumber( L, -1 );
-			ASSERT_M( (lua_isnumber( L, -1 ) && std::floor( ret ) == ret) || lua_isnil( L, -1 ),
-					  "SaveSelections must return integer flags, or nill" );
-			effects |= static_cast<int>( ret );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 
 			lua_pop( L, 1 ); // pop effects
 			lua_pop( L, 1 ); // pop option table
@@ -3034,54 +2798,6 @@ public:
 
 		return effects;
 	}
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
-=======
-	virtual bool NotifyOfSelection(PlayerNumber pn, int choice)
-	{
-		if(!m_TableIsSane)
-		{
-			return false;
-		}
-		Lua *L= LUA->Get();
-		m_pLuaTable->PushSelf(L);
-
-		lua_getfield(L, -1, "NotifyOfSelection");
-		bool changed= false;
-		if(lua_isfunction(L, -1))
-		{
-			m_pLuaTable->PushSelf(L);
-			LuaHelpers::Push(L, pn);
-			// Convert choice to a lua index so it matches up with the Choices table.
-			lua_pushinteger(L, choice+1);
-			RString error= "NotifyOfSelection: ";
-			LuaHelpers::RunScriptOnStack(L, error, 3, 1, true);
-			if(lua_toboolean(L, -1))
-			{
-				lua_pop(L, 1);
-				changed= true;
-				m_Def.m_vsChoices.clear();
-				// Iterate over the "Choices" table.
-				lua_getfield(L, -1, "Choices");
-				lua_pushnil( L );
-				while( lua_next(L, -2) != 0 )
-				{
-					// `key' is at index -2 and `value' at index -1
-					const char *pValue = lua_tostring( L, -1 );
-					//LOG->Trace( "choice: '%s'", pValue);
-					m_Def.m_vsChoices.push_back( pValue );
-					lua_pop( L, 1 ); // removes `value'; keeps `key' for next iteration
-				}
-			}
-		}
-		lua_settop(L, 0); // Release has an assert that forces a clear stack.
-		LUA->Release(L);
-		return changed;
-	}
-	virtual bool GoToFirstOnStart() const
-	{
-		return m_GoToFirstOnStart;
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 };
 
 class OptionRowHandlerConfig : public OptionRowHandler
@@ -3109,16 +2825,12 @@ public:
 		m_Def.m_bOneChoiceForAllPlayers = true;
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		if( pConfOption == nullptr )
 		{
 			LOG->Warn( "Invalid Conf type \"%s\"", sParam.c_str() );
 			pConfOption = ConfOption::Find( "Invalid" );
 			ASSERT_M( pConfOption != nullptr, "ConfOption::Find(Invalid)" );
 		}
-=======
-		ROW_INVALID_IF(pConfOption == nullptr, "Invalid Conf type \"" + sParam + "\".", false);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 
 		pConfOption->UpdateAvailableOptions();
 
@@ -3318,19 +3030,11 @@ public:
 OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 {
 	OptionRowHandler* pHand = nullptr;
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 
 	if( cmds.v.size() == 0 )
 		return nullptr;
 
 	const RString &name = cmds.v[0].GetName();
-=======
-
-	ROW_INVALID_IF(cmds.v.size() == 0, "No commands for constructing row.", nullptr);
-	const RString &name = cmds.v[0].GetName();
-	ROW_INVALID_IF(name != "gamecommand" && cmds.v.size() != 1,
-		"Row must be constructed from single command.", nullptr);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 
 #define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
 
@@ -3339,13 +3043,8 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	{
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1).s;
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 		if( command.m_vsArgs.size() != 2 || !sParam.size() )
 			return nullptr;
-=======
-		ROW_INVALID_IF(command.m_vsArgs.size() != 2 || !sParam.size(),
-			"list row command must be 'list,name' or 'list,type'.", nullptr);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
@@ -3366,40 +3065,16 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	else if( name == "stepstype" )		MAKE( OptionRowHandlerStepsType )
 	else if( name == "steps" )		MAKE( OptionRowHandlerSteps )
 	else if( name == "gamecommand" )	MAKE( OptionRowHandlerGameCommand )
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 
 	return pHand;
-=======
-	else
-	{
-		ROW_INVALID_IF(true, "Invalid row type.", nullptr);
-	}
-
-	if(load_succeeded)
-	{
-		return pHand;
-	}
-	return nullptr;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 }
 
 OptionRowHandler* OptionRowHandlerUtil::MakeNull()
 {
 	OptionRowHandler* pHand = nullptr;
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
 	Commands cmds;
 	MAKE( OptionRowHandlerNull )
 	return pHand;
-=======
-	bool load_succeeded= false; // Part of the MAKE macro, but unused.
-	Commands cmds;
-	MAKE( OptionRowHandlerNull )
-	if(load_succeeded) // Just to get rid of the warning for not using it.
-	{
-		return pHand;
-	}
-	return nullptr;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp
 }
 
 OptionRowHandler* OptionRowHandlerUtil::MakeSimple( const MenuRowDef &mr )
@@ -3472,7 +3147,3 @@ LuaXType( ReloadChanged );
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/OptionRowHandler.cpp
->>>>>>> origin/c++11:src/OptionRowHandler.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/OptionRowHandler.cpp

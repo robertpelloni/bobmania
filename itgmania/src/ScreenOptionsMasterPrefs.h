@@ -3,18 +3,12 @@
 
 #include "EnumHelper.h"
 
-<<<<<<< HEAD
 #include <vector>
 
 
-=======
-<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.h
 #include <vector>
 
 
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.h
->>>>>>> main
 static const int MAX_OPTIONS=16;
 enum OptEffect
 {
@@ -25,19 +19,12 @@ enum OptEffect
 	OPT_APPLY_SOUND				=	(1<<4),
 	OPT_APPLY_SONG				=	(1<<5),
 	OPT_APPLY_ASPECT_RATIO		=	(1<<6),
-<<<<<<< HEAD
 	OPT_APPLY_PROFILES			=	(1<<7),
 	OPT_RELOAD_SONGS			=	(1<<8),
 	NUM_OptEffect				=	9,
-=======
-<<<<<<< HEAD:itgmania/src/ScreenOptionsMasterPrefs.h
 	OPT_APPLY_PROFILES			=	(1<<7),
 	OPT_RELOAD_SONGS			=	(1<<8),
 	NUM_OptEffect				=	9,
-=======
-	NUM_OptEffect				=	7,
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsMasterPrefs.h
->>>>>>> main
 	OptEffect_Invalid			=	MAX_OPTIONS+1
 };
 const RString& OptEffectToString( OptEffect e );

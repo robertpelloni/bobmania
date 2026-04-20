@@ -1,7 +1,6 @@
 #ifndef TOURNAMENT_MANAGER_H
 #define TOURNAMENT_MANAGER_H
 
-<<<<<<< HEAD:itgmania/src/Tournament/TournamentManager.h
 #include "RageTypes.h"
 #include "TournamentBracket.h"
 #include <vector>
@@ -22,24 +21,6 @@ struct MatchInfo {
     RString P2;
     RString Time;
     RString Prize;
-=======
-#include "RageUtil.h"
-#include <vector>
-
-struct lua_State;
-
-struct TournamentMatch
-{
-	RString MatchID;
-	RString OpponentName;
-	int OpponentELO;
-	RString SongTitle;
-	RString Difficulty;
-	bool bCompleted;
-	int UserScore;
-	int OpponentScore;
-    RString Result; // "Win", "Loss", "Draw"
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Tournament/TournamentManager.h
 };
 
 class TournamentManager
@@ -50,7 +31,6 @@ public:
 
 	void Init();
 
-<<<<<<< HEAD:itgmania/src/Tournament/TournamentManager.h
     // Ladder
     const std::vector<LadderEntry>& GetLadder() const;
     void UpdateELO( const RString& sPlayer, int iChange );
@@ -78,24 +58,5 @@ private:
 };
 
 extern TournamentManager* TOURNAMENTMAN;
-=======
-    // API
-	const std::vector<TournamentMatch>& GetLadder() const;
-    void StartMatch(const RString& sMatchID);
-    void ReportMatchResult(const RString& sMatchID, int iUserScore);
-
-    // Callbacks
-    void HandleMatchStarted(const Json::Value& payload);
-
-    // Lua
-    void PushSelf(lua_State *L);
-
-private:
-    std::vector<TournamentMatch> m_Ladder;
-    RString m_CurrentMatchID;
-};
-
-extern TournamentManager *TOURNAMENTMAN;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Tournament/TournamentManager.h
 
 #endif

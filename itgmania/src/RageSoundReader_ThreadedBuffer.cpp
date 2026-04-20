@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
-<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ThreadedBuffer.cpp
 #include "global.h"
 #include "RageSoundReader_ThreadedBuffer.h"
 #include "RageUtil.h"
@@ -54,7 +50,6 @@ RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader 
 
 RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy ):
 	RageSoundReader_Filter(nullptr), // don't touch m_pSource before DisableBuffering
-<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
 	m_Event( "ThreadedBuffer" )
 {
 	bool bWasEnabled = cpy.DisableBuffering();
@@ -377,64 +372,6 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "RageSoundReader_ThreadedBuffer.h"
-#include "RageUtil.h"
-#include "RageTimer.h"
-
-#include "RageLog.h"
-
-#if !defined(_WINDOWS)
-#include <unistd.h>
-#endif
-
-/* Implement threaded read-ahead buffering.
- *
- * If a buffer is low on data, keep filling until it has a g_iMinFillFrames.
- * Once beyond that, fill at a rate relative to realtime.
- *
- * This allows a stream to have a large buffer, for higher reliability, without
- * causing major CPU bursts when the stream starts or underruns. Filling 32k
- * takes more CPU than filling 4k frames, and may cause a skip. */
-
-// The amount of data to read at once:
-static const unsigned g_iReadBlockSizeFrames = 1024;
-
-// The maximum number of frames to buffer:
-static const int g_iStreamingBufferFrames = 1024*32;
-
-/* When a sound has fewer than g_iMinFillFrames buffered, buffer at maximum speed.
- * Once beyond that, fill at a limited rate. */
-static const int g_iMinFillFrames = 1024*4;
-
-RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader *pSource ):
-	RageSoundReader_Filter( pSource ),
-	m_Event( "ThreadedBuffer" )
-{
-	m_iSampleRate = pSource->GetSampleRate();
-	m_iChannels = pSource->GetNumChannels();
-
-	int iFrameSize = sizeof(float) * this->GetNumChannels();
-	m_DataBuffer.reserve( g_iStreamingBufferFrames * iFrameSize, iFrameSize );
-
-	m_bEOF = false;
-	m_bShutdownThread = false;
-	m_bEnabled = false;
-	m_bFilling = false;
-
-	m_StreamPosition.push_back( Mapping() );
-	m_StreamPosition.back().iPositionOfFirstFrame = pSource->GetNextSourceFrame();
-	m_StreamPosition.back().fRate = pSource->GetStreamToSourceRatio();
-
-	m_Thread.SetName( "Streaming sound buffering" );
-	m_Thread.Create( StartBufferingThread, this );
-}
-
-RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( const RageSoundReader_ThreadedBuffer &cpy ):
-	RageSoundReader_Filter(nullptr), // don't touch m_pSource before DisableBuffering
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ThreadedBuffer.cpp
 	m_Event( "ThreadedBuffer" )
 {
 	bool bWasEnabled = cpy.DisableBuffering();
@@ -757,7 +694,3 @@ int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageSoundReader_ThreadedBuffer.cpp
->>>>>>> origin/c++11:src/RageSoundReader_ThreadedBuffer.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundReader_ThreadedBuffer.cpp

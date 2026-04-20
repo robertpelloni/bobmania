@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageDisplay.h
-<<<<<<< HEAD:itgmania/src/RageDisplay.h
 /* RageDisplay - Renderer base class. */
 
 #ifndef RAGEDISPLAY_H
@@ -506,9 +504,6 @@ extern RageDisplay*		DISPLAY;	// global and accessible from anywhere in our prog
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h
 /* RageDisplay - Renderer base class. */
 
 #ifndef RAGEDISPLAY_H
@@ -810,11 +805,6 @@ public:
 	 */
 	virtual uintptr_t CreateRenderTarget( const RenderTargetParam &, int & /* iTextureWidthOut */, int & /* iTextureHeightOut */ ) { return 0; }
 
-<<<<<<< HEAD:itgmania/src/RageDisplay.h
-=======
-	virtual uintptr_t GetRenderTarget()	{ return 0; }
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h
 	/* Set the render target, or 0 to resume rendering to the framebuffer. An active render
 	 * target may not be used as a texture. If bPreserveTexture is true, the contents
 	 * of the texture will be preserved from the previous call; otherwise, cleared.  If
@@ -896,11 +886,7 @@ public:
 
 	virtual RString GetTextureDiagnostics( uintptr_t /* id */ ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
-<<<<<<< HEAD:itgmania/src/RageDisplay.h
 	virtual RageSurface *GetTexture( unsigned /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
-=======
-	virtual RageSurface *GetTexture( uintptr_t /* iTexture */ ) { return nullptr; } // allocates a surface.  Caller must delete it.
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h
 
 protected:
 	virtual void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
@@ -1024,7 +1010,3 @@ extern RageDisplay*		DISPLAY;	// global and accessable from anywhere in our prog
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageDisplay.h
->>>>>>> origin/c++11:src/RageDisplay.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay.h

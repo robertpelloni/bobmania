@@ -39,10 +39,7 @@
 #include "StatsManager.h"
 #include "PlayerAI.h" // for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 #include "Foreach.h"
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
@@ -110,7 +107,6 @@ PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_bIsDummy(false), m_iDummyIndex(0), m_iAddToDifficulty(0),
 	m_bPlayerEnabled(false), m_PlayerStateDummy(),
 	m_PlayerStageStatsDummy(), m_SoundEffectControl(),
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(NULL), 
 	m_ptextCourseSongNumber(NULL), m_ptextStepsDescription(NULL),
 	m_pPrimaryScoreDisplay(NULL), m_pSecondaryScoreDisplay(NULL),
@@ -118,15 +114,6 @@ PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_ptextPlayerOptions(NULL), m_pActiveAttackList(NULL),
 	m_NoteData(), m_pPlayer(NULL), m_pInventory(NULL), 
 	m_pStepsDisplay(NULL), m_sprOniGameOver() {}
-=======
-	m_vpStepsQueue(), m_asModifiersQueue(), m_pLifeMeter(nullptr),
-	m_ptextCourseSongNumber(nullptr), m_ptextStepsDescription(nullptr),
-	m_pPrimaryScoreDisplay(nullptr), m_pSecondaryScoreDisplay(nullptr),
-	m_pPrimaryScoreKeeper(nullptr), m_pSecondaryScoreKeeper(nullptr),
-	m_ptextPlayerOptions(nullptr), m_pActiveAttackList(nullptr),
-	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr),
-	m_pStepsDisplay(nullptr), m_sprOniGameOver() {}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 
 void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
 {
@@ -345,17 +332,8 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 
 ScreenGameplay::ScreenGameplay()
 {
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	m_pSongBackground = NULL;
 	m_pSongForeground = NULL;
-=======
-	m_pSongBackground = nullptr;
-	m_pSongForeground = nullptr;
-	m_pModfile = nullptr;
-	m_bForceNoNetwork = false;
-	m_delaying_ready_announce= false;
-	GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck= false;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 }
 
 void ScreenGameplay::Init()
@@ -418,13 +396,8 @@ void ScreenGameplay::Init()
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->PauseMountingThread();
 
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	m_pSoundMusic = NULL;
 	m_bPaused = false;
-=======
-	m_pSoundMusic = nullptr;
-	set_paused_internal(false);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 
 	m_pCombinedLifeMeter = NULL;
 
@@ -542,27 +515,7 @@ void ScreenGameplay::Init()
 	{
 		RString sName = ssprintf("Player%s", pi->GetName().c_str());
 		pi->m_pPlayer->SetName( sName );
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
-=======
-
-		Style const* style= GAMESTATE->GetCurrentStyle(pi->m_pn);
-		float style_width= style->GetWidth(pi->m_pn);
-		float edge= left_edge[pi->m_pn];
-		float screen_space;
-		float field_space;
-		float left_marge;
-		float right_marge;
-#define CENTER_PLAYER_BLOCK \
-		{ \
-			edge= 0.0f; \
-			screen_space= SCREEN_WIDTH; \
-			left_marge= margins[PLAYER_1][0]; \
-			right_marge= margins[PLAYER_2][1]; \
-			field_space= screen_space - left_marge - right_marge; \
-		}
-		// If pi->m_pn is set, then the player will be visible.  If not, then it's not
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 		// visible and don't bother setting its position.
 
 		float fPlayerX;
@@ -616,12 +569,7 @@ void ScreenGameplay::Init()
 	// we need to wait, so that there is no Dead On Start issues.
 	// if you wait too long at the second checkpoint, you will
 	// appear dead when you begin your game.
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	NSMAN->StartRequest(0); 
-=======
-	if( !m_bForceNoNetwork )
-		NSMAN->StartRequest(0);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 
 
 	// Add individual life meter
@@ -1101,13 +1049,8 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		{
 			Attack a = pi->m_asModifiersQueue[iSongIndex][i];
 			if( a.fStartSecond == 0 )
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 				a.fStartSecond = a.ATTACK_STARTS_NOW;	// now
 			
-=======
-				a.fStartSecond = ATTACK_STARTS_NOW;	// now
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 			pi->GetPlayerState()->LaunchAttack( a );
 			GAMESTATE->m_SongOptions.FromString( ModsLevel_Song, a.sModifiers );
 		}
@@ -1433,7 +1376,6 @@ void ScreenGameplay::LoadLights()
 	NoteData TapNoteData1;
 	pSteps->GetNoteData( TapNoteData1 );
 
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	if( asDifficulties.size() > 1 )
 	{
 		Difficulty d2 = Difficulty_Invalid;
@@ -1453,25 +1395,6 @@ void ScreenGameplay::LoadLights()
 		}
 		else
 			d2 = StringToDifficulty( asDifficulties[1] );
-=======
-	//taken from oitg, restores arrow -> marquee/bass light mapping.
-	if( asDifficulties.size() > 1 )
-	{
-		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
-
-		Steps *pSteps2;
-
-		pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, st, d2 );
-
-		if(pSteps2 != nullptr)
-		{
-			NoteData TapNoteData2;
-			pSteps2->GetNoteData( TapNoteData2 );
-
-			NoteDataUtil::LoadTransformedLightsFromTwo( TapNoteData1, TapNoteData2, m_CabinetLightsNoteData );
-			return;
-		}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 
 		/* fall through */
 	}
@@ -1683,15 +1606,10 @@ void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, fl
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
-<<<<<<< HEAD
     // Replay System: Update playback (input injection)
     if( REPLAYMAN ) REPLAYMAN->Update(fDeltaTime);
 
-=======
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	if( GAMESTATE->m_pCurSong == NULL  )
-=======
->>>>>>> main
 	// Economy Integration: Update mining/background tasks
 	ECONOMYMAN->Update(fDeltaTime);
 	
@@ -1703,7 +1621,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 
 	if( GAMESTATE->m_pCurSong == nullptr  )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 	{
 		/* ScreenDemonstration will move us to the next screen.  We just need to
 		 * survive for one update without crashing.  We need to call Screen::Update
@@ -1857,13 +1774,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				PlayerOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
 				switch( ft )
 				{
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 				case PlayerOptions::FAIL_IMMEDIATE:
 					if( pi->m_pLifeMeter == NULL  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
-=======
-				case FailType_Immediate:
-					if( pi->m_pLifeMeter == nullptr  ||  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing()) )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 						bAllFailed = false;
 					break;
 				case PlayerOptions::FAIL_IMMEDIATE_CONTINUE:
@@ -2071,49 +1983,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) && GAMESTATE->GetFirstDisabledPlayer() != PLAYER_INVALID )
 					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
-=======
-	// ArrowEffects::Update call moved because having it happen once per
-	// NoteField (which means twice in two player) seemed wasteful. -Kyz
-	ArrowEffects::Update();
-}
-
-void ScreenGameplay::DrawPrimitives()
-{
-	// ScreenGameplay::DrawPrimitives exists so that the notefield board can be
-	// above the song background and underneath everything else.  This way, a
-	// theme can put a screen filter in the notefield board and not have it
-	// obscure custom elements on the screen.  Putting the screen filter in the
-	// notefield board simplifies placement because it ensures that the filter
-	// is in the same place as the notefield, instead of forcing the filter to
-	// check conditions and metrics that affect the position of the notefield.
-	// This also solves the problem of the ComboUnderField metric putting the
-	// combo underneath the opaque notefield board.
-	// -Kyz
-	if(m_pSongBackground)
-	{
-		m_pSongBackground->m_disable_draw= false;
-		m_pSongBackground->Draw();
-		m_pSongBackground->m_disable_draw= true;
-	}
-	FOREACH_EnabledPlayerNumberInfo(m_vPlayerInfo, pi)
-	{
-		pi->m_pPlayer->DrawNoteFieldBoard();
-	}
-	// Clear the z buffer so 3D notes aren't hidden by anything in the underlay using masking. -Kyz
-	DISPLAY->ClearZBuffer();
-	ScreenWithMenuElements::DrawPrimitives();
-}
-
-void ScreenGameplay::FailFadeRemovePlayer(PlayerInfo* pi)
-{
-	SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-	pi->ShowOniGameOver();
-	int tracks = pi->m_NoteData.GetNumTracks();
-	pi->m_NoteData.Init();		// remove all notes and scoring
-	pi->m_NoteData.SetNumTracks(tracks); // reset the number of tracks.
-	pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 }
 
 float ScreenGameplay::GetHasteRate()
@@ -2523,7 +2392,6 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 					break;
 				case GameButtonType_Step:
 					if( iCol != -1 )
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 					break;
 				case GameButtonType_Fret:
@@ -2533,22 +2401,6 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				case GameButtonType_Strum:
 					pi.m_pPlayer->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
 					break;
-=======
-					{
-						if( PREFSMAN->m_bBothAtOnce )
-						{
-							FOREACH_EnabledPlayerInfo( m_vPlayerInfo, other_pi )
-							{
-								other_pi->m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-							}
-						}
-						else
-						{
-							pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-						}
-					}
-					return true;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 				}
 			}
 		}
@@ -2794,75 +2646,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				pi->m_pLifeMeter->OnSongEnded();
 		}
 
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
-=======
-		// If this is a repeating course, and we're at the end of it, repick and
-		// add new songs to the players' step and song queues.
-		if(GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse &&
-			GAMESTATE->m_pCurCourse->m_bRepeat &&
-			GAMESTATE->GetCourseSongIndex() >= (int)m_apSongsQueue.size()-1)
-		{
-			Course* course= GAMESTATE->m_pCurCourse;
-			ASSERT(course != nullptr);
-			// Need to store these so they can be used to refetch the players'
-			// trails after they're invalidated.
-			vector<StepsType> trail_sts;
-			vector<CourseDifficulty> trail_cds;
-			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
-			{
-				Trail* trail= GAMESTATE->m_pCurTrail[pi->GetStepsAndTrailIndex()];
-				ASSERT(trail != nullptr);
-				trail_sts.push_back(trail->m_StepsType);
-				trail_cds.push_back(trail->m_CourseDifficulty);
-			}
-			// Set a new stage seed so the order will be different.
-			GAMESTATE->SetNewStageSeed();
-			course->InvalidateTrailCache();
-			course->RegenerateNonFixedTrails();
-			size_t info_id= 0; // Can't use the player number in the playerinfo
-			// because it won't match up in 2-player.
-			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
-			{
-				Trail* trail= course->GetTrail(trail_sts[info_id], trail_cds[info_id]);
-				ASSERT(trail != nullptr);
-				GAMESTATE->m_pCurTrail[pi->m_pn].Set(trail);
-				++info_id;
-			}
-			PlayerNumber master_pn = GAMESTATE->GetMasterPlayerNumber();
-			Trail *master_trail= GAMESTATE->m_pCurTrail[master_pn];
-			ASSERT(master_trail != nullptr);
-			for (TrailEntry const &entry : master_trail->m_vEntries)
-			{
-				ASSERT(entry.pSong != nullptr);
-				m_apSongsQueue.push_back(entry.pSong);
-				STATSMAN->m_CurStageStats.m_vpPossibleSongs.push_back(entry.pSong);
-			}
-			FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi)
-			{
-				Trail* trail= GAMESTATE->m_pCurTrail[pi->GetStepsAndTrailIndex()];
-				ASSERT(trail != nullptr);
-				for (TrailEntry const &entry : master_trail->m_vEntries)
-				{
-					ASSERT(entry.pSteps != nullptr);
-					pi->m_vpStepsQueue.push_back(entry.pSteps);
-					AttackArray a;
-					entry.GetAttackArray(a);
-					pi->m_asModifiersQueue.push_back(a);
-					pi->GetPlayerStageStats()->m_vpPossibleSteps.push_back(entry.pSteps);
-				}
-				// In a survival course, override stored mods
-				if(course->GetCourseType() == COURSE_TYPE_SURVIVAL &&
-					SURVIVAL_MOD_OVERRIDE)
-				{
-					pi->GetPlayerState()->m_PlayerOptions.FromString(ModsLevel_Stage,
-						"clearall," + CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue() +
-						"," + CommonMetrics::DEFAULT_MODIFIERS.GetValue());
-					pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
-				}
-			}
-		}
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 		GAMESTATE->m_bLoadingNextSong = true;
 		MESSAGEMAN->Broadcast( "BeforeLoadingNextCourseSong" );
 		m_NextSong.Reset();
@@ -3199,54 +2982,6 @@ public:
 	}
 	static int PauseGame( T* p, lua_State *L )		{ p->Pause( BArg(1)); return 0; }
 	static int IsPaused( T* p, lua_State *L )		{ lua_pushboolean( L, p->IsPaused() ); return 1; }
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
-=======
-	static int GetHasteRate( T* p, lua_State *L )    { lua_pushnumber( L, p->GetHasteRate() ); return 1; }
-	static bool TurningPointsValid(lua_State* L, int index)
-	{
-		size_t size= lua_objlen(L, index);
-		if(size < 2)
-		{
-			luaL_error(L, "Invalid number of entries %zu", size);
-		}
-		float prev_turning= -1;
-		for(size_t n= 1; n < size; ++n)
-		{
-			lua_pushnumber(L, n);
-			lua_gettable(L, index);
-			float v= FArg(-1);
-			if(v < prev_turning || v > 1)
-			{
-				luaL_error(L, "Invalid value %f", v);
-			}
-			lua_pop(L, 1);
-		}
-		return true;
-	}
-	static bool AddAmountsValid(lua_State* L, int index)
-	{
-		return TurningPointsValid(L, index);
-	}
-	FLOAT_TABLE_INTERFACE(HasteTurningPoints, HasteTurningPoints, TurningPointsValid);
-	FLOAT_TABLE_INTERFACE(HasteAddAmounts, HasteAddAmounts, AddAmountsValid);
-	FLOAT_NO_SPEED_INTERFACE(HasteTimeBetweenUpdates, HasteTimeBetweenUpdates, (v > 0));
-	FLOAT_NO_SPEED_INTERFACE(HasteLifeSwitchPoint, HasteLifeSwitchPoint, (v >= 0 && v <= 1));
-	static int begin_backing_out(T* p, lua_State* L)
-	{
-		p->BeginBackingOutFromGameplay();
-		COMMON_RETURN_SELF;
-	}
-	static int GetTrueBPS(T* p, lua_State* L)
-	{
-		PlayerNumber pn= Enum::Check<PlayerNumber>(L, 1);
-		float haste= p->GetHasteRate();
-		float rate= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
-		float bps= GAMESTATE->m_pPlayerState[pn]->m_Position.m_fCurBPS;
-		float true_bps= haste * rate * bps;
-		lua_pushnumber(L, true_bps);
-		return 1;
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 
 	LunaScreenGameplay()
 	{
@@ -3268,20 +3003,7 @@ LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
 class LunaPlayerInfo: public Luna<PlayerInfo>
 {
 public:
-<<<<<<< HEAD:itgmania/src/ScreenGameplay.cpp
 	static int GetLifeMeter( T* p, lua_State *L ) { p->m_pLifeMeter->PushSelf(L); return 1; }
-=======
-	static int GetLifeMeter( T* p, lua_State *L )
-	{
-		if(p->m_pLifeMeter)
-		{
-			p->m_pLifeMeter->PushSelf(L);
-			return 1;
-		}
-		return 0;
-	}
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenGameplay.cpp
 	static int GetStepsQueueWrapped( T* p, lua_State *L )
 	{
 		int iIndex = IArg(1);

@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
-<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp
 #include "global.h"
 #include "RageSoundManager.h"
 #include "GameSoundManager.h"
@@ -24,10 +20,6 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
->>>>>>> main
 #include <cmath>
 #include <cstddef>
 #include <vector>
@@ -958,29 +950,6 @@ LUAFUNC_REGISTER_COMMON(get_sound_driver_list);
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-=======
-#include "global.h"
-#include "RageSoundManager.h"
-#include "GameSoundManager.h"
-#include "RageSound.h"
-#include "RageLog.h"
-#include "RageUtil.h"
-#include "GameState.h"
-#include "TimingData.h"
-#include "NotesLoaderSSC.h"
-#include "NotesLoaderSM.h"
-#include "PrefsManager.h"
-#include "RageDisplay.h"
-#include "AnnouncerManager.h"
-#include "NoteData.h"
-#include "Song.h"
-#include "Steps.h"
-#include "LightsManager.h"
-#include "SongUtil.h"
-#include "LuaManager.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp
 GameSoundManager *SOUND = nullptr;
 
 /*
@@ -1826,31 +1795,9 @@ public:
 				fadeOut = FArg(5);
 			}
 		}
-<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
 		p->PlayMusic(musicPath, nullptr, false, musicStart, musicLength,
 					 fadeIn, fadeOut);
 		return 0;
-=======
-		if(!lua_isnoneornil(L, 5))
-		{
-			fadeOut = FArg(5);
-		}
-		if(!lua_isnoneornil(L, 6))
-		{
-			loop = BArg(6);
-		}
-		if(!lua_isnoneornil(L, 7))
-		{
-			applyRate = BArg(7);
-		}
-		if(!lua_isnoneornil(L, 8))
-		{
-			alignBeat = BArg(8);
-		}
-		p->PlayMusic(musicPath, nullptr, loop, musicStart, musicLength,
-			fadeIn, fadeOut, alignBeat, applyRate);
-		COMMON_RETURN_SELF;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp
 	}
 
 	LunaGameSoundManager()
@@ -1891,7 +1838,3 @@ LUA_REGISTER_CLASS( GameSoundManager )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-<<<<<<< HEAD:itgmania/src/GameSoundManager.cpp
->>>>>>> origin/c++11:src/GameSoundManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameSoundManager.cpp

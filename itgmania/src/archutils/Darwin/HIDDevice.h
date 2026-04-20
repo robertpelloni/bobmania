@@ -19,18 +19,6 @@
 #include <IOKit/usb/USB.h>
 #include <mach/mach.h>
 #include <mach/mach_error.h>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Darwin/HIDDevice.h
-=======
-#include <vector>
-#include <utility>
-#include <unordered_map>
-
-#include "RageLog.h"
-#include "RageInputDevice.h"
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Darwin/HIDDevice.h
->>>>>>> main
 
 /* A few helper functions. */
 

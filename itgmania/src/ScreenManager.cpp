@@ -72,27 +72,17 @@
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
 
-<<<<<<< HEAD
 #include <vector>
 
 
-=======
-<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 ScreenManager*	SCREENMAN = nullptr;	// global and accessable from anywhere in our program
-=======
->>>>>>> main
 ScreenManager*	SCREENMAN = nullptr;	// global and accessible from anywhere in our program
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 //static Preference<bool> g_bPruneFonts( "PruneFonts", true );
 
 // Screen registration
-<<<<<<< HEAD
 static std::map<RString,CreateScreenFn>	*g_pmapRegistrees = nullptr;
-=======
-static map<RString,CreateScreenFn>	*g_pmapRegistrees = nullptr;
->>>>>>> main
 
 /** @brief Utility functions for the ScreenManager. */
 namespace ScreenManagerUtil
@@ -163,11 +153,7 @@ namespace ScreenManagerUtil
 	 * return it in ls. */
 	bool GetPreppedScreen( const RString &sScreenName, LoadedScreen &ls )
 	{
-<<<<<<< HEAD
 		for (std::vector<LoadedScreen>::iterator s = g_vPreparedScreens.begin(); s != g_vPreparedScreens.end(); ++s)
-=======
-		for (vector<LoadedScreen>::iterator s = g_vPreparedScreens.begin(); s != g_vPreparedScreens.end(); ++s)
->>>>>>> main
 		{
 			if( s->m_pScreen->GetName() == sScreenName )
 			{
@@ -226,11 +212,7 @@ namespace ScreenManagerUtil
 		BeforeDeleteScreen();
 		for (Actor *a : apActorsToDelete)
 		{
-<<<<<<< HEAD
 			RageUtil::SafeDelete( a );
-=======
-			SAFE_DELETE( a );
->>>>>>> main
 		}
 		AfterDeleteScreen();
 	}
@@ -240,11 +222,7 @@ using namespace ScreenManagerUtil;
 RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == nullptr )
-<<<<<<< HEAD
 		g_pmapRegistrees = new std::map<RString, CreateScreenFn>;
-=======
-		g_pmapRegistrees = new map<RString,CreateScreenFn>;
->>>>>>> main
 
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
@@ -555,14 +533,7 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
-<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 		RageException::Throw( "Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str() );
-=======
-	{
-		LuaHelpers::ReportScriptErrorFmt("Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str());
-		return nullptr;
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 
 	this->ZeroNextUpdate();
 
@@ -581,13 +552,6 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		return;
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
-<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
-=======
-	if(pNewScreen == nullptr)
-	{
-		return;
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 
 	{
 		LoadedScreen ls;
@@ -619,16 +583,8 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 		{
 			LOG->Trace( "Loading screen background \"%s\"", sNewBGA.c_str() );
 			Actor *pActor = ActorUtil::MakeActor( sNewBGA );
-<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 			pActor->SetName( sNewBGA );
 			g_vPreparedBackgrounds.push_back( pActor );
-=======
-			if( pActor != nullptr )
-			{
-				pActor->SetName( sNewBGA );
-				g_vPreparedBackgrounds.push_back( pActor );
-			}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
 		}
 	}
 
@@ -689,11 +645,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		}
 		else
 		{
-<<<<<<< HEAD
 			for (std::vector<Actor *>::iterator a = g_vPreparedBackgrounds.begin(); a != g_vPreparedBackgrounds.end(); ++a)
-=======
-			for (vector<Actor *>::iterator a = g_vPreparedBackgrounds.begin(); a != g_vPreparedBackgrounds.end(); ++a)
->>>>>>> main
 			{
 				if( (*a)->GetName() == sNewBGA )
 				{
@@ -771,11 +723,7 @@ void ScreenManager::LoadDelayedScreen()
 		BeforeDeleteScreen();
 		for (Actor *a : apActorsToDelete)
 		{
-<<<<<<< HEAD
 			RageUtil::SafeDelete( a );
-=======
-			SAFE_DELETE( a );
->>>>>>> main
 		}
 		AfterDeleteScreen();
 	}
@@ -922,13 +870,8 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int SystemMessageNoAnimate( T* p, lua_State *L )	{ p->SystemMessageNoAnimate( SArg(1) ); return 0; }
-=======
->>>>>>> main
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); COMMON_RETURN_SELF; }
 	static int ToastMessage( T* p, lua_State *L )
 	{
@@ -937,10 +880,6 @@ public:
 		MESSAGEMAN->Broadcast( msg );
 		COMMON_RETURN_SELF;
 	}
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
->>>>>>> main
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 	static int ScreenClassExists( T* p, lua_State *L )	{ lua_pushboolean( L, g_pmapRegistrees->find( SArg(1) ) != g_pmapRegistrees->end() ); return 1; }
 	static int AddNewScreenToTop( T* p, lua_State *L )
@@ -963,15 +902,8 @@ public:
 		ADD_METHOD( SetNewScreen );
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );
-<<<<<<< HEAD
 		ADD_METHOD( ToastMessage );
-=======
-<<<<<<< HEAD:itgmania/src/ScreenManager.cpp
 		ADD_METHOD( SystemMessageNoAnimate );
-=======
-		ADD_METHOD( ToastMessage );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenManager.cpp
->>>>>>> main
 		ADD_METHOD( ScreenIsPrepped );
 		ADD_METHOD( ScreenClassExists );
 		ADD_METHOD( AddNewScreenToTop );

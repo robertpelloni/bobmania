@@ -12,21 +12,11 @@
 #include "LuaManager.h"
 #include "LocalizedString.h"
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ActorMultiVertex.cpp
->>>>>>> main
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <numeric>
 #include <vector>
-<<<<<<< HEAD
-=======
-=======
-#include <numeric>
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorMultiVertex.cpp
->>>>>>> main
 
 const float min_state_delay= 0.0001f;
 

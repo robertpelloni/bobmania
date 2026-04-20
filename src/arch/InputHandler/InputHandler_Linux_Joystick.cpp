@@ -30,16 +30,11 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		fds[i] = -1;
 
-<<<<<<< HEAD
 	if( InputHandler_Linux_Event::m_bFoundAnyJoysticks )
 	{
 		LOG->Trace( "InputHandler_Linux_Joystick disabled (joystick driver already loaded)" );
 		return;
 	}
-=======
-	if( LINUXINPUT == nullptr ) LINUXINPUT = new LinuxInputManager;
-	LINUXINPUT->InitDriver(this);
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 	/* We check both eg. /dev/js0 and /dev/input/js0.  If both exist, they're probably
 	 * the same device; keep track of device IDs so we don't open the same joystick

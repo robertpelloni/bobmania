@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 #include "global.h"
 #include "GameCommand.h"
 #include "RageUtil.h"
@@ -284,15 +280,8 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		CHECK_INVALID_COND(m_pSong, SONGMAN->FindSong(sValue),
 			(SONGMAN->FindSong(sValue) == nullptr),
-<<<<<<< HEAD
 			(ssprintf("Song \"%s\" not found", sValue.c_str())));
-=======
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 			(ssprintf("Song \"%s\" not found", sValue.c_str())));
-=======
-			(ssprintf("Song \"%s\" not found", sValue.c_str()))); 
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
->>>>>>> main
 	}
 
 	else if( sName == "steps" )
@@ -538,7 +527,6 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
 	if( style == nullptr || pm == PlayMode_Invalid )
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 		return true;
 
 	switch( pm )
@@ -984,430 +972,6 @@ LUA_REGISTER_CLASS( GameCommand )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "GameCommand.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "GameManager.h"
-#include "GameState.h"
-#include "AnnouncerManager.h"
-#include "PlayerOptions.h"
-#include "ProfileManager.h"
-#include "Profile.h"
-#include "StepMania.h"
-#include "ScreenManager.h"
-#include "PrefsManager.h"
-#include "Game.h"
-#include "Style.h"
-
-#include "arch/Dialog/Dialog.h"
-#include "GameSoundManager.h"
-#include "PlayerState.h"
-#include "SongManager.h"
-#include "Song.h"
-#include "UnlockManager.h"
-#include "LocalizedString.h"
-#include "arch/ArchHooks/ArchHooks.h"
-#include "ScreenPrompt.h"
-
-static LocalizedString COULD_NOT_LAUNCH_BROWSER( "GameCommand", "Could not launch web browser." );
-
-REGISTER_CLASS_TRAITS( GameCommand, new GameCommand(*pCopy) );
-
-void GameCommand::Init()
-{
-	m_bApplyCommitsScreens = true;
-	m_sName = "";
-	m_sText = "";
-	m_bInvalid = true;
-	m_iIndex = -1;
-	m_MultiPlayer = MultiPlayer_Invalid;
-	m_pStyle = nullptr;
-	m_pm = PlayMode_Invalid;
-	m_dc = Difficulty_Invalid;
-	m_CourseDifficulty = Difficulty_Invalid;
-	m_sPreferredModifiers = "";
-	m_sStageModifiers = "";
-	m_sAnnouncer = "";
-	m_sScreen = "";
-	m_LuaFunction.Unset();
-	m_pSong = nullptr;
-	m_pSteps = nullptr;
-	m_pCourse = nullptr;
-	m_pTrail = nullptr;
-	m_pCharacter = nullptr;
-	m_SortOrder = SortOrder_Invalid;
-	m_sSoundPath = "";
-	m_vsScreensToPrepare.clear();
-	m_iWeightPounds = -1;
-	m_iGoalCalories = -1;
-	m_GoalType = GoalType_Invalid;
-	m_sProfileID = "";
-	m_sUrl = "";
-	m_bUrlExits = true;
-
-	m_bStopMusic = false;
-	m_bApplyDefaultOptions = false;
-	m_bFadeMusic = false;
-	m_fMusicFadeOutVolume = -1.0f;
-	m_fMusicFadeOutSeconds = -1.0f;
-}
-
-class SongOptions;
-bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
-
-bool GameCommand::DescribesCurrentModeForAllPlayers() const
-{
-	FOREACH_HumanPlayer( pn )
-		if( !DescribesCurrentMode(pn) )
-			return false;
-
-	return true;
-}
-
-bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
-{
-	if( m_pm != PlayMode_Invalid && GAMESTATE->m_PlayMode != m_pm )
-		return false;
-	if( m_pStyle && GAMESTATE->GetCurrentStyle() != m_pStyle )
-		return false;
-	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
-	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
-	// doesn't match the difficulty of m_pCurSteps.
-	if( m_pSteps == nullptr  &&  m_dc != Difficulty_Invalid )
-	{
-		// Why is this checking for all players?
-		FOREACH_HumanPlayer( human )
-			if( GAMESTATE->m_PreferredDifficulty[human] != m_dc )
-				return false;
-	}
-
-	if( m_sAnnouncer != "" && m_sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
-		return false;
-
-	if( m_sPreferredModifiers != "" )
-	{
-		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
-		SongOptions so = GAMESTATE->m_SongOptions.GetPreferred();
-		po.FromString( m_sPreferredModifiers );
-		so.FromString( m_sPreferredModifiers );
-
-		if( po != GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred() )
-			return false;
-		if( so != GAMESTATE->m_SongOptions.GetPreferred() )
-			return false;
-	}
-	if( m_sStageModifiers != "" )
-	{
-		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage();
-		SongOptions so = GAMESTATE->m_SongOptions.GetStage();
-		po.FromString( m_sStageModifiers );
-		so.FromString( m_sStageModifiers );
-
-		if( po != GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage() )
-			return false;
-		if( so != GAMESTATE->m_SongOptions.GetStage() )
-			return false;
-	}
-
-	if( m_pSong && GAMESTATE->m_pCurSong.Get() != m_pSong )
-		return false;
-	if( m_pSteps && GAMESTATE->m_pCurSteps[pn].Get() != m_pSteps )
-		return false;
-	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
-		return false;
-	if( m_pCourse && GAMESTATE->m_pCurCourse.Get() != m_pCourse )
-		return false;
-	if( m_pTrail && GAMESTATE->m_pCurTrail[pn].Get() != m_pTrail )
-		return false;
-	if( !m_sSongGroup.empty() && GAMESTATE->m_sPreferredSongGroup != m_sSongGroup )
-		return false;
-	if( m_SortOrder != SortOrder_Invalid && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
-		return false;
-	if( m_iWeightPounds != -1 && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
-		return false;
-	if( m_iGoalCalories != -1 && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
-		return false;
-	if( m_GoalType != GoalType_Invalid && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
-		return false;
-	if( !m_sProfileID.empty() && ProfileManager::m_sDefaultLocalProfileID[pn].Get() != m_sProfileID )
-		return false;
-
-	return true;
-}
-
-void GameCommand::Load( int iIndex, const Commands& cmds )
-{
-	m_iIndex = iIndex;
-	m_bInvalid = false;
-	m_Commands = cmds;
-
-	for (Command const &cmd : cmds.v)
-		LoadOne( cmd );
-}
-
-void GameCommand::LoadOne( const Command& cmd )
-{
-	RString sName = cmd.GetName();
-	if( sName.empty() )
-		return;
-
-	RString sValue;
-	for( unsigned i = 1; i < cmd.m_vsArgs.size(); ++i )
-	{
-		if( i > 1 )
-			sValue += ",";
-		sValue += cmd.m_vsArgs[i];
-	}
-
-	if( sName == "style" )
-	{
-		const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
-		if( style )
-			m_pStyle = style;
-		else
-			m_bInvalid = true;
-	}
-
-	else if( sName == "playmode" )
-	{
-		PlayMode pm = StringToPlayMode( sValue );
-		if( pm != PlayMode_Invalid )
-			m_pm = pm;
-		else
-			m_bInvalid = true;
-	}
-
-	else if( sName == "difficulty" )
-	{
-		Difficulty dc = StringToDifficulty( sValue );
-		if( dc != Difficulty_Invalid )
-			m_dc = dc;
-		else
-			m_bInvalid = true;
-	}
-
-	else if( sName == "announcer" )
-	{
-		m_sAnnouncer = sValue;
-	}
-
-	else if( sName == "name" )
-	{
-		m_sName = sValue;
-	}
-
-	else if( sName == "text" )
-	{
-		m_sText = sValue;
-	}
-
-	else if( sName == "mod" )
-	{
-		if( m_sPreferredModifiers != "" )
-			m_sPreferredModifiers += ",";
-		m_sPreferredModifiers += sValue;
-	}
-
-	else if( sName == "stagemod" )
-	{
-		if( m_sStageModifiers != "" )
-			m_sStageModifiers += ",";
-		m_sStageModifiers += sValue;
-	}
-
-	else if( sName == "lua" )
-	{
-		m_LuaFunction.SetFromExpression( sValue );
-		ASSERT_M( !m_LuaFunction.IsNil(), ssprintf("\"%s\" evaluated to nil", sValue.c_str()) );
-	}
-
-	else if( sName == "screen" )
-	{
-		m_sScreen = sValue;
-	}
-
-	else if( sName == "song" )
-	{
-		m_pSong = SONGMAN->FindSong( sValue );
-		if( m_pSong == nullptr )
-		{
-			m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
-			m_bInvalid |= true;
-		}
-	}
-
-	else if( sName == "steps" )
-	{
-		RString sSteps = sValue;
-
-		// This must be processed after "song" and "style" commands.
-		if( !m_bInvalid )
-		{
-			Song *pSong = (m_pSong != nullptr)? m_pSong:GAMESTATE->m_pCurSong;
-			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
-			if( pSong == nullptr || pStyle == nullptr )
-				RageException::Throw( "Must set Song and Style to set Steps." );
-
-			Difficulty dc = StringToDifficulty( sSteps );
-			if( dc != Difficulty_Edit )
-				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
-			else
-				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
-			if( m_pSteps == nullptr )
-			{
-				m_sInvalidReason = "steps not found";
-				m_bInvalid |= true;
-			}
-		}
-	}
-
-	else if( sName == "course" )
-	{
-		m_pCourse = SONGMAN->FindCourse( "", sValue );
-		if( m_pCourse == nullptr )
-		{
-			m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
-			m_bInvalid |= true;
-		}
-	}
-	
-	else if( sName == "trail" )
-	{
-		RString sTrail = sValue;
-
-		// This must be processed after "course" and "style" commands.
-		if( !m_bInvalid )
-		{
-			Course *pCourse = (m_pCourse != nullptr)? m_pCourse:GAMESTATE->m_pCurCourse;
-			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
-			if( pCourse == nullptr || pStyle == nullptr )
-				RageException::Throw( "Must set Course and Style to set Steps." );
-
-			const CourseDifficulty cd = StringToDifficulty( sTrail );
-			ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
-
-			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
-			if( m_pTrail == nullptr )
-			{
-				m_sInvalidReason = "trail not found";
-				m_bInvalid |= true;
-			}
-		}
-	}
-	
-	else if( sName == "setenv" )
-	{
-		if( cmd.m_vsArgs.size() == 3 )
-			m_SetEnv[ cmd.m_vsArgs[1] ] = cmd.m_vsArgs[2];
-	}
-	
-	else if( sName == "songgroup" )
-	{
-		m_sSongGroup = sValue;
-	}
-
-	else if( sName == "sort" )
-	{
-		m_SortOrder = StringToSortOrder( sValue );
-		if( m_SortOrder == SortOrder_Invalid )
-		{
-			m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
-			m_bInvalid |= true;
-		}
-	}
-
-	else if( sName == "weight" )
-	{
-		m_iWeightPounds = std::stoi( sValue );
-	}
-
-	else if( sName == "goalcalories" )
-	{
-		m_iGoalCalories = std::stoi( sValue );
-	}
-
-	else if( sName == "goaltype" )
-	{
-		m_GoalType = StringToGoalType( sValue );
-	}
-
-	else if( sName == "profileid" )
-	{
-		m_sProfileID = sValue;
-	}
-
-	else if( sName == "url" )
-	{
-		m_sUrl = sValue;
-		m_bUrlExits = true;
-	}
-
-	else if( sName == "sound" )
-	{
-		m_sSoundPath = sValue;
-	}
-
-	else if( sName == "preparescreen" )
-	{
-		m_vsScreensToPrepare.push_back( sValue );
-	}
-
-	else if( sName == "stopmusic" )
-	{
-		m_bStopMusic = true;
-	}
-
-	else if( sName == "applydefaultoptions" )
-	{
-		m_bApplyDefaultOptions = true;
-	}
-
-	// sm-ssc additions begin:
-	else if( sName == "urlnoexit" )
-	{
-		m_sUrl = sValue;
-		m_bUrlExits = false;
-	}
-
-	else if( sName == "setpref" )
-	{
-		if( cmd.m_vsArgs.size() == 3 )
-		{
-			IPreference *pPref = IPreference::GetPreferenceByName( cmd.m_vsArgs[1] );
-			if( pPref == nullptr )
-			{
-				m_sInvalidReason = ssprintf("unknown preference \"%s\"", cmd.m_vsArgs[1].c_str() );
-				m_bInvalid |= true;
-			}
-			pPref->FromString(cmd.m_vsArgs[2]);
-		}
-	}
-
-	else if( sName == "fademusic" )
-	{
-		if( cmd.m_vsArgs.size() == 3 )
-		{
-			m_bFadeMusic = true;
-			m_fMusicFadeOutVolume = static_cast<float>(atof( cmd.m_vsArgs[1] ));
-			m_fMusicFadeOutSeconds = static_cast<float>(atof( cmd.m_vsArgs[2] ));
-		}
-	}
-
-	else
-	{
-		RString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
-		LOG->Warn( "%s", sWarning.c_str() );
-		Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
-	}
-}
-
-static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
-{
-	if( style == nullptr || pm == PlayMode_Invalid )
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		return true;
 
 	switch( pm )
@@ -1456,11 +1020,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 	if( m_pm != PlayMode_Invalid || m_pStyle != nullptr )
 	{
 		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 		const Style *style = (m_pStyle != nullptr)? m_pStyle: GAMESTATE->GetCurrentStyle();
-=======
-		const Style *style = (m_pStyle != nullptr)? m_pStyle: GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
@@ -1569,25 +1129,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		GAMESTATE->SetCurrentStyle( m_pStyle );
 
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
-=======
-		// It's possible to choose a style that didn't have enough players joined.
-		// If enough players aren't joined, then  we need to subtract credits
-		// for the sides that will be joined as a result of applying this option.
-		if( GAMESTATE->GetCoinMode() == CoinMode_Pay )
-		{
-			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
-			int iNumCreditsPaid = GetNumCreditsPaid();
-			int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
-			GAMESTATE->m_iCoins.Set( GAMESTATE->m_iCoins - iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit );
-			LOG->Trace( "Deducted %i coins, %i remaining",
-					iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit, GAMESTATE->m_iCoins.Get() );
-
-            		//Credit Used, make sure to update CoinsFile
-            		BOOKKEEPER->WriteCoinsFile(GAMESTATE->m_iCoins.Get());
-		}
-		
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		// If only one side is joined and we picked a style that requires both
 		// sides, join the other side.
 		switch( m_pStyle->m_StyleType )
@@ -1617,11 +1158,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_sStageModifiers != "" )
 		for (PlayerNumber const &pn : vpns)
 			GAMESTATE->ApplyStageModifiers( pn, m_sStageModifiers );
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 	if( m_LuaFunction.IsSet() )
-=======
-	if( m_LuaFunction.IsSet() && !m_LuaFunction.IsNil() )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 	{
 		Lua *L = LUA->Get();
 		for (PlayerNumber const &pn : vpns)
@@ -1630,12 +1167,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT( !lua_isnil(L, -1) );
 
 			lua_pushnumber( L, pn ); // 1st parameter
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
 			lua_call( L, 1, 0 ); // call function with 1 argument and 0 results
-=======
-			RString error= "Lua GameCommand error: ";
-			LuaHelpers::RunScriptOnStack(L, error, 1, 0, true);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 		}
 		LUA->Release(L);
 	}
@@ -1673,17 +1205,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		lua_pop( L, 1 );
 		LUA->Release(L);
 	}
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
-=======
-	for(map<RString,RString>::const_iterator setting= m_SetPref.begin(); setting != m_SetPref.end(); ++setting)
-	{
-		IPreference* pref= IPreference::GetPreferenceByName(setting->first);
-		if(pref != nullptr)
-		{
-			pref->FromString(setting->second);
-		}
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
 	if( m_SortOrder != SortOrder_Invalid )
@@ -1722,17 +1243,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	for (RString const &s : m_vsScreensToPrepare)
 		SCREENMAN->PrepareScreen( s );
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
-=======
-
-	if( m_bInsertCredit )
-	{
-		StepMania::InsertCredit();
-	}
-
-	if( m_bClearCredits )
-		StepMania::ClearCredits();
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp
 
 	if( m_bApplyDefaultOptions )
 	{
@@ -1870,7 +1380,3 @@ LUA_REGISTER_CLASS( GameCommand )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/GameCommand.cpp
->>>>>>> origin/c++11:src/GameCommand.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GameCommand.cpp

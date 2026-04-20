@@ -1,13 +1,8 @@
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.cpp
 #include "global.h"
 #include <cerrno>
 #include <cstring>
 #include "NotesWriterSM.h"
 #include "BackgroundUtil.h"
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -388,15 +383,6 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include <cerrno>
-#include <cstring>
-#include "NotesWriterSM.h"
-#include "BackgroundUtil.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.cpp
 #include "GameManager.h"
 #include "LocalizedString.h"
 #include "NoteTypes.h"
@@ -452,7 +438,6 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 
 	switch( out.m_DisplayBPMType )
 	{
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
 	case DISPLAY_BPM_ACTUAL:
 		// write nothing
 		break;
@@ -466,23 +451,6 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 	case DISPLAY_BPM_RANDOM:
 		f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
 		break;
-=======
-		case DISPLAY_BPM_ACTUAL:
-			// write nothing
-			break;
-		case DISPLAY_BPM_SPECIFIED:
-			if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f;", out.m_fSpecifiedBPMMin ) );
-			else
-				f.PutLine( ssprintf( "#DISPLAYBPM:%.6f:%.6f;",
-									 out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax ) );
-			break;
-		case DISPLAY_BPM_RANDOM:
-			f.PutLine( ssprintf( "#DISPLAYBPM:*;" ) );
-			break;
-		default:
-			break;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.cpp
 	}
 
 
@@ -532,19 +500,7 @@ static void WriteGlobalTags( RageFileBasic &f, Song &out )
 	{
 		float fBeat = NoteRowToBeat( ss->GetRow()-1 );
 		float fPause = ToDelay(ss)->GetPause();
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
 		allPauses.insert( pair<float,float>(fBeat, fPause) );
-=======
-		map<float, float>::iterator already_exists= allPauses.find(fBeat);
-		if(already_exists != allPauses.end())
-		{
-			already_exists->second+= fPause;
-		}
-		else
-		{
-			allPauses.insert(pair<float,float>(fBeat, fPause));
-		}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.cpp
 	}
 
 	f.Write( "#STOPS:" );
@@ -629,11 +585,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in )
 	lines.push_back( "" );
 	// Escape to prevent some clown from making a comment of "\r\n;"
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
 		GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName, SmEscape(in.GetDescription()).c_str()) );
-=======
-							  in.m_StepsTypeStr.c_str(), SmEscape(in.GetDescription()).c_str()) );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.cpp
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 	lines.push_back( ssprintf( "     %s:", GAMEMAN->GetStepsTypeInfo(in.m_StepsType).szName ) );
 	RString desc = (USE_CREDIT ? in.GetCredit() : in.GetChartName());
@@ -794,7 +746,3 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RS
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/NotesWriterSM.cpp
->>>>>>> origin/c++11:src/NotesWriterSM.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesWriterSM.cpp

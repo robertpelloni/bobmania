@@ -69,15 +69,8 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RSt
 	char sBuffer[MAX_PATH];
 	DWORD iSize = sizeof(sBuffer);
 	DWORD iType;
-<<<<<<< HEAD
 	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE)sBuffer, &iSize );
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/RegistryAccess.cpp
 	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE)sBuffer, &iSize );
-=======
-	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE)sBuffer, &iSize );
->>>>>>> origin/c++11:src/archutils/Win32/RegistryAccess.cpp
->>>>>>> main
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS )
 		return false;
@@ -103,15 +96,8 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int
 	DWORD iValue;
 	DWORD iSize = sizeof(iValue);
 	DWORD iType;
-<<<<<<< HEAD
 	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE) &iValue, &iSize );
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/RegistryAccess.cpp
 	LONG iRet = RegQueryValueEx( hKey, sName.c_str(), nullptr, &iType, (LPBYTE) &iValue, &iSize );
-=======
-	LONG iRet = RegQueryValueEx( hKey, sName, nullptr, &iType, (LPBYTE) &iValue, &iSize );
->>>>>>> origin/c++11:src/archutils/Win32/RegistryAccess.cpp
->>>>>>> main
 	RegCloseKey( hKey );
 	if( iRet != ERROR_SUCCESS )
 		return false;
@@ -215,23 +201,12 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 	RString sSubkey;
 	HKEY hType;
 	if( !GetRegKeyType(sKey, sSubkey, hType) )
-<<<<<<< HEAD
 		return false;
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/RegistryAccess.cpp
 		return false;
-=======
-		return nullptr;
->>>>>>> origin/c++11:src/archutils/Win32/RegistryAccess.cpp
->>>>>>> main
 
 	HKEY hKey;
 	DWORD dwDisposition = 0;
 	if( ::RegCreateKeyEx(
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/RegistryAccess.cpp
->>>>>>> main
 		hType,
 		sSubkey.c_str(),
 		0,
@@ -239,18 +214,6 @@ bool RegistryAccess::CreateKey( const RString &sKey )
 		REG_OPTION_NON_VOLATILE,
 		KEY_ALL_ACCESS,
 		nullptr,
-<<<<<<< HEAD
-=======
-=======
-		hType, 
-		sSubkey, 
-		0, 
-		nullptr,
-		REG_OPTION_NON_VOLATILE, 
-		KEY_ALL_ACCESS, 
-		nullptr, 
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/RegistryAccess.cpp
->>>>>>> main
 		&hKey,
 		&dwDisposition ) != ERROR_SUCCESS )
 	{

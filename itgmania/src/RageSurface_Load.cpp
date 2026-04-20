@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
-<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load.cpp
 #include "global.h"
 #include "ActorUtil.h"
 #include "RageSurface_Load.h"
@@ -39,7 +35,6 @@ static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error
 	if( result == RageSurfaceUtils::OPEN_OK )
 	{
 		ASSERT( ret != nullptr );
-<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
 		return ret;
 	}
 
@@ -151,43 +146,6 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "RageSurface_Load.h"
-#include "RageSurface_Load_PNG.h"
-#include "RageSurface_Load_JPEG.h"
-#include "RageSurface_Load_GIF.h"
-#include "RageSurface_Load_BMP.h"
-#include "RageUtil.h"
-#include "RageFile.h"
-#include "RageLog.h"
-#include <set>
-
-
-static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
-{
-	RageSurface *ret = nullptr;
-	RageSurfaceUtils::OpenResult result;
-	if( !format.CompareNoCase("png") )
-		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("gif") )
-		result = RageSurface_Load_GIF( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("jpg") || !format.CompareNoCase("jpeg") )
-		result = RageSurface_Load_JPEG( sPath, ret, bHeaderOnly, error );
-	else if( !format.CompareNoCase("bmp") )
-		result = RageSurface_Load_BMP( sPath, ret, bHeaderOnly, error );
-	else
-	{
-		error = "Unsupported format";
-		bKeepTrying = true;
-		return nullptr;
-	}
-
-	if( result == RageSurfaceUtils::OPEN_OK )
-	{
-		ASSERT( ret != nullptr );
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load.cpp
 		return ret;
 	}
 
@@ -298,7 +256,3 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageSurface_Load.cpp
->>>>>>> origin/c++11:src/RageSurface_Load.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load.cpp

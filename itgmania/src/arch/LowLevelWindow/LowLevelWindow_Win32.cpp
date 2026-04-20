@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 #include "global.h"
 #include "LowLevelWindow_Win32.h"
 #include "archutils/Win32/DirectXHelpers.h"
@@ -453,9 +451,6 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 #include "global.h"
 #include "LowLevelWindow_Win32.h"
 #include "archutils/Win32/DirectXHelpers.h"
@@ -474,20 +469,12 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
 static HGLRC g_HGLRC = nullptr;
 static HGLRC g_HGLRC_Background = nullptr;
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
-=======
-static HMODULE g_HGL_Module = nullptr;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 
 static void DestroyGraphicsWindowAndOpenGLContext()
 {
 	if( g_HGLRC != nullptr )
 	{
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 		wglMakeCurrent( NULL, nullptr );
-=======
-		wglMakeCurrent( nullptr, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 		wglDeleteContext( g_HGLRC );
 		g_HGLRC = nullptr;
 	}
@@ -505,37 +492,17 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 
 void *LowLevelWindow_Win32::GetProcAddress( RString s )
 {
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 	void *pRet = wglGetProcAddress( s );
 	if( pRet != nullptr )
 		return pRet;
 
 	return ::GetProcAddress( GetModuleHandle(nullptr), s );
-=======
-	void *pRet = (void*) wglGetProcAddress( s );
-	if( pRet != nullptr )
-		return pRet;
-
-	if (g_HGL_Module != nullptr)
-	{
-		pRet = (void *) ::GetProcAddress( g_HGL_Module, s );
-
-		if (pRet != nullptr)
-			return pRet;
-	}
-
-	return (void*) ::GetProcAddress( GetModuleHandle(nullptr), s );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 }
 
 LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
 	ASSERT( g_HGLRC == nullptr );
 	ASSERT( g_HGLRC_Background == nullptr );
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
-=======
-	ASSERT( g_HGL_Module == nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 
 	GraphicsWindow::Initialize( false );
 }
@@ -671,11 +638,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
 		if( g_HGLRC != nullptr )
 		{
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 			wglMakeCurrent( NULL, nullptr );
-=======
-			wglMakeCurrent( nullptr, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 			wglDeleteContext( g_HGLRC );
 			g_HGLRC = nullptr;
 			wglDeleteContext( g_HGLRC_Background );
@@ -760,11 +723,7 @@ void LowLevelWindow_Win32::BeginConcurrentRendering()
 
 void LowLevelWindow_Win32::EndConcurrentRendering()
 {
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 	wglMakeCurrent( NULL, nullptr );
-=======
-	wglMakeCurrent( nullptr, nullptr );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
 }
 
 static LocalizedString OPENGL_NOT_AVAILABLE( "LowLevelWindow_Win32", "OpenGL hardware acceleration is not available." );
@@ -933,7 +892,3 @@ RenderTarget* LowLevelWindow_Win32::CreateRenderTarget()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
->>>>>>> origin/c++11:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/LowLevelWindow/LowLevelWindow_Win32.cpp

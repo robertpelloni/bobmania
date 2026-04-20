@@ -46,15 +46,6 @@ public:
 	RageSoundReader *GetLoadedSound( const RString &sPath );
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/RageSoundManager.h
-=======
-	void fix_bogus_sound_driver_pref(RString const& valid_setting);
-	void low_sample_count_workaround();
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSoundManager.h
->>>>>>> main
 private:
 	std::map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 

@@ -78,11 +78,6 @@ namespace LuaHelpers
 	template<> void Push<float>( lua_State *L, const float &Object ) { lua_pushnumber( L, Object ); }
 	template<> void Push<double>( lua_State *L, const double &Object ) { lua_pushnumber( L, Object ); }
 	template<> void Push<int>( lua_State *L, const int &Object ) { lua_pushinteger( L, Object ); }
-<<<<<<< HEAD:itgmania/src/LuaManager.cpp
-=======
-	template<> void Push<unsigned int>( lua_State *L, const unsigned int &Object ) { lua_pushnumber( L, double(Object) ); }
-	template<> void Push<unsigned long long>( lua_State *L, const unsigned long long &Object ) { lua_pushnumber( L, double(Object) ); }
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LuaManager.cpp
 	template<> void Push<RString>( lua_State *L, const RString &Object ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 	template<> void Push<std::string>( lua_State *L, std::string const& object ) { lua_pushlstring( L, object.data(), object.size() ); }
 
@@ -234,20 +229,12 @@ static int LuaPanic( lua_State *L )
 }
 
 // Actor registration
-<<<<<<< HEAD
 static std::vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
-=======
-static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = nullptr;
->>>>>>> main
 
 void LuaManager::Register( RegisterWithLuaFn pfn )
 {
 	if( g_vRegisterActorTypes == nullptr )
-<<<<<<< HEAD
 		g_vRegisterActorTypes = new std::vector<RegisterWithLuaFn>;
-=======
-		g_vRegisterActorTypes = new vector<RegisterWithLuaFn>;
->>>>>>> main
 
 	g_vRegisterActorTypes->push_back( pfn );
 }
@@ -259,11 +246,7 @@ LuaManager::LuaManager()
 	LUA = this; // so that LUA is available when we call the Register functions
 
 	lua_State *L = lua_open();
-<<<<<<< HEAD:itgmania/src/LuaManager.cpp
 	ASSERT( L );
-=======
-	ASSERT( L != nullptr );
->>>>>>> origin/c++11:src/LuaManager.cpp
 
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;
@@ -273,17 +256,6 @@ LuaManager::LuaManager()
 	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
 	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
-<<<<<<< HEAD
-=======
-	lua_pushcfunction( L, luaopen_bit ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_package ); lua_call( L, 0, 0 ); // this one seems safe -shake
-	// these two can be dangerous. don't use them
-	// (unless you know what you are doing). -aj
-#if 0
-	lua_pushcfunction( L, luaopen_io ); lua_call( L, 0, 0 );
-	lua_pushcfunction( L, luaopen_os ); lua_call( L, 0, 0 );
-#endif
->>>>>>> main
 
 	// Store the thread pool in a table on the stack, in the main thread.
 #define THREAD_POOL 1
@@ -761,11 +733,7 @@ XNode *LuaHelpers::GetLuaInformation()
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 
 		pConstantNode->AppendAttr( "name", c.first );
-<<<<<<< HEAD
 		if( c.second == std::trunc(c.second) )
-=======
-		if( c.second == truncf(c.second) )
->>>>>>> main
 			pConstantNode->AppendAttr( "value", static_cast<int>(c.second) );
 		else
 			pConstantNode->AppendAttr( "value", c.second );
@@ -889,34 +857,10 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 		s << "return function(self)\n";
 
-<<<<<<< HEAD:itgmania/src/LuaManager.cpp
 		for (Command const &cmd : cmds.v)
 		{
 			RString local_sName = cmd.GetName();
 			s << "\tself:" << local_sName << "(";
-=======
-		if( bLegacy )
-			s << "\tparent = self:GetParent();\n";
-
-		for (Command const &cmd : cmds.v)
-		{
-			RString sCmdName = cmd.GetName();
-			if( bLegacy )
-				sCmdName.MakeLower();
-			s << "\tself:" << sCmdName << "(";
-
-			bool bFirstParamIsString = bLegacy && (
-					sCmdName == "horizalign" ||
-					sCmdName == "vertalign" ||
-					sCmdName == "effectclock" ||
-					sCmdName == "blend" ||
-					sCmdName == "ztestmode" ||
-					sCmdName == "cullmode" ||
-					sCmdName == "playcommand" ||
-					sCmdName == "queuecommand" ||
-					sCmdName == "queuemessage" ||
-					sCmdName == "settext");
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LuaManager.cpp
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
@@ -1128,12 +1072,7 @@ namespace
 		LIST_METHOD( ReadFile ),
 		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
-<<<<<<< HEAD:itgmania/src/LuaManager.cpp
 		{ NULL, nullptr }
-=======
-		LIST_METHOD( ReportScriptError ),
-		{ nullptr, nullptr }
->>>>>>> origin/unified-ui-features-13937230807013224518:src/LuaManager.cpp
 	};
 }
 

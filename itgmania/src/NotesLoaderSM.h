@@ -64,28 +64,14 @@ struct SMLoader
 	 * @param sPath a const reference to the path on the hard drive to check.
 	 * @param out a vector of files found in the path.
 	 */
-<<<<<<< HEAD
 	virtual void GetApplicableFiles( const RString &sPath, std::vector<RString> &out, bool load_autosave= false );
-=======
-<<<<<<< HEAD:itgmania/src/NotesLoaderSM.h
 	virtual void GetApplicableFiles( const RString &sPath, std::vector<RString> &out, bool load_autosave= false );
-=======
-	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out, bool load_autosave= false );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderSM.h
->>>>>>> main
 	virtual bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
 	virtual bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot, Song *givenSong=nullptr );
 	virtual bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong, Song *givenSong=nullptr );
 	virtual bool LoadFromBGChangesVector(BackgroundChange &change, std::vector<RString> aBGChangeValues);
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/NotesLoaderSM.h
 
-=======
-	
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderSM.h
->>>>>>> main
 	/**
 	 * @brief Parse BPM Changes data from a string.
 	 * @param out the vector to put the data in.
@@ -173,15 +159,8 @@ struct SMLoader
 			      const RString &sPath, const RString &sParam );
 
 	virtual void ParseBGChangesString(const RString& _sChanges, std::vector<std::vector<RString> > &vvsAddTo, const RString &sSongDir);
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD:itgmania/src/NotesLoaderSM.h
 
-=======
-	
->>>>>>> origin/unified-ui-features-13937230807013224518:src/NotesLoaderSM.h
->>>>>>> main
 	/**
 	 * @brief Put the attacks in the attacks string.
 	 * @param attacks the attack string.

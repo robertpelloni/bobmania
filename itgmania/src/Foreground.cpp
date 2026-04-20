@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/Foreground.cpp
-<<<<<<< HEAD:itgmania/src/Foreground.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Foreground.cpp
 #include "global.h"
 #include "Foreground.h"
 #include "RageUtil.h"
@@ -78,7 +74,6 @@ void Foreground::Update( float fDeltaTime )
 {
 	// Calls to Update() should *not* be scaled by music rate unless RateModsAffectFGChanges is enabled. Undo it.
 	const float fRate = PREFSMAN->m_bRateModsAffectTweens ? 1.0f : GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
-<<<<<<< HEAD:itgmania/src/Foreground.cpp
 
 	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
 	{
@@ -164,81 +159,6 @@ void Foreground::HandleMessage( const Message &msg )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "Foreground.h"
-#include "RageUtil.h"
-#include "GameState.h"
-#include "RageTextureManager.h"
-#include "ActorUtil.h"
-#include "Song.h"
-#include "BackgroundUtil.h"
-
-
-Foreground::~Foreground()
-{
-	Unload();
-}
-
-void Foreground::Unload()
-{
-	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
-		delete m_BGAnimations[i].m_bga;
-	m_BGAnimations.clear();
-	m_SubActors.clear();
-	m_fLastMusicSeconds = -9999;
-	m_pSong = nullptr;
-}
-
-void Foreground::LoadFromSong( const Song *pSong )
-{
-	// Song graphics can get very big; never keep them in memory.
-	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
-	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
-
-	m_pSong = pSong;
-	for (BackgroundChange const &change : pSong->GetForegroundChanges())
-	{
-		RString sBGName = change.m_def.m_sFile1,
-			sLuaFile = pSong->GetSongDir() + sBGName + "/default.lua";
-
-		LoadedBGA bga;
-		if ( DoesFileExist( sLuaFile ) )
-		{
-			bga.m_bga = ActorUtil::MakeActor( sLuaFile, this );
-		}
-		else
-		{
-			bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
-		}
-		bga.m_bga->SetName( sBGName );
-		bga.m_bga->PlayCommand( "Init" );
-		bga.m_fStartBeat = change.m_fStartBeat;
-		bga.m_bFinished = false;
-
-		const float fStartSecond = pSong->m_SongTiming.GetElapsedTimeFromBeat( bga.m_fStartBeat );
-		bga.m_bga->PlayCommand( "On" );
-		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
-		bga.m_bga->StopTweening();
-		bga.m_fStopBeat = pSong->m_SongTiming.GetBeatFromElapsedTime( fStopSecond );
-
-		bga.m_bga->SetVisible( false );
-
-		this->AddChild( bga.m_bga );
-		m_BGAnimations.push_back( bga );
-	}
-
-	TEXTUREMAN->SetDefaultTexturePolicy( OldPolicy );
-
-	this->SortByDrawOrder();
-}
-
-void Foreground::Update( float fDeltaTime )
-{
-	// Calls to Update() should *not* be scaled by music rate. Undo it.
-	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Foreground.cpp
 
 	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
 	{
@@ -310,7 +230,3 @@ void Foreground::Update( float fDeltaTime )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/Foreground.cpp
->>>>>>> origin/c++11:src/Foreground.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Foreground.cpp

@@ -20,22 +20,12 @@
 #include "Song.h"
 #include "TimingData.h"
 #include "NoteDataWithScoring.h"
-<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 #include "StepsWithScoring.h"
-<<<<<<< HEAD
 
 #include <cstddef>
 #include <cstdint>
 #include <vector>
 
-=======
-#include "Scoring/WifeScoring.h"
-#include "Unified/MissionManager.h"
-=======
-=======
-#include "Scoring/WifeScoring.h"
->>>>>>> main
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperNormal.cpp
 
 
 void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
@@ -128,30 +118,14 @@ void ScoreKeeperNormal::Load(
 		// We might have been given lots of songs; don't keep them in memory uncompressed.
 		pSteps->Compress();
 
-<<<<<<< HEAD
 		const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 		NoteData ndPre;
 		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, ndPre );
-=======
-		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-		NoteData nd;
-		pStyle->GetTransformedNoteDataForStyle( pn, ndTemp, nd );
->>>>>>> main
 
 		/* Compute RadarValues before applying any user-selected mods. Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
 		 * forced and not chosen by the user. */
-<<<<<<< HEAD
 		NoteDataUtil::TransformNoteData(ndPre, *(pSteps->GetTimingData()), aa, pSteps->m_StepsType, pSong );
-=======
-		NoteDataUtil::TransformNoteData( nd, aa, pSteps->m_StepsType, pSong );
-		
-		Steps radarSteps;
-		radarSteps.m_StepsType = pSteps->m_StepsType;
-		radarSteps.SetNoteData(nd);
-		StepsUtil::CalculateRadarValues(&radarSteps, pSong->m_fMusicLengthSeconds);
-		RadarValues rvPre = radarSteps.GetRadarValues(pn);
->>>>>>> main
 
 		/* Apply user transforms to find out how the notes will really look.
 		 *
@@ -160,9 +134,6 @@ void ScoreKeeperNormal::Load(
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/ScoreKeeperNormal.cpp
 		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType );
 
 		radarSteps.SetNoteData(nd);
@@ -171,8 +142,6 @@ void ScoreKeeperNormal::Load(
 		
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
-=======
->>>>>>> main
 		NoteData ndPost = ndPre;
 		NoteDataUtil::TransformNoteData(ndPost, *(pSteps->GetTimingData()), m_pPlayerState->m_PlayerOptions.GetStage(), pSteps->m_StepsType);
 
@@ -180,10 +149,6 @@ void ScoreKeeperNormal::Load(
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( &ndPre, &ndPost, pSteps->GetTimingData(), pSong->m_fMusicLengthSeconds );
 		GAMESTATE->SetProcessedTimingData(nullptr);
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScoreKeeperNormal.cpp
->>>>>>> main
 	}
 
 	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
@@ -266,12 +231,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
-<<<<<<< HEAD
 	GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(pSteps->GetTimingData()));
 
-=======
-	// TODO: Handle multiple players properly. pSteps points to vector versions.
->>>>>>> main
 	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
 		+ pNoteData->GetNumRolls();
 
@@ -285,11 +246,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
-<<<<<<< HEAD
 
 	GAMESTATE->SetProcessedTimingData(nullptr);
-=======
->>>>>>> main
 }
 
 static int GetScore(int p, int Z, int S, int n)
@@ -685,15 +643,8 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	}
 
 	// TODO: Remove indexing with PlayerNumber
-<<<<<<< HEAD
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow ).result.fTapNoteOffset;
-=======
-	float offset = StepsWithScoring::LastTapNoteWithResult(nd, iRow, stc, pn ).result.fTapNoteOffset;
-	NSMAN->ReportScore( pn, scoreOfLastTap,
-			m_pPlayerStageStats->m_iScore,
-			m_pPlayerStageStats->m_iCurCombo, offset, m_iNumNotesHitThisRow);
->>>>>>> main
 	Message msg( "ScoreChanged" );
 	msg.SetParam( "PlayerNumber", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "MultiPlayer", m_pPlayerState->m_mp );

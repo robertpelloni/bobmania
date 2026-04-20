@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 # StepMania Network: Final Project Handoff
 
@@ -95,7 +95,6 @@ To allow parallel development, many C++ Managers currently use "Mocks" or "Stubs
 
 ## 3. WHAT HAS BEEN ACCOMPLISHED
 
-<<<<<<< HEAD
 ## 6. Excluded Features (Analysis)
 The following features from forks were analyzed but explicitly **excluded** from this merge:
 *   **Direct Memory Access (`memory` namespace):** Present in NotITG for advanced hacks. Excluded due to extreme security risks and non-portability (Windows-specific memory layout dependence).
@@ -103,11 +102,12 @@ The following features from forks were analyzed but explicitly **excluded** from
 
 ## Additional Notes from unified-ui-features Branch
 StepMania Unified - Handoff Notes
+<<<<<<< Updated upstream
 
-=======
 StepMania Unified - Handoff Notes
 
->>>>>>> origin/unified-ui-features-13937230807013224518
+=======
+>>>>>>> Stashed changes
 Last Session: Implemented MissionManager, Documentation, and Network Helpers.
 Next Steps: Implement ReplayManager, Wife Scoring, and advanced NetPlay features.
 Current Version: 5.7.0-Unified-Alpha

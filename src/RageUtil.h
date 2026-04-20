@@ -5,12 +5,6 @@
 
 #include <map>
 #include <vector>
-<<<<<<< HEAD
-=======
-#include <sstream>
-#include "global.h"
-#include <cstdint>
->>>>>>> origin/unified-ui-features-13937230807013224518
 class RageFileDriver;
 
 /** @brief Safely delete pointers. */

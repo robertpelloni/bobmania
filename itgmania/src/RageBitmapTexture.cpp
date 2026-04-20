@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
-<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageBitmapTexture.cpp
 #include "global.h"
 #include "RageBitmapTexture.h"
 #include "RageUtil.h"
@@ -99,7 +95,6 @@ void RageBitmapTexture::Create()
 		Dialog::OK(warning, "missing_texture");
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( pImg != nullptr );
-<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
 	}
 
 	if( actualID.bHotPinkColorKey )
@@ -377,85 +372,6 @@ void RageBitmapTexture::Destroy()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "RageBitmapTexture.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "RageTextureManager.h"
-#include "RageDisplay.h"
-#include "RageTypes.h"
-#include "RageSurface.h"
-#include "RageSurfaceUtils.h"
-#include "RageSurfaceUtils_Zoom.h"
-#include "RageSurfaceUtils_Dither.h"
-#include "RageSurface_Load.h"
-#include "arch/Dialog/Dialog.h"
-#include "StepMania.h"
-
-static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
-{
-	/* Match:
-	 *  Foo (res 512x128).png
-	 * Also allow, eg:
-	 *  Foo (dither, res 512x128).png
-	 * Be careful that this doesn't get mixed up with frame dimensions. */
-	static Regex re( "\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)" );
-
-	vector<RString> asMatches;
-	if( !re.Compare(sPath, asMatches) )
-		return;
-
-	iWidth = std::stoi( asMatches[0] );
-	iHeight = std::stoi( asMatches[1] );
-}
-
-RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :
-	RageTexture( name ), m_uTexHandle(0)
-{
-	Create();
-}
-
-RageBitmapTexture::~RageBitmapTexture()
-{
-	Destroy();
-}
-
-void RageBitmapTexture::Reload()
-{
-	Destroy();
-	Create();
-}
-
-/*
- * Each dwMaxSize, dwTextureColorDepth and iAlphaBits are maximums; we may
- * use less.  iAlphaBits must be 0, 1 or 4.
- *
- * XXX: change iAlphaBits == 4 to iAlphaBits == 8 to indicate "as much alpha
- * as needed", since that's what it really is; still only use 4 in 16-bit textures.
- *
- * Dither forces dithering when loading 16-bit textures.
- * Stretch forces the loaded image to fill the texture completely.
- */
-void RageBitmapTexture::Create()
-{
-	RageTextureID actualID = GetID();
-
-	ASSERT( actualID.filename != "" );
-
-	/* Load the image into a RageSurface. */
-	RString error;
-	RageSurface *pImg = RageSurfaceUtils::LoadFile( actualID.filename, error );
-
-	/* Tolerate corrupt/unknown images. */
-	if( pImg == nullptr )
-	{
-		RString sWarning = ssprintf( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
-		Dialog::OK( sWarning );
-		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
-		ASSERT( pImg != nullptr );
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageBitmapTexture.cpp
 	}
 
 	if( actualID.bHotPinkColorKey )
@@ -741,7 +657,3 @@ void RageBitmapTexture::Destroy()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */ 
-<<<<<<< HEAD:itgmania/src/RageBitmapTexture.cpp
->>>>>>> origin/c++11:src/RageBitmapTexture.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageBitmapTexture.cpp

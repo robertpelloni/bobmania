@@ -7,18 +7,12 @@
 #include "Song.h"
 #include "SpecialFiles.h"
 #include "CommonMetrics.h"
-<<<<<<< HEAD
 
 #include <cstddef>
 #include <vector>
-=======
-<<<<<<< HEAD:itgmania/src/SongCacheIndex.cpp
 
 #include <cstddef>
 #include <vector>
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongCacheIndex.cpp
->>>>>>> main
 
 /*
  * A quick explanation of song cache hashes: Each song has two hashes; a hash of the

@@ -6,10 +6,6 @@
 AppInstance::AppInstance()
 {
 	// Little trick to get an HINSTANCE of ourself without having access to the hwnd.
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/AppInstance.cpp
->>>>>>> main
 	WCHAR szFullAppPath[MAX_PATH];
 	if (GetModuleFileNameW(nullptr, szFullAppPath, MAX_PATH) == 0)
 	{
@@ -23,14 +19,6 @@ AppInstance::AppInstance()
 	{
 		LOG->Warn("LoadLibrary failed: %s", werr_ssprintf(GetLastError(), "LoadLibrary").c_str());
 	}
-<<<<<<< HEAD
-=======
-=======
-	TCHAR szFullAppPath[MAX_PATH];
-	GetModuleFileName(nullptr, szFullAppPath, MAX_PATH);
-	h = LoadLibrary(szFullAppPath);
->>>>>>> origin/unified-ui-features-13937230807013224518:src/archutils/Win32/AppInstance.cpp
->>>>>>> main
 	/* h will be nullptr if this fails. Most operations that take an HINSTANCE
 	 * will still work without one (but may be missing graphics); that's OK. */
 }

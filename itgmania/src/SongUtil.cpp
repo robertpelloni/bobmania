@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp
 #include "global.h"
 #include "SongUtil.h"
 #include "Song.h"
@@ -13,16 +9,8 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "XmlFile.h"
-<<<<<<< HEAD
 #include "UnlockManager.h"
-=======
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
 #include "UnlockManager.h"
-=======
-#include "Foreach.h"
->>>>>>> origin/broken:src/SongUtil.cpp
->>>>>>> main
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
@@ -1368,21 +1356,6 @@ LUA_REGISTER_NAMESPACE( SongUtil )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "SongUtil.h"
-#include "Song.h"
-#include "Steps.h"
-#include "GameState.h"
-#include "Style.h"
-#include "ProfileManager.h"
-#include "Profile.h"
-#include "PrefsManager.h"
-#include "SongManager.h"
-#include "XmlFile.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp
 #include "UnlockManager.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
@@ -1639,16 +1612,9 @@ void SongUtil::AdjustDuplicateSteps( Song *pSong )
 			 * bug in an earlier version. */
 			DeleteDuplicateSteps( pSong, vSteps );
 
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
 			CHECKPOINT;
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
 			CHECKPOINT;
-=======
-			const RString &songTitle = pSong->GetDisplayFullTitle();
-			CHECKPOINT_M(ssprintf("Duplicate steps from %s removed.", songTitle.c_str()));
-			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			CHECKPOINT_M(ssprintf("Charts from %s sorted.", songTitle.c_str()));
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				vSteps[k]->SetDifficulty( Difficulty_Edit );
@@ -1858,11 +1824,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
 		ASSERT( pProfile != nullptr );
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
 		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
-=======
-		pProfile->GetGrades( pSong, GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType, iCounts );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp
 
 		RString foo;
 		foo.reserve(256);
@@ -2309,12 +2271,7 @@ void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in,
 void SongUtil::GetPlayableStepsTypes( const Song *pSong, set<StepsType> &vOut )
 {
 	vector<const Style*> vpPossibleStyles;
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
 	if( CommonMetrics::AUTO_SET_STYLE )
-=======
-	// If AutoSetStyle, or a Style hasn't been chosen, check StepsTypes for all Styles.
-	if( CommonMetrics::AUTO_SET_STYLE || GAMESTATE->GetCurrentStyle(PLAYER_INVALID) == nullptr )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp
 		GAMEMAN->GetCompatibleStyles( GAMESTATE->m_pCurGame, GAMESTATE->GetNumPlayersEnabled(), vpPossibleStyles );
 	else
 		vpPossibleStyles.push_back( GAMESTATE->m_pCurStyle );
@@ -2546,11 +2503,7 @@ namespace
 		LIST_METHOD( GetPlayableSteps ),
 		LIST_METHOD( IsStepsTypePlayable ),
 		LIST_METHOD( IsStepsPlayable ),
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
 		{ NULL, nullptr }
-=======
-		{ nullptr, nullptr }
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp
 	};
 }
 
@@ -2580,7 +2533,3 @@ LUA_REGISTER_NAMESPACE( SongUtil )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/SongUtil.cpp
->>>>>>> origin/c++11:src/SongUtil.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/SongUtil.cpp

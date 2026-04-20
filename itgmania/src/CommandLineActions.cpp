@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/CommandLineActions.cpp
-<<<<<<< HEAD:itgmania/src/CommandLineActions.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CommandLineActions.cpp
 #include "global.h"
 #include "CommandLineActions.h"
 #include "RageFile.h"
@@ -13,7 +9,6 @@
 #include "ProductInfo.h"
 #include "DateTime.h"
 
-<<<<<<< HEAD:itgmania/src/CommandLineActions.cpp
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
@@ -118,20 +113,6 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-=======
-#include "global.h"
-#include "CommandLineActions.h"
-#include "RageFile.h"
-#include "RageUtil.h"
-#include "IniFile.h"
-#include "XmlFile.h"
-#include "XmlFileUtil.h"
-#include "LuaManager.h"
-#include "ProductInfo.h"
-#include "DateTime.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CommandLineActions.cpp
 #include "arch/Dialog/Dialog.h"
 #include "RageFileManager.h"
 #include "SpecialFiles.h"
@@ -283,7 +264,3 @@ void CommandLineActions::Handle(LoadingWindow* pLW)
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-<<<<<<< HEAD:itgmania/src/CommandLineActions.cpp
->>>>>>> origin/c++11:src/CommandLineActions.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CommandLineActions.cpp

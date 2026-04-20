@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageSurface_Load_JPEG.cpp
-<<<<<<< HEAD:itgmania/src/RageSurface_Load_JPEG.cpp
 #include "global.h"
 #include "RageSurface_Load_JPEG.h"
 #include "RageUtil.h"
@@ -242,9 +240,6 @@ RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSu
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load_JPEG.cpp
 #include "global.h"
 #include "RageSurface_Load_JPEG.h"
 #include "RageUtil.h"
@@ -494,7 +489,3 @@ RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSu
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/RageSurface_Load_JPEG.cpp
->>>>>>> origin/c++11:src/RageSurface_Load_JPEG.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageSurface_Load_JPEG.cpp

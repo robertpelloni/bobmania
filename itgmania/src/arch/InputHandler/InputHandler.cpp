@@ -8,11 +8,8 @@
 #include "InputHandler_MonkeyKeyboard.h"
 //#include "InputHandler_NSEvent.hpp"
 
-<<<<<<< HEAD
 #include <vector>
 
-=======
->>>>>>> main
 
 void InputHandler::UpdateTimer()
 {
@@ -180,7 +177,6 @@ DriverList InputHandler::m_pDriverList;
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
 {
-<<<<<<< HEAD
 	const std::vector<RString>& driversToTry = drivers_.empty() ? GetDefaultInputDriverList() : split(drivers_, ',', true);
 
 	if (driversToTry.empty())
@@ -189,21 +185,8 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	}
 
 	for (const RString &s : driversToTry)
-=======
-	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
-
-	if( DriversToTry.empty() )
-		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
-<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler.cpp
 
 	FOREACH_CONST( RString, DriversToTry, s )
-=======
-	
-	for (RString const &s : DriversToTry)
->>>>>>> origin/c++11:src/arch/InputHandler/InputHandler.cpp
->>>>>>> main
 	{
 		RageDriver *pDriver = InputHandler::m_pDriverList.Create( s );
 		if( pDriver == nullptr )
@@ -218,19 +201,11 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	}
 
 	// Always add
-<<<<<<< HEAD
 	add.push_back(new InputHandler_MonkeyKeyboard);
 //    add.push_back(new InputHandler_NSEvent);
-=======
-	Add.push_back( new InputHandler_MonkeyKeyboard );
-<<<<<<< HEAD:itgmania/src/arch/InputHandler/InputHandler.cpp
 
 	// Add any additional Lua modules
 	LuaDriver::AddInputModules( drivers, Add );
-=======
-//    Add.push_back( new InputHandler_NSEvent );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/InputHandler/InputHandler.cpp
->>>>>>> main
 }
 
 

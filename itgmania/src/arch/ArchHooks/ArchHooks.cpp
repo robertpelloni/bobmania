@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.cpp
 #include "global.h"
 #include "ArchHooks.h"
 #include "LuaReference.h"
@@ -14,7 +10,6 @@ bool ArchHooks::g_bToggleWindowed = false;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = nullptr; // global and accessible from anywhere in our program
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
 
 ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
 {
@@ -130,21 +125,6 @@ LUA_REGISTER_CLASS( ArchHooks );
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "ArchHooks.h"
-#include "LuaReference.h"
-#include "RageLog.h"
-#include "RageThreads.h"
-#include "arch/arch_default.h"
-
-bool ArchHooks::g_bQuitting = false;
-bool ArchHooks::g_bToggleWindowed = false;
-// Keep from pulling RageThreads.h into ArchHooks.h
-static RageMutex g_Mutex( "ArchHooks" );
-ArchHooks *HOOKS = nullptr;
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.cpp
 
 ArchHooks::ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false)
 {
@@ -258,7 +238,3 @@ REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_Hooks );
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks.cpp
->>>>>>> origin/c++11:src/arch/ArchHooks/ArchHooks.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks.cpp

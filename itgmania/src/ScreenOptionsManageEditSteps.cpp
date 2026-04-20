@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageEditSteps.cpp
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageEditSteps.cpp
 #include "global.h"
 #include "ScreenOptionsManageEditSteps.h"
 #include "ScreenManager.h"
@@ -333,9 +331,6 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageEditSteps.cpp
 #include "global.h"
 #include "ScreenOptionsManageEditSteps.h"
 #include "ScreenManager.h"
@@ -665,7 +660,3 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ScreenOptionsManageEditSteps.cpp
->>>>>>> origin/c++11:src/ScreenOptionsManageEditSteps.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ScreenOptionsManageEditSteps.cpp

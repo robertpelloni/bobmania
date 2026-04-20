@@ -17,11 +17,6 @@ MissionManager::MissionManager()
     m_Missions.push_back({ "m_intro_1", "First Steps", "Clear 3 Songs", "SongsPassed", 3.0f, 0.0f, false, false, "50 BOB" });
     m_Missions.push_back({ "m_intro_2", "Warm Up", "Burn 100 Calories", "Calories", 100.0f, 0.0f, false, false, "100 BOB" });
     m_Missions.push_back({ "m_combo_1", "Combo Master", "Hit 500 Notes", "NotesHit", 500.0f, 0.0f, false, false, "200 BOB" });
-<<<<<<< HEAD:itgmania/src/Unified/MissionManager.cpp
-=======
-
-    m_bJustCompletedMission = false;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.cpp
 }
 
 MissionManager::~MissionManager()
@@ -58,11 +53,7 @@ void MissionManager::ReportMetric( const RString& sType, float fValue )
             {
                 m.CurrentProgress = m.TargetValue;
                 m.Completed = true;
-<<<<<<< HEAD:itgmania/src/Unified/MissionManager.cpp
                 // Optional: Broadcast "MissionComplete" message
-=======
-                m_bJustCompletedMission = true;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.cpp
             }
             bUpdated = true;
         }
@@ -70,19 +61,6 @@ void MissionManager::ReportMetric( const RString& sType, float fValue )
     if( bUpdated ) WriteToDisk();
 }
 
-<<<<<<< HEAD:itgmania/src/Unified/MissionManager.cpp
-=======
-bool MissionManager::IsAnyMissionJustCompleted() const
-{
-    return m_bJustCompletedMission;
-}
-
-void MissionManager::ClearMissionCompletionFlag()
-{
-    m_bJustCompletedMission = false;
-}
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.cpp
 bool MissionManager::ClaimReward( const RString& sMissionID )
 {
     int idx = GetMissionIndex(sMissionID);
@@ -189,24 +167,10 @@ public:
         return 1;
     }
 
-<<<<<<< HEAD:itgmania/src/Unified/MissionManager.cpp
-=======
-    static int IsAnyMissionJustCompleted( T* p, lua_State *L )
-    {
-        lua_pushboolean(L, p->IsAnyMissionJustCompleted());
-        if( p->IsAnyMissionJustCompleted() ) p->ClearMissionCompletionFlag();
-        return 1;
-    }
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.cpp
     LunaMissionManager()
     {
         ADD_METHOD( GetMissions );
         ADD_METHOD( ClaimReward );
-<<<<<<< HEAD:itgmania/src/Unified/MissionManager.cpp
-=======
-        ADD_METHOD( IsAnyMissionJustCompleted );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Unified/MissionManager.cpp
     }
 };
 

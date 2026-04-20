@@ -1,5 +1,4 @@
 #include "global.h"
-<<<<<<< HEAD:itgmania/src/Network/SpectatorManager.cpp
 #include "SpectatorManager.h"
 #include "Network/GameClient.h" // Send data via GameClient
 #include "Network/StreamManager.h"
@@ -35,33 +34,10 @@ SpectatorManager::SpectatorManager()
 {
 	m_bIsBroadcasting = false;
 	m_bIsWatching = false;
-=======
-#include "Network/SpectatorManager.h"
-#include "Network/UnifiedNetwork.h"
-#include "RageLog.h"
-#include "LuaBinding.h"
-#include "LuaManager.h"
-#include "json/json.h"
-
-SpectatorManager *SPECTATORMAN = nullptr;
-SpectatorManager *SpectatorManager::m_pInstance = nullptr;
-
-SpectatorManager::SpectatorManager()
-{
-	m_pInstance = this;
-	m_bConnected = false;
-	m_bBroadcasting = false;
-
-    if( UNIFIED_NET )
-    {
-        UNIFIED_NET->RegisterCallback("spectate_status", std::bind(&SpectatorManager::HandleSpectateStatus, this, std::placeholders::_1));
-    }
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Network/SpectatorManager.cpp
 }
 
 SpectatorManager::~SpectatorManager()
 {
-<<<<<<< HEAD:itgmania/src/Network/SpectatorManager.cpp
 }
 
 void SpectatorManager::StartBroadcasting()
@@ -123,52 +99,12 @@ std::vector<std::string> SpectatorManager::GetLiveMatches() const
 	matches.push_back("Gold Semis: HappyF33t vs DDR_Fan");
 	matches.push_back("Casual: Alice playing Butterfly");
 	return matches;
-=======
-	m_pInstance = nullptr;
-}
-
-void SpectatorManager::ConnectToMatch(const RString& sMatchID)
-{
-	m_sCurrentMatchID = sMatchID;
-	m_bConnected = true;
-
-    if( UNIFIED_NET && UNIFIED_NET->IsConnected() )
-    {
-        Json::Value payload;
-        payload["match_id"] = sMatchID;
-        UNIFIED_NET->SendJSON("spectate_request", payload);
-    }
-
-	LOG->Trace("SpectatorManager: Connected to match %s", sMatchID.c_str());
-}
-
-void SpectatorManager::HandleSpectateStatus(const Json::Value& payload)
-{
-    RString matchID = payload["match_id"].asString();
-    RString status = payload["status"].asString();
-    int viewers = payload["viewers"].asInt();
-
-    LOG->Trace("SpectatorManager: Spectating %s. Status: %s. Viewers: %d", matchID.c_str(), status.c_str(), viewers);
-
-    if( status == "connected" )
-    {
-        SCREENMAN->SystemMessage( ssprintf("Joined Stream! %d Watching", viewers) );
-        m_bConnected = true;
-    }
-}
-
-void SpectatorManager::StartBroadcasting(const RString& sStreamKey)
-{
-	m_bBroadcasting = true;
-	LOG->Trace("SpectatorManager: Started broadcasting with key %s", sStreamKey.c_str());
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Network/SpectatorManager.cpp
 }
 
 // Lua Bindings
 class LunaSpectatorManager: public Luna<SpectatorManager>
 {
 public:
-<<<<<<< HEAD:itgmania/src/Network/SpectatorManager.cpp
 	static int ConnectToMatch( T* p, lua_State *L )
 	{
 		RString matchID = SArg(1);
@@ -186,39 +122,13 @@ public:
 	{
 		p->StopBroadcasting();
 		return 0;
-=======
-	static int ConnectToMatch(T* p, lua_State *L)
-	{
-		p->ConnectToMatch(SArg(1));
-		return 0;
-	}
-	static int StartBroadcasting(T* p, lua_State *L)
-	{
-		p->StartBroadcasting(SArg(1));
-		return 0;
-	}
-	static int IsConnected(T* p, lua_State *L)
-	{
-		lua_pushboolean(L, p->IsConnected());
-		return 1;
-	}
-	static int IsBroadcasting(T* p, lua_State *L)
-	{
-		lua_pushboolean(L, p->IsBroadcasting());
-		return 1;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Network/SpectatorManager.cpp
 	}
 
 	LunaSpectatorManager()
 	{
 		ADD_METHOD( ConnectToMatch );
 		ADD_METHOD( StartBroadcasting );
-<<<<<<< HEAD:itgmania/src/Network/SpectatorManager.cpp
 		ADD_METHOD( StopBroadcasting );
-=======
-		ADD_METHOD( IsConnected );
-		ADD_METHOD( IsBroadcasting );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Network/SpectatorManager.cpp
 	}
 };
 

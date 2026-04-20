@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 #include "global.h"
 
 #include "RageDisplay_OGL.h"
@@ -19,7 +15,6 @@ using namespace RageDisplay_Legacy_Helpers;
 #include "RageUtil.h"
 #include "EnumHelper.h"
 #include "DisplaySpec.h"
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 #include "LocalizedString.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
@@ -2979,27 +2974,6 @@ void RageDisplay_Legacy::SetCelShaded( int stage )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-=======
-#include "global.h"
-
-#include "RageDisplay_OGL.h"
-#include "RageDisplay_OGL_Helpers.h"
-using namespace RageDisplay_Legacy_Helpers;
-
-#include "RageFile.h"
-#include "RageSurface.h"
-#include "RageSurfaceUtils.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "RageTextureManager.h"
-#include "RageMath.h"
-#include "RageTypes.h"
-#include "RageUtil.h"
-#include "EnumHelper.h"
-
-#include "DisplayResolutions.h"
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 #include "LocalizedString.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
@@ -3047,11 +3021,7 @@ static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
 
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 static map<unsigned, RenderTarget *> g_mapRenderTargets;
-=======
-static std::map<uintptr_t, RenderTarget *> g_mapRenderTargets;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 static RenderTarget *g_pCurrentRenderTarget = nullptr;
 
 static LowLevelWindow *g_pWind;
@@ -3784,11 +3754,7 @@ RString RageDisplay_Legacy::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 		for (std::pair<unsigned const, RenderTarget *> &rt : g_mapRenderTargets)
-=======
-		for (std::pair<uintptr_t const, RenderTarget *> &rt : g_mapRenderTargets)
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 			delete rt.second;
 		g_mapRenderTargets.clear();
 
@@ -3843,27 +3809,7 @@ bool RageDisplay_Legacy::BeginFrame()
 
 void RageDisplay_Legacy::EndFrame()
 {
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 	glFlush();
-=======
-	if (UseOffscreenRenderTarget())
-	{
-		offscreenRenderTarget->FinishRenderingTo();
-		Sprite fullscreenSprite;
-		// We've got a hold of this, don't want sprite deleting it when
-		// it's deleted
-		offscreenRenderTarget->m_iRefCount++;
-		fullscreenSprite.SetTexture(offscreenRenderTarget);
-		fullscreenSprite.SetHorizAlign(align_left);
-		fullscreenSprite.SetVertAlign(align_top);
-		CameraPushMatrix();
-		LoadMenuPerspective( 0, GetActualVideoModeParams().width, GetActualVideoModeParams().height,
-							 static_cast<float> (GetActualVideoModeParams().width) / 2.f,
-							 static_cast<float> (GetActualVideoModeParams().height) / 2.f );
-		fullscreenSprite.Draw();
-		CameraPopMatrix();
-	}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 
 	FrameLimitBeforeVsync( g_pWind->GetActualVideoModeParams().rate );
 	g_pWind->SwapBuffers();
@@ -4865,7 +4811,6 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 	GLhandleARB hShader = 0;
 	switch (effect)
 	{
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 	case EffectMode_Normal:		hShader = 0; break;
 	case EffectMode_Unpremultiply:	hShader = g_bUnpremultiplyShader; break;
 	case EffectMode_ColorBurn:	hShader = g_bColorBurnShader; break;
@@ -4875,39 +4820,6 @@ void RageDisplay_Legacy::SetEffectMode( EffectMode effect )
 	case EffectMode_Overlay:	hShader = g_hOverlayShader; break;
 	case EffectMode_Screen:	hShader = g_hScreenShader; break;
 	case EffectMode_YUYV422:	hShader = g_hYUYV422Shader; break;
-=======
-		case EffectMode_Normal:
-			hShader = 0;
-			break;
-		case EffectMode_Unpremultiply:
-			hShader = g_bUnpremultiplyShader;
-			break;
-		case EffectMode_ColorBurn:
-			hShader = g_bColorBurnShader;
-			break;
-		case EffectMode_ColorDodge:
-			hShader = g_bColorDodgeShader;
-			break;
-		case EffectMode_VividLight:
-			hShader = g_bVividLightShader;
-			break;
-		case EffectMode_HardMix:
-			hShader = g_hHardMixShader;
-			break;
-		case EffectMode_Overlay:
-			hShader = g_hOverlayShader;
-			break;
-		case EffectMode_Screen:
-			hShader = g_hScreenShader;
-			break;
-		case EffectMode_YUYV422:
-			hShader = g_hYUYV422Shader;
-			break;
-		case EffectMode_DistanceField:
-			hShader = g_gDistanceFieldShader;
-		default:
-			break;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 	}
 
 	DebugFlushGLErrors();
@@ -4934,7 +4846,6 @@ bool RageDisplay_Legacy::IsEffectModeSupported( EffectMode effect )
 {
 	switch( effect )
 	{
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 	case EffectMode_Normal:		return true;
 	case EffectMode_Unpremultiply:	return g_bUnpremultiplyShader != 0;
 	case EffectMode_ColorBurn:	return g_bColorBurnShader != 0;
@@ -4944,30 +4855,6 @@ bool RageDisplay_Legacy::IsEffectModeSupported( EffectMode effect )
 	case EffectMode_Overlay:		return g_hOverlayShader != 0;
 	case EffectMode_Screen:		return g_hScreenShader != 0;
 	case EffectMode_YUYV422:	return g_hYUYV422Shader != 0;
-=======
-		case EffectMode_Normal:
-			return true;
-		case EffectMode_Unpremultiply:
-			return g_bUnpremultiplyShader != 0;
-		case EffectMode_ColorBurn:
-			return g_bColorBurnShader != 0;
-		case EffectMode_ColorDodge:
-			return g_bColorDodgeShader != 0;
-		case EffectMode_VividLight:
-			return g_bVividLightShader != 0;
-		case EffectMode_HardMix:
-			return g_hHardMixShader != 0;
-		case EffectMode_Overlay:
-			return g_hOverlayShader != 0;
-		case EffectMode_Screen:
-			return g_hScreenShader != 0;
-		case EffectMode_YUYV422:
-			return g_hYUYV422Shader != 0;
-		case EffectMode_DistanceField:
-			return g_gDistanceFieldShader != 0;
-		default:
-			return false;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 	}
 
 	return false;
@@ -5644,10 +5531,6 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 		glGenRenderbuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iDepthBufferHandle) );
 		ASSERT( m_iDepthBufferHandle != 0 );
 
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
-=======
-		glBindRenderbufferEXT( GL_RENDERBUFFER, static_cast<GLuint>(m_iDepthBufferHandle) );
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 		glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, iTextureWidth, iTextureHeight );
 		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, static_cast<GLuint>(m_iDepthBufferHandle) );
 	}
@@ -5734,19 +5617,7 @@ uintptr_t RageDisplay_Legacy::CreateRenderTarget( const RenderTargetParam &param
 	return iTexture;
 }
 
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
 void RageDisplay_Legacy::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
-=======
-uintptr_t RageDisplay_Legacy::GetRenderTarget()
-{
-	for( map<uintptr_t, RenderTarget*>::const_iterator it = g_mapRenderTargets.begin(); it != g_mapRenderTargets.end(); ++it )
-	if( it->second == g_pCurrentRenderTarget )
-		return it->first;
-	return 0;
-}
-
-void RageDisplay_Legacy::SetRenderTarget( uintptr_t iTexture, bool bPreserveTexture )
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp
 {
 	if (iTexture == 0)
 	{
@@ -5991,7 +5862,3 @@ void RageDisplay_Legacy::SetCelShaded( int stage )
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-<<<<<<< HEAD:itgmania/src/RageDisplay_OGL.cpp
->>>>>>> origin/c++11:src/RageDisplay_OGL.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/RageDisplay_OGL.cpp

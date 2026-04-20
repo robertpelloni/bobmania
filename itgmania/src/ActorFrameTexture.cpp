@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
-<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp
 #include "global.h"
 #include "ActorFrameTexture.h"
 #include "RageTextureRenderTarget.h"
@@ -79,7 +75,6 @@ void ActorFrameTexture::Create()
 void ActorFrameTexture::DrawPrimitives()
 {
 	if( m_pRenderTarget == nullptr )
-<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
 		return;
 
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
@@ -155,66 +150,6 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrameTexture, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "ActorFrameTexture.h"
-#include "RageTextureRenderTarget.h"
-#include "RageTextureManager.h"
-#include "ActorUtil.h"
-
-REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture );
-ActorFrameTexture *ActorFrameTexture::Copy() const { return new ActorFrameTexture(*this); }
-
-ActorFrameTexture::ActorFrameTexture()
-{
-	m_bDepthBuffer = false;
-	m_bAlphaBuffer = false;
-	m_bFloat = false;
-	m_bPreserveTexture = false;
-	static uint64_t i = 0;
-	++i;
-	m_sTextureName = ssprintf( ConvertI64FormatString("ActorFrameTexture %lli"), i );
-
-	m_pRenderTarget = nullptr;
-}
-
-ActorFrameTexture::ActorFrameTexture( const ActorFrameTexture &cpy ):
-	ActorFrame(cpy)
-{
-	FAIL_M( "ActorFrameTexture copy not implemented" );
-}
-
-ActorFrameTexture::~ActorFrameTexture()
-{
-	/* Release our reference to the texture. */
-	TEXTUREMAN->UnloadTexture( m_pRenderTarget );
-}
-
-void ActorFrameTexture::Create()
-{
-	ASSERT( m_pRenderTarget == nullptr );
-	RageTextureID id( m_sTextureName );
-	id.Policy = RageTextureID::TEX_VOLATILE;
-
-	RenderTargetParam param;
-	param.bWithDepthBuffer = m_bDepthBuffer;
-	param.bWithAlpha = m_bAlphaBuffer;
-	param.bFloat = m_bFloat;
-	param.iWidth = (int) m_size.x;
-	param.iHeight = (int) m_size.y;
-	m_pRenderTarget = new RageTextureRenderTarget( id, param );
-	m_pRenderTarget->m_bWasUsed = true;
-
-	/* This passes ownership of m_pRenderTarget to TEXTUREMAN, but we retain
-	 * our reference to it until we call TEXTUREMAN->UnloadTexture. */
-	TEXTUREMAN->RegisterTexture( id, m_pRenderTarget );
-}
-
-void ActorFrameTexture::DrawPrimitives()
-{
-	if( m_pRenderTarget == nullptr )
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp
 		return;
 
 	m_pRenderTarget->BeginRenderingTo( m_bPreserveTexture );
@@ -241,18 +176,8 @@ public:
 	{
 		RageTexture *pTexture = p->GetTexture();
 		if( pTexture == nullptr )
-<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
 			return 0;
 		pTexture->PushSelf(L);
-=======
-		{
-			lua_pushnil(L);
-		}
-		else
-		{
-			pTexture->PushSelf(L);
-		}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp
 		return 1;
 	}
 	
@@ -295,7 +220,3 @@ LUA_REGISTER_DERIVED_CLASS( ActorFrameTexture, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/ActorFrameTexture.cpp
->>>>>>> origin/c++11:src/ActorFrameTexture.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/ActorFrameTexture.cpp

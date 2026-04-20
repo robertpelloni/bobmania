@@ -18,18 +18,10 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 
 	vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
-<<<<<<< HEAD
 	
 	for (RString const &Driver : asDriversToTry)
-=======
-<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver.cpp
 
 	FOREACH_CONST( RString, asDriversToTry, Driver )
-=======
-	
-	for (RString const &Driver : asDriversToTry)
->>>>>>> origin/c++11:src/arch/Lights/LightsDriver.cpp
->>>>>>> main
 	{
 		RageDriver *pRet = m_pDriverList.Create( Driver );
 		if( pRet == nullptr )
@@ -45,16 +37,11 @@ void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add 
 		Add.push_back( pDriver );
 	}
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/arch/Lights/LightsDriver.cpp
 	// always add Export
 	Add.push_back( new LightsDriver_Export );
 
 	// Add any additional Lua modules
 	LuaDriver::AddLightsModules( sDrivers, Add );
-=======
->>>>>>> main
 	//ensure these are always available to use for debugging
 	//or if InputHandlers that want lighting state.
 	Add.push_back(new LightsDriver_SystemMessage);
@@ -68,10 +55,6 @@ void LightsDriver::Reset()
 	ZERO( state.m_bGameButtonLights );
 	ZERO( state.m_bCoinCounter );
 	Set( &state );
-<<<<<<< HEAD
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Lights/LightsDriver.cpp
->>>>>>> main
 }
 
 /*

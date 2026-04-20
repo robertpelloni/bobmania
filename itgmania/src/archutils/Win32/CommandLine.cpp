@@ -10,20 +10,10 @@ int GetWin32CmdLine( char** &argv )
 {
 	LPWSTR* argvW = nullptr;
 	int argc = 0;
-<<<<<<< HEAD
 	argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
 	if (argvW == nullptr)
-=======
-<<<<<<< HEAD:itgmania/src/archutils/Win32/CommandLine.cpp
 	argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
 	if (argvW == nullptr)
-=======
-	argv = nullptr;
-
-	int i = 0;
-	while( pCmdLine[i] )
->>>>>>> origin/c++11:src/archutils/Win32/CommandLine.cpp
->>>>>>> main
 	{
 		argv = nullptr;
 		return -1;

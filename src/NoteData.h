@@ -91,89 +91,35 @@ private:
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
 
-<<<<<<< HEAD
 	int GetNumTapsOfType(int start, int end, bool (NoteData::*TapType)(const TapNote &) const) const;
 	
 public:
 	void Init();
 	
-=======
-	/**
-	 * @brief Determine whether this note is for Player 1 or Player 2.
-	 * @param track the track/column the note is in.
-	 * @param tn the note in question. Required for routine mode.
-	 * @return true if it's for player 1, false for player 2. */
-	bool IsPlayer1(const int track, const TapNote &tn) const;
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a tap.
 	 * @param tn the note in question.
 	 * @return true if it's a tap, false otherwise. */
-<<<<<<< HEAD
 	bool IsTap(const TapNote &tn) const;
 	
-=======
-	bool IsTap(const TapNote &tn, const int row) const;
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a mine.
 	 * @param tn the note in question.
 	 * @return true if it's a mine, false otherwise. */
-<<<<<<< HEAD
 	bool IsMine(const TapNote &tn) const;
 	
-=======
-	bool IsMine(const TapNote &tn, const int row) const;
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a lift.
 	 * @param tn the note in question.
 	 * @return true if it's a lift, false otherwise. */
-<<<<<<< HEAD
 	bool IsLift(const TapNote &tn) const;
 	
-=======
-	bool IsLift(const TapNote &tn, const int row) const;
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	/**
 	 * @brief Determine if the note in question should be counted as a fake.
 	 * @param tn the note in question.
 	 * @return true if it's a fake, false otherwise. */
-<<<<<<< HEAD
 	bool IsFake(const TapNote &tn) const;
 	
-=======
-	bool IsFake(const TapNote &tn, const int row) const;
-
-	pair<int, int> GetNumRowsWithSimultaneousTapsTwoPlayer(int minTaps = 2,
-														   int startRow = 0,
-														   int endRow = MAX_NOTE_ROW) const;
-
-	// These exist so that they can be revalidated when something that transforms
-	// the NoteData occurs. -Kyz
-	mutable set<all_tracks_iterator*> m_atis;
-	mutable set<all_tracks_const_iterator*> m_const_atis;
-
-	void AddATIToList(all_tracks_iterator* iter) const;
-	void AddATIToList(all_tracks_const_iterator* iter) const;
-	void RemoveATIFromList(all_tracks_iterator* iter) const;
-	void RemoveATIFromList(all_tracks_const_iterator* iter) const;
-
-	// Mina stuf (Used for chartkey hashing)
-	std::vector<int> NonEmptyRowVector;
-
-public:
-	void Init();
-
-	// Mina stuf (Used for chartkey hashing)
-	void LogNonEmptyRows();
-	std::vector<int>& GetNonEmptyRowVector() { return NonEmptyRowVector; };
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
@@ -328,7 +274,6 @@ public:
 	{
 		return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex );
 	}
-<<<<<<< HEAD
 	
 	/** @brief Get the number of specific holds.
 	 * @param holdType the type of hold we are dealing with.
@@ -336,10 +281,6 @@ public:
 	 * @param end the ending row.
 	 * @return the number of specific holds. */
 	int GetNumHoldsOfType(const TapNote::SubType holdType, int start = 0, int end = MAX_NOTE_ROW) const;
-=======
-
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
@@ -359,39 +300,7 @@ public:
 	// and the other notetypes
 	int GetNumLifts( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumFakes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-<<<<<<< HEAD
 	
-=======
-
-	// the couple/routine style variants of the above.
-	pair<int, int> GetNumTapNotesTwoPlayer(int startRow = 0,
-										   int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumJumpsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumHandsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumQuadsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumHoldNotesTwoPlayer(int startRow = 0,
-											int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumMinesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumRollsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumLiftsTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
-	pair<int, int> GetNumFakesTwoPlayer(int startRow = 0,
-										int endRow = MAX_NOTE_ROW) const;
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 	// Transformations
 	void LoadTransformed(const NoteData& original,
 						 int iNewNumTracks,

@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/WheelBase.h
-<<<<<<< HEAD:itgmania/src/WheelBase.h
 #ifndef WHEELBASE_H
 #define WHEELBASE_H
 
@@ -154,9 +152,6 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/WheelBase.h
 #ifndef WHEELBASE_H
 #define WHEELBASE_H
 
@@ -305,7 +300,3 @@ protected:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/WheelBase.h
->>>>>>> origin/c++11:src/WheelBase.h
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/WheelBase.h

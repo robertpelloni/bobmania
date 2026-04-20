@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
-<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
 #include "global.h"
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
@@ -303,9 +301,6 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_Win32.cpp
 #include "global.h"
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
@@ -473,17 +468,10 @@ static INT_PTR CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 				RString sAppDataDir = SpecialDirs::GetAppDataDir();
 				RString sCommand = "notepad \"" + sAppDataDir + PRODUCT_ID + "/Logs/log.txt\"";
 				CreateProcess(
-<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
 					NULL,		// pointer to name of executable module
 					sCommand.GetBuffer(),	// pointer to command line string
 					NULL,  // process security attributes
 					NULL,   // thread security attributes
-=======
-					nullptr,		// pointer to name of executable module
-					const_cast<char *>(sCommand.c_str()),	// pointer to command line string
-					nullptr,  // process security attributes
-					nullptr,   // thread security attributes
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_Win32.cpp
 					false,  // handle inheritance flag
 					0, // creation flags
 					nullptr,  // pointer to new environment block
@@ -619,7 +607,3 @@ Dialog::Result DialogDriver_Win32::YesNo( RString sMessage, RString sID )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/arch/Dialog/DialogDriver_Win32.cpp
->>>>>>> origin/c++11:src/arch/Dialog/DialogDriver_Win32.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/Dialog/DialogDriver_Win32.cpp

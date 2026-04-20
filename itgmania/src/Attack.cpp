@@ -1,16 +1,8 @@
-<<<<<<< HEAD:itgmania/src/Attack.cpp
-<<<<<<< HEAD:itgmania/src/Attack.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Attack.cpp
 #include "global.h"
 #include "Attack.h"
 #include "GameState.h"
 #include "RageUtil.h"
 #include "Song.h"
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/Attack.cpp
->>>>>>> main
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
@@ -150,14 +142,6 @@ void AttackArray::UpdateStartTimes(float delta)
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "Attack.h"
-#include "GameState.h"
-#include "RageUtil.h"
-#include "Song.h"
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Attack.cpp
 
 #include "PlayerOptions.h"
 #include "PlayerState.h"
@@ -177,11 +161,6 @@ void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBe
  * prevent popping when the attack has note modifers. */
 void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
-<<<<<<< HEAD:itgmania/src/Attack.cpp
-=======
-	ASSERT( pSong != nullptr );
-
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Attack.cpp
 	if( fStartSecond >= 0 )
 	{
 		GetAttackBeats( pSong, fStartBeat, fEndBeat );
@@ -189,10 +168,7 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 	}
 
 	ASSERT( pPlayerState != nullptr );
-<<<<<<< HEAD:itgmania/src/Attack.cpp
 	ASSERT( pSong != nullptr );
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Attack.cpp
 
 	/* If reasonable, push the attack forward 8 beats so that notes on screen don't change suddenly. */
 	fStartBeat = min( GAMESTATE->m_Position.m_fSongBeat+8, pPlayerState->m_fLastDrawnBeat );
@@ -301,7 +277,3 @@ void AttackArray::UpdateStartTimes(float delta)
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/Attack.cpp
->>>>>>> origin/c++11:src/Attack.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Attack.cpp

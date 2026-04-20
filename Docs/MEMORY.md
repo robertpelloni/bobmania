@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Unified StepMania: AI Developer Memory & Context
 
 ## Project Architecture & Patterns
@@ -35,7 +34,6 @@
 ## Recent Decisions
 *   **Hardware Drivers:** Decided to implement an `IHeartRateDriver` abstraction layer for Gym Mode. `HeartRateManager` currently uses a `HeartRateDriver_Mock` (sine wave generator) to prevent the game loop from crashing while actual Bluetooth OS drivers (BlueZ/WinRT) are developed.
 *   **CI Constraints:** GitHub Actions runners have dropped macOS 13 and Node 20. CI `.github/workflows/ci.yml` is updated to target `macos-14` and skip XML Linting if the `Luadoc` folder is missing from the tree.
-=======
 # Unified StepMania Memory Log (Technical Learnings)
 
 This document contains ongoing technical observations, specific engine quirks, and legacy interactions learned during development.
@@ -66,4 +64,3 @@ Due to a lack of immediate APIs (e.g., a real cryptocurrency RPC, a real Bluetoo
 
 ## Pathing & File I/O
 Never use standard `std::fstream` or `<fstream>` for file operations. Always use StepMania's `RageFile` wrapper and the virtual file system (`FILEMAN`). This guarantees cross-platform compatibility (Windows, macOS, Linux, and Android) and ensures files are saved to the correct user directory (`Save/`, `Data/`), handling permissions implicitly.
->>>>>>> origin/unified-ui-features-13937230807013224518

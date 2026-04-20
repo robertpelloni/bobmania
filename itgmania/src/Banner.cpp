@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/Banner.cpp
-<<<<<<< HEAD:itgmania/src/Banner.cpp
 #include "global.h"
 #include "Banner.h"
 #include "ImageCache.h"
@@ -161,10 +159,6 @@ void Banner::LoadIconFromCharacter( const Character *pCharacter )
 	m_bScrolling = false;
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/Banner.cpp
->>>>>>> main
 void Banner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
 {
 	if( pUE == nullptr )
@@ -189,11 +183,6 @@ void Banner::LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE )
 	}
 }
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/broken:src/Banner.cpp
->>>>>>> main
 void Banner::LoadFallback()
 {
 	Load( THEME->GetPathG("Common","fallback banner") );
@@ -301,10 +290,6 @@ public:
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		COMMON_RETURN_SELF;
 	}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/Banner.cpp
->>>>>>> main
 	static int LoadBannerFromUnlockEntry( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadBannerFromUnlockEntry(nullptr); }
@@ -317,11 +302,6 @@ public:
 		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBackgroundFromUnlockEntry( pUE ); }
 		COMMON_RETURN_SELF;
 	}
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/broken:src/Banner.cpp
->>>>>>> main
 	static int LoadFromSongGroup( T* p, lua_State *L )
 	{ 
 		p->LoadFromSongGroup( SArg(1) );
@@ -386,9 +366,6 @@ LUA_REGISTER_DERIVED_CLASS( Banner, Sprite )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Banner.cpp
 #include "global.h"
 #include "Banner.h"
 #include "ImageCache.h"
@@ -744,7 +721,3 @@ LUA_REGISTER_DERIVED_CLASS( Banner, Sprite )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/Banner.cpp
->>>>>>> origin/c++11:src/Banner.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/Banner.cpp

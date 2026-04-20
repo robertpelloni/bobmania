@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/CryptManager.cpp
-<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 #include "global.h"
 
 // tomcrypt_cfg.h redefines malloc, realloc, calloc
@@ -581,9 +579,6 @@ LUA_REGISTER_CLASS( CryptManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp
 #include "global.h"
 
 #include <tomcrypt.h>
@@ -598,13 +593,9 @@ LUA_REGISTER_CLASS( CryptManager )
 #include "LuaReference.h"
 #include "LuaManager.h"
 
-<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 #include "libtomcrypt/src/headers/tomcrypt.h"
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
-=======
-CryptManager*	CRYPTMAN	= nullptr;	// global and accessible from anywhere in our program
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp
 
 static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
@@ -673,11 +664,7 @@ static const int KEY_LENGTH = 1024;
  */
 
 static PRNGWrapper *g_pPRNG = nullptr;
-<<<<<<< HEAD:itgmania/src/CryptManager.cpp
 
-=======
-ltc_math_descriptor ltc_mp = ltm_desc;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp
 
 CryptManager::CryptManager()
 {
@@ -1167,7 +1154,3 @@ LUA_REGISTER_CLASS( CryptManager )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/CryptManager.cpp
->>>>>>> origin/c++11:src/CryptManager.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/CryptManager.cpp

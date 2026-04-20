@@ -95,10 +95,6 @@ public:
 
 	virtual void Reload();
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_Generic.h
->>>>>>> main
 	virtual void SetPosition(float seconds);
 
 	// UpdateMovie tells the MovieTexture to update the displayed frame based
@@ -107,15 +103,6 @@ public:
 	virtual void UpdateMovie(float seconds);
 	virtual void SetPlaybackRate(float rate) { rate_ = rate; }
 	void SetLooping(bool looping = true) { loop_ = looping; }
-<<<<<<< HEAD
-=======
-=======
-	virtual void SetPosition( float fSeconds );
-	virtual void DecodeSeconds( float fSeconds );
-	virtual void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
-	void SetLooping( bool bLooping=true ) { m_bLoop = bLooping; }
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MovieTexture/MovieTexture_Generic.h
->>>>>>> main
 	uintptr_t GetTexHandle() const;
 
 	static EffectMode GetEffectMode( MovieDecoderPixelFormatYCbCr fmt );
@@ -129,20 +116,10 @@ private:
 	bool loop_;
 	bool finished_ = false;
 
-<<<<<<< HEAD
 	// If true, halts all decoding and display.
 	bool failure_ = false;
-=======
-<<<<<<< HEAD:itgmania/src/arch/MovieTexture/MovieTexture_Generic.h
 	// If true, halts all decoding and display.
 	bool failure_ = false;
-=======
-	uintptr_t m_uTexHandle;
-	RageTextureRenderTarget *m_pRenderTarget;
-	RageTexture *m_pTextureIntermediate;
-	Sprite *m_pSprite;
->>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/MovieTexture/MovieTexture_Generic.h
->>>>>>> main
 
 	uintptr_t texture_handle_;
 	std::unique_ptr<RageTextureRenderTarget> render_target_;

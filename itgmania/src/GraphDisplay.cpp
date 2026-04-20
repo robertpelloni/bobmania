@@ -1,7 +1,3 @@
-<<<<<<< HEAD:itgmania/src/GraphDisplay.cpp
-<<<<<<< HEAD:itgmania/src/GraphDisplay.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GraphDisplay.cpp
 #include "global.h"
 #include "GraphDisplay.h"
 #include "ThemeManager.h"
@@ -12,7 +8,6 @@
 #include "RageLog.h"
 #include "RageMath.h"
 #include "StageStats.h"
-<<<<<<< HEAD:itgmania/src/GraphDisplay.cpp
 #include "Song.h"
 #include "XmlFile.h"
 
@@ -343,20 +338,6 @@ LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-#include "global.h"
-#include "GraphDisplay.h"
-#include "ThemeManager.h"
-#include "RageTextureManager.h"
-#include "RageDisplay.h"
-#include "ActorUtil.h"
-#include "RageUtil.h"
-#include "RageLog.h"
-#include "RageMath.h"
-#include "StageStats.h"
-
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GraphDisplay.cpp
 #include "Song.h"
 #include "XmlFile.h"
 
@@ -637,17 +618,6 @@ public:
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
 		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
-<<<<<<< HEAD:itgmania/src/GraphDisplay.cpp
-=======
-		if(pStageStats == nullptr)
-		{
-			luaL_error(L, "The StageStats passed to GraphDisplay:Set are nil.");
-		}
-		if(pPlayerStageStats == nullptr)
-		{
-			luaL_error(L, "The PlayerStageStats passed to GraphDisplay:Set are nil.");
-		}
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GraphDisplay.cpp
 		p->Set( *pStageStats, *pPlayerStageStats );
 		return 0;
 	}
@@ -686,7 +656,3 @@ LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/GraphDisplay.cpp
->>>>>>> origin/c++11:src/GraphDisplay.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/GraphDisplay.cpp

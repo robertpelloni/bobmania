@@ -1,5 +1,3 @@
-<<<<<<< HEAD:itgmania/src/AdjustSync.cpp
-<<<<<<< HEAD:itgmania/src/AdjustSync.cpp
 /*
  * AdjustSync defines two methods for fixing the sync.
  *
@@ -469,9 +467,6 @@ void AdjustSync::GetSyncChangeTextSong( std::vector<RString> &vsAddTo )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/AdjustSync.cpp
 /*
  * AdjustSync defines two methods for fixing the sync.  
  *
@@ -942,7 +937,3 @@ void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-<<<<<<< HEAD:itgmania/src/AdjustSync.cpp
->>>>>>> origin/c++11:src/AdjustSync.cpp
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518:src/AdjustSync.cpp
