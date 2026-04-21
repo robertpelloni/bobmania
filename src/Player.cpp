@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Player.h"
+#include "Scoring/ReplayManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
@@ -811,6 +812,23 @@ void Player::Update( float fDeltaTime )
 
 	ActorFrame::Update( fDeltaTime );
 
+
+	// [Unified Replay] Inject ghost inputs if a replay is loaded
+	if (REPLAYMAN && REPLAYMAN->GetLoadedReplay().size() > 0) {
+		const std::vector<ReplayInput>& replays = REPLAYMAN->GetLoadedReplay();
+		float fCurrentTime = m_pPlayerState->m_Position.m_fMusicSeconds;
+
+		// Very basic simulation: if we crossed a replay timestamp this frame, simulate the press.
+		// A full implementation requires tracking an internal iterator across frames.
+		for (size_t i = 0; i < replays.size(); ++i) {
+			if (replays[i].fTime > fCurrentTime - fDeltaTime && replays[i].fTime <= fCurrentTime) {
+				RageTimer tm;
+				tm.Touch();
+				// Call StepStrumHopo with mocked args
+				StepStrumHopo(replays[i].iColumn, -1, tm, replays[i].bPressed, !replays[i].bPressed, ButtonType_Step);
+			}
+		}
+	}
 	if(m_pPlayerState->m_mp != MultiPlayer_Invalid)
 	{
 		/* In multiplayer, it takes too long to run player updates for every player each frame;

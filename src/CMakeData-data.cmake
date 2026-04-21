@@ -51,6 +51,7 @@ source_group("Data Structures\\\\Courses and Trails"
 
 list(APPEND SM_DATA_NOTEDATA_SRC
             "NoteData.cpp"
+            "NotePath.cpp"
             "NoteDataUtil.cpp"
 <<<<<<< HEAD
             "NoteDataWithScoring.cpp"
@@ -66,6 +67,7 @@ list(APPEND SM_DATA_NOTEDATA_SRC
 
 list(APPEND SM_DATA_NOTEDATA_HPP
             "NoteData.h"
+            "NotePath.h"
             "NoteDataUtil.h"
 <<<<<<< HEAD
             "NoteDataWithScoring.h"
@@ -136,11 +138,11 @@ list(APPEND SM_DATA_SCORE_SRC
 <<<<<<< HEAD
             "Scoring/WifeScoring.cpp")
 =======
-            "Scoring/WifeScoring.cpp"
+            "Scoring/ScoreKeeperUnified.cpp"
             "Scoring/ReplayManager.cpp")
 >>>>>>> origin/unified-ui-features-13937230807013224518
 =======
-            "Scoring/WifeScoring.cpp")
+            "Scoring/ScoreKeeperUnified.cpp")
 >>>>>>> main
 =======
             "Scoring/WifeScoring.cpp"
@@ -157,11 +159,11 @@ list(APPEND SM_DATA_SCORE_HPP
 <<<<<<< HEAD
             "Scoring/WifeScoring.h")
 =======
-            "Scoring/WifeScoring.h"
+            "Scoring/ScoreKeeperUnified.h"
             "Scoring/ReplayManager.h")
 >>>>>>> origin/unified-ui-features-13937230807013224518
 =======
-            "Scoring/WifeScoring.h")
+            "Scoring/ScoreKeeperUnified.h")
 >>>>>>> main
 =======
             "Scoring/WifeScoring.h"

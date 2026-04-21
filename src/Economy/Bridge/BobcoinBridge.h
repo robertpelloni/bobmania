@@ -3,7 +3,22 @@
 
 #include "BlockchainBridge.h"
 #include "RageLog.h"
-#include "bobcoin.h" // Linked from extern/bobcoin/include
+
+// Note: In the real implementation, this links to extern/bobcoin
+// For the Unified Engine compilation mock, we stub the namespace.
+namespace Bobcoin {
+    class Wallet {
+    public:
+        static Wallet* Create() { return new Wallet; }
+        RString GetAddress() { return "BOB-MOCK-1234"; }
+    };
+    class Ledger {
+    public:
+        static void Init() {}
+        static long long GetBalance(const RString&) { return 5000; }
+        static bool Transfer(const RString&, const RString&, long long) { return true; }
+    };
+}
 
 class BobcoinBridge : public BlockchainBridge
 {
@@ -13,7 +28,7 @@ public:
     virtual void Init() override
     {
         LOG->Trace("BobcoinBridge: Initializing...");
-        Bobcoin::Ledger::Init(); // Initialize mock ledger
+        Bobcoin::Ledger::Init();
         m_bConnected = true;
     }
 
@@ -26,9 +41,6 @@ public:
     virtual long long GetBalance(const RString& sAddress) override
     {
         if( !m_bConnected ) return 0;
-
-        // If we have a local wallet object for this address, use it
-        // Otherwise, use static Ledger lookup
         return Bobcoin::Ledger::GetBalance( sAddress );
     }
 
@@ -36,7 +48,6 @@ public:
     {
         if( !m_bConnected ) return false;
 
-        // Use Bobcoin::Ledger
         bool success = Bobcoin::Ledger::Transfer(sFrom, sTo, iAmount);
 
         if( success )
@@ -50,7 +61,6 @@ public:
     virtual RString CreateWallet() override
     {
         Bobcoin::Wallet* w = Bobcoin::Wallet::Create();
-        // Leak/Manage memory? For now just return address string.
         RString addr = w->GetAddress();
         delete w;
         return addr;
@@ -59,6 +69,23 @@ public:
     virtual bool IsConnected() override
     {
         return m_bConnected;
+    }
+
+    virtual std::vector<TransactionRecord> GetTransactionHistory(const RString& sAddress) override
+    {
+        // Mocking an RPC response from the Bobcoin ledger
+        std::vector<TransactionRecord> history;
+        if (!m_bConnected) return history;
+
+        TransactionRecord t1 = {"tx_9a8b", "Deposit", 1000, 1699999000};
+        TransactionRecord t2 = {"tx_7c6d", "Purchase", -250, 1699999500};
+        TransactionRecord t3 = {"tx_5e4f", "Mining", 50, 1700000000};
+
+        history.push_back(t3); // Newest first
+        history.push_back(t2);
+        history.push_back(t1);
+
+        return history;
     }
 
 private:

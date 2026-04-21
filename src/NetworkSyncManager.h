@@ -81,7 +81,7 @@ struct NetServerInfo
 	RString Address;
 };
 
-class EzSockets;
+class UnifiedNetwork;
 class StepManiaLanServer;
 
 /** @brief Uses ezsockets for primitive song syncing and score reporting. */
@@ -160,7 +160,7 @@ private:
 	void StartUp();
 
 	// core of the networking experience
-	EzSockets *NetPlayerClient;
+	UnifiedNetwork *NetPlayerClient;
 	NetworkPacket m_packet;
 
 	RString m_ServerName;
@@ -186,7 +186,7 @@ private:
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
 	// (common) LAN
-	EzSockets *BroadcastReception;
+	UnifiedNetwork *BroadcastReception;
 	vector<NetServerInfo> m_vAllLANServers;
 #endif
 };
@@ -302,7 +302,7 @@ struct NetServerInfo
 	RString Address;
 };
 
-class EzSockets;
+class UnifiedNetwork;
 class StepManiaLanServer;
 
 /** @brief Uses ezsockets for primitive song syncing and score reporting. */
@@ -381,7 +381,7 @@ private:
 	void StartUp();
 
 	// core of the networking experience
-	EzSockets *NetPlayerClient;
+	UnifiedNetwork *NetPlayerClient;
 	NetworkPacket m_packet;
 
 	RString m_ServerName;
@@ -407,7 +407,7 @@ private:
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
 	// (common) LAN
-	EzSockets *BroadcastReception;
+	UnifiedNetwork *BroadcastReception;
 	vector<NetServerInfo> m_vAllLANServers;
 #endif
 };

@@ -27,14 +27,11 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "LuaModules/LuaModule_File.cpp"
             "MemoryCardManager.cpp"
             "MessageManager.cpp"
-<<<<<<< HEAD
-<<<<<<< HEAD
             "NetworkManager.cpp"
-=======
             "NetworkSyncManager.cpp"
+            "Network/ContentSwarmManager.cpp"
+            "Network/LuaBinding_ContentSwarmManager.cpp"
             "Network/ChatManager.cpp"
-            "Network/ContentSwarmManager.cpp"
-            "Network/ContentSwarmManager.cpp"
             "Network/SpectatorManager.cpp"
             "Network/UnifiedNetwork.cpp"
 <<<<<<< HEAD
@@ -49,9 +46,14 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "ProfileManager.cpp"
             "ScreenManager.cpp"
             "SongManager.cpp"
+            "Scoring/ReplayManager.cpp"
+            "Unified/MissionManager.cpp"
+            "Unified/PluginManager.cpp"
+            "Tournament/TournamentManager.cpp"
             "StatsManager.cpp"
             "ThemeManager.cpp"
             "UnlockManager.cpp")
+
 list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "AnnouncerManager.h"
             "Bookkeeper.h"
@@ -88,9 +90,10 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
 >>>>>>> origin/unified-ui-features-13937230807013224518
             "Unified/AssetSyncManager.h"
             "NetworkSyncManager.h"
+            "Network/ContentSwarmManager.h"
+            "Network/LuaBinding_ContentSwarmManager.h"
+            "Unified/AssetSyncManager.h"
             "Network/ChatManager.h"
-            "Network/ContentSwarmManager.h"
-            "Network/ContentSwarmManager.h"
             "Network/SpectatorManager.h"
             "Network/UnifiedNetwork.h"
 <<<<<<< HEAD
@@ -105,18 +108,19 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "ProfileManager.h"
             "ScreenManager.h"
             "SongManager.h"
+            "Scoring/ReplayManager.h"
+            "Unified/MissionManager.h"
+            "Unified/PluginManager.h"
+            "Tournament/TournamentManager.h"
             "StatsManager.h"
             "ThemeManager.h"
             "UnlockManager.h")
 
-<<<<<<< HEAD
-=======
 if(WITH_NETWORKING)
-  list(APPEND SMDATA_GLOBAL_SINGLETON_SRC "ezsockets.cpp")
-  list(APPEND SMDATA_GLOBAL_SINGLETON_HPP "ezsockets.h")
+
+
 endif()
 
->>>>>>> main
 source_group("Global Singletons"
              FILES
              ${SMDATA_GLOBAL_SINGLETON_SRC}

@@ -2,46 +2,44 @@
 <<<<<<< HEAD:docs/SUBMODULES.md
 # Unified StepMania Submodules & Dependencies
 
-This document lists all external libraries and submodules used in the Unified StepMania project, located in `extern/`.
+This document tracks all git submodules, external libraries, and dependencies used within the Unified StepMania project, detailing their locations, versions, and architectural purpose.
 
-## Core Integrations
+## Git Submodules
 
-### 1. `extern/bobcoin`
-*   **Purpose:** The backbone of the **EconomyManager**. Provides blockchain logic, wallet management, and mining simulation.
-*   **Integration:** Linked via `src/Economy/Bridge/BobcoinBridge.cpp`.
-*   **Status:** Submodule. Needs regular updates to sync with upstream Bobcoin improvements.
+### 1. Bobcoin
+*   **Path:** `extern/bobcoin`
+*   **URL:** [Assuming standard GitHub URL or local path]
+*   **Version/Commit:** Tracked via git submodule. (Currently pending update).
+*   **Description:** The official implementation of the Bobcoin cryptocurrency node and wallet.
+*   **Usage:** Integrated via `src/Economy/Bridge/BobcoinBridge.cpp` to handle real-world transactions, player balances, and mining reward distributions. It replaces local XML-based economy tracking.
 
-### 2. `extern/ffmpeg`
-*   **Purpose:** Handles A/V encoding for the **SpectatorManager** and **StreamManager**. Used for live broadcasting matches.
-*   **Integration:** `src/Network/StreamManager.cpp`.
-*   **Status:** Vendored headers/libs (or submodule depending on setup). Critical for the "Tournament" feature set.
+### 2. Simply-Love-SM5
+*   **Path:** `Themes/Simply-Love-SM5`
+*   **URL:** https://github.com/Simply-Love/Simply-Love-SM5
+*   **Version/Commit:** Tracked via git submodule.
+*   **Description:** The premier, highly polished theme for StepMania 5.
+*   **Usage:** Serves as the baseline for high-performance visual themes. We maintain strict Lua 5.1 compatibility to ensure this theme (and community modifications of it) run flawlessly on the Unified engine.
 
-### 3. `extern/lua-5.1`
-*   **Purpose:** The scripting engine that powers Themes, NoteSkins, and the new Unified Lua API.
-*   **Integration:** `src/LuaManager.cpp`, `src/LuaBinding.cpp`.
-*   **Constraint:** Must remain **5.1** for backward compatibility with StepMania themes. Do NOT upgrade to 5.3+ unless explicitly authorized.
+## External Libraries (Vendored in `extern/`)
 
-## Support Libraries
+### 1. Lua
+*   **Version:** 5.1.5
+*   **Path:** `extern/lua-5.1/`
+*   **Usage:** The absolute core of the StepMania UI frontend. We rigidly enforce the 5.1 standard to maintain compatibility with 20 years of community themes.
 
-*   **`extern/jsoncpp`**: JSON parsing for network messages (WebSocket payloads, API responses).
-*   **`extern/zlib`**: Compression for content packages and network streams.
-*   **`extern/mad`**: MPEG Audio Decoder (MP3 support).
-*   **`extern/glew-1.5.8`**: OpenGL Extension Wrangler. Essential for cross-platform graphics.
-*   **`extern/pcre`**: Perl Compatible Regular Expressions. Used in string utility functions.
-*   **`extern/tomcrypt` / `extern/tommath`**: Cryptographic primitives. Used for secure hashing (password storage, signature verification).
-*   **`extern/libjpeg` / `extern/libpng`**: Image loading support.
-*   **`extern/vorbis` / `extern/ogg`**: Ogg Vorbis audio support.
+### 2. JsonCpp
+*   **Version:** 1.9.5 (approximate, embedded)
+*   **Path:** `extern/jsoncpp/`
+*   **Usage:** Used for parsing `Data/MarketplaceCatalog.json`, handling web requests, and processing JSON RPC responses from the Bobcoin node and matchmaking servers.
 
-## Management Protocol
+### 3. Zlib
+*   **Version:** 1.2.11 (approximate, embedded)
+*   **Path:** `extern/zlib/`
+*   **Usage:** Essential for compressing/decompressing `.smzip` packages, network streams, and `ContentSwarmManager` chunk validation.
 
-1.  **Updating:**
-    ```bash
-    git submodule update --remote --merge
-    ```
-    *Be careful!* Always verify compilation after updating submodules.
+## Monorepo Workflow & Submodule Management
 
-2.  **Adding New:**
-    Use `git submodule add <url> extern/<name>` to keep the repo structure clean.
+Unified StepMania treats submodules as active development zones, not just static dependencies.
 
 3.  **Documentation:**
     Any change to a submodule version must be recorded in `CHANGELOG.md` and the `VERSION` file.

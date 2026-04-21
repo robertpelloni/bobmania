@@ -2,28 +2,19 @@
 <<<<<<< HEAD
 # Changelog
 
-## [5.6.1-Maintenance] - 2025-12-27
-### Changed
-- **Documentation:** Finalized Dashboard and Roadmap for Bobcoin integration.
-- **Versioning:** Synchronized to 5.6.1-Maintenance.
-
-## [5.6.0-Bobcoin-Alpha] - 2025-12-27
-### Changed
-- **Economy:** Transitioned from Ethereum Stub to `BobcoinBridge`.
-- **Roadmap:** Updated to reflect privacy-focused token integration.
-- **Dependencies:** Added `extern/bobcoin` (Pending).
-
-## [5.5.4-Tested] - 2025-12-27
+## [5.7.5-Unified-Beta] - 2025-12-27
 ### Added
-- **Testing:** Added unit test suite `src/tests/test_economy.cpp` for Economy verification.
-- **Scripts:** Added `src/tests/run_tests.sh`.
+- **Documentation:** Sweeping updates to `VISION.md`, `DEPLOY.md`, `SUBMODULES.md`, and `LLM_UNIVERSAL.md`.
+- **Documentation:** Consolidated all agent-specific instruction files (`AGENTS.md`, `CLAUDE.md`, etc.) to point to a single source of truth.
+- **Backend:** (In Progress) Transitioning `EconomyManager` to use `BobcoinBridge` for real RPC integration.
 
-## [5.5.3-Complete-API] - 2025-12-27
+## [5.7.4-Unified-Beta] - 2025-12-27
 ### Added
-- **Scripting:** Exposed `SpectatorManager` (`SPECTATORMAN`) and `AssetSyncManager` (`ASSETSYNCMAN`) to Lua.
-- **Themes:** Added `WatchMatch` and `SyncAssets` helpers.
+- **Networking:** Implemented `ContentSwarmManager` singleton stub that mimics a `libtorrent` session.
+- **Lua Bindings:** Exposed `SWARMMAN` methods (`GetDownloadProgress`, `GetSeedCount`, etc.) to frontend via `Luna<T>`.
+- **UI:** Added `ScreenContentNetwork overlay.lua` to visually track P2P swarm progress.
 
-## [5.5.2-Lua-API] - 2025-12-27
+## [5.7.3-Unified-Beta] - 2026-04-14
 ### Added
 - **Scripting:** Exposed `EconomyManager` to Lua as `ECONOMYMAN`.
 - **Themes:** Added helper script `Themes/default/Scripts/02 Network.lua`.
@@ -115,18 +106,17 @@
 - **Gameplay Screen:** Added Calorie Graph overlay for Gym modes.
 - **Profile Manager:** Added `LoadProfileFromID` stub to support QR login simulation.
 
+## [5.7.2-Unified-Beta] - 2026-04-11
 ### Fixed
 - Initialization bug in `EconomyManager` where the ledger was not properly seeded on first run (fixed in Dashboard init).
 - Compilation error in `ProfileManager.h` due to duplicate function declaration.
 ## [5.1.1] - 2025-12-25
 
-## [5.7.11-Unified-Beta-Matchmaker] - 2026-02-10
+## [5.7.1-Unified-Alpha] - 2026-04-10
 ### Added
-- **Node.js Matchmaking Server:** Completely rewrote `server/mock_server.js` from a simple chat echo server into a robust JSON WebSocket handler.
-- The server now implements a real `matchmakingQueue` that pairs players sending the `JOIN_QUEUE` payload, broadcasts `MATCH_START` events, tracks ELO (mocked) in a `clients` map, and broadcasts `ACTIVE_MATCHES` to populate the `ScreenSpectate` TV list dynamically.
-- Overhauled `Docs/SERVER_SETUP.md` with explicit details on the WebSocket protocol.
-
-## [5.7.10-Unified-Beta-Handoff] - 2026-02-10
+- **Hardware:** Added `IHeartRateDriver` and `HeartRateDriver_Mock` for Gym mode heart rate monitoring.
+- **Hardware:** Added `HeartRateManager` singleton to poll drivers and update `GYMMAN`.
+- **Backend:** Connected `EconomyManager` to Bobcoin RPC node stubs.
 ### Changed
 - **Final Handoff Restructuring:** Rebuilt `Docs/ROADMAP.md`, `Docs/TODO.md`, `Docs/IDEAS.md`, and `Docs/SUBMODULES.md` with explicit, prioritized tasks for translating the functional C++ stubs into production-ready network/hardware connections.
 - Generated `Docs/HANDOFF_ANALYSIS.md` summarizing the entire Unified architecture design.

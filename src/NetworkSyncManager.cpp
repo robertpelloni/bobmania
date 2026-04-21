@@ -27,7 +27,7 @@ RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); 
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { } 
 #else
-#include "ezsockets.h"
+#include "Network/UnifiedNetwork.h"
 #include "NetworkPacket.h"
 #include "NetworkProtocol.h"
 #include "ProfileManager.h"
@@ -60,7 +60,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	BroadcastReception = NULL;
 
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
-	NetPlayerClient = new EzSockets;
+	NetPlayerClient = new UnifiedNetwork;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
    
@@ -244,7 +244,7 @@ void NetworkSyncManager::StartUp()
 		PostStartUp( ServerIP );
 
 	// LAN
-	BroadcastReception = new EzSockets;
+	BroadcastReception = new UnifiedNetwork;
 	BroadcastReception->create( IPPROTO_UDP );
 	BroadcastReception->bind( 8765 );
 	BroadcastReception->blocking = false;

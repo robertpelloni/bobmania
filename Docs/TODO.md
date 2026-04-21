@@ -1,12 +1,12 @@
 # Unified StepMania TODO.md
 
-This document tracks immediate, actionable tasks and missing features identified during the deep architectural review.
+This document tracks the next generation of immediate, actionable tasks and missing features identified after the successful completion of the Phase 1-4 architectural prototypes.
 
-## Immediate Backend Tasks (Phase 2 Priorities)
+## Immediate Backend Tasks (Phase 5 Prep)
 
-### 1. `EconomyManager` - Real Blockchain Hookup
-- **Current State:** Hardcoded initial balance, XML parsing for transactions, static marketplace JSON.
-- **Action:** Replace `BuyItem` and `AwardMiningReward` logic with HTTP RPC calls to a real Bobcoin node (using `extern/bobcoin` or generic `jsoncpp` requests). Remove the dependency on `Economy.xml.sig` in favor of trusting the ledger.
+### 1. `libuv` / `asio` Integration for `UnifiedNetwork`
+- **Current State:** `UnifiedNetwork` provides a thread-safe mutex wrapper but lacks high-performance asynchronous non-blocking event loops.
+- **Action:** Replace the mocked C++ `<thread>` socket logic with `libuv` or Boost.Asio. Ensure `FileDownload.cpp` can fetch `.smzip` assets over HTTPS asynchronously without stalling the main `GameLoop`.
 
 ### 2. `HeartRateManager` - Hardware Drivers
 - **Current State:** The architectural base (IHeartRateDriver, HeartRateManager, and Mock driver) is completed.
@@ -32,20 +32,12 @@ This document tracks immediate, actionable tasks and missing features identified
 - **Current State:** `ReplayManager` saves inputs to a CSV file. `ScreenReplayMenu` loads the mock list. `ReplayManager::GetPlaybackInputAtTime` exposes a clean array of inputs at any given timestamp.
 - **Action:** Modify `Player.cpp` to query `REPLAYMAN->GetPlaybackInputAtTime()` on every tick. If present, instantiate a secondary `NoteField` that consumes those inputs exactly at their recorded timestamps, drawing a translucent "Ghost" player. *This is fully prepared for the implementor.*
 
-### 2. Tournament Draft Phase Networking
-- **Current State:** `ScreenTournamentDraft` is a beautiful Lua UI that simulates a CPU opponent taking turns to ban/pick charts.
-- **Action:** Wire the draft screen to `UnifiedNetwork` so two human players actually see the opponent's cursor and selections in real-time.
-
-### 3. Mission Engine Persistence
-- **Current State:** `MissionManager` tracks NotesHit and Calories in-memory and saves to `Missions.xml`.
-- **Action:** Connect `ClaimReward` to the Unified Server so users cannot manually edit their `Missions.xml` to farm infinite Bobcoin.
+### 2. NotITG Spline Editor (Debug Mode)
+- **Current State:** `NotePath` spline mathematics work in C++, and can be manipulated via Lua `13_NotePath.lua`.
+- **Action:** Build a debug UI (`ScreenSplineEditor overlay.lua`) that allows chart authors to drag control points with the mouse and instantly see the 3D spline update, exporting the raw coordinates to their `.sm` file.
 
 ## Legacy Code Refactoring (Technical Debt)
 
-### 1. `ScoreKeeperNormal` vs `WifeScoring`
-- **Issue:** Etterna parity demands we use Wife3 scoring, but `ScoreKeeperNormal.cpp` is deeply entrenched with DDR-style logic (`GetScore`, `HandleRowComboInternal`).
-- **Action:** Write a cleanly separated `ScoreKeeperUnified` that completely deprecates the old logic, implementing J1-J8 scaling natively without hacking it into `HandleTapScore`.
-
-### 2. Remove `EzSockets` Dependency
-- **Issue:** StepMania's legacy networking is notoriously crash-prone and blocks the main thread occasionally.
-- **Action:** Rewrite `UnifiedNetwork` using modern C++11 `<thread>` and `<mutex>` alongside a robust library like `libuv` or `asio`.
+### 1. Remove `RageFile` XML Dependencies
+- **Issue:** `XmlFile` is notoriously slow and brittle. Modern modding and web services use JSON.
+- **Action:** Systematically replace all instances of `XmlFile.Load()` (such as in `Profile.cpp` and `Missions.xml`) with `jsoncpp`. Profiles should be saved and loaded strictly as JSON objects to ensure frictionless syncing with the Node.js backend.
