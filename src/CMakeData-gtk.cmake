@@ -2,6 +2,17 @@ if(NOT GTK3_FOUND)
   return()
 endif()
 
+<<<<<<< HEAD
+add_library("LoadingWindowGtk"
+            OBJECT
+            "arch/LoadingWindow/LoadingWindow_Gtk.cpp"
+            "arch/LoadingWindow/LoadingWindow_Gtk.h")
+
+set_property(TARGET "LoadingWindowGtk" PROPERTY FOLDER "Internal Libraries")
+set_property(TARGET "LoadingWindowGtk" PROPERTY CXX_STANDARD 17)
+set_property(TARGET "LoadingWindowGtk" PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET "LoadingWindowGtk" PROPERTY CXX_EXTENSIONS ON)
+=======
 add_library("GtkModule"
             SHARED
             "arch/LoadingWindow/LoadingWindow_GtkModule.cpp"
@@ -35,7 +46,15 @@ list(APPEND SM_GTK_INCLUDE_DIRS
             "${SM_SRC_DIR}/generated"
             "${SM_SRC_DIR}/arch/LoadingWindow"
             "${GTK3_INCLUDE_DIRS}")
+>>>>>>> main
 
-sm_add_compile_definition("GtkModule" CMAKE_POWERED)
+target_include_directories("LoadingWindowGtk" PRIVATE "${SM_SRC_DIR}"
+                                                      "${SM_GENERATED_SRC_DIR}"
+                                                      "${SM_SRC_DIR}/arch/LoadingWindow"
+                                                      "${GTK3_INCLUDE_DIRS}")
 
-target_include_directories("GtkModule" PUBLIC ${SM_GTK_INCLUDE_DIRS})
+target_link_libraries("LoadingWindowGtk" ${GTK3_LIBRARIES})
+
+list(APPEND SMDATA_LINK_LIB "LoadingWindowGtk")
+list(APPEND SMDATA_ARCH_LOADING_HPP
+            "arch/LoadingWindow/LoadingWindow_Gtk.h")

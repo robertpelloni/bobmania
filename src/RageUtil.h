@@ -5,9 +5,6 @@
 
 #include <map>
 #include <vector>
-#include <sstream>
-#include "global.h"
-#include <cstdint>
 class RageFileDriver;
 
 /** @brief Safely delete pointers. */
@@ -56,14 +53,24 @@ inline U lerp( T x, U l, U h )
 	return U(x * (h - l) + l);
 }
 
-template<typename T, typename U, typename V>
-inline bool CLAMP(T& x, U l, V h)
+inline bool CLAMP( int &x, int l, int h )
 {
-	if(x > static_cast<T>(h)) { x= static_cast<T>(h); return true; }
-	else if(x < static_cast<T>(l)) { x= static_cast<T>(l); return true; }
+	if (x > h)	{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
 	return false;
 }
-
+inline bool CLAMP( unsigned &x, unsigned l, unsigned h )
+{
+	if (x > h)	{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
+	return false;
+}
+inline bool CLAMP( float &x, float l, float h )
+{
+	if (x > h)	{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
+	return false;
+}
 template<class T>
 inline bool ENUM_CLAMP( T &x, T l, T h )
 {
@@ -367,7 +374,7 @@ RString SecondsToMMSS( float fSecs );
 RString PrettyPercent( float fNumerator, float fDenominator );
 inline RString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
 RString Commify( int iNum );
-RString Commify(const RString& num, const RString& sep= ",", const RString& dot= ".");
+RString Commify( RString sNum, RString sSeperator = "," );
 RString FormatNumberAndSuffix( int i );
 
 
@@ -390,11 +397,6 @@ RString GetExtension( const RString &sPath );
 RString GetFileNameWithoutExtension( const RString &sPath );
 void MakeValidFilename( RString &sName );
 
-bool FindFirstFilenameContaining(
-	const vector<RString>& filenames, RString& out,
-	const vector<RString>& starts_with,
-	const vector<RString>& contains, const vector<RString>& ends_with);
-
 extern const wchar_t INVALID_CHAR;
 
 int utf8_get_char_len( char p );
@@ -412,12 +414,13 @@ void MakeLower( wchar_t *p, size_t iLen );
 // TODO: Have the three functions below be moved to better locations.
 float StringToFloat( const RString &sString );
 bool StringToFloat( const RString &sString, float &fOut );
-// Better than IntToString because you can check for success.
-template<class T>
-inline bool operator>>(const RString& lhs, T& rhs)
-{
-	return !!(istringstream(lhs) >> rhs);
-}
+
+/**
+ * @brief Have a standard way of converting vectors of ints to strings.
+ * @param nums the integers to convert.
+ * @param delim the delimeter to use for separating the ints.
+ * @return the string we are after. */
+RString VectorIntToString(const vector<int> &nums, const RString delim = "/");
 
 // Exception-safe wrappers around stoi and friends
 // Additional argument exceptVal will be returned if the conversion couldn't be performed
@@ -567,7 +570,7 @@ RString Basename( const RString &dir );
 RString Dirname( const RString &dir );
 RString Capitalize( const RString &s );
 
-#if defined(HAVE_UNISTD_H)
+#ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif
 

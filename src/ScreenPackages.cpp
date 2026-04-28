@@ -592,22 +592,20 @@ static LocalizedString WAITING_FOR_HEADER( "ScreenPackages", "Waiting for header
 void ScreenPackages::HTTPUpdate()
 {
 	if( !m_bIsDownloading )
-	{
 		return;
-	}
+
 	int BytesGot=0;
 	// Keep this as a code block
 	// as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
-	for(;;)
+	while(1)
 	{
 		char Buffer[1024];
 		int iSize = m_wSocket.ReadData( Buffer, 1024 );
 		if( iSize <= 0 )
-		{
 			break;
-		}
+
 		m_sBUFFER.append( Buffer, iSize );
 		BytesGot += iSize;
 	}
@@ -630,14 +628,14 @@ void ScreenPackages::HTTPUpdate()
 			m_sResponseName = "Malformed response.";
 			return;
 		}
-		m_iResponseCode = StringToInt(m_sBUFFER.substr(i+1,j-i));
+		m_iResponseCode = std::stoi(m_sBUFFER.substr(i+1,j-i));
 		m_sResponseName = m_sBUFFER.substr( j+1, k-j );
 
 		i = m_sBUFFER.find("Content-Length:");
 		j = m_sBUFFER.find("\n", i+1 );
 
 		if( i != string::npos )
-			m_iTotalBytes = StringToInt(m_sBUFFER.substr(i+16,j-i));
+			m_iTotalBytes = std::stoi(m_sBUFFER.substr(i+16,j-i));
 		else
 			m_iTotalBytes = -1;	//We don't know, so go until disconnect
 
@@ -704,7 +702,7 @@ bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RStr
 	sServer = asMatches[1];
 	if( asMatches[3] != "" )
 	{
-		iPort = StringToInt(asMatches[3]);
+		iPort = std::stoi(asMatches[3]);
 		if( iPort == 0 )
 			return false;
 	}

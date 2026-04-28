@@ -131,7 +131,7 @@ bool ScreenNetSelectBase::Input( const InputEventPlus &input )
 		wchar_t c;
 		c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 
-		if( (c >= L' ') && (!bHoldingCtrl) )
+		if( (c >= ' ') && (!bHoldingCtrl) )
 		{
 			if (!enableChatboxInput)
 				return true;
@@ -203,7 +203,7 @@ void ScreenNetSelectBase::UpdateUsers()
 
 	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
 	{
-		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"users") );
+		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 		m_textUsers[i].SetHorizAlign( align_center );
 		m_textUsers[i].SetVertAlign( align_top );
 		m_textUsers[i].SetShadowLength( 0 );
@@ -339,139 +339,17 @@ void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternate
 
 		switch( curChar )
 		{
-			case L' ':
-				if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
-					break;
-				sCurrentLine += sCurrentWord + " ";
-				iLineWidth += iWordWidth + iCharWidth;
-				sCurrentWord = "";
-				iWordWidth = 0;
-				iGlyphsSoFar++;
-				break;
-			case L'\n':
-				if( iLineWidth + iWordWidth > iWrapWidthPixels )
-				{
-					SimpleAddLine( sCurrentLine, iLineWidth );
-					if( iWordWidth > 0 )
-						iLineWidth = iWordWidth +	//Add the width of a space
-							m_pFont->GetLineWidthInSourcePixels( L" " );
-					sCurrentLine = sCurrentWord + " ";
-					iWordWidth = 0;
-					sCurrentWord = "";
-					iGlyphsSoFar++;
-				} 
-				else
-				{
-					SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
-					sCurrentLine = "";	iLineWidth = 0;
-					sCurrentWord = "";	iWordWidth = 0;
-				}
-				break;
-			default:
-				if( iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0 )
-				{
-					SimpleAddLine( sCurrentWord, iWordWidth );
-					sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
-				}
-				else if( iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels )
-				{
-					SimpleAddLine( sCurrentLine, iLineWidth );
-					sCurrentLine = ""; 
-					iLineWidth = 0;
-					sCurrentWord += curCharStr;
-					iWordWidth += iCharWidth;
-				}
-				else
-				{
-					sCurrentWord += curCharStr;
-					iWordWidth += iCharWidth;
-				}
-				iGlyphsSoFar++;
-				break;
-		}
-	}
-
-	if( iWordWidth > 0 )
-	{
-		sCurrentLine += sCurrentWord;
-		iLineWidth += iWordWidth;
-	}
-
-	if( iLineWidth > 0 )
-		SimpleAddLine( sCurrentLine, iLineWidth );
-
-	lines = m_wTextLines.size();
-
-	BuildChars();
-	UpdateBaseZoom();
-}
-
-void ColorBitmapText::ResetText()
-{
-	ASSERT(m_pFont != nullptr);
-
-	int iWrapWidthPixels = m_iWrapWidthPixels;
-
-	// Set up the first color.
-	m_vColors.clear();
-	ColorChange change;
-	change.c = RageColor(1, 1, 1, 1);
-	change.l = 0;
-	m_vColors.push_back(change);
-
-	m_wTextLines.clear();
-
-	RString sCurrentLine = "";
-	int		iLineWidth = 0;
-
-	RString sCurrentWord = "";
-	int		iWordWidth = 0;
-	int		iGlyphsSoFar = 0;
-
-	for (unsigned i = 0; i < m_sText.length(); i++)
-	{
-		int iCharsLeft = m_sText.length() - i - 1;
-
-		// First: Check for the special (color) case.
-
-		if (m_sText.length() > 8 && i < m_sText.length() - 9)
-		{
-			RString FirstThree = m_sText.substr(i, 3);
-			if (FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8)
-			{
-				ColorChange cChange;
-				unsigned int r, g, b;
-				sscanf(m_sText.substr(i, 9).c_str(), "|%*c0%2x%2x%2x", &r, &g, &b);
-				cChange.c = RageColor(r / 255.f, g / 255.f, b / 255.f, 1.f);
-				cChange.l = iGlyphsSoFar;
-				if (iGlyphsSoFar == 0)
-					m_vColors[0] = cChange;
-				else
-					m_vColors.push_back(cChange);
-				i += 8;
-				continue;
-			}
-		}
-
-		int iCharLength = min(utf8_get_char_len(m_sText[i]), iCharsLeft + 1);
-		RString curCharStr = m_sText.substr(i, iCharLength);
-		wchar_t curChar = utf8_get_char(curCharStr);
-		i += iCharLength - 1;
-		int iCharWidth = m_pFont->GetLineWidthInSourcePixels(wstring() + curChar);
-
-		switch (curChar)
-		{
-		case L' ':
-			if ( /* iLineWidth == 0 &&*/ iWordWidth == 0)
+		case ' ':
+			if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
 				break;
 			sCurrentLine += sCurrentWord + " ";
-			iLineWidth += iWordWidth + iCharWidth;
+			iLineWidth += iWordWidth + iCharLen;
 			sCurrentWord = "";
 			iWordWidth = 0;
 			iGlyphsSoFar++;
 			break;
-		case L'\n':
-			if (iLineWidth + iWordWidth > iWrapWidthPixels)
+		case '\n':
+			if( iLineWidth + iWordWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine(sCurrentLine, iLineWidth);
 				if (iWordWidth > 0)
@@ -490,23 +368,23 @@ void ColorBitmapText::ResetText()
 			}
 			break;
 		default:
-			if (iWordWidth + iCharWidth > iWrapWidthPixels && iLineWidth == 0)
+			if( iWordWidth + iCharLen > iWrapWidthPixels && iLineWidth == 0 )
 			{
-				SimpleAddLine(sCurrentWord, iWordWidth);
-				sCurrentWord = curCharStr;  iWordWidth = iCharWidth;
+				SimpleAddLine( sCurrentWord, iWordWidth );
+				sCurrentWord = curChar;	iWordWidth = iCharLen;
 			}
-			else if (iWordWidth + iLineWidth + iCharWidth > iWrapWidthPixels)
+			else if( iWordWidth + iLineWidth + iCharLen > iWrapWidthPixels )
 			{
 				SimpleAddLine(sCurrentLine, iLineWidth);
 				sCurrentLine = "";
 				iLineWidth = 0;
-				sCurrentWord += curCharStr;
-				iWordWidth += iCharWidth;
+				sCurrentWord += curChar;
+				iWordWidth += iCharLen;
 			}
 			else
 			{
-				sCurrentWord += curCharStr;
-				iWordWidth += iCharWidth;
+				sCurrentWord += curChar;
+				iWordWidth += iCharLen;
 			}
 			iGlyphsSoFar++;
 			break;
@@ -608,7 +486,7 @@ void ColorBitmapText::DrawPrimitives( )
 			RageColor c = m_ShadowColor;
 			c.a *= m_pTempState->diffuse[0].a;
 			for( unsigned i=0; i<m_aVertices.size(); i++ )
-				m_aVertices[i].c = c;
+				m_aVertices[i].c = RageVColor(c);
 			DrawChars( true );
 
 			DISPLAY->PopMatrix();
@@ -630,7 +508,7 @@ void ColorBitmapText::DrawPrimitives( )
 				}
 			}
 			for( unsigned j=0; j<4; j++ )
-				m_aVertices[i+j].c = c;
+				m_aVertices[i+j].c = RageVColor(c);
 		}
 
 		DrawChars( false );
@@ -642,7 +520,7 @@ void ColorBitmapText::DrawPrimitives( )
 		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		for( unsigned i=0; i<m_aVertices.size(); i++ )
-			m_aVertices[i].c = m_pTempState->glow;
+			m_aVertices[i].c = RageVColor(m_pTempState->glow);
 		DrawChars( false );
 	}
 }

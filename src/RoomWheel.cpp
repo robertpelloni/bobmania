@@ -129,7 +129,7 @@ void RoomWheel::RemoveItem( int index )
 	vector<WheelItemBaseData *>::iterator i = m_CurWheelItemData.begin();
 	i += index;
 
-	// If this item's data happened to be last selected, make it nullptr.
+	// If this item's data happened to be last selected, make it NULL.
 	if( m_LastSelection == *i )
 		m_LastSelection = nullptr;
 
@@ -195,32 +195,6 @@ unsigned int RoomWheel::GetNumItems() const
 {
 	return m_CurWheelItemData.size() - m_offset;
 }
-
-// lua start
-#include "LuaBinding.h"
-
-class LunaRoomWheel : public Luna<RoomWheel>
-{
-public:
-	static int Move(T* p, lua_State *L)
-	{
-		if (lua_isnil(L, 1)) { p->Move(0); }
-		else
-		{
-			p->Move(IArg(1));
-		}
-		return 1;
-	}
-
-	LunaRoomWheel()
-	{
-		ADD_METHOD(Move);
-	}
-};
-
-LUA_REGISTER_DERIVED_CLASS(RoomWheel, WheelBase)
-// lua end
-
 
 /*
  * (c) 2004 Josh Allen

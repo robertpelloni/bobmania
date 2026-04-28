@@ -3,7 +3,6 @@
 list(APPEND SMDATA_RAGE_UTILS_SRC
             "RageUtil.cpp"
             "RageUtil_BackgroundLoader.cpp"
-            "RageUtil_CachedObject.cpp"
             "RageUtil_CharConversions.cpp"
             "RageUtil_FileDB.cpp"
             "RageUtil_WorkerThread.cpp")
@@ -13,7 +12,6 @@ list(APPEND SMDATA_RAGE_UTILS_HPP
             "RageUtil_AutoPtr.h" # TODO: Remove the need for this and replace
                                  # with c++11 smart pointers
             "RageUtil_BackgroundLoader.h"
-            "RageUtil_CachedObject.h"
             "RageUtil_CharConversions.h"
             "RageUtil_CircularBuffer.h"
             "RageUtil_FileDB.h"
@@ -50,10 +48,85 @@ source_group("Rage\\\\Misc"
              ${SMDATA_RAGE_MISC_HPP})
 
 list(APPEND SMDATA_RAGE_GRAPHICS_SRC
+<<<<<<< HEAD
+  "RageBitmapTexture.cpp"
+  "RageDisplay.cpp"
+  "RageDisplay_Null.cpp"
+  "RageModelGeometry.cpp"
+  "RageSurface.cpp"
+  "RageSurface_Load.cpp"
+  "RageSurface_Load_BMP.cpp"
+  "RageSurface_Load_GIF.cpp"
+  "RageSurface_Load_JPEG.cpp"
+  "RageSurface_Load_PNG.cpp"
+  "RageSurface_Load_XPM.cpp"
+  "RageSurface_Save_BMP.cpp"
+  "RageSurface_Save_JPEG.cpp"
+  "RageSurface_Save_PNG.cpp"
+  "RageSurfaceUtils.cpp"
+  "RageSurfaceUtils_Dither.cpp"
+  "RageSurfaceUtils_Palettize.cpp"
+  "RageSurfaceUtils_Zoom.cpp"
+  "RageTexture.cpp"
+  "RageTextureID.cpp"
+  "RageTextureManager.cpp"
+  "RageTexturePreloader.cpp"
+  "RageTextureRenderTarget.cpp"
+)
+list(APPEND SMDATA_RAGE_GRAPHICS_HPP
+  "RageBitmapTexture.h"
+  "RageDisplay.h"
+  "RageDisplay_Null.h"
+  "RageModelGeometry.h"
+  "RageSurface.h"
+  "RageSurface_Load.h"
+  "RageSurface_Load_BMP.h"
+  "RageSurface_Load_GIF.h"
+  "RageSurface_Load_JPEG.h"
+  "RageSurface_Load_PNG.h"
+  "RageSurface_Load_XPM.h"
+  "RageSurface_Save_BMP.h"
+  "RageSurface_Save_JPEG.h"
+  "RageSurface_Save_PNG.h"
+  "RageSurfaceUtils.h"
+  "RageSurfaceUtils_Dither.h"
+  "RageSurfaceUtils_Palettize.h"
+  "RageSurfaceUtils_Zoom.h"
+  "RageTexture.h"
+  "RageTextureID.h"
+  "RageTextureManager.h"
+  "RageTexturePreloader.h"
+  "RageTextureRenderTarget.h"
+)
+
+if(ANDROID)
+  list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
+  list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+else()
+  list(APPEND SMDATA_RAGE_GRAPHICS_SRC
+    "RageDisplay_OGL.cpp"
+    "RageDisplay_Vulkan.cpp"
+    "RageDisplay_OGL_Helpers.cpp"
+  )
+  list(APPEND SMDATA_RAGE_GRAPHICS_HPP
+    "RageDisplay_OGL.h"
+    "RageDisplay_Vulkan.h"
+    "RageDisplay_OGL_Helpers.h"
+  )
+  if(WIN32)
+    list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_D3D.cpp")
+    list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_D3D.h")
+  elseif(LINUX)
+    if (WITH_GLES2)
+      list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
+      list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+    endif()
+=======
             "RageBitmapTexture.cpp"
             "RageDisplay.cpp"
             "RageDisplay_Null.cpp"
             "RageDisplay_OGL.cpp"
+    "RageDisplay_Vulkan.cpp"
             "RageDisplay_OGL_Helpers.cpp"
             "RageModelGeometry.cpp"
             "RageSurface.cpp"
@@ -75,11 +148,13 @@ list(APPEND SMDATA_RAGE_GRAPHICS_SRC
             "RageTextureManager.cpp"
             "RageTexturePreloader.cpp"
             "RageTextureRenderTarget.cpp")
+
 list(APPEND SMDATA_RAGE_GRAPHICS_HPP
             "RageBitmapTexture.h"
             "RageDisplay.h"
             "RageDisplay_Null.h"
             "RageDisplay_OGL.h"
+    "RageDisplay_Vulkan.h"
             "RageDisplay_OGL_Helpers.h"
             "RageModelGeometry.h"
             "RageSurface.h"
@@ -109,6 +184,7 @@ elseif(LINUX)
   if(WITH_GLES2)
     list(APPEND SMDATA_RAGE_GRAPHICS_SRC "RageDisplay_GLES2.cpp")
     list(APPEND SMDATA_RAGE_GRAPHICS_HPP "RageDisplay_GLES2.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
   endif()
 endif()
 
@@ -162,6 +238,7 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
             "RageSoundReader_ChannelSplit.cpp"
             "RageSoundReader_Extend.cpp"
             "RageSoundReader_FileReader.cpp"
+            "RageSoundReader_MP3.cpp"
             "RageSoundReader_Merge.cpp"
             "RageSoundReader_Pan.cpp"
             "RageSoundReader_PitchChange.cpp"
@@ -170,8 +247,10 @@ list(APPEND SMDATA_RAGE_SOUND_SRC
             "RageSoundReader_Resample_Good.cpp"
             "RageSoundReader_SpeedChange.cpp"
             "RageSoundReader_ThreadedBuffer.cpp"
+            "RageSoundReader_Vorbisfile.cpp"
             "RageSoundReader_WAV.cpp"
             "RageSoundUtil.cpp")
+
 list(APPEND SMDATA_RAGE_SOUND_HPP
             "RageSound.h"
             "RageSoundManager.h"
@@ -183,6 +262,7 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
             "RageSoundReader_Extend.h"
             "RageSoundReader_FileReader.h"
             "RageSoundReader_Filter.h"
+            "RageSoundReader_MP3.h"
             "RageSoundReader_Merge.h"
             "RageSoundReader_Pan.h"
             "RageSoundReader_PitchChange.h"
@@ -191,18 +271,9 @@ list(APPEND SMDATA_RAGE_SOUND_HPP
             "RageSoundReader_Resample_Good.h"
             "RageSoundReader_SpeedChange.h"
             "RageSoundReader_ThreadedBuffer.h"
+            "RageSoundReader_Vorbisfile.h"
             "RageSoundReader_WAV.h"
             "RageSoundUtil.h")
-
-if(HAS_OGG)
-  list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_Vorbisfile.cpp")
-  list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_Vorbisfile.h")
-endif()
-
-if(HAS_MP3)
-  list(APPEND SMDATA_RAGE_SOUND_SRC "RageSoundReader_MP3.cpp")
-  list(APPEND SMDATA_RAGE_SOUND_HPP "RageSoundReader_MP3.h")
-endif()
 
 source_group("Rage\\\\Sound"
              FILES

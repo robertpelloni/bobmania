@@ -1,7 +1,8 @@
-﻿#include "global.h"
+#include "global.h"
 #include "StatsManager.h"
 #include "RageFileManager.h"
 #include "GameState.h"
+
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "PrefsManager.h"
@@ -19,7 +20,7 @@
 #include "PlayerState.h"
 #include "Player.h"
 
-StatsManager*	STATSMAN = nullptr;	// global object accessible from anywhere in the program
+StatsManager*	STATSMAN = nullptr;	// global object accessable from anywhere in the program
 
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn );
 XNode* MakeRecentScoreNode( const StageStats &ss, Trail *pTrail, const PlayerStageStats &pss, MultiPlayer mp );
@@ -58,6 +59,7 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 
 	if( !vss.empty() )
 	{
+		ssreturn.m_pStyle = vss[0].m_pStyle;
 		ssreturn.m_playMode = vss[0].m_playMode;
 	}
 
@@ -95,11 +97,29 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 {
 	statsOut.Init();
+
 	vector<StageStats> vssToCount;
-	for(size_t i= 0; i < m_vPlayedStageStats.size(); ++i)
+
+	// Show stats only for the latest 3 normal songs + passed extra stages
+	int PassedRegularSongsLeft = 3;
+	for( int i = (int)m_vPlayedStageStats.size()-1; i >= 0; --i )
 	{
-		vssToCount.push_back(m_vPlayedStageStats[i]);
+		const StageStats &ss = m_vPlayedStageStats[i];
+
+		if( !ss.OnePassed() )
+			continue;
+
+		if( ss.m_Stage != Stage_Extra1 && ss.m_Stage != Stage_Extra2 )
+		{
+			if( PassedRegularSongsLeft == 0 )
+				break;
+
+			--PassedRegularSongsLeft;
+		}
+
+		vssToCount.push_back( ss );
 	}
+
 	statsOut = AccumPlayedStageStats( vssToCount );
 }
 
@@ -113,9 +133,10 @@ void StatsManager::CalcAccumPlayedStageStats()
 void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn )
 {
 	ss.AssertValid( pn );
+	CHECKPOINT;
 
 	StyleID sID;
-	sID.FromStyle( ss.m_player[pn].m_pStyle );
+	sID.FromStyle( ss.m_pStyle );
 
 	ASSERT( (int) ss.m_vpPlayedSongs.size() == ss.m_player[pn].m_iStepsPlayed );
 	for( int i=0; i<ss.m_player[pn].m_iStepsPlayed; i++ )
@@ -214,10 +235,13 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iNumTotalSongsPlayed += pSS->m_vpPlayedSongs.size();
 
+	CHECKPOINT;
 	if( !GAMESTATE->m_bMultiplayer )	// FIXME
 	{
 		FOREACH_HumanPlayer( pn )
 		{
+			CHECKPOINT;
+
 			Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
 			if( pPlayerProfile )
 			{
@@ -234,36 +258,22 @@ void StatsManager::CommitStatsToProfiles( const StageStats *pSS )
 				AddPlayerStatsToProfile( pPlayerProfile, *pSS, pn );
 			}
 
-			// No marathons etc for now...
-			if ( g_PadmissEnabled.Get() && pSS->m_playMode == PLAY_MODE_REGULAR )
-				SavePadmissScore( pSS, pn );
+			CHECKPOINT;
 		}
 	}
 
-	// Not sure what the Save/Upload folder was originally for, but the files
-	// in it just accumulate uselessly, wasting several seconds when finishing
-	// a song.  So this pref disables it. -Kyz
-	if(!PREFSMAN->m_DisableUploadDir)
-		SaveUploadFile( pSS );
-
-	//FileCopy( "Data/TempTestGroups.xml", "Save/Upload/data.xml" );
-}
-
-void StatsManager::SaveUploadFile( const StageStats *pSS )
-{
 	// Save recent scores
-	unique_ptr<XNode> xml( new XNode("Stats") );
-	xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
-
-	XNode *recent = nullptr;
-	if( GAMESTATE->IsCourseMode() )
-		recent = xml->AppendChild( new XNode("RecentCourseScores") );
-	else
-		recent = xml->AppendChild( new XNode("RecentSongScores") );
-
-	if(!GAMESTATE->m_bMultiplayer)
 	{
-		FOREACH_HumanPlayer( p )
+		unique_ptr<XNode> xml( new XNode("Stats") );
+		xml->AppendChild( "MachineGuid",  PROFILEMAN->GetMachineProfile()->m_sGuid );
+
+		XNode *recent = nullptr;
+		if( GAMESTATE->IsCourseMode() )
+			recent = xml->AppendChild( new XNode("RecentCourseScores") );
+		else
+			recent = xml->AppendChild( new XNode("RecentSongScores") );
+
+		if(!GAMESTATE->m_bMultiplayer)
 		{
 			if( pSS->m_player[p].m_HighScore.IsEmpty() )
 				continue;
@@ -530,13 +540,6 @@ public:
 	}
 	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
 	static int GetAccumPlayedStageStats( T* p, lua_State *L )	{ p->GetAccumPlayedStageStats().PushSelf(L); return 1; }
-	static int GetFinalEvalStageStats( T* p, lua_State *L )
-	{
-		StageStats stats;
-		p->GetFinalEvalStageStats( stats );
-		stats.PushSelf(L);
-		return 1;
-	}
 	static int GetFinalGrade( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -595,7 +598,6 @@ public:
 		ADD_METHOD( GetCurStageStats );
 		ADD_METHOD( GetPlayedStageStats );
 		ADD_METHOD( GetAccumPlayedStageStats );
-		ADD_METHOD( GetFinalEvalStageStats );
 		ADD_METHOD( Reset );
 		ADD_METHOD( GetFinalGrade );
 		ADD_METHOD( GetStagesPlayed );

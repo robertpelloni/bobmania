@@ -1,0 +1,172 @@
+ITGmania Beginner's Guide
+Written and edited by the StepMania team, updated for ITGmania
+--------------------------------------------------------------------------------
+Table of Contents
+1       Introduction
+2       ITGmania
+ 2.1.   Terms and Concepts
+  2.1.1 Notable StepMania/ITGmania Versions
+  2.1.2 ITGmania Components
+ 2.2    ITGmania Configuration
+  2.2.0 Configuring Keys
+  2.2.1 Frequently Asked Questions that can be
+        Solved by Changing the Configuration
+ 2.3.   Installing Content
+  2.3.1 Installing Song Files
+  2.3.2 Installing Noteskins/New Gametypes
+  2.3.3 Installing Themes
+3.      Frequently Asked Questions
+4.      Reporting problems
+Windows:  %APPDATA%/ITGmania/
+Linux:  ~/.itgmania/
+macOS:  ~/Library/Application Support/ITGmania/
+Wherever you see the name "User Data folder", this is the folder it refers to.
+macOS additionally has ~/Library/Preferences/ITGmania/ for storing preferences.
+
+Inside the User Data folder you can install content by placing it in the following folders:
+ * Songs
+ * Themes
+ * NoteSkins
+  (and the various gametype folders, which are optional. You need at least one
+  non-lights gametype in order to play.)
+  * NoteSkins/dance
+  * NoteSkins/pump
+  * NoteSkins/para
+  * NoteSkins/techno
+  * NoteSkins/beat
+  * NoteSkins/popn
+  * NoteSkins/ez2
+ * Announcers
+   (finding announcers made for SM5 is an exercise left for the reader)
+ * Packages
+
+If one of the folders listed above does not exist, do not worry. You only need
+to create a folder if you need to install a piece of content that belongs in it.
+
+* Not on Windows and want to deal with .smzip files?
+There are multiple ways to deal this.
+ 1) Put the SMZip file in the Packages folder.
+ 2) Rename the file to have an extension of .zip and extract in the root
+    User Data folder.
+ 3) Pass the smzip's filename to ITGmania on the command line/terminal.
+    Dragging and dropping the .smzip may or may not work; we have not tested it.
+
+--------------------------------------------------------------------------------
+2.3.1: Installing Song Files
+--------------------------------------------------------------------------------
+Song files are distributed in many ways. The concept of packs was explained
+above, in which multiple songs are included in one archive.
+
+For .smzip files, the section "Not on Windows and want to deal with .smzip
+files?" details all possible ways of installing .smzip files, but the most
+common ways are as follows:
+
+1) For operating systems with a filetype handler (Windows and macOS), you can double
+   click on the .smzip file and the ITGmania tools will handle it.
+2) Putting the .smzip file in the Packages folder, where it will be automatically
+   read by ITGmania.
+
+If it's not a .smzip file, you'll have to do some detective work.
+Open up the song archive and see how the files are laid out.
+
+The easiest single song installs will have a folder structure similar to this:
+Group Name\
+ Song Name\
+  song file.sm
+  song file.ogg/mp3
+  song file-bg.png
+  song file-bn.png
+
+With a setup like this, you can just extract it to the Songs folder with
+directory structure intact.
+
+Sometimes, simfile authors don't package their file with a group name,
+leaving you with a file structure like this:
+Song Name\
+ song file.sm
+ song file.ogg/mp3
+ song file-bg.png
+ song file-bn.png
+
+You will need to extract this into a song group folder that exists already.
+
+An uncommon setup will only include the song files, without any folders at all.
+These need to be put into the {Group Name}\{Song Name}\ folder in order to work.
+
+For packs, you follow the same logic. If there are multiple song folders, but no
+group folder, you will have to make a group folder. (Flightmix 4 is an example
+of a pack that exhibits this behavior.)
+
+Overall, the setup should look something like this:
+
+User Data folder\
+ Songs\
+  Song Group 1\
+  Song Group 2\
+  Song Group 3\
+  Song Group 4\
+   Example Song\
+    Example Song.sm
+    Example Song.mp3/ogg
+    Example Song-bn.png
+    Example Song-bg.png
+
+--------------------------------------------------------------------------------
+2.3.2: Installing Noteskins/New Gametypes
+--------------------------------------------------------------------------------
+NoteSkins change the appearance of the arrows. They are also linked with getting
+other gametypes supported in ITGmania.
+
+The noteskin installation process looks something like this:
+User Data folder\
+ NoteSkins\
+  (gametype)\
+   (noteskin for gametype)\
+   default\
+  (gametype2)\
+   default\
+
+"gametype"/"gametype2" etc. can be any one of the following:
+dance (typically 4 panels)
+pump (typically 5 panels)
+para (5 receptors)
+techno (4, 5, and 8 panel modes)
+beat (5 and 7 key modes with a turntable on each)
+popn (5 and 9 line modes)
+kb7 (6 or 7 keys depending on when you try to use it)
+
+--------------------------------------------------------------------------------
+2.3.3: Installing Themes
+--------------------------------------------------------------------------------
+Depending on if the theme is packaged in a SMZip or not, you have a few options.
+
+If it is in a .smzip, you can put it in the Packages directory:
+User Data folder/
+ Packages/
+  MyTheme.smzip
+and ITGmania will automatically read it.
+On Windows, you can double click on the .smzip file to install it in your user
+packages directory. THIS IS NOT RECOMMENDED BECAUSE IT CAUSES CONFUSION.
+
+Since .smzip files are really .zip files, you could also extract them in the
+User Data folder.
+
+If the themer has not packaged the theme in a .smzip, then you have to look
+inside the archive to see how the directory layout looks.
+1) Themes folder
+   If it has a themes folder when you open it up, extract in the User Data
+   folder, like you would a .smzip file.
+2) Theme name as a folder
+   This one will have to be extracted in the Themes directory. You will get a
+   new folder with the files.
+3) A bunch of folders + metrics.ini
+   The themer was lazy; you're going to have to make a folder in the Themes
+   directory and extract the theme in there. Then go tell the themer that they're a bad person.
+
+When in doubt, read any documentation that comes with the theme for proper
+installation instructions.
+
+Do not attempt to use any theme made for a StepMania version older than StepMania 5.
+It will not work at all. Only use a theme made for StepMania 5 if you are a
+themer and you are working on that theme to make it work with ITGmania.
+

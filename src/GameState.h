@@ -19,7 +19,7 @@
 
 class Character;
 class Course;
-struct Game;
+class Game;
 struct lua_State;
 class LuaTable;
 class PlayerState;
@@ -39,8 +39,6 @@ class GameState
 {
 	/** @brief The player number used with Styles where one player controls both sides. */
 	PlayerNumber	masterPlayerNumber;
-	/** @brief The TimingData that is used for processing certain functions. */
-	TimingData * processedTiming;
 public:
 	/** @brief Set up the GameState with initial values. */
 	GameState();
@@ -73,11 +71,6 @@ public:
 	void SaveCurrentSettingsToProfile( PlayerNumber pn );
 	Song* GetDefaultSong() const;
 
-	bool CanSafelyEnterGameplay(RString& reason);
-	void SetCompatibleStylesForPlayers();
-	void ForceSharedSidesMatch();
-	void ForceOtherPlayersToCompatibleSteps(PlayerNumber main);
-
 	void Update( float fDelta );
 
 	// Main state info
@@ -90,11 +83,7 @@ public:
 	 * @param pGame the game to start using. */
 	void SetCurGame( const Game *pGame );
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
-	private: // DO NOT access directly.  Use Get/SetCurrentStyle.
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
-	// Only used if the Game specifies that styles are separate.
-	Style const* m_SeparatedStyles[NUM_PlayerNumber];
-	public:
 	/** @brief Determine which side is joined.
 	 *
 	 * The left side is player 1, and the right side is player 2. */
@@ -126,8 +115,6 @@ public:
 	int			m_iGameSeed, m_iStageSeed;
 	RString		m_sStageGUID;
 
-	void SetNewStageSeed();
-
 	/**
 	 * @brief Determine if a second player can join in at this time.
 	 * @return true if a player can still enter the game, false otherwise. */
@@ -136,10 +123,9 @@ public:
 	bool	EnoughCreditsToJoin() const { return m_iCoins >= GetCoinsNeededToJoin(); }
 	int		GetNumSidesJoined() const;
 
-	const Game*	GetCurrentGame() const;
-	const Style*	GetCurrentStyle(PlayerNumber pn) const;
-	void	SetCurrentStyle(const Style *style, PlayerNumber pn);
-	bool SetCompatibleStyle(StepsType stype, PlayerNumber pn);
+	const Game*	GetCurrentGame();
+	const Style*	GetCurrentStyle() const;
+	void	SetCurrentStyle( const Style *pStyle );
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;
@@ -168,16 +154,6 @@ public:
 	 * @param p the master player number. */
 	void SetMasterPlayerNumber(const PlayerNumber p);
 
-	/**
-	 * @brief Retrieve the present timing data being processed.
-	 * @return the timing data pointer. */
-	TimingData * GetProcessedTimingData() const;
-
-	/**
-	 * @brief Set the timing data to be used with processing.
-	 * @param t the timing data. */
-	void SetProcessedTimingData(TimingData * t);
-
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; // not Rave
 
@@ -188,7 +164,7 @@ public:
 
 	BroadcastOnChange<RString>	m_sPreferredSongGroup;		// GROUP_ALL denotes no preferred group
 	BroadcastOnChange<RString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
-	bool		m_bFailTypeWasExplicitlySet;	// true if FailType was changed in the song options screen
+	bool		m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
 	BroadcastOnChange<StepsType>				m_PreferredStepsType;
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>		m_PreferredDifficulty;
 	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
@@ -213,9 +189,6 @@ public:
 	 *
 	 * This resets whenever a player joins or continues. */
 	int				m_iPlayerStageTokens[NUM_PLAYERS];
-	// This is necessary so that IsFinalStageForEveryHumanPlayer knows to
-	// adjust for the current song cost.
-	bool m_AdjustTokensBySongCostForFinalStageCheck;
 
 	RString sExpandedSectionName;
 
@@ -230,7 +203,6 @@ public:
 	int			GetNumStagesLeft( PlayerNumber pn ) const;
 	int			GetSmallestNumStagesLeftForAnyHumanPlayer() const;
 	bool		IsFinalStageForAnyHumanPlayer() const;
-	bool		IsFinalStageForEveryHumanPlayer() const;
 	bool		IsAnExtraStage() const;
 	bool		IsAnExtraStageAndSelectionLocked() const;
 	bool		IsExtraStage() const;
@@ -271,9 +243,7 @@ public:
 	static const float MUSIC_SECONDS_INVALID;
 
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
-	void SetPaused(bool p) { m_paused= p; }
-	bool GetPaused() { return m_paused; }
-	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
+	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer, bool bUpdatePlayers = false );
 	float GetSongPercent( float beat ) const;
 
 	bool AllAreInDangerOrWorse() const;
@@ -283,10 +253,6 @@ public:
 	float	m_fHasteRate; // [-1,+1]; 0 = normal speed
 	float	m_fLastHasteUpdateMusicSeconds;
 	float	m_fAccumulatedHasteSeconds;
-
-	// used by themes that support heart rate entry.
-	RageTimer m_DanceStartTime;
-	float m_DanceDuration;
 
 	// Random Attacks & Attack Mines
 	vector<RString>		m_RandomAttacks;
@@ -330,7 +296,7 @@ public:
 	bool CurrentOptionsDisqualifyPlayer( PlayerNumber pn );
 	bool PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier );
 
-	FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
+	PlayerOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
 
 	// character stuff
 	Character* m_pCurCharacters[NUM_PLAYERS];
@@ -409,15 +375,6 @@ public:
 
 	bool m_bDopefish;
 
-	// Autogen stuff.  This should probably be moved to its own singleton or
-	// something when autogen is generalized and more customizable. -Kyz
-	float GetAutoGenFarg(size_t i)
-	{
-		if(i >= m_autogen_fargs.size()) { return 0.0f; }
-		return m_autogen_fargs[i];
-	}
-	vector<float> m_autogen_fargs;
-
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -426,11 +383,6 @@ private:
 	EarnedExtraStage	CalculateEarnedExtraStage() const;
 	int	m_iAwardedExtraStages[NUM_PLAYERS];
 	bool	m_bEarnedExtraStage;
-
-	// Timing position corrections
-	RageTimer m_LastPositionTimer;
-	float m_LastPositionSeconds;
-	bool m_paused;
 
 	GameState(const GameState& rhs);
 	GameState& operator=(const GameState& rhs);
@@ -456,7 +408,7 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp );
 
 
 
-extern GameState*	GAMESTATE;	// global and accessible from anywhere in our program
+extern GameState*	GAMESTATE;	// global and accessable from anywhere in our program
 
 #endif
 

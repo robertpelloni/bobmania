@@ -7,6 +7,7 @@
 #include "RageSound.h"
 #include "AttackDisplay.h"
 #include "NoteData.h"
+#include "Steps.h"
 #include "ScreenMessage.h"
 #include "ThemeMetric.h"
 #include "InputEventPlus.h"
@@ -41,34 +42,11 @@ class Player: public ActorFrame
 {
 public:
 	// The passed in NoteData isn't touched until Load() is called.
-	Player( NoteData &nd, bool bVisibleParts = true );
+	Player( NoteData &nd, StepsType st, bool bVisibleParts = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	// PushPlayerMatrix and PopPlayerMatrix are separate functions because
-	// they need to be used twice so that the notefield board can rendered
-	// underneath the combo and judgment.  They're not embedded in
-	// PlayerMatrixPusher so that some nutjob can later decide to expose them
-	// to lua. -Kyz
-	void PushPlayerMatrix(float x, float skew, float center_y, float fov, float vanish_y);
-	void PopPlayerMatrix();
-
-	// This exists so that the board can be drawn underneath combo/judge. -Kyz
-	void DrawNoteFieldBoard();
-
-	// Here's a fun construct for people that haven't seen it before:
-	// This object does some task when it's created, then cleans up when it's
-	// destroyed.  That way, you stick it inside a block, and can't forget the
-	// cleanup. -Kyz
-	struct PlayerNoteFieldPositioner
-	{
-		PlayerNoteFieldPositioner(Player* p, float x, float tilt, float skew, float mini, float center_y, bool reverse, float fov, float vanish_y);
-		~PlayerNoteFieldPositioner();
-		Player* player;
-		float original_y;
-		float y_offset;
-	};
 
 	struct TrackRowTapNote
 	{
@@ -91,6 +69,9 @@ public:
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
 	void CrossedRows( int iLastRowCrossed, const RageTimer &now );
+	/**
+	 * @brief Has this Player died in the Oni style gameplay?
+	 * @return true if the player is dead based on Oni rules, false otherwise. */
 	bool IsOniDead() const;
 	
 	/**
@@ -103,11 +84,25 @@ public:
 		return *(this->m_Timing);
 	}
 
+	// Called when a fret, step, or strum type button changes
+	void Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
+
+	// Called when the strum bar is pressed down
+	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
+
+	// Called when the strum window passes without a row being hit
+	void DoStrumMiss();
 	void ScoreAllActiveHoldsLetGo();
 	void DoTapScoreNone();
 
-	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
+	enum ButtonType { ButtonType_Step, ButtonType_StrumFretsChanged, ButtonType_Hopo };
+	void StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, ButtonType gbt );
+	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Step); }
 
+	// called by Fret for Hammer-ons and Pull-offs
+	void Hopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Hopo); }
+
+	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	void CacheAllUsedNoteSkins();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
@@ -116,6 +111,10 @@ public:
 
 	static float GetMaxStepDistanceSeconds();
 	static float GetWindowSeconds( TimingWindow tw );
+
+	/**
+	 * @brief Retrieve the latest reference to the Player's NoteData.
+	 * @return the NoteData reference in question. */
 	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasVisibleParts() const { return m_pNoteField != nullptr; }
 
@@ -124,19 +123,15 @@ public:
 
 	void SetSendJudgmentAndComboMessages( bool b ) { m_bSendJudgmentAndComboMessages = b; }
 
-	// OITG bug:  Actor::SetZoom only sets X and Y.  When mini is applied to
-	// the notefield with SetZoom, it does not affect the range of bumpy.
-	// m_oitg_zoom_mode provides compatibility with that bug.  Only used in
-	// defective mode. -Kyz
-	bool m_oitg_zoom_mode;
+	Steps * GetStep() { return this->currentStep; }
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
 	
+	/**
+	 * @brief Have quick access to the Player's state.
+	 * @return the Player's state. */
 	PlayerState * GetPlayerState() { return this->m_pPlayerState; }
-	void ChangeLife(float delta);
-	void SetLife(float value);
-	bool m_inside_lua_set_life;
 
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
@@ -147,17 +142,18 @@ protected:
 	void HandleHoldCheckpoint( int iRow, int iNumHoldsHeldThisRow, int iNumHoldsMissedThisRow, const vector<int> &viColsWithHold );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
-	void SendComboMessages( unsigned int iOldCombo, unsigned int iOldMissCombo );
+	void SendComboMessages( int iOldCombo, int iOldMissCombo );
+
+	/**
+	 * @brief Play the appropriate keysound.
+	 * @param tn the TapNote that has an indexed keysound.
+	 * @param score the score of the note. */
 	void PlayKeysound( const TapNote &tn, TapNoteScore score );
 
-	void SetMineJudgment( TapNoteScore tns , int iTrack );
-	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn ) { SetJudgment( iRow, iFirstTrack, tn, tn.result.tns, tn.result.fTapNoteOffset ); }	
-	void SetJudgment( int iRow, int iFirstTrack, const TapNote &tn, TapNoteScore tns, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
-	void SetHoldJudgment( TapNote &tn, int iTrack );
-	void SetCombo( unsigned int iCombo, unsigned int iMisses );
-	void IncrementComboOrMissCombo( bool bComboOrMissCombo );
-	void IncrementCombo() { IncrementComboOrMissCombo(true); };
-	void IncrementMissCombo() { IncrementComboOrMissCombo(false); };
+	void SetMineJudgment( TapNoteScore tns );
+	void SetJudgment( TapNoteScore tns, int iFirstTrack, float fTapNoteOffset );	// -1 if no track as in TNS_Miss
+	void SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack );
+	void SetCombo( int iCombo, int iMisses );
 
 	void ChangeLife( TapNoteScore tns );
 	void ChangeLife( HoldNoteScore hns, TapNoteScore tns );
@@ -191,6 +187,7 @@ protected:
 
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
+	Steps			*currentStep;
 
 	vector<HoldJudgment*>	m_vpHoldJudgment;
 
@@ -216,8 +213,7 @@ protected:
 	NoteData::all_tracks_iterator *m_pIterUncrossedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedRows;
 	NoteData::all_tracks_iterator *m_pIterUnjudgedMineRows;
-	unsigned int	m_iLastSeenCombo;
-	bool	m_bSeenComboYet;
+	int			m_iLastSeenCombo;
 	JudgedRows		*m_pJudgedRows;
 
 	RageSound		m_soundMine;
@@ -250,9 +246,6 @@ protected:
 	TweenState		m_tsCombo[NUM_REVERSE][NUM_CENTERED];
 
 	bool m_bSendJudgmentAndComboMessages;
-	bool m_bTickHolds;
-	// This exists so that the board can be drawn underneath combo/judge. -Kyz
-	bool m_drawing_notefield_board;
 };
 
 class PlayerPlus
@@ -260,7 +253,7 @@ class PlayerPlus
 	Player *m_pPlayer;
 	NoteData m_NoteData;
 public:
-	PlayerPlus() { m_pPlayer = new Player(m_NoteData); }
+	PlayerPlus() { m_pPlayer = new Player(m_NoteData, StepsType_Invalid); }
 	~PlayerPlus() { delete m_pPlayer; }
 	void Load( const NoteData &nd ) { m_NoteData = nd; m_pPlayer->Load(); }
 	Player *operator->() { return m_pPlayer; }

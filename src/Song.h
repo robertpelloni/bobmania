@@ -20,7 +20,7 @@ void FixupPath( RString &path, const RString &sSongPath );
 RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 
 /** @brief The version of the .ssc file format. */
-const static float STEPFILE_VERSION_NUMBER = 0.83f;
+const static float STEPFILE_VERSION_NUMBER = 0.81f;
 
 /** @brief How many edits for this song can each profile have? */
 const int MAX_EDITS_PER_SONG_PER_PROFILE = 15;
@@ -66,11 +66,9 @@ struct LyricSegment
 class Song
 {
 	RString m_sSongDir;
-	RString m_pre_customify_song_dir;
 public:
 	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
 	RString GetSongDir() { return m_sSongDir; }
-	RString GetPreCustomifyDir() { return m_pre_customify_song_dir; }
 
 	/** @brief When should this song be displayed in the music wheel? */
 	enum SelectionDisplay
@@ -89,15 +87,9 @@ public:
 	 *
 	 * This assumes that there is no song present right now.
 	 * @param sDir the song directory from which to load. */
-	bool LoadFromSongDir(RString sDir, bool load_autosave= false,
-		ProfileSlot from_profile= ProfileSlot_Invalid);
+	bool LoadFromSongDir( RString sDir );
 	// This one takes the effort to reuse Steps pointers as best as it can
 	bool ReloadFromSongDir( RString sDir );
-	bool ReloadFromSongDir() { return ReloadFromSongDir(GetSongDir()); }
-	void LoadEditsFromSongDir(RString dir);
-
-	bool HasAutosaveFile();
-	bool LoadAutosaveFile();
 
 	/**
 	 * @brief Call this after loading a song to clean up invalid data.
@@ -121,9 +113,9 @@ public:
 	 * @param sPath the path where we're saving the file.
 	 * @param bSavingCache a flag to determine if we're saving cache data.
 	 */
-	bool SaveToSSCFile(RString sPath, bool bSavingCache, bool autosave= false);
+	bool SaveToSSCFile( RString sPath, bool bSavingCache );
 	/** @brief Save to the SSC and SM files no matter what. */
-	void Save(bool autosave= false);
+	void Save();
 	/** 
 	  * @brief Save the current Song to a JSON file.
 	  * @return its success or failure. */
@@ -140,10 +132,6 @@ public:
 	 * @brief Save the current Song to a DWI file if possible.
 	 * @return its success or failure. */
 	bool SaveToDWIFile();
-
-	void RemoveAutosave();
-	bool WasLoadedFromAutosave() const
-	{ return m_loaded_from_autosave; }
 
 	const RString &GetSongFilePath() const;
 	RString GetCacheFilePath() const;
@@ -191,15 +179,11 @@ public:
 	/** @brief The transliterated artist of the Song, if it exists. */
 	RString m_sArtistTranslit;
 
-	RString m_sFileHash;
-	RString GetFileHash();
-
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit*
 	 * below. Otherwise, they return the main titles. */
 	RString GetDisplayMainTitle() const;
 	RString GetDisplaySubTitle() const;
 	RString GetDisplayArtist() const;
-	RString GetMainTitle() const;
 
 	/**
 	 * @brief Retrieve the transliterated title, or the main title if there is no translit.
@@ -240,7 +224,6 @@ public:
 	RString m_sOrigin; // song origin (for .ssc format)
 
 	RString	m_sMusicFile;
-	RString m_PreviewFile;
 	RString	m_sInstrumentTrackFile[NUM_InstrumentTrack];
 
 	/** @brief The length of the music file. */
@@ -260,12 +243,10 @@ public:
 	RString m_sBackgroundFile;
 	RString m_sCDTitleFile;
 	RString m_sPreviewVidFile;
-	vector<RString> ImageDir;
 
 	AttackArray m_Attacks;
 	vector<RString>	m_sAttackString;
 
-	static RString GetSongAssetPath( RString sPath, const RString &sSongPath );
 	RString GetMusicPath() const;
 	RString GetInstrumentTrackPath( InstrumentTrack it ) const;
 	RString GetBannerPath() const;
@@ -276,10 +257,6 @@ public:
 	RString GetBackgroundPath() const;
 	RString GetCDTitlePath() const;
 	RString GetPreviewVidPath() const;
-	RString GetPreviewMusicPath() const;
-	float GetPreviewStartSeconds() const;
-	
-	RString GetCacheFile( RString sPath );
 
 	// For loading only:
 	bool m_bHasMusic, m_bHasBanner, m_bHasBackground;
@@ -447,7 +424,6 @@ public:
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
 	bool IsStepsUsingDifferentTiming(Steps *pSteps ) const;
-	bool AnyChartUsesSplitTiming() const;
 
 	/**
 	 * @brief An array of keysound file names (e.g. "beep.wav").
@@ -468,13 +444,10 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	bool m_loaded_from_autosave;
 	/** @brief the Steps that belong to this Song. */
 	vector<Steps*> m_vpSteps;
 	/** @brief the Steps of a particular StepsType that belong to this Song. */
 	std::array<vector<Steps *>, NUM_StepsType> m_vpStepsByType;
-	/** @brief the Steps that are of unrecognized Styles. */
-	vector<Steps*> m_UnknownStyleSteps;
 };
 
 #endif

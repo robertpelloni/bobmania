@@ -118,7 +118,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		LOG->Trace("[ScreenSMOnlineLogin::HandleScreenMessage] SMOnlinePack");
 		if(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 		{
-			LuaHelpers::ReportScriptErrorFmt("Invalid player number: %i", m_iPlayer);
+			LOG->Warn("Invalid player number: %i", m_iPlayer);
 			return;
 		}
 
@@ -146,8 +146,8 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
-				RString Response = NSMAN->m_SMOnlinePacket.ReadNT();
-				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, nullptr );
+				RString Response = NSMAN->m_SMOnlinePacket.ReadString();
+				ScreenTextEntry::Password( SM_PasswordDone, Response + "\n\n" + sLoginQuestion, NULL );
 			}
 		}
 	}
@@ -185,9 +185,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	ScreenOptions::HandleScreenMessage(SM);
 }
 
-bool ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
+void ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
 {
-	return ScreenOptions::MenuStart( input );
+	ScreenOptions::MenuStart( input );
 }
 
 RString ScreenSMOnlineLogin::GetSelectedProfileID()
@@ -215,12 +215,12 @@ void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 		HashedName = NSMAN->MD5Hex( HashedName + ssprintf("%d", NSMAN->GetSMOnlineSalt()) );
 	}
 
-	NSMAN->m_SMOnlinePacket.ClearPacket();
+	NSMAN->m_SMOnlinePacket.Clear();
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)0 );		//Login command
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)m_iPlayer );	//Player
 	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)authMethod );	//MD5 hash style
-	NSMAN->m_SMOnlinePacket.WriteNT( PlayerName );
-	NSMAN->m_SMOnlinePacket.WriteNT( HashedName );
+	NSMAN->m_SMOnlinePacket.WriteString( PlayerName );
+	NSMAN->m_SMOnlinePacket.WriteString( HashedName );
 	NSMAN->SendSMOnline();
 }
 

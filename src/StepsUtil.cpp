@@ -5,10 +5,13 @@
 #include "Profile.h"
 #include "Song.h"
 #include "SongManager.h"
+#include "NoteData.h"
+#include "NoteDataUtil.h" // If we can skip the complicated radar stuff.
 #include "GameManager.h"
 #include "XmlFile.h"
 #include "UnlockManager.h"
 #include "SongUtil.h"
+
 
 bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 {
@@ -61,42 +64,6 @@ void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<So
 			out.push_back( SongAndSteps(pSong, st) );
 }
 
-void StepsUtil::GetAllMatchingEndless( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out )
-{
-	const vector<Steps*> &vSteps = ( stc.m_st == StepsType_Invalid ? pSong->GetAllSteps() :
-		pSong->GetStepsByStepsType( stc.m_st ) );
-	int previousSize = out.size();
-	int successful = false;
-
-	GetAllMatching( pSong, stc, out );
-	if( out.size() != previousSize )
-	{
-		successful = true;
-	}
-
-	if( !successful && vSteps.size() > 0 )
-	{
-		Difficulty difficulty = ( *( vSteps.begin() ) )->GetDifficulty();
-		Difficulty previousDifficulty = difficulty;
-		int lowestDifficultyIndex = 0;
-		vector<Difficulty> difficulties;
-		for (auto st = vSteps.begin(); st != vSteps.end(); ++st)
-		{
-			previousDifficulty = difficulty;
-			difficulty = ( *st )->GetDifficulty();
-			if( ( st - vSteps.begin() ) == 0 )
-			{
-				continue;
-			}
-			if( difficulty < previousDifficulty )
-			{
-				lowestDifficultyIndex = st - vSteps.begin();
-			}
-		}
-		out.push_back( SongAndSteps( pSong, vSteps.at( lowestDifficultyIndex ) ) );
-	}
-}
-
 bool StepsUtil::HasMatching( const SongCriteria &soc, const StepsCriteria &stc )
 {
 	const RString &sGroupName = soc.m_sGroupName.empty()? GROUP_ALL:soc.m_sGroupName;
@@ -113,6 +80,312 @@ bool StepsUtil::HasMatching( const Song *pSong, const StepsCriteria &stc )
 	return std::any_of(vSteps.begin(), vSteps.end(), [&](Steps const *st) {
 		return stc.Matches(pSong, st);
 	});
+}
+
+void CalculateTrueRadarValue(const Steps *in,
+	const float songLength,
+	RadarValues * all,
+	const RadarCategory rc,
+	vector<float> (*RadarCalc)(const Steps *, float)) // Not a member function, should be alright.
+{
+	vector<float> nums = (*RadarCalc)(in, songLength);
+	FOREACH_ENUM(PlayerNumber, pn)
+	{
+		all[pn][rc] = nums[pn];
+	}
+}
+
+void CalculateStatRadarValue(const Steps *in,
+	RadarValues * all,
+	const RadarCategory rc,
+	vector<int> (Steps::*StatCalc)(int, int) const) // Need a member function here.
+{
+	vector<int> nums = (*in.*StatCalc)(0, MAX_NOTE_ROW); // Forced to specify these.
+	all[PLAYER_1][rc] = nums[0];
+	all[PLAYER_2][rc] = nums[(nums.size() < NUM_PLAYERS) ? 0 : 1];
+}
+
+void StepsUtil::CalculateRadarValues( Steps *in, float fSongSeconds )
+{	
+	bool isMulti = in->IsMultiPlayerStyle(); // needed for later
+	if (!isMulti &&
+		!in->m_Timing.HasFakes() &&
+		!in->m_Timing.HasWarps())
+	{
+		RadarValues tmp;
+		NoteDataUtil::CalculateRadarValues(in->GetNoteData(), fSongSeconds, tmp);
+		RadarValues one[NUM_PLAYERS];
+		FOREACH_ENUM(PlayerNumber, pn)
+		{
+			one[pn] = tmp;
+		}
+		in->SetCachedRadarValues(one);
+		return;
+	}
+
+	RadarValues all[NUM_PLAYERS];
+
+	// The for loop and the assert are used to ensure that all fields of 
+	// RadarValue get set in here.
+	
+	/*
+	 * Possible optimization opportunity here:
+	 * The enums go in order from the "true" radar categories to the "stat"
+	 * radar categories. The true ones require information that is later
+	 * gotten from the stat categories. Perhaps instead of looping
+	 * through the enum, we should hardcode values so as to reduce
+	 * processing of the underlying notedata many times? --Wolfman2000
+	 */
+	FOREACH_ENUM( RadarCategory, rc )
+	{
+		switch( rc )
+		{
+			case RadarCategory_Stream:
+			{
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetStreamRadarValue);
+				break;	
+			}
+			case RadarCategory_Voltage:
+			{
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetVoltageRadarValue);
+				break;	
+			}
+			case RadarCategory_Air:
+			{
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetAirRadarValue);
+				break;
+			}
+			case RadarCategory_Freeze:
+			{
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetFreezeRadarValue);
+				break;
+			}
+			case RadarCategory_Chaos:
+			{
+				CalculateTrueRadarValue(in, fSongSeconds, all, rc,
+					&StepsUtil::GetChaosRadarValue);
+				break;
+			}
+			
+			case RadarCategory_TapsAndHolds:	
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumTapNotes);
+				break;
+			}
+			case RadarCategory_Jumps:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumJumps);
+				break;
+			}
+			case RadarCategory_Holds:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumHoldNotes);
+				break;
+			}
+			case RadarCategory_Mines:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumMines);
+				break;
+			}
+			case RadarCategory_Hands:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumHands);
+				break;
+			}
+			case RadarCategory_Rolls:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumRolls);
+				break;
+			}
+			case RadarCategory_Lifts:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumLifts);
+				break;
+			}
+			case RadarCategory_Fakes:
+			{
+				CalculateStatRadarValue(in, all, rc,
+					&Steps::GetNumFakes);
+				break;
+			}
+			default:	FAIL_M("Non-existant radar category attempted to be set!");
+		}
+	}
+}
+
+vector<float> StepsUtil::GetStreamRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// density of steps
+	vector<float> notes(NUM_PLAYERS);
+	vector<int> taps = in->GetNumTapNotes();
+	vector<int> holds = in->GetNumHoldNotes();
+
+	if (!in->IsMultiPlayerStyle())
+	{
+		taps.push_back(taps[0]);
+		holds.push_back(holds[0]);
+	}
+	for (unsigned i = 0; i < notes.size(); ++i)
+	{
+		notes[i] = min((((taps[i] + holds[i]) / fSongSeconds) / 7), 1.0f);
+	}
+	return notes;
+}
+
+vector<float> StepsUtil::GetVoltageRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+
+	const NoteData &nd = in->GetNoteData();
+	const float fLastBeat = nd.GetLastBeat();
+	const float fAvgBPS = fLastBeat / fSongSeconds;
+
+	// peak density of steps
+	vector<float> maxDensity(NUM_PLAYERS, 0.0f);
+
+	const float BEAT_WINDOW = 8;
+	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
+
+	// TODO: Find a way to work around warps and fakes better.
+	for( int i=0; i<=BeatToNoteRow(fLastBeat); i+=BEAT_WINDOW_ROWS )
+	{
+		vector<int> taps = in->GetNumTapNotes(i, i + BEAT_WINDOW_ROWS);
+		vector<int> holds = in->GetNumHoldNotes(i, i + BEAT_WINDOW_ROWS);
+
+		if (!in->IsMultiPlayerStyle())
+		{
+			taps.push_back(taps[0]);
+			holds.push_back(holds[0]);
+		}
+
+		for (unsigned pn = 0; pn < nums.size(); ++pn)
+		{
+			nums[pn] = max(nums[pn], (taps[pn] + holds[pn]) / BEAT_WINDOW);
+		}
+	}
+
+	for (unsigned pn = 0; pn < nums.size(); ++pn)
+	{
+		nums[pn] = min((nums[pn] * fAvgBPS/10), 1.0f);
+	}
+	return nums;
+}
+
+vector<float> StepsUtil::GetAirRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// number of doubles
+	vector<float> jumps(NUM_PLAYERS);
+
+	vector<int> hops = in->GetNumJumps();
+	if (!in->IsMultiPlayerStyle())
+	{
+		hops.push_back(hops[0]);
+	}
+	for (unsigned i = 0; i < jumps.size(); ++i)
+	{
+		jumps[i] = min(hops[i] / fSongSeconds, 1.0f);
+	}
+	return jumps;
+}
+
+vector<float> StepsUtil::GetFreezeRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// number of hold steps
+	vector<float> holds(NUM_PLAYERS);
+
+	vector<int> stats = in->GetNumHoldNotes();
+	if (!in->IsMultiPlayerStyle())
+	{
+		stats.push_back(stats[0]);
+	}
+	for (unsigned i = 0; i < holds.size(); ++i)
+	{
+		holds[i] = min(stats[i] / fSongSeconds, 1.0f);
+	}
+	return holds;
+}
+
+vector<float> StepsUtil::GetChaosRadarValue( const Steps *in, float fSongSeconds )
+{
+	vector<float> nums(NUM_PLAYERS, 0.0f);
+	if( !fSongSeconds )
+		return nums;
+	// count number of notes smaller than 8ths
+	
+	const NoteData &nd = in->GetNoteData();
+	int perPlayerTracks = nd.GetNumTracks() / 2; // mainly for couple.
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( nd, r )
+	{
+		if (!in->m_Timing.IsJudgableAtRow(r))
+		{
+			continue; // if players can't interact with the row, don't count it.
+		}
+
+		if( GetNoteType(r) >= NOTE_TYPE_12TH )
+		{
+			FOREACH_ENUM(PlayerNumber, pn)
+			{
+				if (!in->IsMultiPlayerStyle())
+				{
+					++nums[pn];
+				}
+				else if (in->GetStepsTypeCategory() == StepsTypeCategory_Couple)
+				{
+					// Remember: couple splits up the notes in the middle.
+					for (int t = static_cast<int>(pn) * perPlayerTracks;
+						t < (static_cast<int>(pn) + 1) * perPlayerTracks; ++t)
+					{
+						const TapNote &tn = nd.GetTapNote(t, r);
+						if (tn.type != TapNote::empty && tn.type != TapNote::fake)
+						{
+							++nums[pn];
+						}
+					}
+				}
+				else // routine
+				{
+					for (int t = 0; t < nd.GetNumTracks(); ++t)
+					{
+						const TapNote &tn = nd.GetTapNote(t, r);
+						if (tn.type != TapNote::empty &&
+							tn.type != TapNote::fake &&
+							tn.pn == pn)
+						{
+							++nums[pn];
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	for (unsigned i = 0; i < nums.size(); ++i)
+	{
+		nums[i] = min(nums[i] / fSongSeconds * 0.5f, 1.0f);
+	}
+	return nums;
 }
 
 // Sorting stuff
@@ -158,7 +431,7 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 		}
 	}
 
-	ASSERT( pProfile != nullptr );
+	ASSERT( pProfile );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 	{
 		Steps* pSteps = vStepsPointers[i];
@@ -365,28 +638,9 @@ bool StepsID::operator<( const StepsID &rhs ) const
 	COMP(st);
 	COMP(dc);
 	COMP(sDescription);
-	// See explanation in class declaration. -Kyz
-	if(uHash != 0 && rhs.uHash != 0)
-	{
-		COMP(uHash);
-	}
+	COMP(uHash);
 #undef COMP
 	return false;
-}
-
-bool StepsID::operator==(const StepsID &rhs) const
-{
-#define COMP(a) if(a != rhs.a) return false;
-	COMP(st);
-	COMP(dc);
-	COMP(sDescription);
-	// See explanation in class declaration. -Kyz
-	if(uHash != 0 && rhs.uHash != 0)
-	{
-		COMP(uHash);
-	}
-#undef COMP
-	return true;
 }
 
 /*

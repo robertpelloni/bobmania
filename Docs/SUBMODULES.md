@@ -1,3 +1,52 @@
+<<<<<<< Updated upstream
+<<<<<<< HEAD:docs/SUBMODULES.md
+# Unified StepMania Submodules & Dependencies
+
+This document tracks all git submodules, external libraries, and dependencies used within the Unified StepMania project, detailing their locations, versions, and architectural purpose.
+
+## Git Submodules
+
+### 1. Bobcoin
+*   **Path:** `extern/bobcoin`
+*   **URL:** [Assuming standard GitHub URL or local path]
+*   **Version/Commit:** Tracked via git submodule. (Currently pending update).
+*   **Description:** The official implementation of the Bobcoin cryptocurrency node and wallet.
+*   **Usage:** Integrated via `src/Economy/Bridge/BobcoinBridge.cpp` to handle real-world transactions, player balances, and mining reward distributions. It replaces local XML-based economy tracking.
+
+### 2. Simply-Love-SM5
+*   **Path:** `Themes/Simply-Love-SM5`
+*   **URL:** https://github.com/Simply-Love/Simply-Love-SM5
+*   **Version/Commit:** Tracked via git submodule.
+*   **Description:** The premier, highly polished theme for StepMania 5.
+*   **Usage:** Serves as the baseline for high-performance visual themes. We maintain strict Lua 5.1 compatibility to ensure this theme (and community modifications of it) run flawlessly on the Unified engine.
+
+## External Libraries (Vendored in `extern/`)
+
+### 1. Lua
+*   **Version:** 5.1.5
+*   **Path:** `extern/lua-5.1/`
+*   **Usage:** The absolute core of the StepMania UI frontend. We rigidly enforce the 5.1 standard to maintain compatibility with 20 years of community themes.
+
+### 2. JsonCpp
+*   **Version:** 1.9.5 (approximate, embedded)
+*   **Path:** `extern/jsoncpp/`
+*   **Usage:** Used for parsing `Data/MarketplaceCatalog.json`, handling web requests, and processing JSON RPC responses from the Bobcoin node and matchmaking servers.
+
+### 3. Zlib
+*   **Version:** 1.2.11 (approximate, embedded)
+*   **Path:** `extern/zlib/`
+*   **Usage:** Essential for compressing/decompressing `.smzip` packages, network streams, and `ContentSwarmManager` chunk validation.
+
+## Monorepo Workflow & Submodule Management
+
+Unified StepMania treats submodules as active development zones, not just static dependencies.
+
+3.  **Documentation:**
+    Any change to a submodule version must be recorded in `CHANGELOG.md` and the `VERSION` file.
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518
 # Submodule & External Dependency Deep Analysis
 
 Unified StepMania relies heavily on external libraries to extend the core 20-year-old C++ engine into a modern platform supporting cryptocurrency, live streaming, P2P networking, and robust JSON messaging.
@@ -49,3 +98,6 @@ git submodule update --init --recursive
 git submodule update --remote --merge
 ```
 *Note: Due to the size of the repository and the mock environment constraints during automated CI/LLM passes, large submodules (like ffmpeg) may be shallow-cloned or stubbed in the build system (`CMakeLists.txt`) using `-DWITH_FFMPEG=OFF`.*
+>>>>>>> origin/unified-ui-features-13937230807013224518:Docs/SUBMODULES.md
+=======
+>>>>>>> Stashed changes

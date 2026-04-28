@@ -7,18 +7,22 @@
 #include "RageDisplay.h" // VideoModeParams
 #include "DisplaySpec.h"
 #include "LocalizedString.h"
+#include "RageTimer.h"
 
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_Legacy_Helpers;
 using namespace X11Helper;
 
+#include <cmath>
+#include <cstdint>
 #include <set>
-#include <math.h>	// ceil()
+
 #include <GL/glxew.h>
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#ifdef HAVE_XRANDR
 #include <X11/extensions/Xrandr.h>
 #if defined(HAVE_XINERAMA)
 #include <X11/extensions/Xinerama.h>
@@ -89,6 +93,9 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
 {
+	if( FatalError )
+		return;
+
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
@@ -315,7 +322,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			// If an output name has been specified, search for it
 			RROutput targetOut = None;
 			if (p.sDisplayId.length() > 0) {
-				for (unsigned int i = 0; i < scrRes->noutput && targetOut == None; ++i) {
+				for (unsigned int i = 0; i < static_cast<uint32_t>(scrRes->noutput) && targetOut == None; ++i) {
 					XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, scrRes->outputs[i]);
 					std::string outName = std::string(outInfo->name, static_cast<unsigned int> (outInfo->nameLen));
 					if (p.sDisplayId == outName) {
@@ -335,7 +342,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 					// (it is possible the connection state could be unknown), we'll at least
 					// look for an output with a CRTC driving it
 					RROutput connected = None, hasCrtc = None;
-					for (unsigned int i = 0; i < scrRes->noutput; ++i) {
+					for (unsigned int i = 0; i < static_cast<uint32_t>(scrRes->noutput); ++i) {
 						XRROutputInfo *outInfo = XRRGetOutputInfo(Dpy, scrRes, scrRes->outputs[i]);
 						if (outInfo->connection == RR_Connected) { // Check for CONNECTED state: Connected == 0
 							connected = scrRes->outputs[i];
@@ -362,7 +369,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			RRCrtc tgtOutCrtc = tgtOutInfo->crtc;
 			if (tgtOutCrtc == None)
 			{
-				for (unsigned int i = 0; i < tgtOutInfo->ncrtc; ++i)
+				for (unsigned int i = 0; i < static_cast<uint32_t>(tgtOutInfo->ncrtc); ++i)
 				{
 					XRRCrtcInfo *crtcInfo = XRRGetCrtcInfo( Dpy, scrRes, tgtOutInfo->crtcs[i] );
 					if (crtcInfo->mode == None)
@@ -390,7 +397,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 				const XRRModeInfo &thisMI = scrRes->modes[i];
 				const unsigned int modeWidth = bPortrait ? thisMI.height : thisMI.width;
 				const unsigned int modeHeight = bPortrait ? thisMI.width : thisMI.height;
-				if (modeWidth == p.width && modeHeight == p.height) {
+				if (p.width >= 0 && p.height >= 0 && modeWidth == static_cast<uint32_t>(p.width) && modeHeight == static_cast<uint32_t>(p.height)) {
 					float fTempRefresh = calcRandRRefresh(thisMI.dotClock, thisMI.hTotal, thisMI.vTotal);
 					float fTempDiff = std::abs(p.rate - fTempRefresh);
 					if ((p.rate != REFRESH_DEFAULT && fTempDiff < fRefreshDiff) ||
@@ -410,7 +417,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 					}
 				}
 			}
-			rate = roundf(fRefreshRate);
+			rate = std::round(fRefreshRate);
 
 			g_usedCrtc = tgtOutCrtc;
 			g_originalRandRMode = oldConf->mode;
@@ -559,7 +566,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	CurrentParams.windowHeight = windowHeight;
 	CurrentParams.renderOffscreen = renderOffscreen;
 	ASSERT( rate > 0 );
-	CurrentParams.rate = static_cast<int> (roundf(rate));
+	CurrentParams.rate = std::round(rate);
 
 	if (!p.windowed)
 	{
@@ -621,16 +628,20 @@ void LowLevelWindow_X11::SwapBuffers()
 		 * it's already active.
 		 */
 
-		XLockDisplay( Dpy );
+		auto now = RageTimer::GetTimeSinceStart();
+		if( (now - m_lastScreensaverInterrupt) > m_screensaverInterruptInterval ) {
+		  m_lastScreensaverInterrupt = now;
+		  XLockDisplay( Dpy );
 
-		int event_base, error_base, major, minor;
-		if( XTestQueryExtension( Dpy, &event_base, &error_base, &major, &minor ) )
-		{
-			XTestFakeRelativeMotionEvent( Dpy, 0, 0, 0 );
-			XSync( Dpy, False );
+		  int event_base, error_base, major, minor;
+		  if( XTestQueryExtension( Dpy, &event_base, &error_base, &major, &minor ) )
+		  {
+                    XTestFakeRelativeMotionEvent( Dpy, 0, 0, 0 );
+		    XSync( Dpy, False );
+		  }
+
+		  XUnlockDisplay( Dpy );
 		}
-
-		XUnlockDisplay( Dpy );
 #endif
 	}
 }
@@ -659,12 +670,12 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 	std::set<DisplayMode> screenModes;
 	int nsizes = 0;
 	XRRScreenSize *screenSizes = XRRSizes( Dpy, screenNum, &nsizes);
-	DisplayMode screenCurMode = {0};
-	for (unsigned int szIdx = 0, mode_idx = 0; szIdx < nsizes; ++szIdx) {
+	DisplayMode screenCurMode{};
+	for (unsigned int szIdx = 0, mode_idx = 0; nsizes >= 0 && szIdx < static_cast<uint32_t>(nsizes); ++szIdx) {
 		XRRScreenSize &size = screenSizes[szIdx];
 		int nrates = 0;
 		short *rates = XRRRates(Dpy, screenNum, szIdx, &nrates);
-		for (unsigned int rIdx = 0; rIdx < nrates; ++rIdx, ++mode_idx) {
+		for (unsigned int rIdx = 0; nrates >=0 && rIdx < static_cast<uint32_t>(nrates); ++rIdx, ++mode_idx) {
 			DisplayMode m = {static_cast<unsigned int> (size.width), static_cast<unsigned int> (size.height), static_cast<double> (rates[rIdx])};
 			screenModes.insert(m);
 			if (rates[rIdx] == curRate && szIdx == curSizeId) {
@@ -686,7 +697,7 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 		// OutputInfo
 		XRRScreenResources *scrRes = XRRGetScreenResources(Dpy, Win);
 		std::map<RRMode, DisplayMode> outputModes;
-		for (unsigned int i = 0; i < scrRes->nmode; ++i) {
+		for (int i = 0; i < scrRes->nmode; ++i) {
 			const XRRModeInfo &mode = scrRes->modes[i];
 			DisplayMode m = {mode.width, mode.height,
 							 calcRandRRefresh(mode.dotClock, mode.hTotal, mode.vTotal)};
@@ -694,7 +705,7 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 		}
 
 		// Now, for each output, build a corresponding DisplaySpec
-		for (unsigned int outIdx = 0; outIdx < scrRes->noutput; ++outIdx)
+		for (unsigned int outIdx = 0; outIdx < static_cast<uint32_t>(scrRes->noutput); ++outIdx)
 		{
 			XRROutputInfo *outInfo = XRRGetOutputInfo( Dpy, scrRes, scrRes->outputs[outIdx] );
 			if (outInfo->nmode > 0)
@@ -715,9 +726,9 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 				}
 				// Get all supported modes, noting which one, if any, is currently active
 				std::set<DisplayMode> outputSupported;
-				DisplayMode outputCurMode = {0};
+				DisplayMode outputCurMode{};
 				RectI outBounds;
-				for (unsigned int modeIdx = 0; modeIdx < outInfo->nmode; ++modeIdx)
+				for (unsigned int modeIdx = 0; modeIdx < static_cast<uint32_t>(outInfo->nmode); ++modeIdx)
 				{
 					DisplayMode mode = outputModes[outInfo->modes[modeIdx]];
 					unsigned int modeWidth = bPortrait ? mode.height : mode.width;
@@ -744,6 +755,33 @@ void LowLevelWindow_X11::GetDisplaySpecs(DisplaySpecs &out) const {
 		}
 		XRRFreeScreenResources( scrRes );
 	}
+	else
+#ifndef HAVE_XF86VIDMODE
+		FAIL_M("XRandR not present or too old.");
+#endif
+#endif
+#ifdef HAVE_XF86VIDMODE
+	{
+		int iNumModes = 0;
+		XF86VidModeModeInfo **aModes_;
+		XF86VidModeGetAllModeLines( Dpy, DefaultScreen( Dpy ), &iNumModes, &aModes_ );
+		ASSERT_M( iNumModes != 0, "Couldn't get resolution list from X server" );
+		XF86VidModeModeInfo *aModes = *aModes_;
+
+		for( int i = 0; i < iNumModes; ++i )
+		{
+			// XXX: bStretched doesn't appear to actually be used anywhere?
+			DisplayResolution res = { aModes[i].hdisplay, aModes[i].vdisplay, true };
+			out.insert( res );
+
+			// We're supposed to XFree() the private bits of XF86VidModeModeInfo
+			// structs. This isn't actually possible from C++. At all. Period.
+			// Let it leak.
+		}
+
+		XFree( aModes_ );
+	}
+#endif
 }
 
 bool LowLevelWindow_X11::SupportsThreadedRendering()

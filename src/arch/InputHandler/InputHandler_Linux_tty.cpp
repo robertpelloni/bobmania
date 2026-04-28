@@ -16,9 +16,7 @@
 #include <errno.h>
 
 #include <sys/ioctl.h>
-#if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
-#endif
 
 #include <linux/kd.h>
 #include <linux/keyboard.h>

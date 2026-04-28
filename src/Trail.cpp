@@ -6,6 +6,7 @@
 #include "PlayerOptions.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"
+#include "StepsUtil.h"
 #include "CommonMetrics.h"
 #include <numeric>
 
@@ -107,27 +108,31 @@ const RadarValues &Trail::GetRadarValues() const
 
 		for (TrailEntry const &e : m_vEntries)
 		{
-			const Steps *pSteps = e.pSteps;
-			ASSERT( pSteps != nullptr );
+			const Steps *pSteps = e->pSteps;
+			ASSERT( pSteps );
 			// Hack: don't calculate for autogen entries
 			if( !pSteps->IsAutogen() && e.ContainsTransformOrTurn() )
 			{
+				/*
+				 * TODO: See if radar calculations can be done for all players and
+				 * not just for the single player.
+				 */
+				const float songLength = e->pSong->m_fMusicLengthSeconds;
 				NoteData nd;
 				pSteps->GetNoteData( nd );
-				RadarValues rv_orig;
-				GAMESTATE->SetProcessedTimingData(const_cast<TimingData *>(pSteps->GetTimingData()));
-				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, rv_orig );
+				Steps radarSteps;
+				radarSteps.SetNoteData(nd);
+				radarSteps.m_StepsType = pSteps->m_StepsType;
+				StepsUtil::CalculateRadarValues(&radarSteps, songLength);
+				
 				PlayerOptions po;
 				po.FromString( e.Modifiers );
 				if( po.ContainsTransformOrTurn() )
-				{
-					NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), po, pSteps->m_StepsType);
-				}
-				NoteDataUtil::TransformNoteData(nd, *(pSteps->GetTimingData()), e.Attacks, pSteps->m_StepsType, e.pSong);
-				RadarValues transformed_rv;
-				NoteDataUtil::CalculateRadarValues( nd, e.pSong->m_fMusicLengthSeconds, transformed_rv );
-				GAMESTATE->SetProcessedTimingData(nullptr);
-				rv += transformed_rv;
+					NoteDataUtil::TransformNoteData( nd, po, pSteps->m_StepsType );
+				NoteDataUtil::TransformNoteData( nd, e->Attacks, pSteps->m_StepsType, e->pSong );
+				radarSteps.SetNoteData(nd);
+				StepsUtil::CalculateRadarValues(&radarSteps, songLength);
+				rv += radarSteps.GetRadarValues(PLAYER_1);
 			}
 			else
 			{
@@ -181,8 +186,8 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 			continue;
 		}
 
-		Song *pSong = e.pSong;
-		ASSERT( pSong != nullptr );
+		Song *pSong = e->pSong;
+		ASSERT( pSong );
 		switch( pSong->m_DisplayBPMType )
 		{
 		case DISPLAY_BPM_ACTUAL:

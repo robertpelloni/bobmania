@@ -1,6 +1,18 @@
 #ifndef ECONOMY_MANAGER_H
 #define ECONOMY_MANAGER_H
 
+<<<<<<< HEAD
+#include "global.h"
+#include <vector>
+
+class BlockchainBridge; // Forward declaration
+struct TransactionRecord; // Forward declaration from Bridge
+
+/**
+ * Singleton to manage the Economy interactions via Bobcoin RPC.
+ * Also includes an encrypted XML fallback mechanism for offline play.
+ */
+=======
 #include "RageTypes.h"
 #include <map>
 #include <vector>
@@ -23,12 +35,26 @@ struct Transaction {
     long long Amount;
 };
 
+>>>>>>> origin/unified-ui-features-13937230807013224518
 class EconomyManager
 {
 public:
-	EconomyManager();
-	~EconomyManager();
+    EconomyManager();
+    ~EconomyManager();
 
+<<<<<<< HEAD
+    void Init();
+    void Shutdown();
+
+    long long GetBalance() const;
+    bool BuyItem(const RString& itemID, long long cost);
+    void AwardMiningReward(long long rewardAmount);
+
+    std::vector<TransactionRecord> GetTransactionHistory() const;
+
+private:
+    long long m_iBalance;
+=======
 	void Init();
     void LoadCatalog();
 	void Update( float fDeltaTime );
@@ -76,8 +102,9 @@ private:
     std::vector<EconomyItem> m_MarketplaceCatalog;
 
     BobcoinBridge* m_pBridge;
+>>>>>>> origin/unified-ui-features-13937230807013224518
 };
 
-extern EconomyManager*	ECONOMYMAN;	// global and accessible from anywhere in our program
+extern EconomyManager* ECONOMYMAN;
 
 #endif

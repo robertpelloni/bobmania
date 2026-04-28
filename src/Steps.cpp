@@ -45,8 +45,8 @@ static const char *DisplayBPMNames[] =
 XToString( DisplayBPM );
 LuaXType( DisplayBPM );
 
-Steps::Steps(Song *song): m_StepsType(StepsType_Invalid), m_pSong(song),
-	parent(nullptr), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
+Steps::Steps(): m_StepsType(StepsType_Invalid), 
+	parent(NULL), m_pNoteData(new NoteData), m_bNoteDataIsFilled(false), 
 	m_sNoteDataCompressed(""), m_sFilename(""), m_bSavedToDisk(false), 
 	m_LoadedFromProfile(ProfileSlot_Invalid), m_iHash(0),
 	m_sDescription(""), m_sChartStyle(""), 
@@ -69,7 +69,7 @@ void Steps::GetDisplayBpms( DisplayBpms &AddTo ) const
 	else
 	{
 		float fMinBPM, fMaxBPM;
-		this->GetTimingData()->GetActualBPM( fMinBPM, fMaxBPM );
+		this->m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
 		AddTo.Add( fMinBPM );
 		AddTo.Add( fMaxBPM );
 	}
@@ -108,31 +108,10 @@ bool Steps::GetNoteDataFromSimfile()
 	RString extension = GetExtension(stepFile);
 	extension.MakeLower(); // must do this because the code is expecting lowercase
 
-	if (extension.empty() || extension == "ssc"
-		|| extension == "ats") // remember cache files.
+	if (extension.empty() || extension == "ssc") // remember cache files.
 	{
 		SSCLoader loader;
-		if ( ! loader.LoadNoteDataFromSimfile(stepFile, *this) )
-		{
-			/*
-			HACK: 7/20/12 -- see bugzilla #740
-			users who edit songs using the ever popular .sm file
-			that remove or tamper with the .ssc file later on 
-			complain of blank steps in the editor after reloading.
-			Despite the blank steps being well justified since 
-			the cache files contain only the SSC step file,
-			give the user some leeway and search for a .sm replacement
-			*/
-			SMLoader backup_loader;
-			RString transformedStepFile = stepFile;
-			transformedStepFile.Replace(".ssc", ".sm");
-			
-			return backup_loader.LoadNoteDataFromSimfile(transformedStepFile, *this);
-		}
-		else
-		{
-			return true;
-		}
+		return loader.LoadNoteDataFromSimfile(stepFile, *this);
 	}
 	else if (extension == "sm")
 	{
@@ -155,17 +134,6 @@ bool Steps::GetNoteDataFromSimfile()
 	else if (extension == "bms" || extension == "bml" || extension == "bme" || extension == "pms")
 	{
 		return BMSLoader::LoadNoteDataFromSimfile(stepFile, *this);
-	}
-	else if (extension == "edit")
-	{
-		// Try SSC, then fallback to SM.
-		SSCLoader ldSSC;
-		if(ldSSC.LoadNoteDataFromSimfile(stepFile, *this) != true)
-		{
-			SMLoader ldSM;
-			return ldSM.LoadNoteDataFromSimfile(stepFile, *this);
-		}
-		else return true;
 	}
 	return false;
 }
@@ -262,20 +230,8 @@ float Steps::PredictMeter() const
 
 void Steps::TidyUpData()
 {
-	// Don't set the StepsType to dance single if it's invalid.  That just
-	// causes unrecognized charts to end up where they don't belong.
-	// Leave it as StepsType_Invalid so the Song can handle it specially.  This
-	// is a forwards compatibility feature, so that if a future version adds a
-	// new style, editing a simfile with unrecognized Steps won't silently
-	// delete them. -Kyz
 	if( m_StepsType == StepsType_Invalid )
-	{
-		LOG->Warn("Detected steps with unknown style '%s' in '%s'", m_StepsTypeStr.c_str(), m_pSong->m_sSongFileName.c_str());
-	}
-	else if(m_StepsTypeStr == "")
-	{
-		m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(m_StepsType).szName;
-	}
+		m_StepsType = StepsType_dance_single;
 
 	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
@@ -311,64 +267,16 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	if( IsAnEdit() )
 		return;
 	*/
-
-	NoteData tempNoteData;
-	this->GetNoteData( tempNoteData );
-
 	FOREACH_PlayerNumber( pn )
 		m_CachedRadarValues[pn].Zero();
 
-	GAMESTATE->SetProcessedTimingData(this->GetTimingData());
-	if( tempNoteData.IsComposite() )
-	{
-		vector<NoteData> vParts;
-
-		NoteDataUtil::SplitCompositeNoteData( tempNoteData, vParts );
-		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
-			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
-	}
-	else if (GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Couple)
-	{
-		NoteData p1 = tempNoteData;
-		// XXX: Assumption that couple will always have an even number of notes.
-		const int tracks = tempNoteData.GetNumTracks() / 2;
-		p1.SetNumTracks(tracks);
-		NoteDataUtil::CalculateRadarValues(p1,
-										   fMusicLengthSeconds,
-										   m_CachedRadarValues[PLAYER_1]);
-		// at this point, p2 is tempNoteData.
-		NoteDataUtil::ShiftTracks(tempNoteData, tracks);
-		tempNoteData.SetNumTracks(tracks);
-		NoteDataUtil::CalculateRadarValues(tempNoteData,
-										   fMusicLengthSeconds,
-										   m_CachedRadarValues[PLAYER_2]);
-	}
-	else
-	{
-		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
-		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
-	}
-	GAMESTATE->SetProcessedTimingData(nullptr);
-}
-
-void Steps::ChangeFilenamesForCustomSong()
-{
-	m_sFilename= custom_songify_path(m_sFilename);
-	if(!m_MusicFile.empty())
-	{
-		m_MusicFile= custom_songify_path(m_MusicFile);
-	}
+	StepsUtil::CalculateRadarValues(this, fMusicLengthSeconds);
+	StepsUtil::CalculateRadarValues(this, fMusicLengthSeconds);
 }
 
 void Steps::Decompress() const
 {
 	const_cast<Steps *>(this)->Decompress();
-}
-
-bool stepstype_is_kickbox(StepsType st)
-{
-	return st == StepsType_kickbox_human || st == StepsType_kickbox_quadarm ||
-		st == StepsType_kickbox_insect || st == StepsType_kickbox_arachnid;
 }
 
 void Steps::Decompress()
@@ -392,24 +300,9 @@ void Steps::Decompress()
 		}
 		else
 		{
-			// Special case so that kickbox can have autogen steps that are playable.
-			// Hopefully I'll replace this with a good generalized autogen system
-			// later.  -Kyz
-			if(stepstype_is_kickbox(this->m_StepsType))
-			{
-				// Number of notes seems like a useful "random" input so that charts
-				// from different sources come out different, but autogen always
-				// makes the same thing from one source. -Kyz
-				NoteDataUtil::AutogenKickbox(notedata, *m_pNoteData, *GetTimingData(),
-					this->m_StepsType,
-					static_cast<int>(GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds]));
-			}
-			else
-			{
-				NoteDataUtil::LoadTransformedSlidingWindow( notedata, *m_pNoteData, iNewTracks );
+			NoteDataUtil::LoadTransformedSlidingWindow( notedata, *m_pNoteData, iNewTracks );
 
-				NoteDataUtil::RemoveStretch( *m_pNoteData, m_StepsType );
-			}
+			NoteDataUtil::RemoveStretch( *m_pNoteData, m_StepsType );
 		}
 		return;
 	}
@@ -434,7 +327,7 @@ void Steps::Decompress()
 	else
 	{
 		// load from compressed
-		bool bComposite = GAMEMAN->GetStepsTypeInfo(m_StepsType).m_StepsTypeCategory == StepsTypeCategory_Routine;
+		bool bComposite = this->GetStepsTypeCategory() == StepsTypeCategory_Routine;
 		m_bNoteDataIsFilled = true;
 		m_pNoteData->SetNumTracks( GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks );
 
@@ -511,20 +404,17 @@ void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_StepsType = ntTo;
-	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	m_Timing = parent->m_Timing;
 }
 
 void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds )	// pSource does not have to be of the same StepsType
 {
 	m_StepsType = ntTo;
-	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	parent = nullptr;
 	m_Timing = pSource->m_Timing;
-	this->m_pSong = pSource->m_pSong;
 	this->m_Attacks = pSource->m_Attacks;
 	this->m_sAttackString = pSource->m_sAttackString;
 	this->SetNoteData( noteData );
@@ -537,7 +427,6 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 void Steps::CreateBlank( StepsType ntTo )
 {
 	m_StepsType = ntTo;
-	m_StepsTypeStr= GAMEMAN->GetStepsTypeInfo(ntTo).szName;
 	NoteData noteData;
 	noteData.SetNumTracks( GAMEMAN->GetStepsTypeInfo(ntTo).iNumTracks );
 	this->SetNoteData( noteData );
@@ -580,45 +469,20 @@ void Steps::SetMeter( int meter )
 	m_iMeter = meter;
 }
 
-const TimingData *Steps::GetTimingData() const
-{
-	return m_Timing.empty() ? &m_pSong->m_SongTiming : &m_Timing;
-}
-
 bool Steps::HasSignificantTimingChanges() const
 {
-	const TimingData *timing = GetTimingData();
-	if( timing->HasStops() || timing->HasDelays() || timing->HasWarps() ||
-		timing->HasSpeedChanges() || timing->HasScrollChanges() )
+	if( m_Timing.HasStops() || m_Timing.HasDelays() )
 		return true;
-
-	if( timing->HasBpmChanges() )
+	
+	/* TODO: Deal with DisplayBPM here...if possible?
+	 * Song's version may still be useful. */
+	
+	else if( m_Timing.HasBpmChanges() || m_Timing.HasWarps() || m_Timing.HasSpeedChanges() )
 	{
-		// check to see if these changes are significant.
-		DisplayBpms bpms;
-		m_pSong->GetDisplayBpms(bpms);
-		if (bpms.GetMax() - bpms.GetMin() > 3.000f)
-			return true;
+		return true;
+		return true;
 	}
-
 	return false;
-}
-
-const RString Steps::GetMusicPath() const
-{
-	return Song::GetSongAssetPath(
-		m_MusicFile.empty() ? m_pSong->m_sMusicFile : m_MusicFile,
-		m_pSong->GetSongDir());
-}
-
-const RString& Steps::GetMusicFile() const
-{
-	return m_MusicFile;
-}
-
-void Steps::SetMusicFile(const RString& file)
-{
-	m_MusicFile= file;
 }
 
 void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
@@ -628,74 +492,399 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 	m_bAreCachedRadarValuesJustLoaded = true;
 }
 
-RString Steps::GenerateChartKey()
+bool Steps::UsesSplitTiming() const
 {
-	ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
-	return ChartKey;
+	Song *song = SONGMAN->GetSongFromSteps(const_cast<Steps *>(this));
+	return song->m_SongTiming != this->m_Timing;
 }
-RString Steps::GetChartKey()
+
+vector<int> Steps::GetNumHoldsOfType(const TapNote::SubType holdType, int start, int end) const
 {
-	if (ChartKey.empty()) {
-		this->Decompress();
-		ChartKey = this->GenerateChartKey(*m_pNoteData, this->GetTimingData());
-		this->Compress();
-	}
-	return ChartKey;
-}
-RString Steps::GenerateChartKey(NoteData &nd, TimingData *td)
-{
-	RString k = "";
-	RString o = "";
-	float bpm;
-	nd.LogNonEmptyRows();
-	std::vector<int>& nerv = nd.GetNonEmptyRowVector();
-
-
-	RString firstHalf = "";
-	RString secondHalf = "";
-
-#pragma omp parallel sections
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
 	{
-#pragma omp section
+		num[0] = this->GetNoteData().GetNumHoldsOfType(holdType, start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (!this->m_Timing.IsJudgableAtRow(r))
 		{
-			for (size_t r = 0; r < nerv.size() / 2; r++) {
-				int row = nerv[r];
-				for (int t = 0; t < nd.GetNumTracks(); ++t) {
-					const TapNote &tn = nd.GetTapNote(t, row);
-					std::ostringstream os;
-					os << tn.type;
-					firstHalf.append(os.str());
-				}
-				bpm = td->GetBPMAtRow(row);
-				std::ostringstream os;
-				os << static_cast<int>(bpm + 0.374643f);
-				firstHalf.append(os.str());
-			}
+			continue;
 		}
-
-#pragma omp section
+		for (int t = 0; t < nd.GetNumTracks(); ++t)
 		{
-			for (size_t r = nerv.size() / 2; r < nerv.size(); r++) {
-				int row = nerv[r];
-				for (int t = 0; t < nd.GetNumTracks(); ++t) {
-					const TapNote &tn = nd.GetTapNote(t, row);
-					std::ostringstream os;
-					os << tn.type;
-					secondHalf.append(os.str());
-				}
-				bpm = td->GetBPMAtRow(row);
-				std::ostringstream os;
-				os << static_cast<int>(bpm + 0.374643f);
-				firstHalf.append(os.str());
+			const TapNote &tn = nd.GetTapNote(t, r);
+			if (tn.type == TapNote::hold_head &&
+				tn.subType == holdType)
+			{
+				++num[this->GetEffectivePlayer(t, tn)];
 			}
 		}
 	}
-	k = firstHalf + secondHalf;
+	return num;
+}
 
-	//ChartKeyRecord = k;
-	o.append("X");	// I was thinking of using "C" to indicate chart.. however.. X is cooler... - Mina
-	o.append(BinaryToHex(CryptManager::GetSHA1ForString(k)));
-	return o;
+StepsType Steps::GetStepsType() const
+{
+	return this->m_StepsType;
+}
+
+StepsTypeCategory Steps::GetStepsTypeCategory() const
+{
+	return GAMEMAN->GetStepsTypeInfo(this->GetStepsType()).m_StepsTypeCategory;
+}
+
+bool Steps::IsMultiPlayerStyle() const
+{
+	const StepsTypeCategory &cat = this->GetStepsTypeCategory();
+	return cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine;
+}
+
+PlayerNumber Steps::GetEffectivePlayer(const int track, const TapNote &tn) const
+{
+	if (!this->IsMultiPlayerStyle())
+	{
+		return PLAYER_1;
+	}
+	if (this->GetStepsTypeCategory() == StepsTypeCategory_Routine)
+	{
+		return tn.pn;
+	}
+	// at this point, we know it's couple.
+	return (track < (this->GetNoteData().GetNumTracks() / 2)) ? PLAYER_1 : PLAYER_2;
+}
+
+vector<bool> Steps::RowNeedsAtLeastSimultaneousPresses(int min, int row) const
+{
+	if (!this->IsMultiPlayerStyle())
+	{
+		vector<bool> result(1, this->GetNoteData().RowNeedsAtLeastSimultaneousPresses(min, row));
+		return result;
+	}
+	vector<bool> result(NUM_PLAYERS);
+	vector<int> found(NUM_PLAYERS);
+
+	const NoteData &nd = this->GetNoteData();
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		const TapNote &tn = nd.GetTapNote(t, row);
+		switch (tn.type)
+		{
+		case TapNote::mine:
+		case TapNote::empty:
+		case TapNote::fake:
+		case TapNote::lift: // you don't "press" on a lift.
+		case TapNote::autoKeysound:
+			continue; // should attack type notes be included?
+		default:
+			++found[this->GetEffectivePlayer(t, tn)];
+		}
+	}
+	// if no taps are found for any players, abandon ship.
+	bool valid = false;
+	FOREACH(int, found, i)
+	{
+		if (*i > 0)
+		{
+			valid = true;
+			break;
+		}
+	}
+	if (!valid)
+	{
+		return result; // by default, bools in vectors should be set to false.
+	}
+
+	FOREACH(int, found, i)
+	{
+		if (*i < min)
+		{
+			valid = false;
+			break;
+		}
+	}
+	if (valid)
+	{
+		vector<bool> yes(result.size(), true);
+		return yes; // all players require the min number of taps.
+	}
+
+	/*
+	 * At this point, at least one player doesn't have to press the minimum number of taps.
+	 * Check the holds at this point. Specifically, check the adjacent ones. */
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		int headRow = nd.GetSoonestHoldHeadAtRow(t, row);
+		if (headRow != -1)
+		{
+			++found[this->GetEffectivePlayer(t, nd.GetTapNote(t, headRow))];
+		}
+	}
+	for (unsigned i = 0; i < found.size(); ++i)
+	{
+		if (found[i] > min)
+		{
+			result[i] = true;
+		}
+	}
+	return result;
+}
+
+vector<int> Steps::GetNumRowsWithSimultaneousPresses(int min, int start, int end) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumRowsWithSimultaneousPresses(min, start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (this->m_Timing.IsJudgableAtRow(r))
+		{
+			vector<bool> result = this->RowNeedsAtLeastSimultaneousPresses(min, r);
+			for (unsigned i = 0; i < num.size(); ++i)
+			{
+				if (result[i])
+				{
+					++num[i];
+				}
+			}
+		}
+	}
+	return num;
+}
+
+vector<int> Steps::GetNumRowsWithSimultaneousTaps(int min, int start, int end) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumRowsWithSimultaneousTaps(min, start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (!this->m_Timing.IsJudgableAtRow(r))
+		{
+			continue;
+		}
+		vector<int> found(num.size());
+		for (int t = 0; t < nd.GetNumTracks(); ++t)
+		{
+			const TapNote &tn = nd.GetTapNote(t, r);
+			if (nd.IsTap(tn))
+			{
+				++found[this->GetEffectivePlayer(t, tn)];
+			}
+		}
+		for (unsigned i = 0; i < num.size(); ++i)
+		{
+			if (found[i] >= min)
+			{
+				++num[i];
+			}
+		}
+	}
+	return num;
+}
+
+bool Steps::IsTap(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsTap(tn);
+	return false;
+}
+
+bool Steps::IsMine(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsMine(tn);
+	return false;
+}
+
+bool Steps::IsLift(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsLift(tn);
+	return false;
+}
+
+bool Steps::IsFake(const TapNote &tn, const int row) const
+{
+	if (this->m_Timing.IsJudgableAtRow(row))
+		return this->GetNoteData().IsFake(tn);
+	return true;
+}
+
+vector<int> Steps::GetNumTapsOfType(int start,
+		int end,
+		int (NoteData::*NumTapType)(int, int) const,
+		bool (NoteData::*TapType)(const TapNote &) const
+		) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = (this->GetNoteData().*NumTapType)(start, end);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (this->m_Timing.IsJudgableAtRow(r))
+		{
+			for (int t = 0; t < nd.GetNumTracks(); ++t)
+			{
+				const TapNote &tn = nd.GetTapNote(t, r);
+				if ((nd.*TapType)(tn))
+				{
+					++num[this->GetEffectivePlayer(t, tn)];
+				}
+			}
+		}
+	}
+	return num;
+}
+
+vector<int> Steps::GetNumTapNotes(int start, int end) const
+{
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumTapNotes, &NoteData::IsTap);
+}
+
+int Steps::GetNumRowsWithTap( int start, int end ) const
+{
+	if (!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		return this->GetNoteData().GetNumRowsWithTap(start, end);
+	}
+	int num = 0;
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if(nd.IsThereATapAtRow(r) && this->m_Timing.IsJudgableAtRow(r))
+		{
+			++num;
+		}
+	}
+
+	return num;
+}
+
+int Steps::GetNumRowsWithTapOrHoldHead(int start, int end) const
+{
+	if (!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		return this->GetNoteData().GetNumRowsWithTapOrHoldHead(start, end);
+	}
+	int num = 0;
+	const NoteData &nd = this->GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(nd, r, start, end)
+	{
+		if (nd.IsThereATapOrHoldHeadAtRow(r) && this->m_Timing.IsJudgableAtRow(r))
+		{
+			++num;
+		}
+	}
+	return num;
+}
+
+vector<int> Steps::GetNumTracksWithTapOrHoldHead(int row) const
+{
+	vector<int> num(1);
+	if (!this->IsMultiPlayerStyle() &&
+		!this->m_Timing.HasWarps() &&
+		!this->m_Timing.HasFakes())
+	{
+		num[0] = this->GetNoteData().GetNumTracksWithTapOrHoldHead(row);
+		return num;
+	}
+	if (this->IsMultiPlayerStyle())
+	{
+		num.resize(NUM_PLAYERS);
+	}
+	const NoteData &nd = this->GetNoteData();
+	for (int t = 0; t < nd.GetNumTracks(); ++t)
+	{
+		const TapNote &tn = nd.GetTapNote(t, row);
+		if (tn.type == TapNote::tap ||
+			tn.type == TapNote::lift || // unsure of this one.
+			tn.type == TapNote::hold_head)
+		{
+			++num[this->GetEffectivePlayer(t, tn)];
+		}
+	}
+	return num;
+}
+
+vector<int> Steps::GetNumJumps(int start, int end) const
+{
+	return this->GetNumRowsWithSimultaneousTaps(2, start, end);
+}
+
+vector<int> Steps::GetNumHands(int start, int end) const
+{
+	return this->GetNumRowsWithSimultaneousPresses(3, start, end);
+}
+
+vector<int> Steps::GetNumQuads(int start, int end) const
+{
+	return this->GetNumRowsWithSimultaneousPresses(4, start, end);
+}
+
+vector<int> Steps::GetNumHoldNotes(int start, int end) const
+{
+	return this->GetNumHoldsOfType(TapNote::hold_head_hold, start, end);
+}
+
+vector<int> Steps::GetNumRolls(int start, int end) const
+{
+	return this->GetNumHoldsOfType(TapNote::hold_head_roll, start, end);
+}
+
+vector<int> Steps::GetNumMines(int start, int end) const
+{
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumMines, &NoteData::IsMine);
+}
+
+vector<int> Steps::GetNumLifts(int start, int end) const
+{
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumLifts, &NoteData::IsLift);
+}
+
+vector<int> Steps::GetNumFakes(int start, int end) const
+{
+	return this->GetNumTapsOfType(start, end, &NoteData::GetNumFakes, &NoteData::IsFake);
 }
 
 
@@ -715,6 +904,7 @@ public:
 	DEFINE_METHOD( IsAutogen,	IsAutogen() )
 	DEFINE_METHOD( IsAnEdit,	IsAnEdit() )
 	DEFINE_METHOD( IsAPlayerEdit,	IsAPlayerEdit() )
+	DEFINE_METHOD( UsesSplitTiming, UsesSplitTiming() )
 
 	static int HasSignificantTimingChanges( T* p, lua_State *L )
 	{
@@ -728,18 +918,14 @@ public:
 	}
 	static int GetRadarValues( T* p, lua_State *L )
 	{
-		PlayerNumber pn = PLAYER_1;
-		if (!lua_isnil(L, 1)) {
-			pn = Enum::Check<PlayerNumber>(L, 1);
-		}
-		
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
 		rv.PushSelf(L);
 		return 1;
 	}
 	static int GetTimingData( T* p, lua_State *L )
 	{
-		p->GetTimingData()->PushSelf(L);
+		p->m_Timing.PushSelf(L);
 		return 1;
 	}
 	static int GetHash( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHash() ); return 1; }
@@ -815,6 +1001,7 @@ public:
 		ADD_METHOD( IsAnEdit );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( IsAPlayerEdit );
+		ADD_METHOD( UsesSplitTiming );
 		ADD_METHOD( GetDisplayBpms );
 		ADD_METHOD( IsDisplayBpmSecret );
 		ADD_METHOD( IsDisplayBpmConstant );

@@ -8,7 +8,7 @@
 #include "Style.h"
 #include "GameState.h"
 #include "RadarValues.h"
-#include "TimingData.h"
+#include "Foreach.h"
 #include <utility>
 
 // TODO: Remove these constants that aren't time signature-aware
@@ -69,22 +69,19 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 		 * would do as I would expect. */
 		split( sSMNoteData, ",", start, size, end, true ); // Ignore empty is important.
 		if( start == end )
-		{
 			break;
-		}
+
 		// Partial string split.
 		int measureLineStart = start, measureLineSize = -1;
 		const int measureEnd = start + size;
 
 		aMeasureLines.clear();
-		for(;;)
+		while( true )
 		{
 			// Ignore empty is clearly important here.
 			split( sSMNoteData, "\n", measureLineStart, measureLineSize, measureEnd, true );
 			if( measureLineStart == measureEnd )
-			{
 				break;
-			}
 			//RString &line = sSMNoteData.substr( measureLineStart, measureLineSize );
 			const char *beginLine = sSMNoteData.data() + measureLineStart;
 			const char *endLine = beginLine + measureLineSize;
@@ -163,10 +160,10 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				// case 'I': tn = TAP_ORIGINAL_ITEM;			break;
 				default: 
 					/* Invalid data. We don't want to assert, since there might
-					 * simply be invalid data in an .SM, and we don't want to die
+					 * simply be invalid data in a .SSC, and we don't want to die
 					 * due to invalid data. We should probably check for this when
 					 * we load SM data for the first time ... */
-					// FAIL_M("Invalid data in SM");
+					// ASSERT(0); 
 					tn = TAP_EMPTY;
 					break;
 				}
@@ -181,9 +178,10 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 
 					char szModifiers[256] = "";
 					float fDurationSeconds = 0;
-					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )	// not fatal if this fails due to malformed data
+					// not fatal if this fails due to malformed data
+					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )				
 					{
-						tn.type = TapNoteType_Attack;
+						tn.type = TapNote::attack;
 						tn.sAttackModifiers = szModifiers;
 		 				tn.fAttackDurationSeconds = fDurationSeconds;
 					}
@@ -202,7 +200,8 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				{
 					p++;
 					int iKeysoundIndex = 0;
-					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )	// not fatal if this fails due to malformed data
+					// not fatal if this fails due to malformed data
+					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )
 		 				tn.iKeysoundIndex = iKeysoundIndex;
 
 					// skip past the ']'
@@ -213,13 +212,35 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					}
 				}
 
-#if 0
-				// look for optional item name (e.g. "<potion>"),
-				// where the name in the <> is a Lua function defined elsewhere
-				// (Data/ItemTypes.lua, perhaps?) -aj
+				// Look for optional obstacle data (pre-applied attacks).
+
 				if( *p == '<' )
 				{
 					p++;
+					
+					char szModifiers[256] = "";
+					// not fatal if this fails due to malformed data
+					if( sscanf( p, "%255[^>]>", szModifiers ) == 1 )
+					{
+						vector<RString> fullObstacles;
+						RString readMods = szModifiers;
+						split(readMods, ",", fullObstacles);
+						
+						FOREACH(RString, fullObstacles, r)
+						{
+							Trim(*r);
+							vector<RString> sizeCheck;
+							split(*r, " ", sizeCheck);
+							RString intensity = "100%";
+							if (sizeCheck.size() == 2)
+							{
+								intensity = sizeCheck[0];
+							}
+							Trim(intensity, "%");
+							tn.obstacles.insert(pair<RString, float>(sizeCheck.back(),
+																	 StringToFloat(intensity) / 100.f));
+						}
+					}
 
 					// skip past the '>'
 					while( p < endLine )
@@ -228,12 +249,11 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 							break;
 					}
 				}
-#endif
 
 				/* Optimization: if we pass TAP_EMPTY, NoteData will do a search
 				 * to remove anything in this position.  We know that there's nothing
 				 * there, so avoid the search. */
-				if( tn.type != TapNoteType_Empty && ch != '3' )
+				if( tn.type != TapNote::empty && ch != '3' )
 				{
 					tn.pn = pn;
 					out.SetTapNote( iTrack, iIndex, tn );
@@ -253,7 +273,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 		{
 			NoteData::iterator next = Increment( begin );
 			const TapNote &tn = begin->second;
-			if( tn.type == TapNoteType_HoldHead && tn.iDuration == MAX_NOTE_ROW )
+			if( tn.type == TapNote::hold_head && tn.iDuration == MAX_NOTE_ROW )
 			{
 				int iRow = begin->first;
 				LOG->UserLog( "", "", "While loading .sm/.ssc note data, there was an unmatched 2 at beat %f", NoteRowToBeat(iRow) );
@@ -263,7 +283,6 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			begin = next;
 		}
 	}
-	out.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData_, bool bComposite )
@@ -314,7 +333,6 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 		LoadFromSMNoteDataStringWithPlayer( nd, sSMNoteData, start, size, pn, iNumTracks );
 	}
 	CombineCompositeNoteData( out, vParts );
-	out.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::InsertHoldTails( NoteData &inout )
@@ -327,11 +345,11 @@ void NoteDataUtil::InsertHoldTails( NoteData &inout )
 		{
 			int iRow = begin->first;
 			const TapNote &tn = begin->second;
-			if( tn.type != TapNoteType_HoldHead )
+			if( tn.type != TapNote::hold_head )
 				continue;
 
 			TapNote tail = tn;
-			tail.type = TapNoteType_HoldTail;
+			tail.type = TapNote::hold_tail;
 
 			/* If iDuration is 0, we'd end up overwriting the head with the tail
 			 * (and invalidating our iterator). Empty hold notes aren't valid. */
@@ -390,36 +408,37 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					char c;
 					switch( tn.type )
 					{
-					case TapNoteType_Empty:			c = '0'; break;
-					case TapNoteType_Tap:			c = '1'; break;
-					case TapNoteType_HoldHead:
+					case TapNote::empty:			c = '0'; break;
+					case TapNote::tap:				c = '1'; break;
+					case TapNote::hold_head:
 						switch( tn.subType )
 						{
-						case TapNoteSubType_Hold:	c = '2'; break;
-						case TapNoteSubType_Roll:	c = '4'; break;
-						//case TapNoteSubType_Mine:	c = 'N'; break;
-						default:
-							FAIL_M(ssprintf("Invalid tap note subtype: %i", tn.subType));
+						case TapNote::hold_head_hold:	c = '2'; break;
+						case TapNote::hold_head_roll:	c = '4'; break;
+						//case TapNote::hold_head_mine:	c = 'N'; break;
+						default:	ASSERT(0);
 						}
 						break;
-					case TapNoteType_HoldTail:		c = '3'; break;
-					case TapNoteType_Mine:			c = 'M'; break;
-					case TapNoteType_Attack:			c = 'A'; break;
-					case TapNoteType_AutoKeysound:	c = 'K'; break;
-					case TapNoteType_Lift:			c = 'L'; break;
-					case TapNoteType_Fake:			c = 'F'; break;
+					case TapNote::hold_tail:		c = '3'; break;
+					case TapNote::mine:			c = 'M'; break;
+					case TapNote::attack:			c = 'A'; break;
+					case TapNote::autoKeysound:	c = 'K'; break;
+					case TapNote::lift:			c = 'L'; break;
+					case TapNote::fake:			c = 'F'; break;
 					default: 
-						c = '\0';
-						FAIL_M(ssprintf("Invalid tap note type: %i", tn.type));
+						FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 					}
 					sRet.append( 1, c );
 
-					if( tn.type == TapNoteType_Attack )
+					if( tn.type == TapNote::attack )
 					{
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
-					// hey maybe if we have TapNoteType_Item we can do things here.
+					if (!tn.obstacles.empty())
+					{
+						sRet.append( ssprintf("<%s>", tn.ObstaclesToString().c_str() ) );
+					}
 					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
 				}
@@ -457,8 +476,8 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			 occuring to begin with, but at this time, I am unsure how to deal with it.
 			 Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
 			 */
-			const Style *curStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-			if( (curStyle == nullptr || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
+			const Style *curStyle = GAMESTATE->GetCurrentStyle();
+			if( (curStyle == NULL || curStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
 				&& int( tn.pn ) > NUM_PlayerNumber )
 			{
 				tn.pn = PLAYER_1;
@@ -485,14 +504,13 @@ void NoteDataUtil::CombineCompositeNoteData( NoteData &out, const vector<NoteDat
 				int row = i->first;
 				if( out.IsHoldNoteAtRow(track, i->first) )
 					continue;
-				if( i->second.type == TapNoteType_HoldHead )
+				if( i->second.type == TapNote::hold_head )
 					out.AddHoldNote( track, row, row + i->second.iDuration, i->second );
 				else
 					out.SetTapNote( track, row, i->second );
 			}
 		}
 	}
-	out.RevalidateATIs(vector<int>(), false);
 }
 
 
@@ -559,12 +577,10 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			TapNote tn = in.GetTapNote( iOldTrack, r );
-			tn.pn= PLAYER_INVALID;
+			const TapNote &tn = in.GetTapNote( iOldTrack, r );
 			out.SetTapNote( iNewTrack, r, tn );
 		}
 	}
-	out.RevalidateATIs(vector<int>(), false);
 }
 
 void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap )
@@ -596,7 +612,7 @@ void PlaceAutoKeysound( NoteData &out, int row, TapNote akTap )
 	
 	if( iEmptyTrack != -1 )
 	{
-		akTap.type = TapNoteType_AutoKeysound;
+		akTap.type = TapNote::autoKeysound;
 		out.SetTapNote( iEmptyTrack, iEmptyRow, akTap );
 	}
 }
@@ -626,14 +642,13 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 	{
 		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
-			TapNote tnFrom = in.GetTapNote( iTrackFrom, row );
-			if( tnFrom.type == TapNoteType_Empty || tnFrom.type == TapNoteType_AutoKeysound )
+			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
+			if( tnFrom.type == TapNote::empty || tnFrom.type == TapNote::autoKeysound )
 				continue;
-			tnFrom.pn= PLAYER_INVALID;
 
 			// If this is a hold note, find the end.
 			int iEndIndex = row;
-			if( tnFrom.type == TapNoteType_HoldHead )
+			if( tnFrom.type == TapNote::hold_head )
 				iEndIndex = row + tnFrom.iDuration;
 
 			int &iTrackTo = DestRow[iTrackFrom];
@@ -664,7 +679,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 			LastSourceTrack[iTrackTo] = iTrackFrom;
 			LastSourceRow[iTrackTo] = iEndIndex;
 			out.SetTapNote( iTrackTo, row, tnFrom );
-			if( tnFrom.type == TapNoteType_HoldHead )
+			if( tnFrom.type == TapNote::hold_head )
 			{
 				const TapNote &tnTail = in.GetTapNote( iTrackFrom, iEndIndex );
 				out.SetTapNote( iTrackTo, iEndIndex, tnTail );
@@ -675,13 +690,12 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 		for( int iTrackFrom = 0; iTrackFrom < in.GetNumTracks(); ++iTrackFrom )
 		{
 			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
-			if( tnFrom.type != TapNoteType_AutoKeysound )
+			if( tnFrom.type != TapNote::autoKeysound )
 				continue;
 			
 			PlaceAutoKeysound( out, row, tnFrom );
 		}
 	}
-	out.RevalidateATIs(vector<int>(), false);
 }
 
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
@@ -690,7 +704,7 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		const TapNote &tn = in.GetTapNote( t, iRow );
-		if( tn.type == TapNoteType_HoldHead )
+		if( tn.type == TapNote::hold_head )
 			iMaxTailRow = max( iMaxTailRow, iRow + tn.iDuration );
 	}
 
@@ -709,13 +723,11 @@ void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> 
 		 * until we've extended to the end of the latest overlapping hold note. */
 		int iHoldStart = r;
 		int iHoldEnd = -1;
-		for(;;)
+		while(1)
 		{
 			int iMaxTailRow = FindLongestOverlappingHoldNoteForAnyTrack( in, r );
 			if( iMaxTailRow == -1 )
-			{
 				break;
-			}
 			iHoldEnd = iMaxTailRow;
 			r = iMaxTailRow;
 		}
@@ -788,371 +800,189 @@ void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const 
 	NoteDataUtil::RemoveMines( out );
 }
 
-// This kickbox_limb enum should not be used anywhere outside the
-// Autogenkickbox function. -Kyz
-enum kickbox_limb
+RadarStats CalculateRadarStatsFast( const NoteData &in, RadarStats &out )
 {
-	left_foot, left_fist, right_fist, right_foot, num_kickbox_limbs, invalid_limb= -1
-};
-void NoteDataUtil::AutogenKickbox(const NoteData& in, NoteData& out, const TimingData& timing, StepsType out_type, int nonrandom_seed)
-{
-	// Each limb has its own list of tracks it is used for.  This allows
-	// abstract handling of the different styles.
-	// By convention, the lower panels are pushed first.  This gives the upper
-	// panels a higher index, which is mnemonically useful.
-	vector<vector<int> > limb_tracks(num_kickbox_limbs);
-	bool have_feet= true;
-	switch(out_type)
+	out.taps = 0;
+	out.jumps = 0;
+	out.hands = 0;
+	out.quads = 0;
+	map<int, int> simultaneousMap;
+	map<int, int> simultaneousMapNoHold;
+	map<int, int> simultaneousMapTapHoldHead;
+	map<int, int>::iterator itr;
+	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		case StepsType_kickbox_human:
-			out.SetNumTracks(4);
-			limb_tracks[left_foot].push_back(0);
-			limb_tracks[left_fist].push_back(1);
-			limb_tracks[right_fist].push_back(2);
-			limb_tracks[right_foot].push_back(3);
-			break;
-		case StepsType_kickbox_quadarm:
-			out.SetNumTracks(4);
-			have_feet= false;
-			limb_tracks[left_fist].push_back(1);
-			limb_tracks[left_fist].push_back(0);
-			limb_tracks[right_fist].push_back(2);
-			limb_tracks[right_fist].push_back(3);
-			break;
-		case StepsType_kickbox_insect:
-			out.SetNumTracks(6);
-			limb_tracks[left_foot].push_back(0);
-			limb_tracks[left_fist].push_back(2);
-			limb_tracks[left_fist].push_back(1);
-			limb_tracks[right_fist].push_back(3);
-			limb_tracks[right_fist].push_back(4);
-			limb_tracks[right_foot].push_back(5);
-			break;
-		case StepsType_kickbox_arachnid:
-			out.SetNumTracks(8);
-			limb_tracks[left_foot].push_back(0);
-			limb_tracks[left_foot].push_back(1);
-			limb_tracks[left_fist].push_back(3);
-			limb_tracks[left_fist].push_back(2);
-			limb_tracks[right_fist].push_back(4);
-			limb_tracks[right_fist].push_back(5);
-			limb_tracks[right_foot].push_back(7);
-			limb_tracks[right_foot].push_back(6);
-			break;
-		DEFAULT_FAIL(out_type);
-	}
-	// prev_limb_panels keeps track of which panel in the track list the limb
-	// hit last.
-	vector<size_t> prev_limb_panels(num_kickbox_limbs, 0);
-	vector<int> panel_repeat_counts(num_kickbox_limbs, 0);
-	vector<int> panel_repeat_goals(num_kickbox_limbs, 0);
-	RandomGen rnd(nonrandom_seed);
-	kickbox_limb prev_limb_used= invalid_limb;
-	// Kicks are only allowed if there is enough setup/recovery time.
-	float kick_recover_time= GAMESTATE->GetAutoGenFarg(0);
-	if(kick_recover_time <= 0.0f)
-	{
-		kick_recover_time= .25f;
-	}
-	float prev_note_time= -1.0f;
-	int rows_done= 0;
-#define RAND_FIST ((rnd() % 2) ? left_fist : right_fist)
-#define RAND_FOOT ((rnd() % 2) ? left_foot : right_foot)
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS(in, r)
-	{
-		// Arbitrary:  Drop everything except taps and hold heads out entirely,
-		// convert holds to tap just the head.
-		bool has_valid_tapnote= false;
-		for(int t= 0; t < in.GetNumTracks(); ++t)
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, MAX_NOTE_ROW )
 		{
-			const TapNote& tn= in.GetTapNote(t, r);
-			if(tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead)
+			const TapNote &tn = in.GetTapNote(t, r);
+			switch( tn.type )
 			{
-				has_valid_tapnote= true;
-				break;
+				case TapNote::mine:
+				case TapNote::empty:
+				case TapNote::fake:
+				case TapNote::autoKeysound:
+					continue;	// skip these types - they don't count
+				default: break;
 			}
-		}
-		if(!has_valid_tapnote) { continue; }
-		int next_row= r;
-		bool next_has_valid= false;
-		while(!next_has_valid)
-		{
-			if(!in.GetNextTapNoteRowForAllTracks(next_row))
-			{
-				next_row= -1;
-				next_has_valid= true;
-			}
+
+			if( (itr = simultaneousMap.find(r)) == simultaneousMap.end() )
+				simultaneousMap[r] = 1;
 			else
+				itr->second++;
+
+			if( (itr = simultaneousMapNoHold.find(r)) == simultaneousMapNoHold.end() )
+				simultaneousMapNoHold[r] = 1;
+			else
+				itr->second++;
+			
+			if( tn.type == TapNote::tap || tn.type == TapNote::lift || tn.type == TapNote::hold_head )
 			{
-				for(int t= 0; t < in.GetNumTracks(); ++t)
+				simultaneousMapTapHoldHead[r] = 1;
+			}
+
+			if( tn.type == TapNote::hold_head )
+			{
+				int searchStartRow = r + 1;
+				int searchEndRow   = r + tn.iDuration;
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, rr, searchStartRow, searchEndRow )
 				{
-					const TapNote& tn= in.GetTapNote(t, next_row);
-					if(tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead)
+					switch( in.GetTapNote(t, rr).type )
 					{
-						next_has_valid= true;
-						break;
+						case TapNote::mine:
+						case TapNote::empty:
+						case TapNote::fake:
+							continue;	// skip these types - they don't count
+						default: break;
 					}
+					if( (itr = simultaneousMap.find(rr)) == simultaneousMap.end() )
+						simultaneousMap[rr] = 1;
+					else
+						itr->second++;
 				}
 			}
 		}
-		float this_note_time= timing.GetElapsedTimeFromBeat(NoteRowToBeat(r));
-		float next_note_time= timing.GetElapsedTimeFromBeat(NoteRowToBeat(next_row));
-		kickbox_limb this_limb= invalid_limb;
-		switch(prev_limb_used)
-		{
-			case invalid_limb:
-				// First limb is arbitrarily always a fist.
-				this_limb= RAND_FIST;
-				break;
-			case left_foot:
-			case right_foot:
-				// Multiple kicks in a row are allowed if they're on the same foot.
-				// Allow the last note to be a kick.
-				// Switch feet if there's enough time.
-				if(next_note_time - this_note_time > kick_recover_time * 2.0f)
-				{
-					this_limb= prev_limb_used == left_foot ? right_foot : left_foot;
-				}
-				else if((next_note_time - this_note_time > kick_recover_time * .5f ||
-						next_note_time < 0.0f) && (rnd() % 2))
-				{
-					this_limb= prev_limb_used;
-				}
-				else
-				{
-					this_limb= RAND_FIST;
-				}
-				break;
-			case left_fist:
-			case right_fist:
-				if(this_note_time - prev_note_time > kick_recover_time &&
-					(next_note_time - this_note_time > kick_recover_time ||
-						next_note_time < 0.0f) && have_feet)
-				{
-					this_limb= RAND_FOOT;
-				}
-				else
-				{
-					// Alternate fists.
-					this_limb= prev_limb_used == left_fist ? right_fist : left_fist;
-				}
-				break;
-			default:
-				break;
-		}
-		size_t this_panel= prev_limb_panels[this_limb];
-		if(panel_repeat_counts[this_limb] + 1 > panel_repeat_goals[this_limb])
-		{
-			// Use a different panel.
-			this_panel= (this_panel + 1) % limb_tracks[this_limb].size();
-			panel_repeat_counts[this_limb]= 0;
-			panel_repeat_goals[this_limb]= (rnd() % 8) + 1;
-		}
-		out.SetTapNote(limb_tracks[this_limb][this_panel], r, TAP_ORIGINAL_TAP);
-		++panel_repeat_counts[this_limb];
-		prev_limb_panels[this_limb]= this_panel;
-		prev_note_time= this_note_time;
-		prev_limb_used= this_limb;
-		++rows_done;
 	}
-	out.RevalidateATIs(vector<int>(), false);
-}
-
-struct recent_note
-{
-	int row;
-	int track;
-	recent_note()
-		:row(0), track(0) {}
-	recent_note(int r, int t)
-		:row(r), track(t) {}
-};
-
-// CalculateRadarValues has to delay some stuff until a row ends, but can
-// only detect a row ending when it hits the next note.  There isn't a note
-// after the last row, so it also has to do the delayed stuff after exiting
-// its loop.  So this state structure exists to be passed to a function that
-// can be called from both places to do the work.  If this were Lua,
-// DoRowEndRadarCalc would be a nested function. -Kyz
-struct crv_state
-{
-	bool judgable;
-	// hold_ends tracks where currently active holds will end, which is used
-	// to count the number of hands. -Kyz
-	vector<int> hold_ends;
-	// num_holds_on_curr_row saves us the work of tracking where holds started
-	// just to keep a jump of two holds from counting as a hand.
-	int num_holds_on_curr_row;
-	int num_notes_on_curr_row;
-
-	crv_state()
-		:judgable(false), num_holds_on_curr_row(0), num_notes_on_curr_row(0)
-	{}
-};
-
-static void DoRowEndRadarCalc(crv_state& state, RadarValues& out)
-{
-	if(state.judgable)
+	for( itr = simultaneousMap.begin(); itr != simultaneousMap.end(); itr ++ )
 	{
-		if(state.num_notes_on_curr_row + (state.hold_ends.size() -
-				state.num_holds_on_curr_row) >= 3)
+		if( itr->second >= 3 )
 		{
-			++out[RadarCategory_Hands];
+			out.hands ++;
+			if( itr->second >= 4 )
+			{
+				out.quads ++;
+			}
 		}
 	}
+	for( itr = simultaneousMapNoHold.begin(); itr != simultaneousMapNoHold.end(); itr ++ )
+	{
+		if( itr->second >= 2 )
+		{
+			out.jumps ++;
+		}
+	}
+	out.taps = simultaneousMapTapHoldHead.size();
+	return out;
 }
 
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
 {
-	// Anybody editing this function should also examine
-	// NoteDataWithScoring::GetActualRadarValues to make sure it handles things
-	// the same way.
-	out.Zero();
-	int curr_row= -1;
-	// recent_notes is used to calculate the voltage.  Each element is the row
-	// and track number of a tap note.  When the pair at the beginning is too
-	// old, it's deleted.  This provides a way to have a rolling window
-	// that scans for the peak step density. -Kyz
-	vector<recent_note> recent_notes;
-	NoteData::all_tracks_const_iterator curr_note=
-		in.GetTapNoteRangeAllTracks(0, MAX_NOTE_ROW);
-	TimingData* timing= GAMESTATE->GetProcessedTimingData();
-	// total_taps exists because the stream calculation needs GetNumTapNotes,
-	// but TapsAndHolds + Jumps + Hands would be inaccurate. -Kyz
-	float total_taps= 0;
-	const float voltage_window_beats= 8.0f;
-	const int voltage_window= BeatToNoteRow(voltage_window_beats);
-	size_t max_notes_in_voltage_window= 0;
-	int num_chaos_rows= 0;
-	crv_state state;
-
-	while(!curr_note.IsAtEnd())
+	RadarStats stats;
+	CalculateRadarStatsFast( in, stats );
+	
+	// The for loop and the assert are used to ensure that all fields of 
+	// RadarValue get set in here.
+	FOREACH_ENUM( RadarCategory, rc )
 	{
-		if(curr_note.Row() != curr_row)
+		switch( rc )
 		{
-			DoRowEndRadarCalc(state, out);
-			curr_row= curr_note.Row();
-			state.num_notes_on_curr_row= 0;
-			state.num_holds_on_curr_row= 0;
-			state.judgable= timing->IsJudgableAtRow(curr_row);
-			for(size_t n= 0; n < state.hold_ends.size(); ++n)
-			{
-				if(state.hold_ends[n] < curr_row)
-				{
-					state.hold_ends.erase(state.hold_ends.begin() + n);
-					--n;
-				}
-			}
-			for(size_t n= 0; n < recent_notes.size(); ++n)
-			{
-				if(recent_notes[n].row < curr_row - voltage_window)
-				{
-					recent_notes.erase(recent_notes.begin() + n);
-					--n;
-				}
-				else
-				{
-					// recent_notes is kept sorted, so reaching the first note that
-					// isn't old enough to remove means we're finished. -Kyz
-					break;
-				}
-			}
-			// GetChaosRadarValue did not care about whether a row is judgable.
-			// So chaos is checked here. -Kyz
-			if(GetNoteType(curr_row) >= NOTE_TYPE_12TH)
-			{
-				++num_chaos_rows;
-			}
+		case RadarCategory_Stream:			out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
+		case RadarCategory_Voltage:			out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Air:				out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
+		case RadarCategory_Freeze:			out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Chaos:			out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_TapsAndHolds:	out[rc] = (float) stats.taps;				break;
+		case RadarCategory_Jumps:			out[rc] = (float) stats.jumps;				break;
+		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();		break;
+		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();			break;
+		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();			break;
+		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();			break;
+		case RadarCategory_Lifts:			out[rc] = (float) in.GetNumLifts();			break;
+		case RadarCategory_Fakes:			out[rc] = (float) in.GetNumFakes();			break;
+		default:	FAIL_M("Non-existant radar category attempted to be set!");
 		}
-		if(state.judgable)
-		{
-			switch(curr_note->type)
-			{
-				case TapNoteType_Tap:
-				case TapNoteType_HoldHead:
-					// Lifts have to be counted with taps for them to be added to max dp
-					// correctly. -Kyz
-				case TapNoteType_Lift:
-					// HoldTails and Attacks are counted by IsTap.  But it doesn't
-					// make sense to count HoldTails as hittable notes. -Kyz
-				case TapNoteType_Attack:
-					++out[RadarCategory_Notes];
-					++state.num_notes_on_curr_row;
-					++total_taps;
-					recent_notes.push_back(
-						recent_note(curr_row, curr_note.Track()));
-					max_notes_in_voltage_window= max(recent_notes.size(),
-						max_notes_in_voltage_window);
-					// If there is one hold active, and one tap on this row, it does
-					// not count as a jump.  Hands do need to count the number of
-					// holds active though. -Kyz
-					switch(state.num_notes_on_curr_row)
-					{
-						case 1:
-							++out[RadarCategory_TapsAndHolds];
-							break;
-						case 2:
-							++out[RadarCategory_Jumps];
-							break;
-						default:
-							break;
-					}
-					if(curr_note->type == TapNoteType_HoldHead)
-					{
-						state.hold_ends.push_back(curr_row + curr_note->iDuration);
-						++state.num_holds_on_curr_row;
-						switch(curr_note->subType)
-						{
-							case TapNoteSubType_Hold:
-								++out[RadarCategory_Holds];
-								break;
-							case TapNoteSubType_Roll:
-								++out[RadarCategory_Rolls];
-								break;
-							default:
-								break;
-						}
-					}
-					else if(curr_note->type == TapNoteType_Lift)
-					{
-						++out[RadarCategory_Lifts];
-					}
-					break;
-				case TapNoteType_Mine:
-					++out[RadarCategory_Mines];
-					break;
-				case TapNoteType_Fake:
-					++out[RadarCategory_Fakes];
-					break;
-				default:
-					break;
-			}
-		}
-		else
-		{
-			++out[RadarCategory_Fakes];
-		}
-		++curr_note;
 	}
-	DoRowEndRadarCalc(state, out);
+}
 
-	// Walking the notes complete, now assign any values that remain. -Kyz
-	if(fSongSeconds > 0.0f)
+float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds )
+{
+	if( !fSongSeconds )
+		return 0.0f;
+	// density of steps
+	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
+	float fNotesPerSecond = iNumNotes/fSongSeconds;
+	float fReturn = fNotesPerSecond / 7;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds )
+{
+	if( !fSongSeconds )
+		return 0.0f;
+
+	const float fLastBeat = in.GetLastBeat();
+	const float fAvgBPS = fLastBeat / fSongSeconds;
+
+	// peak density of steps
+	float fMaxDensitySoFar = 0;
+
+	const float BEAT_WINDOW = 8;
+	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
+
+	for( int i=0; i<=BeatToNoteRow(fLastBeat); i+=BEAT_WINDOW_ROWS )
 	{
-		out[RadarCategory_Stream]= (total_taps / fSongSeconds) / 7.0f;
-		// As seen in GetVoltageRadarValue:  Don't use the timing data, just
-		// pretend the beats are evenly spaced. -Kyz
-		float avg_bps= in.GetLastBeat() / fSongSeconds;
-		out[RadarCategory_Voltage]=
-			((max_notes_in_voltage_window / voltage_window_beats) * avg_bps) /
-			10.0f;
-		out[RadarCategory_Air]= out[RadarCategory_Jumps] / fSongSeconds;
-		out[RadarCategory_Freeze]= out[RadarCategory_Holds] / fSongSeconds;
-		out[RadarCategory_Chaos]= num_chaos_rows / fSongSeconds * .5f;
+		int iNumNotesThisWindow = in.GetNumTapNotes( i, i+BEAT_WINDOW_ROWS ) + in.GetNumHoldNotes( i, i+BEAT_WINDOW_ROWS );
+		float fDensityThisWindow = iNumNotesThisWindow / BEAT_WINDOW;
+		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
-	// Sorry, there's not an assert here anymore for making sure all fields
-	// are set.  There's a comment in the RadarCategory enum to direct
-	// attention here when adding new categories. -Kyz
+
+	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
+{
+	if( !fSongSeconds )
+		return 0.0f;
+	// number of doubles
+	int iNumDoubles = in.GetNumJumps();
+	float fReturn = iNumDoubles / fSongSeconds;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetFreezeRadarValue( const NoteData &in, float fSongSeconds )
+{
+	if( !fSongSeconds )
+		return 0.0f;
+	// number of hold steps
+	float fReturn = in.GetNumHoldNotes() / fSongSeconds;
+	return min( fReturn, 1.0f );
+}
+
+float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
+{
+	if( !fSongSeconds )
+		return 0.0f;
+	// count number of notes smaller than 8ths
+	int iNumChaosNotes = 0;
+
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
+	{
+		if( GetNoteType(r) >= NOTE_TYPE_12TH )
+			iNumChaosNotes++;
+	}
+
+	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
+	return min( fReturn, 1.0f );
 }
 
 void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex )
@@ -1164,13 +994,12 @@ void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
-			if( begin->second.type != TapNoteType_HoldHead ||
-				begin->second.subType != TapNoteSubType_Hold )
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_hold )
 				continue;
-			begin->second.type = TapNoteType_Tap;
+			begin->second.type = TapNote::tap;
 		}
 	}
-	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIndex )
@@ -1181,13 +1010,12 @@ void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIn
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
-			if( begin->second.type != TapNoteType_HoldHead ||
-				begin->second.subType != TapNoteSubType_Roll )
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_roll )
 				continue;
-			begin->second.subType = TapNoteSubType_Hold;
+			begin->second.subType = TapNote::hold_head_hold;
 		}
 	}
-	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIndex )
@@ -1198,13 +1026,12 @@ void NoteDataUtil::ChangeHoldsToRolls( NoteData &in, int iStartIndex, int iEndIn
 		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
-			if( begin->second.type != TapNoteType_HoldHead ||
-				begin->second.subType != TapNoteSubType_Hold )
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_hold )
 				continue;
-			begin->second.subType = TapNoteSubType_Roll;
+			begin->second.subType = TapNote::hold_head_roll;
 		}
 	}
-	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
@@ -1236,14 +1063,13 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
 		{
 			const TapNote &tn = in.GetTapNote(t,r);
-			if( tn.type == TapNoteType_Tap || tn.type == TapNoteType_HoldHead )
+			if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
 			{
 				in.SetTapNote( t, r, TAP_EMPTY );
 				iTracksToRemove--;
 			}
 		}
 	}
-	in.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveJumps( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1261,45 +1087,27 @@ void NoteDataUtil::RemoveQuads( NoteData &inout, int iStartIndex, int iEndIndex 
 	RemoveSimultaneousNotes( inout, 3, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveSpecificTapNotes(NoteData &inout, TapNoteType tn, int iStartIndex, int iEndIndex)
+void NoteDataUtil::RemoveSpecificTapNotes( NoteData &inout, TapNote::Type tn, int iStartIndex, int iEndIndex )
 {
-	for(int t=0; t<inout.GetNumTracks(); t++)
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(inout, t, r, iStartIndex, iEndIndex)
-		{
-			if(inout.GetTapNote(t,r).type == tn)
-			{
+	for( int t=0; t<inout.GetNumTracks(); t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, iStartIndex, iEndIndex ) 
+			if( inout.GetTapNote(t,r).type == tn )
 				inout.SetTapNote( t, r, TAP_EMPTY );
-			}
-		}
-	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
-void NoteDataUtil::RemoveMines(NoteData &inout, int iStartIndex, int iEndIndex)
+void NoteDataUtil::RemoveMines( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSpecificTapNotes(inout, TapNoteType_Mine, iStartIndex, iEndIndex);
+	RemoveSpecificTapNotes( inout, TapNote::mine, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveLifts(NoteData &inout, int iStartIndex, int iEndIndex)
+void NoteDataUtil::RemoveLifts( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSpecificTapNotes(inout, TapNoteType_Lift, iStartIndex, iEndIndex);
+	RemoveSpecificTapNotes( inout, TapNote::lift, iStartIndex, iEndIndex );
 }
 
-void NoteDataUtil::RemoveFakes(NoteData &inout, TimingData const& timing_data, int iStartIndex, int iEndIndex)
+void NoteDataUtil::RemoveFakes( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	RemoveSpecificTapNotes(inout, TapNoteType_Fake, iStartIndex, iEndIndex);
-	for(int t=0; t<inout.GetNumTracks(); t++)
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE(inout, t, r, iStartIndex, iEndIndex)
-		{
-			if(!timing_data.IsJudgableAtRow(r))
-			{
-				inout.SetTapNote( t, r, TAP_EMPTY );
-			}
-		}
-	}
-	inout.RevalidateATIs(vector<int>(), false);
+	RemoveSpecificTapNotes( inout, TapNote::fake, iStartIndex, iEndIndex );
 }
 
 void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
@@ -1309,7 +1117,7 @@ void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
 	int track;
 	for( track = 0; track < inout.GetNumTracks(); ++track )
 	{
-		if( inout.GetTapNote(track, row).type == TapNoteType_Tap )
+		if( inout.GetTapNote(track, row).type == TapNote::tap )
 			break;
 	}
 
@@ -1318,10 +1126,9 @@ void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
 	for( ; track < inout.GetNumTracks(); ++track )
 	{
 		NoteData::iterator iter = inout.FindTapNote( track, row );
-		if( iter != inout.end(track) && iter->second.type == TapNoteType_Tap )
+		if( iter != inout.end(track) && iter->second.type == TapNote::tap )
 			inout.RemoveTapNote( track, iter );
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
@@ -1338,7 +1145,6 @@ void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
 				++i;
 		}
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 // TODO: Perform appropriate matrix calculations for everything instead.
@@ -1471,44 +1277,6 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 				iTakeFromTrack[5] = 0;
 				break;
 			}
-			case StepsType_beat_single5:
-			{
-				// scratch is on right (cols 5 and 11) for 5-key
-				iTakeFromTrack[0] = 4;
-				iTakeFromTrack[1] = 3;
-				iTakeFromTrack[2] = 2;
-				iTakeFromTrack[3] = 1;
-				iTakeFromTrack[4] = 0;
-				iTakeFromTrack[5] = 5;
-				iTakeFromTrack[6] = 10;
-				iTakeFromTrack[7] = 9;
-				iTakeFromTrack[8] = 8;
-				iTakeFromTrack[9] = 7;
-				iTakeFromTrack[10] = 6;
-				iTakeFromTrack[11] = 11;
-				break;
-			}
-			case StepsType_beat_single7:
-			{
-				// scratch is on left (cols 0 and 8) for 7-key
-				iTakeFromTrack[0] = 0;
-				iTakeFromTrack[1] = 7;
-				iTakeFromTrack[2] = 6;
-				iTakeFromTrack[3] = 5;
-				iTakeFromTrack[4] = 4;
-				iTakeFromTrack[5] = 3;
-				iTakeFromTrack[6] = 2;
-				iTakeFromTrack[7] = 1;
-				iTakeFromTrack[8] = 8;
-				iTakeFromTrack[9] = 15;
-				iTakeFromTrack[10] = 14;
-				iTakeFromTrack[11] = 13;
-				iTakeFromTrack[12] = 12;
-				iTakeFromTrack[13] = 11;
-				iTakeFromTrack[14] = 10;
-				iTakeFromTrack[15] = 9;
-				break;
-			}
 			default:
 				needsBackwards = false;
 		}
@@ -1524,36 +1292,17 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	case NoteDataUtil::super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
 		{
 			// TRICKY: Shuffle so that both player get the same shuffle mapping
-			// in the same round. This is already achieved in beat mode.
+			// in the same round.
 			int iOrig[MAX_NOTE_TRACKS];
 			memcpy( iOrig, iTakeFromTrack, sizeof(iOrig) );
 
 			int iShuffleSeed = GAMESTATE->m_iStageSeed;
 			do {
 				RandomGen rnd( iShuffleSeed );
-				// ignore turntable in beat mode
-				switch(st) {
-					case StepsType_beat_single5:
-					{
-						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[5], rnd );
-						random_shuffle( &iTakeFromTrack[6], &iTakeFromTrack[11], rnd );
-						break;
-					}
-					case StepsType_beat_single7:
-					{
-						random_shuffle( &iTakeFromTrack[1], &iTakeFromTrack[8], rnd );
-						random_shuffle( &iTakeFromTrack[9], &iTakeFromTrack[16], rnd );
-						break;
-					}
-					default:
-					{
-						random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
-						break;
-					}
-				}
+				random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
 				iShuffleSeed++;
 			}
-			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) ); // shuffle again if shuffle managed to shuffle them in the same order
+			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) );
 		}
 		break;
 	case NoteDataUtil::soft_shuffle:
@@ -1669,72 +1418,6 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 						iTakeFromTrack[8] = 0;
 						iTakeFromTrack[9] = 1;
 						break;
-					case StepsType_kickbox_human:
-						if(iRandChoice == 1)
-						{
-							iTakeFromTrack[0]= 3;
-							iTakeFromTrack[3]= 0;
-						}
-						if(iRandChoice == 2)
-						{
-							iTakeFromTrack[1]= 2;
-							iTakeFromTrack[2]= 1;
-						}
-						break;
-					case StepsType_kickbox_quadarm:
-						if(iRandChoice == 1)
-						{
-							iTakeFromTrack[0]= 1;
-							iTakeFromTrack[1]= 0;
-							iTakeFromTrack[2]= 3;
-							iTakeFromTrack[3]= 2;
-						}
-						if(iRandChoice == 2)
-						{
-							iTakeFromTrack[1]= 2;
-							iTakeFromTrack[2]= 1;
-						}
-						break;
-					case StepsType_kickbox_insect:
-						if(iRandChoice == 1)
-						{
-							iTakeFromTrack[1]= 2;
-							iTakeFromTrack[2]= 1;
-							iTakeFromTrack[3]= 4;
-							iTakeFromTrack[4]= 3;
-						}
-						if(iRandChoice == 2)
-						{
-							iTakeFromTrack[1]= 4;
-							iTakeFromTrack[2]= 3;
-							iTakeFromTrack[3]= 2;
-							iTakeFromTrack[4]= 1;
-						}
-						break;
-					case StepsType_kickbox_arachnid:
-						if(iRandChoice == 1)
-						{
-							iTakeFromTrack[0]= 1;
-							iTakeFromTrack[1]= 0;
-							iTakeFromTrack[2]= 3;
-							iTakeFromTrack[3]= 2;
-							iTakeFromTrack[4]= 5;
-							iTakeFromTrack[5]= 4;
-							iTakeFromTrack[6]= 7;
-							iTakeFromTrack[7]= 6;
-						}
-						if(iRandChoice == 2)
-						{
-							iTakeFromTrack[0]= 6;
-							iTakeFromTrack[1]= 7;
-							iTakeFromTrack[2]= 4;
-							iTakeFromTrack[3]= 5;
-							iTakeFromTrack[4]= 2;
-							iTakeFromTrack[5]= 3;
-							iTakeFromTrack[6]= 0;
-							iTakeFromTrack[7]= 1;
-						}
-						break;
 					default: break;
 					}
 					break;
@@ -1773,81 +1456,8 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[6] = 7;
 			iTakeFromTrack[7] = 6;
 			break;
-		case StepsType_kickbox_human:
-			iTakeFromTrack[0]= 1;
-			iTakeFromTrack[1]= 0;
-			iTakeFromTrack[2]= 3;
-			iTakeFromTrack[3]= 2;
-			break;
-		case StepsType_kickbox_quadarm:
-			iTakeFromTrack[0]= 1;
-			iTakeFromTrack[1]= 0;
-			iTakeFromTrack[2]= 3;
-			iTakeFromTrack[3]= 2;
-			break;
-		case StepsType_kickbox_insect:
-			iTakeFromTrack[0]= 1;
-			iTakeFromTrack[1]= 4;
-			iTakeFromTrack[2]= 3;
-			iTakeFromTrack[3]= 2;
-			iTakeFromTrack[4]= 1;
-			iTakeFromTrack[5]= 4;
-			break;
-		case StepsType_kickbox_arachnid:
-			iTakeFromTrack[0]= 5;
-			iTakeFromTrack[1]= 4;
-			iTakeFromTrack[2]= 5;
-			iTakeFromTrack[3]= 4;
-			iTakeFromTrack[4]= 3;
-			iTakeFromTrack[5]= 2;
-			iTakeFromTrack[6]= 1;
-			iTakeFromTrack[7]= 0;
-			break;
 		default: 
 			break;
-		}
-		break;
-	case NoteDataUtil::swap_up_down:
-		switch(st)
-		{
-			case StepsType_dance_single:
-			case StepsType_dance_double:
-			case StepsType_dance_couple:
-			case StepsType_dance_routine:
-				iTakeFromTrack[0]= 0;
-				iTakeFromTrack[1]= 2;
-				iTakeFromTrack[2]= 1;
-				iTakeFromTrack[3]= 3;
-				iTakeFromTrack[4]= 4;
-				iTakeFromTrack[5]= 6;
-				iTakeFromTrack[6]= 5;
-				iTakeFromTrack[7]= 7;
-				break;
-			case StepsType_pump_single:
-			case StepsType_pump_double:
-			case StepsType_pump_couple:
-			case StepsType_pump_routine:
-				iTakeFromTrack[0]= 1;
-				iTakeFromTrack[1]= 0;
-				iTakeFromTrack[2]= 2;
-				iTakeFromTrack[3]= 4;
-				iTakeFromTrack[4]= 3;
-				iTakeFromTrack[5]= 6;
-				iTakeFromTrack[6]= 5;
-				iTakeFromTrack[7]= 7;
-				iTakeFromTrack[8]= 9;
-				iTakeFromTrack[9]= 8;
-				break;
-			case StepsType_pump_halfdouble:
-				iTakeFromTrack[0]= 0;
-				iTakeFromTrack[1]= 2;
-				iTakeFromTrack[2]= 1;
-				iTakeFromTrack[3]= 4;
-				iTakeFromTrack[4]= 3;
-				iTakeFromTrack[5]= 5;
-				break;
-			default:
-				break;
 		}
 		break;
 	default:
@@ -1871,16 +1481,16 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			const TapNote &tn1 = inout.GetTapNote( t1, r );
 			switch( tn1.type )
 			{
-			case TapNoteType_Empty:
-			case TapNoteType_HoldHead:
-			case TapNoteType_HoldTail:
-			case TapNoteType_AutoKeysound:
+			case TapNote::empty:
+			case TapNote::hold_head:
+			case TapNote::hold_tail:
+			case TapNote::autoKeysound:
 				continue;	// skip
-			case TapNoteType_Tap:
-			case TapNoteType_Mine:
-			case TapNoteType_Attack:
-			case TapNoteType_Lift:
-			case TapNoteType_Fake:
+			case TapNote::tap:
+			case TapNote::mine:
+			case TapNote::attack:
+			case TapNote::lift:
+			case TapNote::fake:
 				break;	// shuffle this
 			DEFAULT_FAIL( tn1.type );
 			}
@@ -1903,16 +1513,16 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				const TapNote &tn2 = inout.GetTapNote( t2, r );
 				switch( tn2.type )
 				{
-				case TapNoteType_HoldHead:
-				case TapNoteType_HoldTail:
-				case TapNoteType_AutoKeysound:
+				case TapNote::hold_head:
+				case TapNote::hold_tail:
+				case TapNote::autoKeysound:
 					continue;	// don't swap with these
-				case TapNoteType_Empty:
-				case TapNoteType_Tap:
-				case TapNoteType_Mine:
-				case TapNoteType_Attack:
-				case TapNoteType_Lift:
-				case TapNoteType_Fake:
+				case TapNote::empty:
+				case TapNote::tap:
+				case TapNote::mine:
+				case TapNote::attack:
+				case TapNote::lift:
+				case TapNote::fake:
 					break;	// ok to swap with this
 				DEFAULT_FAIL( tn2.type );
 				}
@@ -1945,7 +1555,6 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, int iSt
 		SuperShuffleTaps( tempNoteData, iStartIndex, iEndIndex );
 
 	inout.CopyAll( tempNoteData );
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Backwards( NoteData &inout )
@@ -1962,7 +1571,7 @@ void NoteDataUtil::Backwards( NoteData &inout )
 			int iRowLater = max_row-r;
 
 			const TapNote &tnEarlier = inout.GetTapNote( t, iRowEarlier );
-			if( tnEarlier.type == TapNoteType_HoldHead )
+			if( tnEarlier.type == TapNote::hold_head )
 				iRowLater -= tnEarlier.iDuration;
 
 			out.SetTapNote( t, iRowLater, tnEarlier );
@@ -1970,7 +1579,6 @@ void NoteDataUtil::Backwards( NoteData &inout )
 	}
 
 	inout.swap( out );
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::SwapSides( NoteData &inout )
@@ -1986,7 +1594,6 @@ void NoteDataUtil::SwapSides( NoteData &inout )
 
 	NoteData orig( inout );
 	inout.LoadTransformed( orig, orig.GetNumTracks(), iOriginalTrackToTakeFrom );
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -2001,7 +1608,6 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 			inout.SetTapNote( t, i, TAP_EMPTY );
 		}
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 // Make all quarter notes into jumps.
@@ -2048,13 +1654,12 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 			iTrackToAdd--;
 		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );
 
-		if( inout.GetTapNote(iTrackToAdd, i).type != TapNoteType_Empty  &&  inout.GetTapNote(iTrackToAdd, i).type != TapNoteType_Fake )
+		if( inout.GetTapNote(iTrackToAdd, i).type != TapNote::empty  &&  inout.GetTapNote(iTrackToAdd, i).type != TapNote::fake )
 		{
 			iTrackToAdd = (iTrackToAdd+1) % inout.GetNumTracks();
 		}
 		inout.SetTapNote(iTrackToAdd, i, TAP_ADDITION_TAP);
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Big( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -2138,30 +1743,39 @@ void NoteDataUtil::InsertIntelligentTaps(
 		inout.GetTapFirstNonEmptyTrack( iRowLater, iTrackOfNoteLater );
 		int iTrackOfNoteToAdd = 0;
 		if( bSkippy  &&
-			iTrackOfNoteEarlier != iTrackOfNoteLater &&   // Don't make skips on the same note
-			bEarlierHasNonEmptyTrack )
+			iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
 		{
-			iTrackOfNoteToAdd = iTrackOfNoteEarlier;
-		}
-		else if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) >= 2 )
-		{
-			// try to choose a track between the earlier and later notes
-			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
-		}
-		else if( min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1 >= 0 )
-		{
-			// try to choose a track just to the left
-			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1;
-		}
-		else if( max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1 < inout.GetNumTracks() )
-		{
-			// try to choose a track just to the right
-			iTrackOfNoteToAdd = max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
+			if( bEarlierHasNonEmptyTrack )
+			{
+				iTrackOfNoteToAdd = iTrackOfNoteEarlier;
+				goto done_looking_for_track_to_add;
+			}
 		}
 
+		// try to choose a track between the earlier and later notes
+		if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) >= 2 )
+		{
+			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
+			goto done_looking_for_track_to_add;
+		}
+		
+		// try to choose a track just to the left
+		if( min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1 >= 0 )
+		{
+			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1;
+			goto done_looking_for_track_to_add;
+		}
+
+		// try to choose a track just to the right
+		if( max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1 < inout.GetNumTracks() )
+		{
+			iTrackOfNoteToAdd = max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
+			goto done_looking_for_track_to_add;
+		}
+
+done_looking_for_track_to_add:
 		inout.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION_TAP);
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 #if 0
 class TrackIterator
@@ -2247,7 +1861,7 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 		if( iRowCount>=iPlaceEveryRows )
 		{
 			for( int t=0; t<inout.GetNumTracks(); t++ )
-				if( inout.GetTapNote(t,r).type == TapNoteType_Tap )
+				if( inout.GetTapNote(t,r).type == TapNote::tap )
 					inout.SetTapNote(t,r,TAP_ADDITION_MINE);
 			
 			iRowCount = 0;
@@ -2264,7 +1878,7 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, iTrack, r, iStartIndex, iEndIndex )
 		{
 			const TapNote &tn = inout.GetTapNote( iTrack, r );
-			if( tn.type != TapNoteType_HoldHead )
+			if( tn.type != TapNote::hold_head )
 				continue;
 
 			int iMineRow = r + tn.iDuration + BeatToNoteRow(0.5f);
@@ -2282,13 +1896,12 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 
 			// Convert all notes in this row to mines.
 			for( int t=0; t<inout.GetNumTracks(); t++ )
-				if( inout.GetTapNote(t,iMineRow).type == TapNoteType_Tap )
+				if( inout.GetTapNote(t,iMineRow).type == TapNote::tap )
 					inout.SetTapNote(t,iMineRow,TAP_ADDITION_MINE);
 
 			iRowCount = 0;
 		}
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -2343,7 +1956,6 @@ void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 
 		inout.SetTapNote( iEchoTrack, iRowEcho, TAP_ADDITION_TAP );
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Planted( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -2369,24 +1981,20 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 			if( iTrackAddedThisRow > iSimultaneousHolds )
 				break;
 
-			if( inout.GetTapNote(t,r).type == TapNoteType_Tap )
+			if( inout.GetTapNote(t,r).type == TapNote::tap )
 			{
 				// Find the ending row for this hold
 				int iTapsLeft = iSimultaneousHolds;
 
 				int r2 = r+1;
-				bool addHold = true;
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, next_row, r+1, iEndIndex )
 				{
 					r2 = next_row;
 
 					// If there are two taps in a row on the same track, 
 					// don't convert the earlier one to a hold.
-					if( inout.GetTapNote(t,r2).type != TapNoteType_Empty )
-					{
-						addHold = false;
-						break;
-					}
+					if( inout.GetTapNote(t,r2).type != TapNote::empty )
+						goto dont_add_hold;
 
 					set<int> tracksDown;
 					inout.GetTracksHeldAtRow( r2, tracksDown );
@@ -2395,15 +2003,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 					if( iTapsLeft == 0 )
 						break;	// we found the ending row for this hold
 					else if( iTapsLeft < 0 )
-					{
-						addHold = false;
-						break;
-					}
-				}
-
-				if (!addHold)
-				{
-					continue;
+						goto dont_add_hold;
 				}
 
 				// If the steps end in a tap, convert that tap
@@ -2414,9 +2014,11 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 				inout.AddHoldNote( t, r, r2, TAP_ORIGINAL_HOLD_HEAD );
 				iTrackAddedThisRow++;
 			}
+dont_add_hold:
+			;
 		}
 	}
-	inout.RevalidateATIs(vector<int>(), false);
+
 }
 
 void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
@@ -2432,7 +2034,7 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iE
 
 		for( int t=0; t<inout.GetNumTracks(); t++ )
 		{
-			if( inout.GetTapNote(t, r).type == TapNoteType_Tap )	// there is a tap here
+			if( inout.GetTapNote(t, r).type == TapNote::tap )	// there is a tap here
 			{
 				// Look to see if there is enough empty space on either side of the note
 				// to turn this into a jump.
@@ -2459,7 +2061,6 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iE
 			}
 		}
 	}		
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, int iStartIndex, int iEndIndex )
@@ -2483,15 +2084,15 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 		for( int c=0; c<inout.GetNumTracks(); c++ )
 		{
 			TapNote tnNew = inout.GetTapNote(c, iOldIndex);
-			if( tnNew.type == TapNoteType_Empty )
+			if( tnNew.type == TapNote::empty )
 				continue;
 
 			inout.SetTapNote(c, iOldIndex, TAP_EMPTY);
 
-			if( tnNew.type == TapNoteType_Tap && inout.IsHoldNoteAtRow(c, iNewIndex) )
+			if( tnNew.type == TapNote::tap && inout.IsHoldNoteAtRow(c, iNewIndex) )
 				continue; // HoldNotes override TapNotes
 
-			if( tnNew.type == TapNoteType_HoldHead )
+			if( tnNew.type == TapNote::hold_head )
 			{
 				/* Quantize the duration.  If the result is empty, just discard the hold. */
 				tnNew.iDuration = Quantize( tnNew.iDuration, BeatToNoteRow(fSnapInterval1) );
@@ -2506,7 +2107,6 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 			inout.SetTapNote( c, iNewIndex, tnNew );
 		}
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 
@@ -2580,7 +2180,7 @@ void NoteDataUtil::CollapseLeft( NoteData &inout )
 		int iNumTracksFilled = 0;
 		for( int t=0; t<inout.GetNumTracks(); t++ )
 		{
-			if( inout.GetTapNote(t,r).type != TapNoteType_Empty )
+			if( inout.GetTapNote(t,r).type != TapNote::empty )
 			{
 				TapNote tn = inout.GetTapNote(t,r);
 				inout.SetTapNote(t, r, TAP_EMPTY);
@@ -2616,24 +2216,6 @@ void NoteDataUtil::ShiftLeft( NoteData &inout )
 void NoteDataUtil::ShiftRight( NoteData &inout )
 {
 	ShiftTracks( inout, +1 );
-}
-
-void NoteDataUtil::SwapUpDown(NoteData& inout, StepsType st)
-{
-	int TakeFrom[MAX_NOTE_TRACKS];
-	GetTrackMapping(st, NoteDataUtil::swap_up_down, inout.GetNumTracks(), TakeFrom);
-	NoteData tempND;
-	tempND.LoadTransformed(inout, inout.GetNumTracks(), TakeFrom);
-	inout.CopyAll(tempND);
-	inout.RevalidateATIs(vector<int>(), false);
-}
-
-void NoteDataUtil::ArbitraryRemap(NoteData& inout, int* mapping)
-{
-	NoteData tempND;
-	tempND.LoadTransformed(inout, inout.GetNumTracks(), mapping);
-	inout.CopyAll(tempND);
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 
@@ -2691,14 +2273,13 @@ void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex
 		if( !bPassedOneMask )
 			RemoveAllButOneTap( inout, r );
 	}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
 bool NoteDataUtil::RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] )
 {
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 	{
-		if( !bValidMask[t] && inout.GetTapNote(t,row).type != TapNoteType_Empty )
+		if( !bValidMask[t] && inout.GetTapNote(t,row).type != TapNote::empty )
 			return false;
 	}
 
@@ -2709,16 +2290,15 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &inout )
 {
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 		FOREACH_NONEMPTY_ROW_IN_TRACK( inout, t, r )
-			if( inout.GetTapNote(t,r).source == TapNoteSource_Addition )
+			if( inout.GetTapNote(t,r).source == TapNote::addition )
 			{
 				TapNote tn = inout.GetTapNote(t,r);
-				tn.source = TapNoteSource_Original;
+				tn.source = TapNote::original;
 				inout.SetTapNote( t, r, tn );
 			}
-	inout.RevalidateATIs(vector<int>(), false);
 }
 
-void NoteDataUtil::TransformNoteData(NoteData &nd, TimingData const& timing_data, const AttackArray &aa, StepsType st, Song* pSong)
+void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong )
 {
 	for (Attack const &a : aa)
 	{
@@ -2729,12 +2309,12 @@ void NoteDataUtil::TransformNoteData(NoteData &nd, TimingData const& timing_data
 			float fStartBeat, fEndBeat;
 			a.GetAttackBeats( pSong, fStartBeat, fEndBeat );
 
-			NoteDataUtil::TransformNoteData(nd, timing_data, po, st, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
+			NoteDataUtil::TransformNoteData( nd, po, st, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 		}
 	}
 }
 
-void NoteDataUtil::TransformNoteData( NoteData &nd, TimingData const& timing_data, const PlayerOptions &po, StepsType st, int iStartIndex, int iEndIndex )
+void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Apply remove transforms before others so that we don't go removing
 	// notes we just inserted.  Apply TRANSFORM_NOROLLS before TRANSFORM_NOHOLDS,
@@ -2745,7 +2325,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, TimingData const& timing_dat
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )	NoteDataUtil::RemoveMines( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOLIFTS] )	NoteDataUtil::RemoveLifts( nd, iStartIndex, iEndIndex );
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )	NoteDataUtil::RemoveFakes( nd, timing_data, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOFAKES] )	NoteDataUtil::RemoveFakes( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )	NoteDataUtil::RemoveStretch( nd, st, iStartIndex, iEndIndex );
@@ -2785,8 +2365,6 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, TimingData const& timing_dat
 	if( po.m_bTurns[PlayerOptions::TURN_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_SOFT_SHUFFLE] )			NoteDataUtil::Turn( nd, st, NoteDataUtil::soft_shuffle, iStartIndex, iEndIndex );
 	if( po.m_bTurns[PlayerOptions::TURN_SUPER_SHUFFLE] )		NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle, iStartIndex, iEndIndex );
-
-	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
@@ -2806,15 +2384,14 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		int iBeat = (int)fBeat;
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
 		TapNote tn(
-			TapNoteType_Attack,
-			TapNoteSubType_Invalid,
-			TapNoteSource_Original, 
+			TapNote::attack,
+			TapNote::SubType_Invalid,
+			TapNote::original, 
 			szAttacks[RandomInt(ARRAYLEN(szAttacks))],
 			15.0f, 
 			-1 );
 		nd.SetTapNote( iTrack, BeatToNoteRow(fBeat), tn );
 	}
-	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::Scale( NoteData &nd, float fScale )
@@ -2837,7 +2414,6 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 	}
 	
 	nd.swap( ndOut );
-	nd.RevalidateATIs(vector<int>(), false);
 }
 
 /* XXX: move this to an appropriate place, same place as NoteRowToBeat perhaps? */
@@ -2873,7 +2449,6 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int
 	}
 	
 	nd.swap( ndOut );
-	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
@@ -2885,7 +2460,6 @@ void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
 	temp.CopyRange( nd, iStartIndex, MAX_NOTE_ROW );
 	nd.ClearRange( iStartIndex, MAX_NOTE_ROW );
 	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iStartIndex + iRowsToAdd );		
-	nd.RevalidateATIs(vector<int>(), false);
 }
 
 void NoteDataUtil::DeleteRows( NoteData &nd, int iStartIndex, int iRowsToDelete )
@@ -2897,10 +2471,9 @@ void NoteDataUtil::DeleteRows( NoteData &nd, int iStartIndex, int iRowsToDelete 
 	temp.CopyRange( nd, iStartIndex + iRowsToDelete, MAX_NOTE_ROW );
 	nd.ClearRange( iStartIndex, MAX_NOTE_ROW );
 	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iStartIndex );		
-	nd.RevalidateATIs(vector<int>(), false);
 }
 
-void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNoteType typeToRemove )
+void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove )
 {
 	/* Be very careful when deleting the tap notes. Erasing elements from maps using
 	 * iterators invalidates only the iterator that is being erased. To that end,
@@ -2916,10 +2489,9 @@ void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNoteType typeToRem
 				++iter;
 		}
 	}
-	ndInOut.RevalidateATIs(vector<int>(), false);
 }
 
-void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNoteType typeToKeep )
+void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep )
 {
 	/* Same as in RemoveAllTapsOfType(). */
 	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
@@ -2932,7 +2504,6 @@ void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNoteType ty
 				++iter;
 		}
 	}
-	ndInOut.RevalidateATIs(vector<int>(), false);
 }
 
 int NoteDataUtil::GetMaxNonEmptyTrack( const NoteData& in )
@@ -2953,8 +2524,8 @@ bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, 
 	{
 		switch( in.GetTapNote( iTrack, r ).type )
 		{
-		case TapNoteType_Empty:
-		case TapNoteType_Mine:
+		case TapNote::empty:
+		case TapNote::mine:
 			continue;
 		default:
 			return true;
@@ -3013,7 +2584,7 @@ bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
 			continue;
 
 		const TapNote &tn = in.GetTapNote( t, iHeadRow );
-		if( tn.type != TapNoteType_HoldHead )
+		if( tn.type != TapNote::hold_head )
 			continue;
 
 		int iEndRow = iHeadRow + tn.iDuration;
@@ -3032,31 +2603,35 @@ bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
 	return true;
 }
 
+extern Preference<float> g_fTimingWindowHopo;
 
-unsigned int NoteDataUtil::GetTotalHoldTicks( NoteData* nd, const TimingData* td )
+
+void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
 {
-	unsigned int ret = 0;
-	// Last row must be included. -- Matt
-	int end = nd->GetLastRow()+1;
-	vector<TimingSegment*> segments = td->GetTimingSegments( SEGMENT_TICKCOUNT );
-	// We start with the LAST TimingSegment and work our way backwards.
-	// This way we can continually update end instead of having to lookup when
-	// the next segment starts.
-	for(int i = segments.size() - 1; i >= 0; i--)
+	float fLastRowMusicSeconds = -1;
+	int iLastTapTrackOfLastRow = -1;
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( ndInOut, r )
 	{
-		TickcountSegment *ts = (TickcountSegment*) segments[i];
-		if( ts->GetTicks() > 0)
+		float fBeat = NoteRowToBeat( r );
+		float fSeconds = pSong->m_SongTiming.GetElapsedTimeFromBeat( fBeat );
+
+		int iLastTapTrack = ndInOut.GetLastTrackWithTapOrHoldHead( r );
+		if( iLastTapTrack != -1  &&  fSeconds <= fLastRowMusicSeconds + g_fTimingWindowHopo )
 		{
-			// Jump to each point where holds would tick and add the number of holds there to ret.
-			for(int j = ts->GetRow(); j < end; j += ROWS_PER_BEAT / ts->GetTicks() )
-				// 1 tick per row.
-				if( nd->GetNumTracksHeldAtRow(j) > 0 )
-					ret++;
+			int iNumNotesInRow = ndInOut.GetNumTapNotesInRow( r );
+			TapNote &tn = ndInOut.FindTapNote( iLastTapTrack, r )->second;
+		
+			if( iNumNotesInRow == 1  &&  iLastTapTrack != iLastTapTrackOfLastRow )
+			{
+				tn.bHopoPossible = true;
+			}
 		}
-		end = ts->GetRow();
+
+		fLastRowMusicSeconds = fSeconds;
+		iLastTapTrackOfLastRow = iLastTapTrack;
 	}
-	return ret;
 }
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

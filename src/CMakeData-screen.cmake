@@ -3,13 +3,23 @@ list(APPEND SMDATA_SCREEN_GAMEPLAY_SRC
             "ScreenGameplayLesson.cpp"
             "ScreenGameplayNormal.cpp"
             "ScreenGameplayShared.cpp"
+<<<<<<< HEAD
+            "ScreenGameplaySyncMachine.cpp"
+            "GameplayHelpers.cpp")
+=======
             "ScreenGameplaySyncMachine.cpp")
+>>>>>>> main
 
 list(APPEND SMDATA_SCREEN_GAMEPLAY_HPP
             "ScreenGameplay.h"
             "ScreenGameplayNormal.h"
             "ScreenGameplayShared.h"
+<<<<<<< HEAD
+            "ScreenGameplaySyncMachine.h"
+            "GameplayHelpers.h")
+=======
             "ScreenGameplaySyncMachine.h")
+>>>>>>> main
 
 source_group("Screens\\\\Gameplay"
              FILES
@@ -70,7 +80,10 @@ list(APPEND SMDATA_SCREEN_REST_SRC
             "ScreenMiniMenu.cpp"
             "ScreenNameEntry.cpp"
             "ScreenNameEntryTraditional.cpp"
+<<<<<<< HEAD
+=======
             "ScreenPackages.cpp"
+>>>>>>> main
             "ScreenPlayerOptions.cpp"
             "ScreenProfileLoad.cpp"
             "ScreenProfileSave.cpp"
@@ -97,7 +110,14 @@ list(APPEND SMDATA_SCREEN_REST_SRC
             "ScreenTestSound.cpp"
             "ScreenTextEntry.cpp"
             "ScreenTitleMenu.cpp"
+<<<<<<< HEAD
+<<<<<<< HEAD
             "Network/UI/ScreenContentNetwork.cpp"
+=======
+>>>>>>> main
+=======
+            "Network/UI/ScreenContentNetwork.cpp"
+>>>>>>> origin/unified-ui-features-13937230807013224518
             "ScreenUnlockBrowse.cpp"
             "ScreenUnlockCelebrate.cpp"
             "ScreenUnlockStatus.cpp"
@@ -124,7 +144,10 @@ list(APPEND SMDATA_SCREEN_REST_HPP
             "ScreenMiniMenu.h"
             "ScreenNameEntry.h"
             "ScreenNameEntryTraditional.h"
+<<<<<<< HEAD
+=======
             "ScreenPackages.h"
+>>>>>>> main
             "ScreenPlayerOptions.h"
             "ScreenProfileLoad.h"
             "ScreenProfileSave.h"
@@ -151,7 +174,14 @@ list(APPEND SMDATA_SCREEN_REST_HPP
             "ScreenTestSound.h"
             "ScreenTextEntry.h"
             "ScreenTitleMenu.h"
+<<<<<<< HEAD
+<<<<<<< HEAD
             "Network/UI/ScreenContentNetwork.h"
+=======
+>>>>>>> main
+=======
+            "Network/UI/ScreenContentNetwork.h"
+>>>>>>> origin/unified-ui-features-13937230807013224518
             "ScreenUnlockBrowse.h"
             "ScreenUnlockCelebrate.h"
             "ScreenUnlockStatus.h"
@@ -161,6 +191,8 @@ source_group("Screens\\\\Others"
              FILES
              ${SMDATA_SCREEN_REST_SRC}
              ${SMDATA_SCREEN_REST_HPP})
+<<<<<<< HEAD
+=======
 
 list(APPEND SMDATA_SCREEN_NET_SRC
             "ScreenNetEvaluation.cpp"
@@ -185,15 +217,22 @@ source_group("Screens\\\\Network"
              FILES
              ${SMDATA_SCREEN_NET_SRC}
              ${SMDATA_SCREEN_NET_HPP})
+>>>>>>> main
 
 list(APPEND SMDATA_ALL_SCREENS_SRC
             ${SMDATA_SCREEN_GAMEPLAY_SRC}
             ${SMDATA_SCREEN_OPTION_SRC}
+<<<<<<< HEAD
+=======
             ${SMDATA_SCREEN_NET_SRC}
+>>>>>>> main
             ${SMDATA_SCREEN_REST_SRC})
 
 list(APPEND SMDATA_ALL_SCREENS_HPP
             ${SMDATA_SCREEN_GAMEPLAY_HPP}
             ${SMDATA_SCREEN_OPTION_HPP}
+<<<<<<< HEAD
+=======
             ${SMDATA_SCREEN_NET_HPP}
+>>>>>>> main
             ${SMDATA_SCREEN_REST_HPP})

@@ -206,7 +206,7 @@ void FileTransfer::StartTransfer( TransferType type, const RString &sURL, const 
 	m_wSocket.SendData( sHeader.c_str(), sHeader.length() );
 	m_wSocket.SendData( "\r\n" );
 
-	m_wSocket.SendData( sRequestPayload.c_str(), sRequestPayload.size() );
+	m_wSocket.SendData( sRequestPayload.GetBuffer(), sRequestPayload.size() );
 
 	m_sStatus = "Header Sent.";
 	m_wSocket.blocking = false;
@@ -238,7 +238,7 @@ void FileTransfer::HTTPUpdate()
 	// Keep this as a code block, as there may be need to "if" it out some time.
 	/* If you need a conditional for a large block of code, stick it in
 	 * a function and return. */
-	for(;;)
+	while(1)
 	{
 		char Buffer[1024];
 		int iSize = m_wSocket.ReadData( Buffer, 1024 );
@@ -267,14 +267,14 @@ void FileTransfer::HTTPUpdate()
 			m_sResponseName = "Malformed response.";
 			return;
 		}
-		m_iResponseCode = StringToInt(m_sBUFFER.substr(i+1,j-i));
+		m_iResponseCode = std::stoi(m_sBUFFER.substr(i+1,j-i));
 		m_sResponseName = m_sBUFFER.substr( j+1, k-j );
 
 		i = m_sBUFFER.find("Content-Length:");
 		j = m_sBUFFER.find("\n", i+1 );
 
 		if( i != string::npos )
-			m_iTotalBytes = StringToInt(m_sBUFFER.substr(i+16,j-i));
+			m_iTotalBytes = std::stoi(m_sBUFFER.substr(i+16,j-i));
 		else
 			m_iTotalBytes = -1;	// We don't know, so go until disconnect
 
@@ -345,7 +345,7 @@ bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RStrin
 	sServer = asMatches[1];
 	if( asMatches[3] != "" )
 	{
-		iPort = StringToInt(asMatches[3]);
+		iPort = std::stoi(asMatches[3]);
 		if( iPort == 0 )
 			return false;
 	}
@@ -359,15 +359,13 @@ bool FileTransfer::ParseHTTPAddress( const RString &URL, RString &sProto, RStrin
 
 void FileTransfer::Finish()
 {
-	for(;;)
+	while( true )
 	{
 		float fSleepSeconds = 0.1f;
 		this->Update( fSleepSeconds );
 		usleep( int( fSleepSeconds * 1000000.0 ) );
 		if( this->IsFinished() )
-		{
 			break;
-		}
 	}
 }
 

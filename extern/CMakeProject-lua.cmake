@@ -63,7 +63,11 @@ set_property(TARGET "lua-5.1" PROPERTY FOLDER "External Libraries")
 # include_directories(src)
 
 if(MSVC)
+<<<<<<< HEAD
+  target_compile_definitions("lua-5.1" PRIVATE _CRT_SECURE_NO_WARNINGS)
+=======
   sm_add_compile_definition("lua-5.1" _CRT_SECURE_NO_WARNINGS)
+>>>>>>> main
   set_source_files_properties(${LUA_SRC} PROPERTIES LANGUAGE CXX)
 endif(MSVC)
 

@@ -1,6 +1,13 @@
+list(APPEND SMDATA_OS_SRC "archutils/Common/HidDevice.cpp")
+list(APPEND SMDATA_OS_HPP "archutils/Common/HidDevice.h")
+
 if(APPLE)
   list(APPEND SMDATA_OS_DARWIN_SRC
+<<<<<<< HEAD
+              "archutils/Darwin/Crash.mm"
+=======
               "archutils/Darwin/Crash.cpp"
+>>>>>>> main
               "archutils/Darwin/DarwinThreadHelpers.cpp"
               "archutils/Darwin/HIDDevice.cpp"
               "archutils/Darwin/JoystickDevice.cpp"
@@ -8,8 +15,7 @@ if(APPLE)
               "archutils/Darwin/MouseDevice.cpp"
               "archutils/Darwin/PumpDevice.cpp"
               "archutils/Darwin/SMMain.mm"
-              "archutils/Darwin/SpecialDirs.cpp"
-              "archutils/Darwin/VectorHelper.cpp")
+              "archutils/Darwin/SpecialDirs.mm")
   list(APPEND SMDATA_OS_DARWIN_HPP
               "archutils/Darwin/arch_setup.h"
               "archutils/Darwin/Crash.h"
@@ -20,9 +26,22 @@ if(APPLE)
               "archutils/Darwin/MouseDevice.h"
               "archutils/Darwin/PumpDevice.h"
               "archutils/Darwin/SpecialDirs.h"
+<<<<<<< HEAD
+              "archutils/Darwin/StepMania.pch")
+=======
               "archutils/Darwin/StepMania.pch" # precompiled header.
               "archutils/Darwin/VectorHelper.h")
+>>>>>>> main
 
+<<<<<<< HEAD
+
+  list(APPEND SMDATA_OS_SRC
+    ${SMDATA_OS_DARWIN_SRC}
+  )
+  list(APPEND SMDATA_OS_HPP
+    ${SMDATA_OS_DARWIN_HPP}
+  )
+=======
   source_group("OS Specific\\\\Darwin"
                FILES
                ${SMDATA_OS_DARWIN_SRC}
@@ -30,8 +49,16 @@ if(APPLE)
 
   list(APPEND SMDATA_OS_SRC ${SMDATA_OS_DARWIN_SRC})
   list(APPEND SMDATA_OS_HPP ${SMDATA_OS_DARWIN_HPP})
+>>>>>>> origin/unified-ui-features-13937230807013224518
 else()
   if(WIN32)
+    configure_file("${SM_SRC_DIR}/archutils/Win32/StepMania.in.manifest"
+                   "${SM_GENERATED_SRC_DIR}/archutils/Win32/StepMania.manifest")
+    configure_file("${SM_SRC_DIR}/archutils/Win32/WindowsResources.in.rc"
+                   "${SM_GENERATED_SRC_DIR}/archutils/Win32/WindowsResources.rc")
+
+    set(CMAKE_RC_STANDARD_INCLUDE_DIRECTORIES "${SM_SRC_DIR}/archutils/Win32")
+
     list(APPEND SMDATA_OS_SRC
                 "archutils/Win32/AppInstance.cpp"
                 "archutils/Win32/arch_setup.cpp"
@@ -46,7 +73,6 @@ else()
                 "archutils/Win32/DirectXHelpers.cpp"
                 "archutils/Win32/ErrorStrings.cpp"
                 "archutils/Win32/GetFileInformation.cpp"
-                "archutils/Win32/GotoURL.cpp"
                 "archutils/Win32/GraphicsWindow.cpp"
                 "archutils/Win32/MessageWindow.cpp"
                 "archutils/Win32/RegistryAccess.cpp"
@@ -56,7 +82,8 @@ else()
                 "archutils/Win32/VideoDriverInfo.cpp"
                 "archutils/Win32/WindowIcon.cpp"
                 "archutils/Win32/WindowsDialogBox.cpp"
-                "archutils/Win32/WindowsResources.rc")
+                "${SM_GENERATED_SRC_DIR}/archutils/Win32/StepMania.manifest"
+                "${SM_GENERATED_SRC_DIR}/archutils/Win32/WindowsResources.rc")
 
     list(APPEND SMDATA_OS_HPP
                 "archutils/Win32/AppInstance.h"
@@ -70,7 +97,6 @@ else()
                 "archutils/Win32/DirectXHelpers.h"
                 "archutils/Win32/ErrorStrings.h"
                 "archutils/Win32/GetFileInformation.h"
-                "archutils/Win32/GotoURL.h"
                 "archutils/Win32/GraphicsWindow.h"
                 "archutils/Win32/MessageWindow.h"
                 "archutils/Win32/RegistryAccess.h"
@@ -82,6 +108,73 @@ else()
                 "archutils/Win32/WindowsDialogBox.h"
                 "archutils/Win32/WindowsResources.h")
   else() # Unix
+<<<<<<< HEAD
+    if(LINUX)
+      list(APPEND SMDATA_OS_SRC # TODO: X11 check, crash handler check
+        "archutils/Unix/AssertionHandler.cpp"
+        "archutils/Unix/EmergencyShutdown.cpp"
+        "archutils/Unix/GetSysInfo.cpp"
+        "archutils/Unix/RunningUnderValgrind.cpp"
+        "archutils/Unix/SignalHandler.cpp"
+        "archutils/Unix/SpecialDirs.cpp"
+        "archutils/Unix/StackCheck.cpp"
+        )
+      list(APPEND SMDATA_OS_HPP
+        "archutils/Unix/arch_setup.h"
+        "archutils/Unix/AssertionHandler.h"
+        "archutils/Unix/EmergencyShutdown.h"
+        "archutils/Unix/GetSysInfo.h"
+        "archutils/Unix/RunningUnderValgrind.h"
+        "archutils/Unix/SignalHandler.h"
+        "archutils/Unix/SpecialDirs.h"
+        "archutils/Common/gcc_byte_swaps.h"
+      )
+      if(X11_FOUND)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Unix/X11Helper.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Unix/X11Helper.h"
+        )
+      endif()
+      if(HAS_PTHREAD)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Common/PthreadHelpers.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Common/PthreadHelpers.h"
+        )
+      endif()
+    elseif(ANDROID)
+      list(APPEND SMDATA_OS_SRC
+        "archutils/Android/Globals.cpp"
+        "archutils/Android/SpecialDirs.cpp"
+        "archutils/Common/PthreadHelpers.cpp"
+        "archutils/Common/EGLHelper.cpp"
+        "archutils/Unix/GetSysInfo.cpp"
+        "archutils/Unix/BacktraceNames.cpp"
+        "archutils/Unix/StackCheck.cpp"
+        "archutils/Unix/EmergencyShutdown.cpp"
+      )
+      list(APPEND SMDATA_OS_HPP
+        "archutils/Android/arch_setup.h"
+        "archutils/Android/Globals.h"
+        "archutils/Android/SpecialDirs.h"
+        "archutils/Common/PthreadHelpers.h"
+        "archutils/Common/EGLHelper.h"
+        "archutils/Unix/GetSysInfo.h"
+        "archutils/Unix/BacktraceNames.h"
+        "archutils/Unix/EmergencyShutdown.h"
+      )
+      if (WITH_CRASH_HANDLER)
+        list(APPEND SMDATA_OS_SRC
+          "archutils/Android/CrashHandler.cpp"
+        )
+        list(APPEND SMDATA_OS_HPP
+          "archutils/Android/CrashHandler.h"
+        )
+      endif()
+=======
     list(APPEND SMDATA_OS_SRC # TODO: X11 check, crash handler check
                 "archutils/Unix/AssertionHandler.cpp"
                 "archutils/Unix/EmergencyShutdown.cpp"
@@ -97,8 +190,7 @@ else()
                 "archutils/Unix/GetSysInfo.h"
                 "archutils/Unix/RunningUnderValgrind.h"
                 "archutils/Unix/SignalHandler.h"
-                "archutils/Unix/SpecialDirs.h"
-                "archutils/Common/gcc_byte_swaps.h")
+                "archutils/Unix/SpecialDirs.h")
     if(X11_FOUND)
       list(APPEND SMDATA_OS_SRC "archutils/Unix/X11Helper.cpp")
       list(APPEND SMDATA_OS_HPP "archutils/Unix/X11Helper.h")
@@ -106,6 +198,7 @@ else()
     if(HAS_PTHREAD)
       list(APPEND SMDATA_OS_SRC "archutils/Common/PthreadHelpers.cpp")
       list(APPEND SMDATA_OS_HPP "archutils/Common/PthreadHelpers.h")
+>>>>>>> origin/unified-ui-features-13937230807013224518
     endif()
   endif()
   source_group("OS Specific" FILES ${SMDATA_OS_SRC} ${SMDATA_OS_HPP})

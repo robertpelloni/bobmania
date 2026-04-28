@@ -42,7 +42,7 @@ class Steps
 {
 public:
 	/** @brief Set up the Steps with initial values. */
-	Steps( Song* song );
+	Steps();
 	/** @brief Destroy the Steps that are no longer needed. */
 	~Steps();
 
@@ -168,12 +168,6 @@ public:
 	TimingData m_Timing;
 
 	/**
-	 * @brief Retrieves the appropriate timing data for the Steps.  Falls
-	 * back on the Song if needed. */
-	const TimingData *GetTimingData() const;
-	TimingData *GetTimingData() { return const_cast<TimingData*>( static_cast<const Steps*>( this )->GetTimingData() ); };
-
-	/**
 	 * @brief Determine if the Steps have any major timing changes during gameplay.
 	 * @return true if it does, or false otherwise. */
 	bool HasSignificantTimingChanges() const;
@@ -183,20 +177,17 @@ public:
 	 * @return true if it does, or false otherwise. */
 	bool HasAttacks() const;
 
-	const RString GetMusicPath() const; // Returns the path for loading.
-	const RString& GetMusicFile() const; // Returns the filename for the simfile.
-	void SetMusicFile(const RString& file);
-
 	// Lua
 	void PushSelf( lua_State *L );
 
 	StepsType			m_StepsType;
-	/** @brief The string form of the StepsType, for dealing with unrecognized styles. */
-	RString m_StepsTypeStr;
-	/** @brief The Song these Steps are associated with */
-	Song				*m_pSong;
 
 	CachedObject<Steps> m_CachedObject;
+
+	/**
+	 * @brief Determine if the Steps use Split Timing by comparing the Song it's in.
+	 * @return true if the Step and Song use different timings, false otherwise. */
+	bool UsesSplitTiming() const;
 
 	void SetDisplayBPM(const DisplayBPM type)	{ this->displayBPMType = type; }
 	DisplayBPM GetDisplayBPM() const			{ return this->displayBPMType; }
@@ -210,6 +201,140 @@ public:
 	{
 		return join(":", this->m_sAttackString);
 	}
+
+	/**
+	 * @brief Quickly get the Steps' StepsType.
+	 * @return the StepsType. */
+	StepsType GetStepsType() const;
+
+	/**
+	 * @brief Quickly get the category for this Steps' style.
+	 * @return the appropriate StepsTypeCategory. */
+	StepsTypeCategory GetStepsTypeCategory() const;
+
+	/**
+	 * @brief Determine whether this Steps' style requires more than one player.
+	 * @return true if more than one player is needed for this style, false otherwise. */
+	bool IsMultiPlayerStyle() const;
+
+	/**
+	 * @brief Determine whether this note is to be a Tap
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Tap, false otherwise. */
+	bool IsTap(const TapNote &tn, const int row) const;
+	/**
+	 * @brief Determine whether this note is to be a Mine
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Mine, false otherwise. */
+	bool IsMine(const TapNote &tn, const int row) const;
+	/**
+	 * @brief Determine whether this note is to be a Lift
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Lift, false otherwise. */
+	bool IsLift(const TapNote &tn, const int row) const;
+	/**
+	 * @brief Determine whether this note is to be a Fake
+	 * given the Steps' timing data.
+	 * @param tn the TapNote to check.
+	 * @param row the row to check.
+	 * @return true if this is to be a Fake, false otherwise. */
+	bool IsFake(const TapNote &tn, const int row) const;
+
+	/* Many of the functions below are designed to work with any arbitrary number of players.
+	 * While we only support two players at once right now for normal gameplay purposes,
+	 * it helps to think ahead for future versions of StepMania.
+	 *
+	 * If there are any situations where we don't have to worry about multiple players or
+	 * crazy timing data, we defer to the NoteData calls. They are generally faster. */
+
+	int GetNumRowsWithTap(int start = 0, int end = MAX_NOTE_ROW) const;
+	
+	int GetNumRowsWithTapOrHoldHead(int start = 0, int end = MAX_NOTE_ROW) const;
+
+	/**
+	 * @brief Determine how many tracks for each player have a tap or hold head.
+	 *
+	 * NOTE: Right now lifts are counted with this. Should this be modified?
+	 * @param row the row to check.
+	 * @return the number of tracks per player with the requisite note. */
+	vector<int> GetNumTracksWithTapOrHoldHead(int row) const;
+	
+	/** @brief Determine if a Player's row needs a certain number of presses.
+	 * @param min the mininum number to watch for.
+	 * @param row the row to check for.
+	 * @return true if the player needs that many presses at minimum, false otherwise. */
+	vector<bool> RowNeedsAtLeastSimultaneousPresses(int min, int row) const;
+	/** @brief Get the number of rows that require a minimum number of presses for all players.
+	 *
+	 * Note that presses are NOT the same as taps. Presses means others can be held, as long as
+	 * there is at least one tap involved.
+	 * @param min the minimum number to watch for.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of rows each player must press said number of times. */
+	vector<int> GetNumRowsWithSimultaneousPresses(int min, int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of rows that require a minimum number of taps for all players.
+	 *
+	 * Note that presses are NOT the same as taps. Taps means at the same time.
+	 * @param min the minimum number to watch for.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of rows each player must tap said number of times. */
+	vector<int> GetNumRowsWithSimultaneousTaps(int min, int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of tap notes when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of tap notes for each player. */
+	vector<int> GetNumTapNotes(int start = 0, int end = MAX_NOTE_ROW) const;
+
+	vector<int> GetNumTapNotesInRow(int row) const; // may keep int
+	
+	/** @brief Get the number of jumps when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of jumps for each player. */
+	vector<int> GetNumJumps(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of hands when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of hands for each player. */
+	vector<int> GetNumHands(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of quads when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of quads for each player. */
+	vector<int> GetNumQuads(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of holds when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of holds for each player. */
+	vector<int> GetNumHoldNotes(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of rolls when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of rolls for each player. */
+	vector<int> GetNumRolls(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of mines when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of mines for each player. */
+	vector<int> GetNumMines(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of lifts when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of lifts for each player. */
+	vector<int> GetNumLifts(int start = 0, int end = MAX_NOTE_ROW) const;
+	/** @brief Get the number of fakes when comparing TimingData for all players.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of fakes for each player. */
+	vector<int> GetNumFakes(int start = 0, int end = MAX_NOTE_ROW) const;
 
 private:
 	inline const Steps *Real() const		{ return parent ? parent : this; }
@@ -232,9 +357,7 @@ private:
 	/** @brief The name of the file where these steps are stored. */
 	RString				m_sFilename;
 	/** @brief true if these Steps were loaded from or saved to disk. */
-	bool				m_bSavedToDisk;
-	/** @brief allows the steps to specify their own music file. */
-	RString m_MusicFile;
+	bool				m_bSavedToDisk;	
 	/** @brief What profile was used? This is ProfileSlot_Invalid if not from a profile. */
 	ProfileSlot			m_LoadedFromProfile;
 
@@ -265,6 +388,30 @@ private:
 	 * @brief What is the maximum specified BPM?
 	 * If this is a range, then min should not be equal to max. */
 	float	specifiedBPMMax;
+
+	/**
+	* @brief Which PlayerNumber are we dealing with for the purposes of this Steps' TapNote?
+	* 
+	* Note: this function could possibly be abstracted if all of the cases
+	* can be separated between Couple and Routine.
+	* @param track the Track in question. Mainly if it's Couple.
+	* @param tn the TapNote to look at. Mainly if it's Routine.
+	* @return the PlayerNumber that uses this note. */
+	PlayerNumber GetEffectivePlayer(const int track, const TapNote &tn) const;
+
+	/** @brief Get the number of specific holds when comparing TimingData for all players.
+	 * @param holdType the type of hold we are dealing with.
+	 * @param start the starting row.
+	 * @param end the ending row.
+	 * @return the number of specific holds for each player. */
+	vector<int> GetNumHoldsOfType(const TapNote::SubType holdType, int start = 0, int end = MAX_NOTE_ROW) const;
+
+
+	vector<int> GetNumTapsOfType(int start,
+		int end,
+		int (NoteData::*NumTapType)(int, int) const, // nd.GetNumWhatever
+		bool (NoteData::*TapType)(const TapNote &) const // nd.IsWhatever
+		) const;
 };
 
 #endif

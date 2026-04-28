@@ -1,70 +1,74 @@
 # Unified StepMania Deployment & Build Guide
 
 ## Overview
+This document contains the latest instructions for compiling the Unified StepMania C++ backend and deploying the associated Node.js matchmaking/relay servers.
 
-The build system for Unified StepMania heavily relies on CMake to manage its diverse set of external libraries (bobcoin, ffmpeg, libpng) and submodules.
+## 1. C++ Engine Compilation (Linux/macOS)
 
-## Dependencies (Linux/Debian)
+### Prerequisites
+*   CMake (3.10+)
+*   GCC or Clang (C++11 support required)
+*   Libraries: X11, ALSA, libmad, libogg, libvorbis, FFmpeg (for StreamManager), libtorrent-rasterbar (for ContentSwarmManager).
 
-Before configuring, ensure the following packages are installed:
-
-```bash
-sudo apt-get update
-sudo apt-get install cmake gcc g++ libgl1-mesa-dev libglu1-mesa-dev \
-    libx11-dev libxrandr-dev zlib1g-dev libasound2-dev libpulse-dev \
-    libogg-dev libvorbis-dev libmad0-dev ffmpeg libavcodec-dev \
-    libavformat-dev libswscale-dev
-```
-
-## Configuring the Build (CMake)
-
-1.  **Clone the repository and submodules:**
+### Build Steps
+1.  Clone the repository and initialize submodules:
     ```bash
-    git clone --recurse-submodules <repository_url>
-    cd <repo>
+    git clone --recursive <repository-url>
+    cd stepmania-unified
     ```
-
-2.  **Generate Build Files:**
-    Create a build directory and invoke CMake. We use the Ninja generator for faster compilation.
+    *(If submodules fail, initialize them manually: `git submodule update --init`)*
+2.  Generate Makefiles:
     ```bash
-    mkdir build
-    cd build
-    cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+    mkdir build && cd build
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
     ```
-
-    *Optional Flags:*
-    *   `-DWITH_FFMPEG=ON` (Enables the Spectator TV and streaming modules).
-    *   `-DWITH_BOBCOIN=ON` (Links the real cryptocurrency library).
-    *   `-DWITH_CRASH_HANDLER=OFF` (Disables the legacy crash logger).
-
-3.  **Compile:**
+3.  Compile:
     ```bash
-    ninja
+    make -j$(nproc)
     ```
-
-4.  **Run:**
-    The executable is placed in the root directory.
+4.  Run:
     ```bash
     ./stepmania
     ```
 
-## Submodule Strategy
+## 2. Server Deployment (Node.js)
 
-The repository includes submodules like `extern/bobcoin`. If a submodule is out of date:
+The Unified platform relies on a lightweight Node.js backend for WebSockets, chat relay, and tournament matchmaking.
 
+### Prerequisites
+*   Node.js (v18+)
+*   npm or yarn
+
+### Deployment Steps
+1.  Navigate to the server directory:
+    ```bash
+    cd server
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the server (Development):
+    ```bash
+    node mock_server.js
+    ```
+4.  Start the server (Production via PM2):
+    ```bash
+    npm install -g pm2
+    pm2 start mock_server.js --name "stepmania-unified-backend"
+    pm2 save
+    ```
+
+## 3. Blockchain Node Integration (Bobcoin)
+To fully utilize the `EconomyManager`, a local or remote Bobcoin node must be running.
+1. Compile `extern/bobcoin` according to its internal documentation.
+2. Start the RPC server.
+3. Ensure the RPC credentials and IP address match the settings in `Save/Economy.xml` (or the default fallbacks in `BobcoinBridge.cpp`).
+
+## Automated Deployment Script
+For rapid testing during AI agent sessions, a `deploy.sh` script is provided in the root directory. It simulates building the frontend, checking server dependencies, and restarting the backend service.
+
+Run it via:
 ```bash
-git submodule update --remote --merge
-git commit -am "Update submodules to latest upstream"
+bash deploy.sh
 ```
-
-## Running the Mock Server
-
-The Tournament and Network modules require a backend server. A Node.js mock server is provided for local testing.
-
-```bash
-cd server
-npm install ws uuid
-node mock_server.js
-```
-
-Ensure the server is running on `ws://127.0.0.1:8080` before testing Network modules in-game.

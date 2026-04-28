@@ -1,171 +1,139 @@
-#include "global.h"
 #include "NotePath.h"
-#include "ArrowEffects.h"
-#include "GameState.h"
-#include "PlayerState.h"
-#include "RageDisplay.h"
-#include "Style.h"
-#include "LuaBinding.h"
-#include "ActorUtil.h"
+#include "RageMath.h"
+#include <algorithm>
 
-REGISTER_ACTOR_CLASS( NotePath );
+NotePath::NotePath() : m_bActive(false) {}
 
-NotePath::NotePath() :
-	m_fGrayArrowsYStandard("Player", "ReceptorArrowsYStandard"),
-	m_fGrayArrowsYReverse("Player", "ReceptorArrowsYReverse")
-{
-	m_PlayerNumber = PLAYER_1;
-	m_iColumn = 0;
-	m_fStartBeat = -1.0f;
-	m_fEndBeat = 4.0f;
-	m_iResolution = 10;
+NotePath::~NotePath() {}
+
+void NotePath::Clear() {
+    m_vPoints.clear();
+    m_bActive = false;
 }
 
-NotePath::~NotePath()
-{
-
+void NotePath::AddControlPoint(float yOffset, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
+    ControlPoint cp;
+    cp.yOffset = yOffset;
+    cp.pos = RageVector3(posX, posY, posZ);
+    cp.rot = RageVector3(rotX, rotY, rotZ);
+    m_vPoints.push_back(cp);
 }
 
-NotePath *NotePath::Copy() const
-{
-	return new NotePath(*this);
+bool ComparePoints(const NotePath::ControlPoint& a, const NotePath::ControlPoint& b) {
+    return a.yOffset < b.yOffset;
 }
 
-void NotePath::Update( float fDeltaTime )
-{
-	Actor::Update( fDeltaTime );
+void NotePath::BuildSpline() {
+    if (m_vPoints.size() < 2) {
+        m_bActive = false;
+        return;
+    }
+
+    // Sort points by YOffset to ensure correct spline evaluation
+    std::sort(m_vPoints.begin(), m_vPoints.end(), ComparePoints);
+    m_bActive = true;
 }
 
-void NotePath::SetPlayerNumber( PlayerNumber pn )
-{
-	m_PlayerNumber = pn;
+// Catmull-Rom Spline Interpolation
+float NotePath::Interpolate(float t, float p0, float p1, float p2, float p3) const {
+    float t2 = t * t;
+    float t3 = t2 * t;
+    return 0.5f * (
+        (2.0f * p1) +
+        (-p0 + p2) * t +
+        (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t2 +
+        (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t3
+    );
 }
 
-void NotePath::SetColumn( int iCol )
-{
-	m_iColumn = iCol;
+void NotePath::Evaluate(float yOffset, RageVector3& posOut, RageVector3& rotOut) const {
+    if (!m_bActive || m_vPoints.empty()) {
+        posOut = RageVector3(0, yOffset, 0);
+        rotOut = RageVector3(0, 0, 0);
+        return;
+    }
+
+    // Edge case: before first point
+    if (yOffset <= m_vPoints.front().yOffset) {
+        posOut = m_vPoints.front().pos;
+        rotOut = m_vPoints.front().rot;
+        return;
+    }
+
+    // Edge case: after last point
+    if (yOffset >= m_vPoints.back().yOffset) {
+        posOut = m_vPoints.back().pos;
+        rotOut = m_vPoints.back().rot;
+        return;
+    }
+
+    // Find the segment we are in
+    size_t idx = 0;
+    for (size_t i = 0; i < m_vPoints.size() - 1; ++i) {
+        if (yOffset >= m_vPoints[i].yOffset && yOffset < m_vPoints[i+1].yOffset) {
+            idx = i;
+            break;
+        }
+    }
+
+    // Get 4 control points for Catmull-Rom
+    const ControlPoint& p1 = m_vPoints[idx];
+    const ControlPoint& p2 = m_vPoints[idx + 1];
+
+    // Duplicate edge points if we are at the boundaries
+    const ControlPoint& p0 = (idx > 0) ? m_vPoints[idx - 1] : p1;
+    const ControlPoint& p3 = (idx + 2 < m_vPoints.size()) ? m_vPoints[idx + 2] : p2;
+
+    // Calculate normalized t (0.0 to 1.0) inside this segment
+    float range = p2.yOffset - p1.yOffset;
+    float t = (range > 0.001f) ? (yOffset - p1.yOffset) / range : 0.0f;
+
+    posOut.x = Interpolate(t, p0.pos.x, p1.pos.x, p2.pos.x, p3.pos.x);
+    posOut.y = Interpolate(t, p0.pos.y, p1.pos.y, p2.pos.y, p3.pos.y);
+    posOut.z = Interpolate(t, p0.pos.z, p1.pos.z, p2.pos.z, p3.pos.z);
+
+    rotOut.x = Interpolate(t, p0.rot.x, p1.rot.x, p2.rot.x, p3.rot.x);
+    rotOut.y = Interpolate(t, p0.rot.y, p1.rot.y, p2.rot.y, p3.rot.y);
+    rotOut.z = Interpolate(t, p0.rot.z, p1.rot.z, p2.rot.z, p3.rot.z);
 }
 
-void NotePath::SetDrawRange( float fStartBeat, float fEndBeat )
-{
-	m_fStartBeat = fStartBeat;
-	m_fEndBeat = fEndBeat;
+bool NotePath::IsActive() const {
+    return m_bActive;
 }
 
-void NotePath::SetResolution( int iResolution )
-{
-	m_iResolution = max(1, iResolution);
-}
-
-void NotePath::DrawPrimitives()
-{
-	Actor::DrawPrimitives();
-
-	if( m_PlayerNumber >= NUM_PLAYERS || !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-		return;
-
-	const Style* pStyle = GAMESTATE->GetCurrentStyle(m_PlayerNumber);
-	if( !pStyle ) return;
-
-	if( m_iColumn < 0 || m_iColumn >= pStyle->m_iColsPerPlayer ) return;
-
-	PlayerState *pPlayerState = GAMESTATE->m_pPlayerState[m_PlayerNumber];
-	if( !pPlayerState ) return;
-
-	// Use temporary options if needed, but here we just use the current player options.
-	// NoteField does this too.
-	ArrowEffects::SetCurrentOptions( &pPlayerState->m_PlayerOptions.GetCurrent() );
-
-	float fSongBeat = pPlayerState->m_Position.m_fSongBeatVisible;
-
-	float fStart = fSongBeat + m_fStartBeat;
-	float fEnd = fSongBeat + m_fEndBeat;
-
-	if( fStart >= fEnd ) return;
-
-	int iNumSteps = (int)((fEnd - fStart) * m_iResolution);
-	if( iNumSteps <= 0 ) return;
-
-	// Limit steps to prevent crash/freeze if range is huge
-	if( iNumSteps > 4000 ) iNumSteps = 4000;
-
-	vector<RageSpriteVertex> v;
-	v.reserve( iNumSteps + 1 );
-
-	// Calculate Y offsets for reverse
-	// NoteField calculates this in Init, we do it here or cache it.
-	// Since metrics can change (rarely), doing it here is safe.
-	float fYReverseOffsetPixels = m_fGrayArrowsYReverse - m_fGrayArrowsYStandard;
-
-	for( int i=0; i<=iNumSteps; ++i )
-	{
-		float fBeat = fStart + (float)i / m_iResolution;
-
-		float fPeakYOffset;
-		bool bIsPastPeak;
-		// GetYOffset returns Y pixel offset relative to receptor.
-		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, m_iColumn, fBeat, fPeakYOffset, bIsPastPeak, false );
-
-		RageVector3 pos;
-		// GetXYZPos converts Y offset to absolute screen coordinates (applying reverse, mods, etc)
-		ArrowEffects::GetXYZPos( pPlayerState, m_iColumn, fYOffset, fYReverseOffsetPixels, pos, true );
-
-		RageSpriteVertex vert;
-		vert.p = pos;
-		vert.c = this->GetDiffuses(0); // Use actor's diffuse color
-		vert.t = RageVector2(0,0);
-		v.push_back( vert );
-	}
-
-	DISPLAY->SetTexture( nullptr );
-	DISPLAY->SetBlendMode( BLEND_NORMAL );
-	DISPLAY->SetCullMode( CULL_NONE );
-	DISPLAY->SetZWrite( false );
-	DISPLAY->SetZTestMode( ZTEST_OFF );
-
-	if( !v.empty() )
-	{
-		// Draw as a line strip.
-		// Use width 2.0f as a default or expose it? NotITG usually relies on basic lines or quads.
-		// RageDisplay::DrawLineStrip takes width.
-		DISPLAY->DrawLineStrip( &v[0], v.size(), 2.0f );
-	}
-}
-
-// Lua
+// ----------------------------------------------------------------------------
+// Lua Bindings
+// ----------------------------------------------------------------------------
+#include "LuaManager.h"
 #include "LuaBinding.h"
 
 class LunaNotePath : public Luna<NotePath>
 {
 public:
-	static int SetPlayer( T* p, lua_State *L )
-	{
-		p->SetPlayerNumber( Enum::Check<PlayerNumber>(L, 1) );
-		return 0;
-	}
-	static int SetColumn( T* p, lua_State *L )
-	{
-		p->SetColumn( IArg(1) );
-		return 0;
-	}
-	static int SetDrawRange( T* p, lua_State *L )
-	{
-		p->SetDrawRange( FArg(1), FArg(2) );
-		return 0;
-	}
-	static int SetResolution( T* p, lua_State *L )
-	{
-		p->SetResolution( IArg(1) );
-		return 0;
-	}
+    static int Clear(NotePath* p, lua_State* L) {
+        p->Clear();
+        return 0;
+    }
 
-	LunaNotePath()
-	{
-		ADD_METHOD( SetPlayer );
-		ADD_METHOD( SetColumn );
-		ADD_METHOD( SetDrawRange );
-		ADD_METHOD( SetResolution );
-	}
+    static int AddControlPoint(NotePath* p, lua_State* L) {
+        float yOff = FArg(1);
+        float px = FArg(2); float py = FArg(3); float pz = FArg(4);
+        float rx = FArg(5); float ry = FArg(6); float rz = FArg(7);
+        p->AddControlPoint(yOff, px, py, pz, rx, ry, rz);
+        return 0;
+    }
+
+    static int BuildSpline(NotePath* p, lua_State* L) {
+        p->BuildSpline();
+        return 0;
+    }
+
+    LunaNotePath()
+    {
+        ADD_METHOD(Clear);
+        ADD_METHOD(AddControlPoint);
+        ADD_METHOD(BuildSpline);
+    }
 };
 
-LUA_REGISTER_DERIVED_CLASS( NotePath, Actor );
+LUA_REGISTER_CLASS(NotePath)

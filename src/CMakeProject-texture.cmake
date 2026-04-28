@@ -37,12 +37,15 @@ set_property(TARGET "TextureFontGenerator" PROPERTY FOLDER "Internal Libraries")
 
 disable_project_warnings("TextureFontGenerator")
 
+<<<<<<< HEAD
+=======
 if(NOT WITH_STATIC_LINKING)
   sm_add_compile_definition("TextureFontGenerator" _AFXDLL)
 endif()
 
 sm_add_compile_definition("TextureFontGenerator" CMAKE_POWERED)
 
+>>>>>>> main
 list(APPEND TEXTURE_LINK_LIB "zlib" "png")
 
 target_link_libraries("TextureFontGenerator" ${TEXTURE_LINK_LIB})
@@ -50,6 +53,25 @@ target_link_libraries("TextureFontGenerator" ${TEXTURE_LINK_LIB})
 list(APPEND TEXTURE_INCLUDE_DIRS
             "${TEXTURE_DIR}"
             "${TEXTURE_DIR}/res"
+<<<<<<< HEAD
+            "${SM_GENERATED_SRC_DIR}")
+
+target_include_directories("TextureFontGenerator"
+                           PUBLIC ${TEXTURE_INCLUDE_DIRS})
+
+set_target_properties("TextureFontGenerator"
+                      PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                                 "${SM_PROGRAM_DIR}"
+                                 RUNTIME_OUTPUT_DIRECTORY_RELEASE
+                                 "${SM_PROGRAM_DIR}"
+                                 RUNTIME_OUTPUT_DIRECTORY_DEBUG
+                                 "${SM_PROGRAM_DIR}"
+                                 RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL
+                                 "${SM_PROGRAM_DIR}"
+                                 RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO
+                                 "${SM_PROGRAM_DIR}")
+
+=======
             "${SM_SRC_DIR}/generated")
 
 if(NOT WITH_SYSTEM_ZLIB)
@@ -77,6 +99,7 @@ set_target_properties("TextureFontGenerator"
                                  RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO
                                  "${SM_PROGRAM_DIR}")
 
+>>>>>>> main
 set_target_properties("TextureFontGenerator"
                       PROPERTIES OUTPUT_NAME
                                  "Texture Font Generator"

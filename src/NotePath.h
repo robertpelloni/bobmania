@@ -1,38 +1,53 @@
 #ifndef NOTE_PATH_H
 #define NOTE_PATH_H
 
-#include "Actor.h"
-#include "PlayerNumber.h"
-#include "ThemeMetric.h"
+#include "global.h"
+#include "RageTypes.h"
+#include <vector>
 
-class NotePath : public Actor
+/**
+ * Unified StepMania - NotITG Parity
+ * NotePath encapsulates a Catmull-Rom or Cubic spline that dictates
+ * exactly where an arrow should be drawn on the screen based on its
+ * current YOffset (distance from the receptor).
+ */
+class NotePath
 {
 public:
-	NotePath();
-	virtual ~NotePath();
+    NotePath();
+    ~NotePath();
 
-	virtual void DrawPrimitives();
-	virtual void Update( float fDeltaTime );
+    // Clears the current spline and resets to a straight vertical line
+    void Clear();
 
-	void SetPlayerNumber( PlayerNumber pn );
-	void SetColumn( int iCol );
-	void SetDrawRange( float fStartBeat, float fEndBeat ); // relative to current beat
-	void SetResolution( int iResolution ); // steps per beat
+    // Adds a control point to the spline.
+    // yOffset: distance from receptor.
+    // posX, posY, posZ: 3D coordinate offsets for the arrow.
+    // rotX, rotY, rotZ: 3D rotation offsets for the arrow.
+    void AddControlPoint(float yOffset, float posX, float posY, float posZ, float rotX, float rotY, float rotZ);
 
-	virtual NotePath *Copy() const;
+    // Finalizes the spline generation. Must be called after adding points.
+    void BuildSpline();
 
-	// Lua
-	virtual void PushSelf( lua_State *L );
+    // Evaluates the spline at a specific YOffset.
+    // Outputs the interpolated 3D position and rotation.
+    void Evaluate(float yOffset, RageVector3& posOut, RageVector3& rotOut) const;
 
-private:
-	PlayerNumber m_PlayerNumber;
-	int m_iColumn;
-	float m_fStartBeat;
-	float m_fEndBeat;
-	int m_iResolution;
+    // Checks if a custom path is active (otherwise fast-path straight rendering)
+    bool IsActive() const;
 
-	ThemeMetric<float> m_fGrayArrowsYStandard;
-	ThemeMetric<float> m_fGrayArrowsYReverse;
+public:
+    struct ControlPoint {
+        float yOffset;
+        RageVector3 pos;
+        RageVector3 rot;
+    };
+
+    std::vector<ControlPoint> m_vPoints;
+    bool m_bActive;
+
+    // Interpolation helper
+    float Interpolate(float t, float p0, float p1, float p2, float p3) const;
 };
 
 #endif
