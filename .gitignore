@@ -1,7 +1,5 @@
 *.o
 *.obj
-<<<<<<< HEAD
-<<<<<<< HEAD
 *.a
 
 # CMake Files/Directories
@@ -82,10 +80,6 @@ Data/uPrefs
 Data/GamePrefs/*.cfg
 Data/Static.ini
 src/*.so
-<<<<<<< HEAD
-=======
-ffmpeg-*
->>>>>>> main
 Data/SpeedMods.txt
 crashinfo.txt
 Utils/temp*
@@ -111,7 +105,6 @@ BuildLog.htm
 *.pc
 *.d
 *.lastcodeanalysissucceeded
-=======
 *.exe
 *.dll
 *.so
@@ -132,8 +125,6 @@ node_modules/
 *.swp
 *.orig
 *~
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
 *.exe
 *.dll
 *.so
@@ -154,4 +145,3 @@ node_modules/
 *.swp
 *.orig
 *~
->>>>>>> origin/unified-ui-features-13937230807013224518

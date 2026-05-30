@@ -1,8 +1,5 @@
 # Prep options that are needed for each platform.
-<<<<<<< HEAD
-=======
 option(WITH_NETWORKING "Build with networking support." ON)
->>>>>>> main
 
 # This option quiets warnings that are a part of external projects.
 option(WITH_EXTERNAL_WARNINGS
@@ -13,41 +10,14 @@ option(WITH_LTO
        "Build with Link Time Optimization (LTO)/Whole Program Optimization."
        OFF)
 
-<<<<<<< HEAD
 # This option may go away in the future: if it does, JPEG will always be required.
-=======
-# This option handles if we use SSE2 processing.
-option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
-
-<<<<<<< HEAD
-# Turn this on to set this to a specific release mode.
-option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
-
-# Turn this on to set this to a specific release mode.
-option(WITH_NIGHTLY_RELEASE "Build as a nightly release." OFF)
-
-# Turn this on to include Club Fantastic songs
-option(WITH_CLUB_FANTASTIC "Include Club Fantastic songs." OFF)
-
-=======
-# This option may go away in the future: if it does, JPEG will always be
-# required.
->>>>>>> origin/unified-ui-features-13937230807013224518
 option(WITH_JPEG "Build with JPEG Image Support." ON)
 
 # Turn this on to set this to a specific release mode.
 option(WITH_FULL_RELEASE "Build as a proper, full release." OFF)
 
-<<<<<<< HEAD
 # Turn this on to compile tomcrypt with no assembly data. This is a portable mode.
 option(WITH_PORTABLE_TOMCRYPT "Build with assembly/free tomcrypt, making it portable." OFF)
-=======
->>>>>>> main
-# Turn this on to compile tomcrypt with no assembly data. This is a portable
-# mode.
-option(WITH_PORTABLE_TOMCRYPT
-       "Build with assembly/free tomcrypt, making it portable." ON)
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 # Turn this on to not use the ROLC assembly featurs of tomcrypt. If
 # WITH_PORTABLE_TOMCRYPT is ON, this will automatically have no effect.
@@ -56,12 +26,9 @@ option(
   "Build without the ROLC assembly instructions for tomcrypt."
   OFF)
 
-<<<<<<< HEAD
-=======
 # Turn this option off to not use the GPL exclusive components.
 option(WITH_GPL_LIBS "Build with GPL libraries." ON)
 
-<<<<<<< HEAD
 if(WIN32)
   option(WITH_MINIMAID "Build with Mimimaid Lights Support." OFF)
 elseif(LINUX)
@@ -77,24 +44,10 @@ elseif(LINUX)
     option(WITH_MP3 "Build with MP3 Support." ON)
     option(WITH_PARALLEL_PORT "Build with Parallel Lights I/O Support." OFF)
     option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
-=======
-# Turn this option off to disable using WAV files with the game. Note that it is
-# recommended to keep this on.
-option(WITH_WAV "Build with WAV Support." ON)
-
-# Turn this option off to disable using MP3 files with the game.
-option(WITH_MP3 "Build with MP3 Support." ON)
-
-# Turn this option off to disable using OGG files with the game.
-option(WITH_OGG "Build with OGG/Vorbis Support." ON)
-
->>>>>>> main
 # Turn this option on to log every segment added or removed.
 option(WITH_LOGGING_TIMING_DATA
        "Build with logging all Add and Erase Segment calls." OFF)
 
-<<<<<<< HEAD
-=======
 option(WITH_SYSTEM_PNG "Build with system PNG library (may not work on 1.6+)"
        OFF)
 option(WITH_SYSTEM_OGG "Build with system OGG libraries" OFF)
@@ -109,7 +62,6 @@ option(WITH_SYSTEM_ZLIB "Build against system zlib" OFF)
 
 option(WITH_SDL "Build with SDL" OFF)
 
->>>>>>> main
 if(NOT MSVC)
   # Change this number to utilize a different number of jobs for building
   # FFMPEG.
@@ -122,23 +74,7 @@ else()
     OFF)
 endif()
 
-<<<<<<< HEAD
 if(LINUX)
-=======
-if(WIN32)
-  option(WITH_MINIMAID "Build with Minimaid Lights Support." OFF)
-  # Developer only option: connect to IRC to report the result. Only use with
-  # build servers.
-  option(WITH_IRC_POST_HOOK "Report via IRC of the success afterwards." OFF)
-elseif(LINUX)
-  # Builder beware: later versions of ffmpeg may break!
-  option(WITH_SYSTEM_FFMPEG
-         "Build with the system's FFMPEG, disabled build with bundled's FFMPEG"
-         OFF)
-  option(WITH_CRYSTALHD_DISABLED "Build FFMPEG without Crystal HD support." OFF)
-  option(WITH_MINIMAID "Build with Minimaid Lights Support." OFF)
-  option(WITH_TTY "Build with Linux TTY Input Support." OFF)
->>>>>>> main
   option(WITH_PROFILING "Build with Profiling Support." OFF)
   option(WITH_GLES2 "Build with OpenGL ES 2.0 Support." ON)
   option(WITH_GTK3 "Build with GTK3 Support." ON)
@@ -153,19 +89,7 @@ elseif(LINUX)
   option(WITH_XRANDR "Build with Xrandr support" ON)
   option(WITH_LIBXTST "Build with libXtst support" ON)
   option(WITH_X11 "Build with X11 support" ON)
-<<<<<<< HEAD
 endif()
 
 option(WITH_MINIMAID "Build with Minimaid support." ON)
 
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
-endif()
-
-if(NOT ANDROID)
-  # This option handles if we use SSE2 processing.
-  option(WITH_SSE2 "Build with SSE2 Optimizations." ON)
-elseif(ANDROID)
-  option(WITH_CRASH_HANDLER "Build with Crash Handler Support." ON)
-endif()
->>>>>>> main
