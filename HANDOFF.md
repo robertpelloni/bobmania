@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 <<<<<<< HEAD
 # StepMania Network: Final Project Handoff
 
@@ -60,9 +59,6 @@ This document summarizes the comprehensive overhaul of StepMania 5 into "StepMan
 ## Final Note
 The project is fully integrated. All branches are merged to `main`. The version is synchronized to `5.5.4-Tested`.
 # Handoff Document: StepMania 5.2 (5.1-new) Unified Fork Project
-=======
-# UNIFIED STEPMANIA: MASTER AI HANDOFF (v5.7.12)
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 **Author:** Jules (Google AI)
 **Date:** 2026-02-10
@@ -102,43 +98,6 @@ The following features from forks were analyzed but explicitly **excluded** from
 
 ## Additional Notes from unified-ui-features Branch
 StepMania Unified - Handoff Notes
-<<<<<<< Updated upstream
 
 StepMania Unified - Handoff Notes
 
-=======
->>>>>>> Stashed changes
-Last Session: Implemented MissionManager, Documentation, and Network Helpers.
-Next Steps: Implement ReplayManager, Wife Scoring, and advanced NetPlay features.
-Current Version: 5.7.0-Unified-Alpha
-Submodules: Simply-Love-SM5, bobcoin (mock)
-=======
-### UI & Frontend
-Every single C++ feature is exhaustively represented in the Lua 5.1 Theme.
-*   **`ScreenUnifiedDashboard`:** The master hub linking to all new modes.
-*   **`ScreenMarketplace` & `ScreenWalletHistory`:** Buy themes/songs with Bobcoin; view the transaction ledger.
-*   **`ScreenTournamentLadder` & `ScreenBettingEntry`:** View ELO ranks, wager Bobcoins, and trigger the `ScreenTournamentDraft` pick/ban phase against opponents.
-*   **`ScreenGymWelcome` & `ScreenGymSummary`:** Create biometric profiles, generate dynamic endurance playlists (`GymPlaylistGenerator`), and track calories.
-*   **`ScreenSpectate`:** View active matches (populated by the Node.js server) and tune in to simulated RTMP streams.
-*   **`ScreenContentNetwork` & `ScreenAssetSync`:** Browse P2P packs, push/pull high scores and wallet balances from the cloud.
-*   **`ScreenMissionSelect`:** Track objectives (Calories Burned, Notes Hit, Songs Passed) fed dynamically from the C++ `MissionManager`.
-*   **`ScreenUnifiedOptions`:** Exposes backend `PlayerOptions` (Ghost Tapping, Practice Mode, NotITG FOV Overrides) directly to the user.
-
-### Backend Infrastructure
-*   **Discord RPC:** Context-aware Rich Presence injected into every single Lua screen (`Themes/default/Scripts/11 Discord.lua`).
-*   **Node.js Server:** `server/mock_server.js` was completely rewritten into a JSON WebSocket handler. It maintains a Matchmaking Queue, tracks mocked ELO, issues `MATCH_START` payloads, and broadcasts an `ACTIVE_MATCHES` list for Spectators.
-*   **Git Merges:** The repository cleanly merged upstream `x11_fullscreen` (Linux fixes) and `merge-itgmania-features` (parity groundwork) without regressing any Unified modules.
-
-## 4. DOCUMENTATION DIRECTORY
-You must consult the `Docs/` directory before writing code.
-*   **`Docs/LLM_UNIVERSAL.md`:** The absolute master directive set for AI agents.
-*   **`Docs/ROADMAP.md` & `Docs/TODO.md`:** The exact, prioritized list of remaining C++ hardware/network implementations.
-*   **`Docs/SUBMODULES.md`:** Detailed explanation of the 15+ external libraries (`ffmpeg`, `bobcoin`, `jsoncpp`, etc.).
-*   **`Docs/IDEAS.md`:** Far-future pivots (Rust rewrite, Rhythm MMO).
-
-## 5. NEXT STEPS (ACTION REQUIRED)
-1. Boot the `mock_server.js`.
-2. Connect `TournamentManager` to the WebSocket.
-3. Open `src/Scoring/ReplayManager.cpp` and `src/Player.cpp` and implement Ghost Rendering.
-4. Replace `EconomyManager`'s local XML parsing with Blockchain RPCs.
->>>>>>> origin/unified-ui-features-13937230807013224518

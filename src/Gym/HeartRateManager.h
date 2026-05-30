@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #ifndef HEARTRATE_MANAGER_H
 #define HEARTRATE_MANAGER_H
 
@@ -9,22 +8,12 @@
  * Global singleton that manages the heart rate hardware.
  * Accessible via HEARTRATEMAN.
  */
-=======
-#ifndef HEART_RATE_MANAGER_H
-#define HEART_RATE_MANAGER_H
-
-#include "RageUtil.h"
-
-struct lua_State;
-
->>>>>>> origin/unified-ui-features-13937230807013224518
 class HeartRateManager
 {
 public:
     HeartRateManager();
     ~HeartRateManager();
 
-<<<<<<< HEAD
     // Initialize the best available driver for the platform
     void Init();
 
@@ -46,23 +35,5 @@ private:
 };
 
 extern HeartRateManager* HEARTRATEMAN;
-=======
-    void Init();
-    void Update( float fDeltaTime );
-
-    int GetHeartRate() const;
-    bool IsConnected() const;
-
-    // Lua
-    void PushSelf( lua_State *L );
-
-private:
-    int m_iCurrentBPM;
-    float m_fTimer;
-    bool m_bConnected;
-};
-
-extern HeartRateManager* HRMAN;
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 #endif
