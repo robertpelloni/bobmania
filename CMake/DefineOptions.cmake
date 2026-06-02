@@ -31,7 +31,7 @@ option(WITH_GPL_LIBS "Build with GPL libraries." ON)
 
 if(WIN32)
   option(WITH_MINIMAID "Build with Mimimaid Lights Support." OFF)
-elseif(LINUX)
+elseif(UNIX)
     option(WITH_FFMPEG "Build with FFMPEG." ON)
     # Builder beware: later versions of ffmpeg may break!
     option(WITH_SYSTEM_FFMPEG "Build with the system's FFMPEG." OFF)
@@ -62,6 +62,7 @@ option(WITH_SYSTEM_ZLIB "Build against system zlib" OFF)
 
 option(WITH_SDL "Build with SDL" OFF)
 
+endif()
 if(NOT MSVC)
   # Change this number to utilize a different number of jobs for building
   # FFMPEG.
