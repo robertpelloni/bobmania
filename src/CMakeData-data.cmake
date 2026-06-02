@@ -53,7 +53,6 @@ list(APPEND SM_DATA_NOTEDATA_SRC
             "NoteData.cpp"
             "NotePath.cpp"
             "NoteDataUtil.cpp"
-<<<<<<< HEAD
             "NoteDataWithScoring.cpp"
             "ColumnCues.cpp"
             "TechCounts.cpp"
@@ -61,15 +60,11 @@ list(APPEND SM_DATA_NOTEDATA_SRC
             "StepParityGenerator.cpp"
             "StepParityDatastructs.cpp"
             "StepParityCost.cpp")
-=======
-            "NoteDataWithScoring.cpp")
->>>>>>> main
 
 list(APPEND SM_DATA_NOTEDATA_HPP
             "NoteData.h"
             "NotePath.h"
             "NoteDataUtil.h"
-<<<<<<< HEAD
             "NoteDataWithScoring.h"
             "ColumnCues.h"
             "TechCounts.h"
@@ -77,9 +72,6 @@ list(APPEND SM_DATA_NOTEDATA_HPP
             "StepParityGenerator.h"
             "StepParityDatastructs.h"
             "StepParityCost.h")
-=======
-            "NoteDataWithScoring.h")
->>>>>>> main
 
 source_group("Data Structures\\\\Note Data"
              FILES
@@ -133,42 +125,14 @@ list(APPEND SM_DATA_SCORE_SRC
             "ScoreKeeperNormal.cpp"
             "ScoreKeeperRave.cpp"
             "ScoreKeeperShared.cpp"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             "Scoring/WifeScoring.cpp")
-=======
-            "Scoring/ScoreKeeperUnified.cpp"
-            "Scoring/ReplayManager.cpp")
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
-            "Scoring/ScoreKeeperUnified.cpp")
->>>>>>> main
-=======
-            "Scoring/WifeScoring.cpp"
-            "Scoring/ReplayManager.cpp")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 list(APPEND SM_DATA_SCORE_HPP
             "ScoreKeeper.h"
             "ScoreKeeperNormal.h"
             "ScoreKeeperRave.h"
             "ScoreKeeperShared.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             "Scoring/WifeScoring.h")
-=======
-            "Scoring/ScoreKeeperUnified.h"
-            "Scoring/ReplayManager.h")
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
-            "Scoring/ScoreKeeperUnified.h")
->>>>>>> main
-=======
-            "Scoring/WifeScoring.h"
-            "Scoring/ReplayManager.h")
->>>>>>> origin/unified-ui-features-13937230807013224518
 
 list(APPEND SM_DATA_GYM_SRC
             "Gym/GymManager.cpp"
@@ -211,21 +175,7 @@ source_group("Data Structures\\\\Score Keepers"
              ${SM_DATA_SCORE_HPP})
 
 list(APPEND SM_DATA_SONG_SRC
-<<<<<<< HEAD
             "Group.cpp"
-=======
->>>>>>> main
-            "Song.cpp"
-            "SongCacheIndex.cpp"
-            "SongOptions.cpp"
-            "SongPosition.cpp"
-            "SongUtil.cpp")
-
-list(APPEND SM_DATA_SONG_HPP
-<<<<<<< HEAD
-            "Group.h"
-=======
->>>>>>> main
             "Song.h"
             "SongCacheIndex.h"
             "SongOptions.h"
@@ -272,13 +222,8 @@ list(APPEND SM_DATA_REST_SRC
             "DateTime.cpp"
             "Difficulty.cpp"
             "DisplaySpec.cpp"
-<<<<<<< HEAD
             "EditModePlayerManager.cpp"
             "EnumHelper.cpp"
-=======
-            "EnumHelper.cpp"
-            "FileDownload.cpp"
->>>>>>> main
             "Game.cpp"
             "GameCommand.cpp"
             "GameConstantsAndTypes.cpp"
@@ -329,13 +274,8 @@ list(APPEND SM_DATA_REST_HPP
             "DateTime.h"
             "DisplaySpec.h"
             "Difficulty.h"
-<<<<<<< HEAD
             "EditModePlayerManager.h"
             "EnumHelper.h"
-=======
-            "EnumHelper.h"
-            "FileDownload.h"
->>>>>>> main
             "Game.h"
             "GameCommand.h"
             "GameConstantsAndTypes.h"
@@ -371,14 +311,6 @@ list(APPEND SM_DATA_REST_HPP
             "TimingSegments.h"
             "TitleSubstitution.h")
 
-<<<<<<< HEAD
-=======
-if(WITH_NETWORKING)
-  list(APPEND SM_DATA_REST_SRC "RoomWheel.cpp")
-  list(APPEND SM_DATA_REST_HPP "RoomWheel.h")
-endif()
-
->>>>>>> main
 source_group("Data Structures\\\\Misc Objects"
              FILES
              ${SM_DATA_REST_SRC}

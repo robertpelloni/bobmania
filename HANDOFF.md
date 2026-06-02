@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # StepMania Network: Final Project Handoff
 
 **Date:** 2025-12-27

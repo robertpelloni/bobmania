@@ -1,6 +1,5 @@
 #ifndef SextetUtils_H
 #define SextetUtils_H
-<<<<<<<< HEAD:itgmania/src/arch/Lights/SextetUtils.h
 #ifndef SextetUtils_H
 #define SextetUtils_H
 

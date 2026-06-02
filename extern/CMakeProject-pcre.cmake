@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 set(PCRE_SRC "pcre/pcre_byte_order.c"
              "pcre/pcre_chartables.c"
              "pcre/pcre_compile.c"
@@ -32,23 +31,9 @@ configure_file("pcre/pcre_chartables.c.dist" "pcre/pcre_chartables.c" COPYONLY)
 source_group("" FILES ${PCRE_SRC} ${PCRE_HPP})
 
 add_library("pcre" STATIC ${PCRE_SRC} ${PCRE_HPP})
-=======
-if(WITH_SYSTEM_PCRE)
-  find_package(Pcre REQUIRED)
-else()
-  set(PCRE_SRC "pcre/get.c" "pcre/maketables.c" "pcre/pcre.c" "pcre/study.c")
-
-  set(PCRE_HPP "pcre/internal.h" "pcre/pcre.h")
-
-  source_group("" FILES ${PCRE_SRC})
-  source_group("" FILES ${PCRE_HPP})
-
-  add_library("pcre" ${PCRE_SRC} ${PCRE_HPP})
->>>>>>> main
 
   set_property(TARGET "pcre" PROPERTY FOLDER "External Libraries")
 
-<<<<<<< HEAD
 target_compile_definitions("pcre" PRIVATE HAVE_CONFIG_H)
 target_compile_definitions("pcre" PUBLIC PCRE_STATIC)
 
@@ -56,7 +41,3 @@ target_include_directories("pcre" PUBLIC
   "pcre"
   "${CMAKE_CURRENT_BINARY_DIR}/pcre"
 )
-=======
-  disable_project_warnings("pcre")
-endif()
->>>>>>> main

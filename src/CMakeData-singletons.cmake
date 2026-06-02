@@ -8,14 +8,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "FontManager.cpp"
             "GameManager.cpp"
             "GameSoundManager.cpp"
-<<<<<<< HEAD
-<<<<<<< HEAD
             "Gym/HeartRateManager.cpp"
-=======
->>>>>>> main
-=======
-            "Gym/HeartRateManager.cpp"
->>>>>>> origin/unified-ui-features-13937230807013224518
             "GrooveStats/GrooveStatsManager.cpp"
             "Discord/DiscordManager.cpp"
             "GameState.cpp"
@@ -34,13 +27,6 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_SRC
             "Network/ChatManager.cpp"
             "Network/SpectatorManager.cpp"
             "Network/UnifiedNetwork.cpp"
-<<<<<<< HEAD
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
-            "NetworkSyncManager.cpp"
->>>>>>> main
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
             "NoteSkinManager.cpp"
             "PrefsManager.cpp"
             "ProfileManager.cpp"
@@ -64,14 +50,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "FontManager.h"
             "GameManager.h"
             "GameSoundManager.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
             "Gym/HeartRateManager.h"
-=======
->>>>>>> main
-=======
-            "Gym/HeartRateManager.h"
->>>>>>> origin/unified-ui-features-13937230807013224518
             "GrooveStats/GrooveStatsManager.h"
             "GameState.h"
             "InputFilter.h"
@@ -81,13 +60,7 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "LuaManager.h"
             "MemoryCardManager.h"
             "MessageManager.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
             "NetworkManager.h"
-=======
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
             "Unified/AssetSyncManager.h"
             "NetworkSyncManager.h"
             "Network/ContentSwarmManager.h"
@@ -96,13 +69,6 @@ list(APPEND SMDATA_GLOBAL_SINGLETON_HPP
             "Network/ChatManager.h"
             "Network/SpectatorManager.h"
             "Network/UnifiedNetwork.h"
-<<<<<<< HEAD
->>>>>>> origin/unified-ui-features-13937230807013224518
-=======
-            "NetworkSyncManager.h"
->>>>>>> main
-=======
->>>>>>> origin/unified-ui-features-13937230807013224518
             "NoteSkinManager.h"
             "PrefsManager.h"
             "ProfileManager.h"

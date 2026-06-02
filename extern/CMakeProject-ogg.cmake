@@ -1,18 +1,9 @@
 set(OGG_SRC "ogg/src/bitwise.c"
             "ogg/src/framing.c")
 
-<<<<<<< HEAD
 set(OGG_HPP "ogg/ogg/config_types.h"
             "ogg/include/ogg/ogg.h"
             "ogg/include/ogg/os_types.h")
-=======
-list(APPEND OGG_SRC "${OGG_DIR}/src/bitwise.c" "${OGG_DIR}/src/framing.c")
-
-list(APPEND OGG_HPP
-            "${OGG_DIR}/include/ogg/config_types.h"
-            "${OGG_DIR}/include/ogg/ogg.h"
-            "${OGG_DIR}/include/ogg/os_types.h")
->>>>>>> main
 
 source_group("Source Files" FILES ${OGG_SRC})
 source_group("Header Files" FILES ${OGG_HPP})
@@ -28,9 +19,4 @@ target_include_directories("ogg" PUBLIC
   "${CMAKE_CURRENT_BINARY_DIR}/ogg"
 )
 
-<<<<<<< HEAD
 configure_file("config.ogg.types.in.h" "ogg/ogg/config_types.h")
-=======
-configure_file("${SM_EXTERN_DIR}/config.ogg.types.in.h"
-               "${OGG_DIR}/include/ogg/config_types.h")
->>>>>>> main
