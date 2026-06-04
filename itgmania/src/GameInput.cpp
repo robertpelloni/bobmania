@@ -1,102 +1,55 @@
 #include "global.h"
+
 #include "GameInput.h"
+
+#include "InputMapper.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "InputMapper.h"
 #include "ThemeManager.h"
 
-
-static const char *GameControllerNames[] = {
-	"1",
-	"2",
+static const char* GameControllerNames[] = {
+    "1",
+    "2",
 };
-XToString( GameController );
-StringToX( GameController );
-LuaXType( GameController );
+XToString(GameController);
+StringToX(GameController);
+LuaXType(GameController);
 
-/* TODO: extend game-specific names into Lua space */
-static const char *GameButtonNames[] = {
-	"MenuLeft",
-	"MenuRight",
-	"MenuUp",
-	"MenuDown",
-	"Start",
-	"Select",
-	"Back",
-	"Coin",
-	"Operator",
-	"EffectUp",
-	"EffectDown",
-	"Custom01",
-	"Custom02",
-	"Custom03",
-	"Custom04",
-	"Custom05",
-	"Custom06",
-	"Custom07",
-	"Custom08",
-	"Custom09",
-	"Custom10",
-	"Custom11",
-	"Custom12",
-	"Custom13",
-	"Custom14",
-	"Custom15",
-	"Custom16",
-	"Custom17",
-	"Custom18",
-	"Custom19",
+RString GameButtonToString(const InputScheme* inputs, GameButton i) {
+  return inputs->GetGameButtonName(i);
+}
 
+RString GameButtonToLocalizedString(const InputScheme* inputs, GameButton i) {
+  return THEME->GetString("GameButton", GameButtonToString(inputs, i));
+}
+
+GameButton StringToGameButton(const InputScheme* inputs, const RString& s) {
+  FOREACH_GameButtonInScheme(inputs, i) {
+    if (s == GameButtonToString(inputs, i)) {
+      return i;
+    }
+  }
+  return GameButton_Invalid;
+}
+
+RString GameInput::ToString(const InputScheme* inputs) const {
+  return GameControllerToString(controller) + RString("_") +
+         GameButtonToString(inputs, button);
+}
+
+bool GameInput::FromString(const InputScheme* inputs, const RString& s) {
+  char controller_buf[32] = "";
+  char buton_buf[32] = "";
+
+  if (2 != sscanf(s, "%31[^_]_%31[^_]", controller_buf, buton_buf)) {
+    controller = GameController_Invalid;
+    return false;
+  }
+
+  controller = StringToGameController(controller_buf);
+  button = StringToGameButton(inputs, buton_buf);
+  return true;
 };
-
-// game-agnostic overloads of the functions below
-XToString( GameButton );
-StringToX( GameButton );
-LuaXType( GameButton );
-
-RString GameButtonToString( const InputScheme* pInputs, GameButton i )
-{
-	return pInputs->GetGameButtonName(i);
-}
-
-RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i )
-{
-	return THEME->GetString( "GameButton", GameButtonToString(pInputs,i) );
-}
-
-GameButton StringToGameButton( const InputScheme* pInputs, const RString& s )
-{
-	FOREACH_GameButtonInScheme( pInputs, i )
-	{
-		if( s == GameButtonToString(pInputs, i) )
-			return i;
-	}
-	return GameButton_Invalid;
-}
-
-
-RString GameInput::ToString( const InputScheme* pInputs ) const
-{
-	return GameControllerToString(controller) + RString("_") + GameButtonToString(pInputs,button);
-}
-
-bool GameInput::FromString( const InputScheme* pInputs, const RString &s )
-{
-	char szController[32] = "";
-	char szButton[32] = "";
-
-	if( 2 != sscanf( s.c_str(), "%31[^_]_%31[^_]", szController, szButton ) )
-	{
-		controller = GameController_Invalid;
-		return false;
-	}
-
-	controller = StringToGameController( szController );
-	button = StringToGameButton( pInputs, szButton );
-	return true;
-};
-
-
 
 /*
  * (c) 2001-2004 Chris Danford
@@ -111,7 +64,7 @@ bool GameInput::FromString( const InputScheme* pInputs, const RString &s )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

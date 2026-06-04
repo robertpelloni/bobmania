@@ -1,30 +1,34 @@
-#include "global.h"
 #include "ScreenContinue.h"
-#include "ScreenManager.h"
-#include "ActorUtil.h"
-#include "GameState.h"
-#include "RageLog.h"
-#include "InputEventPlus.h"
-#include "MenuTimer.h"
-#include "MemoryCardManager.h"
 
+#include <algorithm>
 #include <cmath>
 
+#include "EnumHelper.h"
+#include "GameInput.h"
+#include "GameState.h"
+#include "InputEventPlus.h"
+#include "InputFilter.h"
+#include "MemoryCardManager.h"
+#include "MenuTimer.h"
+#include "MessageManager.h"
+#include "PlayerNumber.h"
+#include "Screen.h"
+#include "ScreenManager.h"
+#include "ScreenMessage.h"
+#include "ScreenWithMenuElements.h"
 
-REGISTER_SCREEN_CLASS( ScreenContinue );
+REGISTER_SCREEN_CLASS(ScreenContinue);
 
-void ScreenContinue::Init()
-{
-	ScreenWithMenuElementsSimple::Init();
+void ScreenContinue::Init() {
+  ScreenWithMenuElementsSimple::Init();
 
-	this->SubscribeToMessage( Message_PlayerJoined );
+  this->SubscribeToMessage(Message_PlayerJoined);
 
-	FORCE_TIMER_WAIT.Load( m_sName, "ForceTimerWait" );
+  FORCE_TIMER_WAIT.Load(m_sName, "ForceTimerWait");
 }
 
-void ScreenContinue::BeginScreen()
-{
-	GAMESTATE->SetCurrentStyle( nullptr, PLAYER_INVALID );
+void ScreenContinue::BeginScreen() {
+  GAMESTATE->SetCurrentStyle(nullptr, PLAYER_INVALID);
 
 	// Unjoin human players with 0 stages left and reset non-human players.
 	// We need to reset non-human players because data in non-human (CPU)
@@ -34,7 +38,7 @@ void ScreenContinue::BeginScreen()
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
-			bool bPlayerDone = GAMESTATE->m_iPlayerStageTokens[p] <= 0;
+			bool bPlayerDone = GAMESTATE->player_stage_tokens_[p] <= 0;
 			if( bPlayerDone )
 			{
 				GAMESTATE->UnjoinPlayer( p );
@@ -47,23 +51,24 @@ void ScreenContinue::BeginScreen()
 		}
 	}
 
-	ScreenWithMenuElementsSimple::BeginScreen();
+  ScreenWithMenuElementsSimple::BeginScreen();
 }
 
 bool ScreenContinue::Input( const InputEventPlus &input )
 {
-	if( input.MenuI == GAME_BUTTON_COIN &&  input.type == IET_FIRST_PRESS )
+	if( input.menu_input_ == GAME_BUTTON_COIN &&  input.type_ == IET_FIRST_PRESS )
 		ResetTimer();
 
-	if( input.MenuI == GAME_BUTTON_START  &&  input.type == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn) )
+	if( input.menu_input_ == GAME_BUTTON_START  &&  input.type_ == IET_FIRST_PRESS  &&  GAMESTATE->JoinInput(input.pn_) )
 		return true;	// handled
 
-	if( IsTransitioning() )
-		return true;
+  if (IsTransitioning()) {
+    return true;
+  }
 
-	if( input.type == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn)  &&  FORCE_TIMER_WAIT )
+	if( input.type_ == IET_FIRST_PRESS  &&  GAMESTATE->IsHumanPlayer(input.pn_)  &&  FORCE_TIMER_WAIT )
 	{
-		switch( input.MenuI )
+		switch( input.menu_input_ )
 		{
 			case GAME_BUTTON_START:
 			case GAME_BUTTON_UP:
@@ -75,7 +80,7 @@ bool ScreenContinue::Input( const InputEventPlus &input )
 				fSeconds = std::max( fSeconds, 0.0001f ); // don't set to 0
 				m_MenuTimer->SetSeconds( fSeconds );
 				Message msg("HurryTimer");
-				msg.SetParam( "PlayerNumber", input.pn );
+				msg.SetParam( "PlayerNumber", input.pn_ );
 				this->HandleMessage( msg );
 				return true;	// handled
 			}
@@ -83,43 +88,40 @@ bool ScreenContinue::Input( const InputEventPlus &input )
 		}
 	}
 
-	return ScreenWithMenuElementsSimple::Input( input );
+  return ScreenWithMenuElementsSimple::Input(input);
 }
 
-void ScreenContinue::HandleScreenMessage( const ScreenMessage SM )
-{
-	if( SM == SM_MenuTimer )
-	{
-		if( !IsTransitioning() )
-			StartTransitioningScreen( SM_GoToNextScreen );
-		return;
-	}
+void ScreenContinue::HandleScreenMessage(const ScreenMessage SM) {
+  if (SM == SM_MenuTimer) {
+    if (!IsTransitioning()) {
+      StartTransitioningScreen(SM_GoToNextScreen);
+    }
+    return;
+  }
 
-	ScreenWithMenuElementsSimple::HandleScreenMessage( SM );
+  ScreenWithMenuElementsSimple::HandleScreenMessage(SM);
 }
 
-void ScreenContinue::HandleMessage( const Message &msg )
-{
-	if( msg == Message_PlayerJoined )
-	{
-		ResetTimer();
+void ScreenContinue::HandleMessage(const Message& msg) {
+  if (msg == Message_PlayerJoined) {
+    ResetTimer();
 
-		bool bAllPlayersAreEnabled = true;
-		FOREACH_ENUM( PlayerNumber, p )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				bAllPlayersAreEnabled = false;
-		}
+    bool bAllPlayersAreEnabled = true;
+    FOREACH_ENUM(PlayerNumber, p) {
+      if (!GAMESTATE->IsPlayerEnabled(p)) {
+        bAllPlayersAreEnabled = false;
+      }
+    }
 
-		if( bAllPlayersAreEnabled )
-		{
-			m_MenuTimer->Stop();
-			if( !IsTransitioning() )
-				StartTransitioningScreen( SM_GoToNextScreen );
-		}
-	}
+    if (bAllPlayersAreEnabled) {
+      m_MenuTimer->Stop();
+      if (!IsTransitioning()) {
+        StartTransitioningScreen(SM_GoToNextScreen);
+      }
+    }
+  }
 
-	ScreenWithMenuElementsSimple::HandleMessage( msg );
+  ScreenWithMenuElementsSimple::HandleMessage(msg);
 }
 
 /*

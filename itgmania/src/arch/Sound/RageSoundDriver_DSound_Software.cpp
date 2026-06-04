@@ -10,8 +10,6 @@
 
 #include <cstdint>
 
-#include <cstdint>
-
 REGISTER_SOUND_DRIVER_CLASS2( DirectSound-sw, DSound_Software );
 
 static const int channels = 2;
@@ -27,7 +25,7 @@ void RageSoundDriver_DSound_Software::MixerThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
 		if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
-			LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
+			LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority").c_str());
 
 	/* Fill a buffer before we start playing, so we don't play whatever junk is
 	 * in the buffer. */
@@ -78,8 +76,6 @@ int RageSoundDriver_DSound_Software::MixerThread_start(void *p)
 RageSoundDriver_DSound_Software::RageSoundDriver_DSound_Software()
 	: m_pPCM(nullptr), m_iSampleRate(0), m_bShutdownMixerThread(false)
 {
-	: m_pPCM(nullptr), m_iSampleRate(0), m_bShutdownMixerThread(false)
-{
 }
 
 RString RageSoundDriver_DSound_Software::Init()
@@ -102,7 +98,7 @@ RString RageSoundDriver_DSound_Software::Init()
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_iSampleRate == 0 )
 	{
-		m_iSampleRate = kFallbackSampleRate;
+		m_iSampleRate = FALLBACK_SAMPLE_RATE;
 	}
 	// This m_iSampleRate (driver's) is then passed as the iSampleRate parameter to DSoundBuf::Init()
 	sError = m_pPCM->Init( ds, DSoundBuf::HW_DONT_CARE, channels, m_iSampleRate, 16, g_iMaxWriteahead );
@@ -138,7 +134,7 @@ RageSoundDriver_DSound_Software::~RageSoundDriver_DSound_Software()
 void RageSoundDriver_DSound_Software::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set decoding thread priority") );
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set decoding thread priority").c_str() );
 }
 
 float RageSoundDriver_DSound_Software::GetPlayLatency() const
@@ -155,7 +151,6 @@ int RageSoundDriver_DSound_Software::GetSampleRate() const
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
  *
- *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -165,7 +160,6 @@ int RageSoundDriver_DSound_Software::GetSampleRate() const
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

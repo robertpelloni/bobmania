@@ -9,6 +9,7 @@
 #include "Difficulty.h"
 #include "SongUtil.h"
 #include "CourseUtil.h"
+#include "InputQueue.h"
 
 #include <vector>
 
@@ -89,6 +90,7 @@ public:
 	bool	m_bRequirePassChallengeSteps;
 	bool	m_bRoulette;
 	RString	m_sEntryID;
+	InputQueueCode m_Code;
 
 	bool	IsValid() const;
 	bool	IsLocked() const	{ return GetUnlockEntryStatus() != UnlockEntryStatus_Unlocked; }
@@ -171,6 +173,8 @@ public:
 	const UnlockEntry *FindStepsType( const Song *pSong, const Steps *pSteps, const StepsType *pSType ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;
 	const UnlockEntry *FindModifier( const RString &sOneMod ) const;
+
+	bool Input( const InputEventPlus &input );
 
 	// Lua
 	void PushSelf( lua_State *L );

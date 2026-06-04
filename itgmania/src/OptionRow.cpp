@@ -32,8 +32,8 @@ RString OptionRow::GetThemedItemText( int iChoice ) const
 	return s;
 }
 
-RString ITEMS_LONG_ROW_X_NAME( size_t p )	{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
-RString MOD_ICON_X_NAME( size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); }
+RString ITEMS_LONG_ROW_X_NAME( std::size_t p )	{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
+RString MOD_ICON_X_NAME( std::size_t p )		{ return ssprintf("ModIconP%dX",int(p+1)); }
 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
@@ -71,7 +71,7 @@ void OptionRow::Clear()
 		for (RString const &m : m_pHand->m_vsReloadRowMessages)
 			MESSAGEMAN->Unsubscribe( this, m );
 	}
-	RageUtil::SafeDelete( m_pHand );
+	SAFE_DELETE( m_pHand );
 
 	m_bFirstItemGoesDown = false;
 	ZERO( m_bRowHasFocus );
@@ -206,9 +206,9 @@ RString OptionRow::GetRowTitle() const
 	{
 		bool bShowBpmInSpeedTitle = m_pParentType->SHOW_BPM_IN_SPEED_TITLE;
 
-		if( GAMESTATE->m_pCurCourse )
+		if( GAMESTATE->cur_course_ )
 		{
-			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->GetMasterPlayerNumber()];
+			const Trail* pTrail = GAMESTATE->cur_trail_[GAMESTATE->GetMasterPlayerNumber()];
 			ASSERT( pTrail != nullptr );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
@@ -218,14 +218,14 @@ RString OptionRow::GetRowTitle() const
 		if( bShowBpmInSpeedTitle )
 		{
 			DisplayBpms bpms;
-			if( GAMESTATE->m_pCurSong )
+			if( GAMESTATE->cur_song_ )
 			{
-				const Song* pSong = GAMESTATE->m_pCurSong;
+				const Song* pSong = GAMESTATE->cur_song_;
 				pSong->GetDisplayBpms( bpms );
 			}
-			else if( GAMESTATE->m_pCurCourse )
+			else if( GAMESTATE->cur_course_ )
 			{
-				const Course *pCourse = GAMESTATE->m_pCurCourse;
+				const Course *pCourse = GAMESTATE->cur_course_;
 				StepsType st = GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StepsType;
 				const Trail* pTrail = pCourse->GetTrail( st );
 				ASSERT( pTrail != nullptr );
@@ -979,7 +979,7 @@ public:
 	DEFINE_METHOD( FirstItemGoesDown, GetFirstItemGoesDown() )
 	static int GetChoiceInRowWithFocus( T* p, lua_State *L ) { lua_pushnumber( L, p->GetChoiceInRowWithFocus(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	DEFINE_METHOD( GetLayoutType, GetHandler()->m_Def.m_layoutType )
-	static int GetName( T* p, lua_State *L ) { lua_pushstring( L, p->GetHandler()->m_Def.m_sName.c_str() ); return 1; }
+	static int GetName( T* p, lua_State *L ) { lua_pushstring( L, p->GetHandler()->m_Def.m_sName ); return 1; }
 	static int GetNumChoices( T* p, lua_State *L ) { lua_pushnumber( L, p->GetHandler()->m_Def.m_vsChoices.size() ); return 1; }
 	DEFINE_METHOD( GetSelectType, GetHandler()->m_Def.m_selectType )
 	DEFINE_METHOD( GetRowTitle, GetRowTitle() )

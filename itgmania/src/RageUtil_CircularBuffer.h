@@ -5,8 +5,6 @@
 
 #include <cstring>
 
-#include <cstring>
-
 /* Lock-free circular buffer.  This should be threadsafe if one thread is reading
  * and another is writing. */
 template<class T>
@@ -135,8 +133,6 @@ public:
 
 	void clear()
 	{
-		read_pos = 0;
-		write_pos = 0;
 		read_pos = 0;
 		write_pos = 0;
 	}
@@ -272,7 +268,6 @@ public:
 		 * through, we can tell if we accidentally get a stale pointer. */
 		memset( p[0], 0xFF, from_first*sizeof(T) );
 		if( buffer_size > sizes[0] )
-			memset( p[1], 0xFF, (buffer_size-sizes[0])*sizeof(T) );
 			memset( p[1], 0xFF, (buffer_size-sizes[0])*sizeof(T) );
 
 		advance_read_pointer( buffer_size );

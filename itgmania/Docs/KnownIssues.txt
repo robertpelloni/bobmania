@@ -2,6 +2,10 @@ The following is a list of known issues with StepMania 5.
 
 * The course editor is not working. (It could stand to be rewritten.)
 
+<<<<<<< HEAD
+* LuaDriver works well, but without threading it has latency issues.
+
+=======
 * The scoring system needs to be made global for the game instead
   of tying it to the theme. The current arrangement causes multiple problems
   (themes not supporting scoring unless they explicitly add it to gameplay
@@ -47,4 +51,5 @@ The following is a list of known issues with StepMania 5.
 * Survival courses crash if you set a noteskin in the player options
   just before starting the course.
 
+>>>>>>> upstream/release
 * On some graphics cards, 3D models may cause crashes.

@@ -10,16 +10,13 @@
 #include <cmath>
 #include <vector>
 
-#include <cmath>
-#include <vector>
-
 
 RageSoundReader_Merge::RageSoundReader_Merge()
 {
 	m_iSampleRate = -1;
 	m_iChannels = 0;
 	m_iNextSourceFrame = 0;
-	m_fCurrentStreamToSourceRatio = 1.0f;
+	m_fCurrentStreamToSourceRatio = 1.0;
 }
 
 RageSoundReader_Merge::~RageSoundReader_Merge()
@@ -67,7 +64,6 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	m_iChannels = 1;
 	for (RageSoundReader *it : m_aSounds)
 		m_iChannels = std::max( m_iChannels, it->GetNumChannels() );
-		m_iChannels = std::max( m_iChannels, it->GetNumChannels() );
 
 	/*
 	 * We might get different sample rates from our sources.  If they're all the same
@@ -98,7 +94,6 @@ void RageSoundReader_Merge::Finish( int iPreferredSampleRate )
 	 * channels. */
 	if( m_iChannels > 2 )
 	{
-		std::vector<RageSoundReader *> aSounds;
 		std::vector<RageSoundReader *> aSounds;
 		for (RageSoundReader *it : m_aSounds)
 		{
@@ -136,7 +131,7 @@ int RageSoundReader_Merge::SetPosition( int iFrame )
 	return iRet;
 }
 
-bool RageSoundReader_Merge::SetProperty( const RString &sProperty, float fValue )
+bool RageSoundReader_Merge::SetProperty( const RString &sProperty, double fValue )
 {
 	bool bRet = false;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
@@ -148,9 +143,7 @@ bool RageSoundReader_Merge::SetProperty( const RString &sProperty, float fValue 
 	return bRet;
 }
 
-static float Difference( float a, float b ) { return std::abs( a - b ); }
-static int Difference( int a, int b ) { return std::abs( a - b ); }
-static float Difference( float a, float b ) { return std::abs( a - b ); }
+static double Difference( double a, double b ) { return std::abs( a - b ); }
 static int Difference( int a, int b ) { return std::abs( a - b ); }
 
 /*
@@ -182,9 +175,6 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 	{
 		return END_OF_FILE;
 	}
-	{
-		return END_OF_FILE;
-	}
 
 	/*
 	 * All sounds which are active should stay aligned; each GetNextSourceFrame should not
@@ -192,7 +182,7 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 	 * happens may be a bug, such as sounds at different speeds.
 	 */
 	std::vector<int> aNextSourceFrames(m_aSounds.size());
-	std::vector<float> aRatios(m_aSounds.size());
+	std::vector<double> aRatios(m_aSounds.size());
 
 	for (size_t i = 0; i < m_aSounds.size(); ++i)
 	{
@@ -273,9 +263,6 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 				{
 					return iGotFrames;
 				}
-				{
-					return iGotFrames;
-				}
 				break;
 			}
 
@@ -287,9 +274,6 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 			{
 				break;
 			}
-			{
-				break;
-			}
 		}
 	}
 
@@ -297,7 +281,6 @@ int RageSoundReader_Merge::Read( float *pBuffer, int iFrames )
 	int iMaxFramesRead = mix.size() / m_iChannels;
 	mix.read( pBuffer );
 
-	m_iNextSourceFrame += static_cast<int>(( iMaxFramesRead * m_fCurrentStreamToSourceRatio ) + 0.5);
 	m_iNextSourceFrame += static_cast<int>(( iMaxFramesRead * m_fCurrentStreamToSourceRatio ) + 0.5);
 
 	return iMaxFramesRead;
@@ -308,7 +291,6 @@ int RageSoundReader_Merge::GetLength() const
 	int iLength = 0;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
 		iLength = std::max( iLength, m_aSounds[i]->GetLength() );
-		iLength = std::max( iLength, m_aSounds[i]->GetLength() );
 	return iLength;
 }
 
@@ -316,7 +298,6 @@ int RageSoundReader_Merge::GetLength_Fast() const
 {
 	int iLength = 0;
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
-		iLength = std::max( iLength, m_aSounds[i]->GetLength_Fast() );
 		iLength = std::max( iLength, m_aSounds[i]->GetLength_Fast() );
 	return iLength;
 }

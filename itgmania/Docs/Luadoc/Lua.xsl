@@ -207,20 +207,10 @@
 			<link rel="icon" type="image/x-icon" href="./favicon.ico"/>
 		</head>
 		<body>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:itgmania/Docs/Luadoc/Lua.xsl
->>>>>>> main
 			<xsl:apply-templates />
 			<script>
 				OpenOnLoad();
 			</script>
-<<<<<<< HEAD
-=======
-=======
-			<xsl:apply-templates />\
->>>>>>> origin/unified-ui-features-13937230807013224518:Docs/Luadoc/Lua.xsl
->>>>>>> main
 		</body>
 	</html>
 </xsl:template>

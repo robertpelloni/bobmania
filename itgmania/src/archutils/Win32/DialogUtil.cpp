@@ -7,9 +7,6 @@
 #include <cmath>
 #include <memory>
 
-#include <cmath>
-#include <memory>
-
 // Create*Font copied from MFC's CFont
 
 // pLogFont->nHeight is interpreted as PointSize * 10
@@ -29,7 +26,6 @@ static HFONT CreatePointFontIndirect(const LOGFONT* lpLogFont)
 	logFont.lfHeight = -std::abs(pt.y - ptOrg.y);
 
 	ReleaseDC(nullptr, hDC);
-	ReleaseDC(NULL, hDC);
 
 	return ::CreateFontIndirect(&logFont);
 }
@@ -102,7 +98,6 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
  *
- *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -112,7 +107,6 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

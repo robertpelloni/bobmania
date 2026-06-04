@@ -3,15 +3,13 @@
 #ifndef RAGE_SOUND_READER_FILTER_H
 #define RAGE_SOUND_READER_FILTER_H
 
+#include <string>
+
 #include "RageSoundReader.h"
 #include "RageUtil_AutoPtr.h"
-class RageSoundReader_Filter: public RageSoundReader
-{
-public:
-	RageSoundReader_Filter( RageSoundReader *pSource ):
-		m_pSource( pSource )
-	{
-	}
+class RageSoundReader_Filter : public RageSoundReader {
+ public:
+  RageSoundReader_Filter(RageSoundReader* pSource) : m_pSource(pSource) {}
 
 	virtual int GetLength() const { return m_pSource->GetLength(); }
 	virtual int GetLength_Fast() const { return m_pSource->GetLength_Fast(); }
@@ -19,14 +17,14 @@ public:
 	virtual int Read( float *pBuf, int iFrames ) { return m_pSource->Read( pBuf, iFrames ); }
 	virtual int GetSampleRate() const { return m_pSource->GetSampleRate(); }
 	virtual unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
-	virtual bool SetProperty( const RString &sProperty, float fValue ) { return m_pSource->SetProperty( sProperty, fValue ); }
+	virtual bool SetProperty( const RString &sProperty, double fValue ) { return m_pSource->SetProperty( sProperty, fValue ); }
 	virtual int GetNextSourceFrame() const { return m_pSource->GetNextSourceFrame(); }
-	virtual float GetStreamToSourceRatio() const { return m_pSource->GetStreamToSourceRatio(); }
+	virtual double GetStreamToSourceRatio() const { return m_pSource->GetStreamToSourceRatio(); }
 	virtual RageSoundReader *GetSource() { return &*m_pSource; }
 	virtual RString GetError() const { return m_pSource->GetError(); }
 
-protected:
-	HiddenPtr<RageSoundReader> m_pSource;
+ protected:
+  HiddenPtr<RageSoundReader> m_pSource;
 };
 
 #endif

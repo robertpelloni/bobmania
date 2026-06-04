@@ -4,9 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface.h"
-
-#include <cstdint>
-
+#include "RageUtil/Endian.h"
 
 #include <cstdint>
 
@@ -85,7 +83,6 @@ static RageSurfaceUtils::OpenResult LoadBMP( RageFile &f, RageSurface *&img, RSt
 		FATAL_ERROR( ssprintf( "BI_BITFIELDS unexpected with bpp %u", iBPP ) );
 
 	int iFileBPP = iBPP;
-	iBPP = std::max( iBPP, 8u );
 	iBPP = std::max( iBPP, 8u );
 
 	int Rmask = 0, Gmask = 0, Bmask = 0, Amask = 0;

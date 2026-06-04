@@ -27,11 +27,9 @@ source_group("Arch Specific\\\\Threads"
 list(APPEND SMDATA_ARCH_SOUND_SRC
             "arch/Sound/RageSoundDriver.cpp"
             "arch/Sound/RageSoundDriver_Generic_Software.cpp"
-            "arch/Sound/RageSoundDriver_MiniAudio.cpp"
             "arch/Sound/RageSoundDriver_Null.cpp")
 
 list(APPEND SMDATA_ARCH_SOUND_HPP "arch/Sound/RageSoundDriver.h"
-            "arch/Sound/RageSoundDriver_MiniAudio.h"
             "arch/Sound/RageSoundDriver_Null.h")
 
 if(WIN32)
@@ -46,7 +44,7 @@ if(WIN32)
               "arch/Sound/RageSoundDriver_WaveOut.h"
               "arch/Sound/RageSoundDriver_WDMKS.h")
 elseif(APPLE)
-  list(APPEND SMDATA_ARCH_SOUND_SRC "arch/Sound/RageSoundDriver_AU.cpp")
+  list(APPEND SMDATA_ARCH_SOUND_SRC "arch/Sound/RageSoundDriver_AU.mm")
   list(APPEND SMDATA_ARCH_SOUND_HPP "arch/Sound/RageSoundDriver_AU.h")
 else() # Unix
   if(HAS_PULSE)
@@ -82,33 +80,15 @@ source_group("Arch Specific\\\\Sound"
 
 list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
             "arch/MovieTexture/MovieTexture.cpp"
+            "arch/MovieTexture/MovieTexture_FFMpeg.cpp"
             "arch/MovieTexture/MovieTexture_Generic.cpp"
             "arch/MovieTexture/MovieTexture_Null.cpp")
+
 list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
             "arch/MovieTexture/MovieTexture.h"
+            "arch/MovieTexture/MovieTexture_FFMpeg.h"
             "arch/MovieTexture/MovieTexture_Generic.h"
             "arch/MovieTexture/MovieTexture_Null.h")
-
-if(APPLE)
-  if(${HAS_FFMPEG})
-    list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
-                "arch/MovieTexture/MovieTexture_FFMpeg.cpp")
-    list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
-                "arch/MovieTexture/MovieTexture_FFMpeg.h")
-  endif()
-elseif(MSVC)
-  list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
-              "arch/MovieTexture/MovieTexture_FFMpeg.cpp")
-  list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
-              "arch/MovieTexture/MovieTexture_FFMpeg.h")
-else() # Unix
-  if(${HAS_FFMPEG})
-    list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_SRC
-                "arch/MovieTexture/MovieTexture_FFMpeg.cpp")
-    list(APPEND SMDATA_ARCH_MOVIE_TEXTURE_HPP
-                "arch/MovieTexture/MovieTexture_FFMpeg.h")
-  endif()
-endif()
 
 source_group("Arch Specific\\\\Movie Texture"
              FILES
@@ -187,12 +167,7 @@ else()
     list(APPEND SMDATA_ARCH_LOADING_HPP
                 "arch/LoadingWindow/LoadingWindow_MacOSX.h")
   elseif(LINUX)
-    if(GTK3_FOUND)
-      list(APPEND SMDATA_ARCH_LOADING_SRC
-                  "arch/LoadingWindow/LoadingWindow_Gtk.cpp")
-      list(APPEND SMDATA_ARCH_LOADING_HPP
-                  "arch/LoadingWindow/LoadingWindow_Gtk.h")
-    endif()
+    include(CMakeData-gtk.cmake)
   endif()
 endif()
 
@@ -202,34 +177,42 @@ source_group("Arch Specific\\\\Loading Window"
              ${SMDATA_ARCH_LOADING_HPP})
 
 list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver.cpp"
-            "arch/Lights/LightsDriver_SystemMessage.cpp")
+            "arch/Lights/LightsDriver_Export.cpp"
+            "arch/Lights/LightsDriver_SextetStream.cpp"
+            "arch/Lights/LightsDriver_SystemMessage.cpp"
+            "arch/Lights/LightsDriver_stac.cpp"
+            "arch/Lights/LightsDriver_stac2.cpp"
+            "arch/Lights/LightsDriver_snek.cpp"
+            "arch/Lights/LightsDriver_fusion.cpp"
+            "arch/Lights/LightsDriver_MinimaidHID.cpp"
+            "arch/Lights/LightsDriver_PacDrive.cpp"
+            "arch/Lights/LightsDriver_gpb.cpp"
+            "arch/Lights/LightsDriver_HidBlueDot.cpp")
 list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver.h"
-            "arch/Lights/LightsDriver_SystemMessage.h")
+            "arch/Lights/LightsDriver_Export.h"
+            "arch/Lights/LightsDriver_SextetStream.h"
+            "arch/Lights/LightsDriver_SystemMessage.h"
+            "arch/Lights/SextetUtils.h"
+            "arch/Lights/LightsDriver_stac.h"
+            "arch/Lights/LightsDriver_stac2.h"
+            "arch/Lights/LightsDriver_snek.h"
+            "arch/Lights/LightsDriver_fusion.h"
+            "arch/Lights/LightsDriver_MinimaidHID.cpp"
+            "arch/Lights/LightsDriver_PacDrive.h"
+            "arch/Lights/LightsDriver_gpb.h"
+            "arch/Lights/LightsDriver_HidBlueDot.h")
 
-list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_SextetStream.cpp")
-list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_SextetStream.h")
-list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/SextetUtils.h")
-
-list(APPEND SMDATA_ARCH_LIGHTS_SRC "arch/Lights/LightsDriver_Export.cpp")
-list(APPEND SMDATA_ARCH_LIGHTS_HPP "arch/Lights/LightsDriver_Export.h")
-
+# TODO: Confirm if Apple can use the export.
 if(NOT APPLE)
-
   if(WIN32)
     list(APPEND SMDATA_ARCH_LIGHTS_SRC
                 "arch/Lights/LightsDriver_Win32Serial.cpp"
                 "arch/Lights/LightsDriver_Win32Parallel.cpp"
-                "arch/Lights/LightsDriver_PacDrive.cpp")
+                "arch/Lights/LightsDriver_Win32Minimaid.cpp")
     list(APPEND SMDATA_ARCH_LIGHTS_HPP
                 "arch/Lights/LightsDriver_Win32Parallel.h"
                 "arch/Lights/LightsDriver_Win32Serial.h"
-                "arch/Lights/LightsDriver_PacDrive.cpp")
-    if(WITH_MINIMAID)
-      list(APPEND SMDATA_ARCH_LIGHTS_SRC
-                  "arch/Lights/LightsDriver_Win32Minimaid.cpp")
-      list(APPEND SMDATA_ARCH_LIGHTS_HPP
-                  "arch/Lights/LightsDriver_Win32Minimaid.h")
-    endif()
+                "arch/Lights/LightsDriver_Win32Minimaid.h")
   else() # Unix/Linux TODO: Linux HAVE_PARALLEL_PORT
     if(LINUX)
       list(APPEND SMDATA_LINK_LIB "udev")
@@ -239,27 +222,27 @@ if(NOT APPLE)
                   "arch/Lights/LightsDriver_Linux_PIUIO_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_PIUIOBTN_Leds.cpp"
                   "arch/Lights/LightsDriver_Linux_ITGIO.cpp"
+                  "arch/Lights/LightsDriver_GenericHID.cpp"
                   "arch/Lights/LightsDriver_Linux_stac.cpp"
-                  "arch/Lights/LightsDriver_LinuxWeedTech.cpp")
+                  "arch/Lights/LightsDriver_LinuxPacDrive.cpp"
+                  "arch/Lights/LightsDriver_LinuxWeedTech.cpp"
+                  "io/PacDrive.cpp")
       list(APPEND SMDATA_ARCH_LIGHTS_HPP
                   "arch/Lights/LightsDriver_Linux_Leds.h"
                   "arch/Lights/LightsDriver_Linux_PIUIO.h"
                   "arch/Lights/LightsDriver_Linux_PIUIO_Leds.h"
                   "arch/Lights/LightsDriver_Linux_PIUIOBTN_Leds.h"
                   "arch/Lights/LightsDriver_Linux_ITGIO.h"
+                  "arch/Lights/LightsDriver_GenericHID.h"
                   "arch/Lights/LightsDriver_Linux_stac.h"
-                  "arch/Lights/LightsDriver_LinuxWeedTech.h")
+                  "arch/Lights/LightsDriver_LinuxPacDrive.h"
+                  "arch/Lights/LightsDriver_LinuxWeedTech.h"
+                  "io/PacDrive.h")
       if(WITH_PARALLEL_PORT)
         list(APPEND SMDATA_ARCH_LIGHTS_SRC
                     "arch/Lights/LightsDriver_LinuxParallel.cpp")
         list(APPEND SMDATA_ARCH_LIGHTS_HPP
                     "arch/Lights/LightsDriver_LinuxParallel.h")
-      endif()
-      if(WITH_MINIMAID)
-        list(APPEND SMDATA_ARCH_LIGHTS_SRC
-                    "arch/Lights/LightsDriver_LinuxMinimaid.cpp")
-        list(APPEND SMDATA_ARCH_LIGHTS_HPP
-                    "arch/Lights/LightsDriver_LinuxMinimaid.h")
       endif()
     endif()
   endif(WIN32)
@@ -271,8 +254,10 @@ source_group("Arch Specific\\\\Lights"
              ${SMDATA_ARCH_LIGHTS_HPP})
 
 list(APPEND SMDATA_ARCH_INPUT_SRC "arch/InputHandler/InputHandler.cpp"
+            "arch/InputHandler/InputHandler_PumpHID.cpp"
             "arch/InputHandler/InputHandler_MonkeyKeyboard.cpp")
 list(APPEND SMDATA_ARCH_INPUT_HPP "arch/InputHandler/InputHandler.h"
+            "arch/InputHandler/InputHandler_PumpHID.h"
             "arch/InputHandler/InputHandler_MonkeyKeyboard.h")
 
 if(WIN32)
@@ -283,7 +268,7 @@ if(WIN32)
               "arch/InputHandler/InputHandler_Win32_Para.cpp"
               "arch/InputHandler/InputHandler_Win32_Pump.cpp"
               "arch/InputHandler/InputHandler_Win32_RTIO.cpp"
-			  "arch/InputHandler/InputHandler_Win32_ddrio.cpp")
+              "arch/InputHandler/InputHandler_Win32_ddrio.cpp")
   list(APPEND SMDATA_ARCH_INPUT_HPP
               "arch/InputHandler/InputHandler_DirectInput.h"
               "arch/InputHandler/InputHandler_DirectInputHelper.h"
@@ -291,7 +276,7 @@ if(WIN32)
               "arch/InputHandler/InputHandler_Win32_Para.h"
               "arch/InputHandler/InputHandler_Win32_Pump.h"
               "arch/InputHandler/InputHandler_Win32_RTIO.h"
-			  "arch/InputHandler/InputHandler_Win32_ddrio.h")
+              "arch/InputHandler/InputHandler_Win32_ddrio.h")
   if(NOT MSVC)
     list(APPEND SMDATA_ARCH_INPUT_SRC
                 "arch/InputHandler/InputHandler_SextetStream.cpp")
@@ -300,9 +285,11 @@ if(WIN32)
   endif()
 elseif(APPLE)
   list(APPEND SMDATA_ARCH_INPUT_SRC
-              "arch/InputHandler/InputHandler_MacOSX_HID.cpp")
+              "arch/InputHandler/InputHandler_MacOSX_HID.mm"
+              "arch/InputHandler/InputHandler_NSEvent.mm")
   list(APPEND SMDATA_ARCH_INPUT_HPP
-              "arch/InputHandler/InputHandler_MacOSX_HID.h")
+              "arch/InputHandler/InputHandler_MacOSX_HID.h"
+              "arch/InputHandler/InputHandler_NSEvent.hpp")
 else() # Unix/Linux
   if(LINUX)
     list(APPEND SMDATA_ARCH_INPUT_SRC
@@ -317,13 +304,6 @@ else() # Unix/Linux
                 "arch/InputHandler/InputHandler_Linux_Event.h"
                 "arch/InputHandler/InputHandler_Linux_PIUIO.h"
                 "arch/InputHandler/InputHandler_SextetStream.h")
-    if(WITH_TTY)
-      list(APPEND SMDATA_ARCH_INPUT_SRC
-                  "arch/InputHandler/InputHandler_Linux_tty.cpp")
-      list(APPEND SMDATA_ARCH_INPUT_HPP
-                  "arch/InputHandler/InputHandler_Linux_tty.h"
-                  "arch/InputHandler/InputHandler_Linux_tty_keys.h")
-    endif()
   endif()
   if(X11_FOUND)
     list(APPEND SMDATA_ARCH_INPUT_SRC "arch/InputHandler/InputHandler_X11.cpp")
@@ -354,8 +334,8 @@ source_group("Arch Specific\\\\Dialog"
              ${SMDATA_ARCH_DIALOG_SRC}
              ${SMDATA_ARCH_DIALOG_HPP})
 
-list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks.cpp" "arch/ArchHooks/ArchHooks_VR.cpp")
-list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks.h" "arch/ArchHooks/ArchHooks_VR.h")
+list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooks.cpp")
+list(APPEND SMDATA_ARCH_HOOKS_HPP "arch/ArchHooks/ArchHooks.h")
 
 if(NOT APPLE)
   list(APPEND SMDATA_ARCH_HOOKS_SRC "arch/ArchHooks/ArchHooksUtil.cpp")

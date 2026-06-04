@@ -12,9 +12,6 @@ prevents mapping keys through the Config Key/Joy Mappings screen.
 Windows: `%APPDATA%/ITGmania/Save/Keymaps.ini`
 Linux: `~/.itgmania/Save/Keymaps.ini`
 macOS: `~/Library/Preferences/ITGmania/Keymaps.ini`
-Windows: `%APPDATA%/ITGmania/Save/Keymaps.ini`
-Linux: `~/.itgmania/Save/Keymaps.ini`
-macOS: `~/Library/Preferences/ITGmania/Keymaps.ini`
 
 
 ## Structure

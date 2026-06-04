@@ -59,8 +59,6 @@ int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
 
 	m_iFilePos = std::min( m_iFilePos, GetFileSize() );
 	bytes = std::min( bytes, (size_t) GetFileSize() - m_iFilePos );
-	m_iFilePos = std::min( m_iFilePos, GetFileSize() );
-	bytes = std::min( bytes, (size_t) GetFileSize() - m_iFilePos );
 	if( bytes == 0 )
 		return 0;
 	memcpy( buffer, &m_pFile->m_sBuf[m_iFilePos], bytes );
@@ -81,7 +79,6 @@ int RageFileObjMem::WriteInternal( const void *buffer, size_t bytes )
 
 int RageFileObjMem::SeekInternal( int offset )
 {
-	m_iFilePos = std::clamp( offset, 0, GetFileSize() );
 	m_iFilePos = std::clamp( offset, 0, GetFileSize() );
 	return m_iFilePos;
 }
@@ -174,7 +171,6 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 	/* Unregister the file. */
 	FDB->DelFile( sPath );
 	std::vector<RageFileObjMemFile*>::iterator it = find( m_Files.begin(), m_Files.end(), pFile );
-	std::vector<RageFileObjMemFile*>::iterator it = find( m_Files.begin(), m_Files.end(), pFile );
 	ASSERT( it != m_Files.end() );
 	m_Files.erase( it );
 
@@ -193,7 +189,6 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
  * (c) 2004 Glenn Maynard
  * All rights reserved.
  *
- *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -203,7 +198,6 @@ static struct FileDriverEntry_MEM: public FileDriverEntry
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

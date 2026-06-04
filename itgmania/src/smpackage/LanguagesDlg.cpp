@@ -7,6 +7,7 @@
 #include "LanguagesDlg.h"
 #include "SpecialFiles.h"
 #include "RageUtil.h"
+#include "RageUtil/Regex.h"
 #include "IniFile.h"
 #include "languagesdlg.h"
 #include "SMPackageUtil.h"
@@ -55,7 +56,6 @@ BOOL LanguagesDlg::OnInitDialog()
 	GetDirListing( SpecialFiles::THEMES_DIR+"*", vs, true );
 	StripCvsAndSvn( vs );
 	for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
-	for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
 		m_listThemes.AddString( *s );
 	if( !vs.empty() )
 		m_listThemes.SetSel( 0 );
@@ -102,7 +102,6 @@ void LanguagesDlg::OnSelchangeListThemes()
 
 		std::vector<RString> vs;
 		GetDirListing( sLanguagesDir+"*.ini", vs, false );
-		for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
 		for (std::vector<RString>::const_iterator s = vs.begin(); s != vs.end(); ++s)
 		{
 			RString sIsoCode = GetFileNameWithoutExtension(*s);
@@ -393,7 +392,6 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	int iNumUnchanged = 0;
 	int iNumIgnored = 0;
 	for (std::vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
-	for (std::vector<CsvFile::StringVector>::const_iterator line = csv.m_vvs.begin(); line != csv.m_vvs.end(); ++line)
 	{
 		int iLineIndex = line - csv.m_vvs.begin();
 
@@ -466,7 +464,6 @@ void GetAllMatches( const RString &sRegex, const RString &sString, std::vector<R
 void DumpList( const std::vector<RString> &asList, RageFile &file )
 {
 	RString sLine;
-	for (std::vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
 	for (std::vector<RString>::const_iterator s = asList.begin(); s != asList.end(); ++s)
 	{
 		if( sLine.size() + s->size() > 100 )
@@ -566,7 +563,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 					RString sCurrentLanguage2 = sCurrentLanguage;
 					TrimRight( sCurrentLanguage2, " " );
 
-					if( (sBaseLanguage2.Right(1) == ".")  ^  (sCurrentLanguage2.Right(1) == ".") )
+					if( StrUtil::EndsWith(sBaseLanguage2, ".")  ^  StrUtil::EndsWith(sCurrentLanguage2, ".") )
 					{
 						file.PutLine( ssprintf("Period mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
 						file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );

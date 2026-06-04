@@ -8,9 +8,6 @@
 #include <vector>
 
 
-#include <vector>
-
-
 class Song;
 class Steps;
 struct lua_State;
@@ -66,7 +63,6 @@ public:
 	CourseType		m_CourseType;
 	CourseDifficulty	m_CourseDifficulty;
 	std::vector<TrailEntry>	m_vEntries;
-	std::vector<TrailEntry>	m_vEntries;
 	int			m_iSpecifiedMeter;	// == -1 if no meter specified
 	mutable bool		m_bRadarValuesCached;
 	mutable RadarValues	m_CachedRadarValues;
@@ -79,7 +75,6 @@ public:
 		m_CourseType(CourseType_Invalid),
 		m_CourseDifficulty(Difficulty_Invalid),
 		m_vEntries(), m_iSpecifiedMeter(-1),
-		m_bRadarValuesCached(false), m_CachedRadarValues() {}
 		m_bRadarValuesCached(false), m_CachedRadarValues() {}
 	void Init()
 	{
@@ -111,7 +106,6 @@ public:
  * @section LICENSE
  * All rights reserved.
  *
- *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -121,7 +115,6 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

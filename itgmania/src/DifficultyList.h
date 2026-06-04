@@ -2,82 +2,71 @@
 #ifndef DIFFICULTY_LIST_H
 #define DIFFICULTY_LIST_H
 
+#include <vector>
+
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
+#include "Song.h"
+#include "Steps.h"
 #include "StepsDisplay.h"
 #include "ThemeMetric.h"
 
-#include <vector>
+class StepsDisplayList : public ActorFrame {
+ public:
+  StepsDisplayList();
+  virtual ~StepsDisplayList();
+  virtual StepsDisplayList* Copy() const;
+  virtual void LoadFromNode(const XNode* node);
 
+  void HandleMessage(const Message& msg);
 
-#include <vector>
+  void SetFromGameState();
+  void TweenOnScreen();
+  void TweenOffScreen();
+  void Hide();
+  void Show();
 
+  // Lua
+  void PushSelf(lua_State* L);
 
-class Song;
-class Steps;
+ private:
+  void UpdatePositions();
+  void PositionItems();
+  int GetCurrentRowIndex(PlayerNumber pn) const;
+  void HideRows();
 
-class StepsDisplayList: public ActorFrame
-{
-public:
-	StepsDisplayList();
-	virtual ~StepsDisplayList();
-	virtual StepsDisplayList *Copy() const;
-	virtual void LoadFromNode( const XNode* pNode );
+  ThemeMetric<float> ITEMS_SPACING_Y;
+  ThemeMetric<int> NUM_SHOWN_ITEMS;
+  ThemeMetric<bool> CAPITALIZE_DIFFICULTY_NAMES;
+  ThemeMetric<apActorCommands> MOVE_COMMAND;
 
-	void HandleMessage( const Message &msg );
+  AutoActor cursors_[NUM_PLAYERS];
+	// Contains Cursor so that color can fade independent of other tweens.
+  ActorFrame cursor_frames_[NUM_PLAYERS];
 
-	void SetFromGameState();
-	void TweenOnScreen();
-	void TweenOffScreen();
-	void Hide();
-	void Show();
+  struct Line {
+    StepsDisplay meter;
+  };
+  std::vector<Line> lines_;
 
-	// Lua
-	void PushSelf( lua_State *L );
+  const Song* cur_song_;
+  bool is_shown_;
 
-private:
-	void UpdatePositions();
-	void PositionItems();
-	int GetCurrentRowIndex( PlayerNumber pn ) const;
-	void HideRows();
+  struct Row {
+    Row() {
+      steps = nullptr;
+      difficulty = Difficulty_Invalid;
+      y = 0;
+      is_hidden = false;
+    }
 
-	ThemeMetric<float> ITEMS_SPACING_Y;
-	ThemeMetric<int> NUM_SHOWN_ITEMS;
-	ThemeMetric<bool> CAPITALIZE_DIFFICULTY_NAMES;
-	ThemeMetric<apActorCommands> MOVE_COMMAND;
+    const Steps* steps;
+    Difficulty difficulty;
+    float y;
+    bool is_hidden;  // currently off screen
+  };
 
-	AutoActor		m_Cursors[NUM_PLAYERS];
-	ActorFrame		m_CursorFrames[NUM_PLAYERS];	// contains Cursor so that color can fade independent of other tweens
-
-	struct Line
-	{
-		StepsDisplay m_Meter;
-	};
-	std::vector<Line>	m_Lines;
-	std::vector<Line>	m_Lines;
-
-	const Song		*m_CurSong;
-	bool			m_bShown;
-
-	struct Row
-	{
-		Row()
-		{
-			m_Steps = nullptr;
-			m_dc = Difficulty_Invalid;
-			m_fY = 0;
-			m_bHidden = false;
-		}
-
-		const Steps *m_Steps;
-		Difficulty m_dc;
-		float m_fY;
-		bool m_bHidden; // currently off screen
-	};
-
-	std::vector<Row>		m_Rows;
-	std::vector<Row>		m_Rows;
-
+  std::vector<Row> rows_;
 };
 
 #endif
@@ -85,7 +74,6 @@ private:
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
- *
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
@@ -96,7 +84,6 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

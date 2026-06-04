@@ -4,6 +4,7 @@ list(APPEND SMDATA_OS_HPP "archutils/Common/HidDevice.h")
 if(APPLE)
   list(APPEND SMDATA_OS_DARWIN_SRC
               "archutils/Darwin/Crash.mm"
+              "archutils/Darwin/CocoaEventDispatcher.mm"
               "archutils/Darwin/DarwinThreadHelpers.cpp"
               "archutils/Darwin/HIDDevice.cpp"
               "archutils/Darwin/JoystickDevice.cpp"
@@ -14,6 +15,7 @@ if(APPLE)
               "archutils/Darwin/SpecialDirs.mm")
   list(APPEND SMDATA_OS_DARWIN_HPP
               "archutils/Darwin/arch_setup.h"
+              "archutils/Darwin/CocoaEventDispatcher.h"
               "archutils/Darwin/Crash.h"
               "archutils/Darwin/DarwinThreadHelpers.h"
               "archutils/Darwin/HIDDevice.h"
@@ -90,21 +92,29 @@ else()
                 "archutils/Win32/WindowsResources.h")
   else() # Unix
     list(APPEND SMDATA_OS_SRC # TODO: X11 check, crash handler check
+                "arch/USB/USBDriver_Impl.cpp"
+                "arch/USB/USBDriver_Impl_Libusb.cpp"
                 "archutils/Unix/AssertionHandler.cpp"
                 "archutils/Unix/EmergencyShutdown.cpp"
                 "archutils/Unix/GetSysInfo.cpp"
                 "archutils/Unix/RunningUnderValgrind.cpp"
                 "archutils/Unix/SignalHandler.cpp"
                 "archutils/Unix/SpecialDirs.cpp"
-                "archutils/Unix/StackCheck.cpp")
+                "archutils/Unix/StackCheck.cpp"
+                "io/USBDriver.cpp")
     list(APPEND SMDATA_OS_HPP
+                "arch/USB/USBDriver_Impl.h"
+                "arch/USB/USBDriver_Impl_Libusb.h"
+                "arch/USB/USBDriver_Macros.h"
                 "archutils/Unix/arch_setup.h"
                 "archutils/Unix/AssertionHandler.h"
                 "archutils/Unix/EmergencyShutdown.h"
                 "archutils/Unix/GetSysInfo.h"
                 "archutils/Unix/RunningUnderValgrind.h"
                 "archutils/Unix/SignalHandler.h"
-                "archutils/Unix/SpecialDirs.h")
+                "archutils/Unix/SpecialDirs.h"
+                "archutils/Common/gcc_byte_swaps.h"
+                "io/USBDriver.h")
     if(X11_FOUND)
       list(APPEND SMDATA_OS_SRC "archutils/Unix/X11Helper.cpp")
       list(APPEND SMDATA_OS_HPP "archutils/Unix/X11Helper.h")

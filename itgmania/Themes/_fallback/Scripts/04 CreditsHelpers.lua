@@ -38,7 +38,7 @@ local stepmania_credits= {
 		"Jason Felds (wolfman2000)", -- Timing Segments, Split Timing, optimization
 		"Thai Pangsakulyanont (theDtTvB)", -- BMS, Split Timing, optimization
 		"Alberto Ramos (Daisuke Master)",
-		"tertu marybig (FSX)",
+		"Jack Walstrom (FSX)",
 	},
 	{
 		name= "StepMania Team",

@@ -7,7 +7,6 @@
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "Song.h"
-#include "Song.h"
 #include "GameCommand.h"
 #include "WheelItemBase.h"
 #include "AutoActor.h"
@@ -72,7 +71,6 @@ struct MusicWheelItemData : public WheelItemBaseData
 
 	Course*			m_pCourse;
 	Song*			m_pSong;
-	Group*			m_pGroup;
 	Group*			m_pGroup;
 	WheelNotifyIcon::Flags  m_Flags;
 

@@ -9,6 +9,7 @@
 #include "resource.h"
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
+#include "RageUtil/LanguageInfo.h"
 
 #include <cstddef>
 #include <vector>
@@ -264,7 +265,7 @@ bool RageFileOsAbsolute::Open( const RString& path, int mode )
 	m_sOsDir.erase( m_sOsDir.begin()+iStart, m_sOsDir.end() );
 
 	FILEMAN->Mount( "dir", m_sOsDir, TEMP_MOUNT_POINT );
-	RString sFileName = path.Right( path.size()-m_sOsDir.size() );
+	RString sFileName = path.substr( m_sOsDir.size() );
 	return RageFile::Open( TEMP_MOUNT_POINT+sFileName, mode );
 }
 

@@ -35,7 +35,6 @@ class IPreference
 {
 public:
 	IPreference( const RString& sName, PreferenceType type );
-	IPreference( const RString& sName, PreferenceType type );
 	virtual ~IPreference();
 	void ReadFrom( const XNode* pNode, bool bIsStatic );
 	void WriteTo( XNode* pNode ) const;
@@ -74,8 +73,6 @@ class Preference : public IPreference
 public:
 	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr, PreferenceType type = PreferenceType::Mutable ):
 		IPreference( sName, type ),
-	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = nullptr, PreferenceType type = PreferenceType::Mutable ):
-		IPreference( sName, type ),
 		m_currentValue( defaultValue ),
 		m_defaultValue( defaultValue ),
 		m_pfnValidate( pfnValidate )
@@ -88,7 +85,6 @@ public:
 	{
 		if( !StringConversion::FromString<T>(s, m_currentValue) )
 			m_currentValue = m_defaultValue;
-		if( m_pfnValidate )
 		if( m_pfnValidate )
 			m_pfnValidate( m_currentValue );
 	}
@@ -118,7 +114,6 @@ public:
 	{
 		return m_currentValue;
 	}
-
 
 	const T &GetDefault() const
 	{
@@ -160,9 +155,6 @@ public:
 	std::vector<PreferenceT*> m_v;
 
 	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N, PreferenceType type = PreferenceType::Mutable )
-	std::vector<PreferenceT*> m_v;
-
-	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N, PreferenceType type = PreferenceType::Mutable )
 	{
 		for( size_t i=0; i<N; ++i )
 		{
@@ -170,14 +162,12 @@ public:
 			T defaultValue;
 			pfn( i, sName, defaultValue );
 			m_v.push_back( new Preference<T>(sName, defaultValue, nullptr, type) );
-			m_v.push_back( new Preference<T>(sName, defaultValue, nullptr, type) );
 		}
 	}
 
 	~Preference1D()
 	{
 		for( size_t i=0; i<m_v.size(); ++i )
-			RageUtil::SafeDelete( m_v[i] );
 			RageUtil::SafeDelete( m_v[i] );
 	}
 	const Preference<T>& operator[]( size_t i ) const
@@ -196,7 +186,6 @@ public:
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
  *
- *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -206,7 +195,6 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

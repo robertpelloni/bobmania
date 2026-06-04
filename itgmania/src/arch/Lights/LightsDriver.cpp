@@ -1,66 +1,59 @@
-#include "global.h"
 #include "LightsDriver.h"
-#include "LightsDriver_Export.h"
+
 #include "RageLog.h"
+#include "RageUtil.h"
+#include "arch/RageDriver.h"
+#include "global.h"
 
-#include "arch/arch_default.h"
-#include "arch/LuaDriver/LuaDriver.h"
+// We explicitly load these drivers as they should always be available.
+#include <string>
+#include <vector>
 
-//We explicitly load these drivers as they should always be available.
-#include "arch/Lights/LightsDriver_SystemMessage.h"
 #include "arch/Lights/LightsDriver_Export.h"
+#include "arch/Lights/LightsDriver_SystemMessage.h"
 
 DriverList LightsDriver::m_pDriverList;
 
-void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
-{
-	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
+void LightsDriver::Create(
+    const std::string& sDrivers, std::vector<LightsDriver*>& Add) {
+  LOG->Trace("Initializing lights drivers: %s", sDrivers.c_str());
 
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
-	
-	for (RString const &Driver : asDriversToTry)
+  std::vector<std::string> asDriversToTry;
+  split(sDrivers, ",", asDriversToTry, true);
 
-	FOREACH_CONST( RString, asDriversToTry, Driver )
-	{
-		RageDriver *pRet = m_pDriverList.Create( Driver );
-		if( pRet == nullptr )
-		{
-			LOG->Trace( "Unknown lights driver: %s", Driver.c_str() );
-			continue;
-		}
+  for (const std::string& Driver : asDriversToTry) {
+    RageDriver* pRet = m_pDriverList.Create(Driver);
+    if (pRet == nullptr) {
+      LOG->Trace("Unknown lights driver: %s", Driver.c_str());
+      continue;
+    }
 
-		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
-		ASSERT( pDriver != nullptr );
+    LightsDriver* pDriver = dynamic_cast<LightsDriver*>(pRet);
+    ASSERT(pDriver != nullptr);
 
-		LOG->Info( "Lights driver: %s", Driver.c_str() );
-		Add.push_back( pDriver );
-	}
+    LOG->Info("Lights driver: %s", Driver.c_str());
+    Add.push_back(pDriver);
+  }
 
-	// always add Export
-	Add.push_back( new LightsDriver_Export );
-
-	// Add any additional Lua modules
-	LuaDriver::AddLightsModules( sDrivers, Add );
-	//ensure these are always available to use for debugging
-	//or if InputHandlers that want lighting state.
-	Add.push_back(new LightsDriver_SystemMessage);
-	Add.push_back(new LightsDriver_Export);
+  // ensure these are always available to use for debugging
+  // or if InputHandlers that want lighting state.
+  Add.push_back(new LightsDriver_SystemMessage);
+  Add.push_back(new LightsDriver_Export);
 }
 
 void LightsDriver::Reset()
 {
 	LightsState state;
-	ZERO( state.m_bCabinetLights );
-	ZERO( state.m_bGameButtonLights );
-	ZERO( state.m_bCoinCounter );
+	ZERO( state.cabinet_lights );
+	ZERO( state.game_button_lights );
+	ZERO( state.coin_counter );
 	Set( &state );
 }
 
 /*
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -70,7 +63,7 @@ void LightsDriver::Reset()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -17,7 +17,6 @@
 #endif
 
 #define WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winioctl.h>
 #include <ks.h>
@@ -65,7 +64,6 @@ struct WinWdmPin
 	WinWdmFilter			*m_pParentFilter;
 	int				m_iPinId;
 	std::vector<KSDATARANGE_AUDIO>	m_dataRangesItem;
-	std::vector<KSDATARANGE_AUDIO>	m_dataRangesItem;
 };
 
 enum DeviceSampleFormat
@@ -106,12 +104,10 @@ struct WinWdmFilter
 	~WinWdmFilter()
 	{
 		m_apPins.clear();
-		m_apPins.clear();
 		if( m_hHandle )
 			CloseHandle( m_hHandle );
 	}
 
-	std::unique_ptr<WinWdmPin> CreatePin( unsigned long iPinId, RString &sError );
 	std::unique_ptr<WinWdmPin> CreatePin( unsigned long iPinId, RString &sError );
 	WinWdmPin *InstantiateRenderPin(
 			DeviceSampleFormat &PreferredOutputSampleFormat,
@@ -123,7 +119,6 @@ struct WinWdmFilter
 	void Release();
 
 	HANDLE			m_hHandle;
-	std::vector<std::unique_ptr<WinWdmPin>>	m_apPins;
 	std::vector<std::unique_ptr<WinWdmPin>>	m_apPins;
 	RString			m_sFilterName;
 	RString			m_sFriendlyName;
@@ -191,7 +186,6 @@ static bool WdmGetPropertySimple( HANDLE hHandle, const GUID *pGuidPropertySet, 
 {
 	unsigned long iPropertySize = sizeof(KSPROPERTY) + iInstanceSize;
 	std::vector<char> buf;
-	std::vector<char> buf;
 	buf.resize( iPropertySize );
 	KSPROPERTY *ksProperty = (KSPROPERTY*) &buf[0];
 
@@ -211,7 +205,6 @@ static bool WdmSetPropertySimple(
 	void *pValue, unsigned long iValueSize,
 	void *instance, unsigned long iInstanceSize, RString &sError )
 {
-	std::vector<char> buf;
 	std::vector<char> buf;
 	unsigned long iPropertySize = sizeof(KSPROPERTY) + iInstanceSize;
 	buf.resize( iPropertySize );
@@ -278,7 +271,6 @@ static bool WdmGetPinPropertyMulti(
  * The pin object holds all the configuration information about the pin
  * before it is opened, and then the handle of the pin after is opened
  */
-std::unique_ptr<WinWdmPin> WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 std::unique_ptr<WinWdmPin> WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 {
 	{
@@ -375,7 +367,6 @@ std::unique_ptr<WinWdmPin> WinWdmFilter::CreatePin( unsigned long iPinId, RStrin
 
 	/* Allocate the new PIN object */
 	auto pPin = std::make_unique<WinWdmPin>( this, iPinId );
-	auto pPin = std::make_unique<WinWdmPin>( this, iPinId );
 
 	/* Get DATARANGEs */
 	KSMULTIPLE_ITEM *pDataRangesItem;
@@ -415,7 +406,6 @@ std::unique_ptr<WinWdmPin> WinWdmFilter::CreatePin( unsigned long iPinId, RStrin
 	if( pPin->m_dataRangesItem.size() == 0 )
 	{
 		sError = "Pin has no supported audio data ranges";
-		return nullptr;
 		return nullptr;
 	}
 
@@ -559,9 +549,6 @@ WinWdmFilter *WinWdmFilter::Create( const RString &sFilterName, const RString &s
 		auto pNewPin = pFilter->CreatePin( iPinId, sError );
 		if( pNewPin )
 			pFilter->m_apPins.push_back( std::move(pNewPin) );
-		auto pNewPin = pFilter->CreatePin( iPinId, sError );
-		if( pNewPin )
-			pFilter->m_apPins.push_back( std::move(pNewPin) );
 	}
 
 	if( pFilter->m_apPins.empty() )
@@ -590,7 +577,7 @@ bool WinWdmFilter::Use( RString &sError )
 	if( m_hHandle == nullptr )
 	{
 		/* Open the filter */
-		m_hHandle = CreateFile( m_sFilterName, GENERIC_READ | GENERIC_WRITE, 0,
+		m_hHandle = CreateFile( m_sFilterName.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
 			nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr );
 
 		if( m_hHandle == nullptr )
@@ -699,7 +686,6 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	 * the preferred channel count first.
 	 */
 	std::vector<int> aChannels;
-	std::vector<int> aChannels;
 	aChannels.push_back( 8 );
 	aChannels.push_back( 6 );
 	aChannels.push_back( 4 );
@@ -708,7 +694,6 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	MoveToBeginning( aChannels, iPreferredOutputChannels );
 
 	/* Try all sample formats.  Try PreferredOutputSampleFormat first. */
-	std::vector<DeviceSampleFormat> SampleFormats;
 	std::vector<DeviceSampleFormat> SampleFormats;
 	SampleFormats.push_back( DeviceSampleFormat_Int16 );
 	SampleFormats.push_back( DeviceSampleFormat_Int24 );
@@ -724,9 +709,6 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	 * Try all samplerates listed in the device's DATARANGES.  Sort iSampleRate first,
 	 * then 48k, then 44.1k, then higher sample rates first.
 	 */
-	std::vector<int> aSampleRates;
-	{
-		for (const auto& pPin : m_apPins)
 	std::vector<int> aSampleRates;
 	{
 		for (const auto& pPin : m_apPins)
@@ -754,7 +736,6 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 	}
 
 	/* Try WAVE_FORMAT_EXTENSIBLE, then WAVE_FORMAT_PCM. */
-	std::vector<bool> aTryPCM;
 	std::vector<bool> aTryPCM;
 	aTryPCM.push_back( false );
 	aTryPCM.push_back( true );
@@ -820,7 +801,6 @@ static bool GetDevicePath( HANDLE hHandle, SP_DEVICE_INTERFACE_DATA *pInterfaceD
 }
 
 /* Build a list of available filters. */
-static bool BuildFilterList( std::vector<WinWdmFilter*> &aFilters, RString &sError )
 static bool BuildFilterList( std::vector<WinWdmFilter*> &aFilters, RString &sError )
 {
 	const GUID *pCategoryGuid = (GUID*) &KSCATEGORY_RENDER;
@@ -1002,7 +982,6 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 	{
 		m_iFramesPerChunk = 512 / m_iWriteAheadChunks;
 		m_iFramesPerChunk = std::max( m_iFramesPerChunk, iFrameSize ); // iFrameSize may be 0
-		m_iFramesPerChunk = std::max( m_iFramesPerChunk, iFrameSize ); // iFrameSize may be 0
 	}
 
 	LOG->Info( "KS: chunk size: %i; allocator framing: %i (%ims)", m_iFramesPerChunk, iFrameSize, (iFrameSize * 1000) / m_iSampleRate );
@@ -1181,11 +1160,10 @@ void RageSoundDriver_WDMKS::MixerThread()
 	/* I don't trust this driver with THREAD_PRIORITY_TIME_CRITICAL just yet. */
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
 //	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority").c_str() );
 
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
-
 
 	ASSERT( m_pStream->m_pPlaybackPin != nullptr );
 
@@ -1213,7 +1191,7 @@ void RageSoundDriver_WDMKS::MixerThread()
 
 		if( iWait == WAIT_FAILED )
 		{
-			LOG->Warn( werr_ssprintf(GetLastError(), "WaitForMultipleObjects") );
+			LOG->Warn( werr_ssprintf(GetLastError(), "WaitForMultipleObjects").c_str() );
 			break;
 		}
 		if( iWait == WAIT_TIMEOUT )
@@ -1255,7 +1233,7 @@ int RageSoundDriver_WDMKS::MixerThread_start( void *p )
 void RageSoundDriver_WDMKS::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority").c_str() );
 }
 
 int64_t RageSoundDriver_WDMKS::GetPosition() const
@@ -1287,7 +1265,6 @@ RString RageSoundDriver_WDMKS::Init()
 		return sError;
 
 	std::vector<WinWdmFilter *> apFilters;
-	std::vector<WinWdmFilter *> apFilters;
 	if( !BuildFilterList(apFilters, sError) )
 		return "Error building filter list: " + sError;
 	if( apFilters.empty() )
@@ -1298,7 +1275,6 @@ RString RageSoundDriver_WDMKS::Init()
 		const WinWdmFilter *pFilter = apFilters[i];
 		LOG->Trace( "Device #%i: %s", i, pFilter->m_sFriendlyName.c_str() );
 		int j = 0;
-		for (const auto& pPin : pFilter->m_apPins)
 		for (const auto& pPin : pFilter->m_apPins)
 		{
 			LOG->Trace( "  Pin %i", j++ );
@@ -1313,7 +1289,6 @@ RString RageSoundDriver_WDMKS::Init()
 				else if( !memcmp(&rawSubFormat, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, sizeof(GUID)) )
 					sSubFormat = "FLOAT";
 
-				LOG->Trace( "     Range: %i channels, sample %i-%i, %i-%ihz (%s)",
 				LOG->Trace( "     Range: %i channels, sample %i-%i, %i-%ihz (%s)",
 					range.MaximumChannels,
 					range.MinimumBitsPerSample,
@@ -1412,13 +1387,10 @@ float RageSoundDriver_WDMKS::GetPlayLatency() const
 
 /*
  * The text above constitutes the entire PortAudio license; however,
- * The text above constitutes the entire PortAudio license; however,
  * the PortAudio community also makes the following non-binding requests:
  *
  * Any person wishing to distribute modifications to the Software is
  * requested to send the modifications to the original developer so that
- * they can be incorporated into the canonical version. It is also
- * requested that these non-binding requests be included along with the
  * they can be incorporated into the canonical version. It is also
  * requested that these non-binding requests be included along with the
  * license above.

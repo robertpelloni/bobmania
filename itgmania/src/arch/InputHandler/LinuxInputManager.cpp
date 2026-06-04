@@ -154,7 +154,6 @@ void LinuxInputManager::InitDriver(InputHandler_Linux_Event* driver)
 		RString devFile = getDevice(dev, "event");
 		ASSERT( devFile != "" );
 
-
 		if( ! driver->TryDevice(devFile) && m_bJoystickEnabled && getDevice(dev, "js") != "" )
 			m_vsPendingJoystickDevices.push_back(dev);
 	}

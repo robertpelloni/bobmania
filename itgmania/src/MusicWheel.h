@@ -54,8 +54,8 @@ public:
 	const MusicWheelItemData *GetCurWheelItemData( int i ) { return (const MusicWheelItemData *) m_CurWheelItemData[i]; }
 
 	virtual void ReloadSongList();
+	void SetSongs( const std::vector<Song*> &vpSongs );
 
-	void GetCurrentSections(std::vector<RString> &sections);
 	void GetCurrentSections(std::vector<RString> &sections);
 	// Lua
 	void PushSelf( lua_State *L );

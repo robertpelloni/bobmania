@@ -50,7 +50,7 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	{
 		const MsdFile::value_t &sParams = msd.GetValue( i );
 		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		MakeUpper(sValueName);
 
 		/* handle the data...well, not this data: not related to steps.
 		 * Skips INTRO, MUSICINTRO, TITLEFILE, DISCFILE, SONGFILE. */
@@ -114,7 +114,6 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			stepsTiming.m_fBeat0OffsetInSeconds = SMGap1;
 		}
 		// This is currently required for more accurate KIU BPM changes.
-		// This is currently required for more accurate KIU BPM changes.
 		else if( sValueName=="STARTTIME2" )
 		{
 			if (bKIUCompliant)
@@ -135,7 +134,6 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		else if( sValueName=="TICKCOUNT" )
 		{
 			iTickCount = StringToInt( sParams[1] );
-			iTickCount = std::stoi( sParams[1] );
 			if( iTickCount <= 0 )
 			{
 				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
@@ -147,14 +145,12 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		else if( sValueName=="DIFFICULTY" )
 		{
 			out.SetMeter( std::max(StringToInt(sParams[1]), 1) );
-			out.SetMeter( max(std::stoi(sParams[1]), 1) );
 		}
 		// new cases from Aldo_MX's fork:
 		else if( sValueName=="PLAYER" )
 		{
 			RString sPlayer = sParams[1];
-			sPlayer.MakeLower();
-			if( sPlayer.find( "double" ) != std::string::npos )
+			MakeLower(sPlayer);
 			if( sPlayer.find( "double" ) != std::string::npos )
 				bDoublesChart = true;
 		}
@@ -173,7 +169,6 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", iTickCount );
 	}
 
-
 	// Prepare BPM stuff already if the file uses KSF syntax.
 	if( bKIUCompliant )
 	{
@@ -181,7 +176,6 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		{
 			HandleBunki( stepsTiming, BPM1, BPM2, SMGap1, BPMPos2 );
 		}
-
 
 		if( BPM3 > 0 && BPMPos3 > 0 )
 		{
@@ -194,11 +188,10 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 	{
 		RString sDir, sFName, sExt;
 		splitpath( sPath, sDir, sFName, sExt );
-		sFName.MakeLower();
+		MakeLower(sFName);
 
 		out.SetDescription(sFName);
 		// Check another before anything else... is this okay? -DaisuMaster
-		if( sFName.find("another") != std::string::npos )
 		if( sFName.find("another") != std::string::npos )
 		{
 			out.SetDifficulty( Difficulty_Edit );
@@ -234,16 +227,11 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 		else if(sFName.find("easy") != std::string::npos ||
 			sFName.find("ez") != std::string::npos ||
 			sFName.find("normal") != std::string::npos )
-		else if(sFName.find("easy") != std::string::npos ||
-			sFName.find("ez") != std::string::npos ||
-			sFName.find("normal") != std::string::npos )
 		{
 			// I wonder if I should leave easy fall into the Beginner difficulty... -DaisuMaster
 			out.SetDifficulty( Difficulty_Easy );
 			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
-		else if(sFName.find("beginner") != std::string::npos ||
-			sFName.find("practice") != std::string::npos || sFName.find("pr") != std::string::npos  )
 		else if(sFName.find("beginner") != std::string::npos ||
 			sFName.find("practice") != std::string::npos || sFName.find("pr") != std::string::npos  )
 		{
@@ -357,14 +345,10 @@ static bool LoadFromKSFFile( const RString &sPath, Steps &out, Song &song, bool 
 			RString temp = sRowString.substr(2,sRowString.size()-3);
 			float numTemp = StringToFloat(temp);
 			if (BeginsWith(sRowString, "|T"))
-			if (BeginsWith(sRowString, "|T"))
 			{
 				// duh
 				iTickCount = static_cast<int>(numTemp);
 				// I have been owned by the man -DaisuMaster
-				stepsTiming.SetTickcountAtBeat( fCurBeat, std::clamp(iTickCount, 0, ROWS_PER_BEAT) );
-			}
-			else if (BeginsWith(sRowString, "|B"))
 				stepsTiming.SetTickcountAtBeat( fCurBeat, std::clamp(iTickCount, 0, ROWS_PER_BEAT) );
 			}
 			else if (BeginsWith(sRowString, "|B"))
@@ -492,17 +476,15 @@ static void LoadTags( const RString &str, Song &out )
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
 	std::vector<RString> asBits;
-	std::vector<RString> asBits;
 	split( str, " - ", asBits, false );
 	// Ignore the difficulty, since we get that elsewhere.
 	if( asBits.size() == 3 && (
-		asBits[2].EqualsNoCase("double") ||
-		asBits[2].EqualsNoCase("easy") ||
-		asBits[2].EqualsNoCase("normal") ||
-		asBits[2].EqualsNoCase("hard") ||
-		asBits[2].EqualsNoCase("crazy") ||
-		asBits[2].EqualsNoCase("nightmare"))
-		asBits[2].EqualsNoCase("nightmare"))
+		EqualsNoCase(asBits[2], "double") ||
+		EqualsNoCase(asBits[2], "easy") ||
+		EqualsNoCase(asBits[2], "normal") ||
+		EqualsNoCase(asBits[2], "hard") ||
+		EqualsNoCase(asBits[2], "crazy") ||
+		EqualsNoCase(asBits[2], "nightmare"))
 		)
 	{
 		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
@@ -557,7 +539,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	// changed up there in case of something is found inside the SONGFILE tag in the head ksf -DaisuMaster
 	// search for music with song in the file name
 	std::vector<RString> arrayPossibleMusic;
-	std::vector<RString> arrayPossibleMusic;
 	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.oga"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
@@ -571,13 +552,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	int iTickCount = -1;
 	bKIUCompliant = false;
 	std::vector<RString> vNoteRows;
-	std::vector<RString> vNoteRows;
 
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
-		sValueName.MakeUpper();
+		MakeUpper(sValueName);
 
 		// handle the data
 		if( sValueName=="TITLE" )
@@ -675,7 +655,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 
 	/* BPM Change checks are done here.  If bKIUCompliant, it's short and sweet.
 	 * Otherwise, the whole file has to be processed.  Right now, this is only
-	 * Otherwise, the whole file has to be processed.  Right now, this is only
 	 * called once, for the initial file (often the Crazy steps).  Hopefully that
 	 * will end up changing soon. */
 	if( bKIUCompliant )
@@ -723,14 +702,12 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 				//continue;
 			}
 
-
 			fCurBeat += 1.0f / iTickCount;
 		}
 	}
 
 	// Try to fill in missing bits of information from the pathname.
 	{
-		std::vector<RString> asBits;
 		std::vector<RString> asBits;
 		split( sPath, "/", asBits, true);
 
@@ -741,7 +718,6 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( const RString &sPath, std::vector<RString> &out )
 void KSFLoader::GetApplicableFiles( const RString &sPath, std::vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.ksf"), out );
@@ -768,7 +744,6 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	LOG->Trace( "KSFLoader::LoadFromDir(%s)", sDir.c_str() );
 
 	std::vector<RString> arrayKSFFileNames;
-	std::vector<RString> arrayKSFFileNames;
 	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
 
 	// We shouldn't have been called to begin with if there were no KSFs.
@@ -777,7 +752,6 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	bool bKIUCompliant = false;
 	/* With Split Timing, there has to be a backup Song Timing in case
 	 * anything goes wrong. As these files are kept in alphabetical
-	 * order (hopefully), it is best to use the LAST file for timing
 	 * order (hopefully), it is best to use the LAST file for timing
 	 * purposes, for that is the "normal", or easiest difficulty.
 	 * Usually. */
@@ -800,7 +774,6 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	out.m_sSongFileName = dir + arrayKSFFileNames[files - 1];
 	// load the Steps from the rest of the KSF files
 	for( unsigned i=0; i<files; i++ )
-	for( unsigned i=0; i<files; i++ )
 	{
 		Steps* pNewNotes = out.CreateSteps();
 		if( !LoadFromKSFFile(dir + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
@@ -818,7 +791,6 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
  * (c) 2001-2006 Chris Danford, Glenn Maynard, Jason Felds
  * All rights reserved.
  *
- *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -828,7 +800,6 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

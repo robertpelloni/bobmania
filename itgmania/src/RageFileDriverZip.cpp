@@ -63,8 +63,6 @@ bool RageFileDriverZip::Load( RageFileBasic *pFile )
 	ASSERT( m_pZip == nullptr ); /* don't load twice */
 	m_sPath = ssprintf("%p", static_cast<void*>(pFile));
 	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", static_cast<void*>(pFile)) );
-	m_sPath = ssprintf("%p", static_cast<void*>(pFile));
-	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", static_cast<void*>(pFile)) );
 
 	m_pZip = pFile;
 
@@ -98,7 +96,6 @@ bool RageFileDriverZip::ReadEndCentralRecord( int &iTotalEntries, int &iCentralD
 bool RageFileDriverZip::SeekToEndCentralRecord()
 {
 	const int iSearchTo = std::max( m_pZip->GetFileSize() - 1024*32, 0 );
-	const int iSearchTo = std::max( m_pZip->GetFileSize() - 1024*32, 0 );
 	int iRealPos = m_pZip->GetFileSize();
 
 	while( iRealPos > 0 && iRealPos >= iSearchTo )
@@ -107,7 +104,6 @@ bool RageFileDriverZip::SeekToEndCentralRecord()
 		 * the case where the signature crosses the block boundary. */
 		char buf[1024*4];
 		iRealPos -= sizeof(buf) - 4;
-		iRealPos = std::max( 0, iRealPos );
 		iRealPos = std::max( 0, iRealPos );
 		m_pZip->Seek( iRealPos );
 
