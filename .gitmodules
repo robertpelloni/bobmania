@@ -43,3 +43,9 @@
 [submodule "itgmania/extern/vorbis"]
 	path = itgmania/extern/vorbis
 	url = https://github.com/xiph/vorbis.git
+[submodule "itgmania/Themes/Simply Love"]
+	path = itgmania/Themes/Simply Love
+	url = https://github.com/Simply-Love/Simply-Love-SM5.git
+[submodule "itgmania/extern/zlib"]
+	path = itgmania/extern/zlib
+	url = https://github.com/madler/zlib.git
