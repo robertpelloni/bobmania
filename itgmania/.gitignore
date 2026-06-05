@@ -110,3 +110,17 @@ BuildLog.htm
 *.d
 *.lastcodeanalysissucceeded
 extern/mbedtls/
+
+# External dependencies - fetched by fetch-extern-deps.sh
+extern/IXWebSocket/
+extern/ffmpeg/
+extern/hidapi/
+extern/libjpeg-turbo/
+extern/libpng/
+extern/libtomcrypt/
+extern/libtommath/
+extern/libusb/
+extern/mbedtls/
+extern/ogg/
+extern/vorbis/
+extern/zlib/
