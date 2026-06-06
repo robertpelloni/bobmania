@@ -3,13 +3,4 @@
 	url = https://github.com/robertpelloni/bobcoin
 [submodule "Themes/Simply-Love-SM5"]
 	path = Themes/Simply-Love-SM5
-	url = https://github.com/Simply-Love/Simply-Love-SM5.git
-[submodule "itgmania/Themes/Simply-Love-SM5"]
-	path = itgmania/Themes/Simply-Love-SM5
 	url = https://github.com/robertpelloni/Simply-Love-SM5.git
-[submodule "itgmania/bobcoin"]
-	path = itgmania/bobcoin
-	url = https://github.com/robertpelloni/bobcoin
-[submodule "itgmania/Themes/Simply Love"]
-	path = itgmania/Themes/Simply Love
-	url = https://github.com/Simply-Love/Simply-Love-SM5.git
