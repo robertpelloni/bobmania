@@ -7,8 +7,8 @@
     "start": "node mock_server.js"
   },
   "dependencies": {
-    "ws": "^8.0.0",
-    "uuid": "^9.0.0",
+    "ws": "^8.20.1",
+    "uuid": "^14.0.0",
     "pg": "^8.11.3"
   },
   "author": "Unified StepMania Team",
