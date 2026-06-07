@@ -1,32 +1,27 @@
+#include "global.h"
 #include "ScreenSaveSync.h"
+#include "GameState.h"
+#include "Song.h"
+#include "PrefsManager.h"
+#include "LocalizedString.h"
+#include "AdjustSync.h"
 
-#include <string>
 #include <vector>
 
-#include "AdjustSync.h"
-#include "GameState.h"
-#include "LocalizedString.h"
-#include "RageUtil.h"
-#include "ScreenMessage.h"
-#include "ScreenPrompt.h"
-#include "Song.h"
 
-static LocalizedString CHANGED_TIMING_OF(
-    "ScreenSaveSync", "You have changed the timing of");
-static LocalizedString WOULD_YOU_LIKE_TO_SAVE(
-    "ScreenSaveSync", "Would you like to save these changes?");
-static LocalizedString CHOOSING_NO_WILL_DISCARD(
-    "ScreenSaveSync", "Choosing NO will discard your changes.");
-static std::string GetPromptText() {
-  std::string s;
+static LocalizedString CHANGED_TIMING_OF	("ScreenSaveSync","You have changed the timing of");
+static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
+static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
+static RString GetPromptText()
+{
+	RString s;
 
-  {
-    std::vector<std::string> vs;
-    AdjustSync::GetSyncChangeTextGlobal(vs);
-    if (!vs.empty()) {
-      s += join("\n", vs) + "\n\n";
-    }
-  }
+	{
+		std::vector<RString> vs;
+		AdjustSync::GetSyncChangeTextGlobal( vs );
+		if( !vs.empty() )
+			s += join( "\n", vs ) + "\n\n";
+	}
 
 	{
 		std::vector<RString> vs;
@@ -34,41 +29,55 @@ static std::string GetPromptText() {
 		if( !vs.empty() )
 		{
 			s += ssprintf(
-				CHANGED_TIMING_OF.GetValue()+"\n"
+				(CHANGED_TIMING_OF.GetValue()+"\n"
 				"%s:\n"
-				"\n",
-				GAMESTATE->cur_song_->GetDisplayFullTitle().c_str() );
-=======
->>>>>>> Stashed changes
+				"\n").c_str(),
+				GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
 
-      s += join("\n", vs) + "\n\n";
-    }
-  }
+			s += join( "\n", vs ) + "\n\n";
+		}
+	}
 
-  s += WOULD_YOU_LIKE_TO_SAVE.GetValue() + "\n" +
-       CHOOSING_NO_WILL_DISCARD.GetValue();
-  return s;
+	s += WOULD_YOU_LIKE_TO_SAVE.GetValue()+"\n"+
+		CHOOSING_NO_WILL_DISCARD.GetValue();
+	return s;
 }
 
-static void SaveSyncChanges(void* pThrowAway) { AdjustSync::SaveSyncChanges(); }
-
-static void RevertSyncChanges(void* pThrowAway) {
-  AdjustSync::RevertSyncChanges();
+static void SaveSyncChanges( void* pThrowAway )
+{
+	AdjustSync::SaveSyncChanges();
 }
 
-void ScreenSaveSync::Init() {
-  ScreenPrompt::Init();
-
-  ScreenPrompt::SetPromptSettings(
-      GetPromptText(), PROMPT_YES_NO, ANSWER_YES, SaveSyncChanges,
-      RevertSyncChanges, nullptr);
+static void RevertSyncChanges( void* pThrowAway )
+{
+	AdjustSync::RevertSyncChanges();
 }
 
-void ScreenSaveSync::PromptSaveSync(ScreenMessage sm) {
-  ScreenPrompt::Prompt(
-      sm, GetPromptText(), PROMPT_YES_NO, ANSWER_YES, SaveSyncChanges,
-      RevertSyncChanges, nullptr);
+void ScreenSaveSync::Init()
+{
+	ScreenPrompt::Init();
+
+	ScreenPrompt::SetPromptSettings(
+		GetPromptText(),
+		PROMPT_YES_NO,
+		ANSWER_YES,
+		SaveSyncChanges,
+		RevertSyncChanges,
+		nullptr );
 }
+
+void ScreenSaveSync::PromptSaveSync( ScreenMessage sm )
+{
+	ScreenPrompt::Prompt(
+		sm,
+		GetPromptText(),
+		PROMPT_YES_NO,
+		ANSWER_YES,
+		SaveSyncChanges,
+		RevertSyncChanges,
+		nullptr );
+}
+
 
 /*
  * (c) 2001-2005 Chris Danford

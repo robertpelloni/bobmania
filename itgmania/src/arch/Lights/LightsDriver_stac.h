@@ -1,5 +1,4 @@
-/* LightsDriver_stac: Control lights for the stac by icedragon.io using hidapi
- */
+/* LightsDriver_stac: Control lights for the stac by icedragon.io using hidapi */
 
 #ifndef LightsDriver_stac_H
 #define LightsDriver_stac_H
@@ -11,28 +10,22 @@
  * This can be achieved by using a udev rule like this:
  *
  * (player 1 then player 2)
- * SUBSYSTEMS=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5b",
- * OWNER="dance", GROUP="dance", MODE="0660" SUBSYSTEMS=="usb",
- * ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5a", OWNER="dance",
- * GROUP="dance", MODE="0660"
+ * SUBSYSTEMS=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5b", OWNER="dance", GROUP="dance", MODE="0660"
+ * SUBSYSTEMS=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5a", OWNER="dance", GROUP="dance", MODE="0660"
  *
  *  or
  *
- * KERNEL=="hidraw*", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5b",
- * OWNER="dance", GROUP="dance", MODE="0660" KERNEL=="hidraw*",
- * ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5a", OWNER="dance",
- * GROUP="dance", MODE="0660"
+ * KERNEL=="hidraw*", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5b", OWNER="dance", GROUP="dance", MODE="0660"
+ * KERNEL=="hidraw*", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="eb5a", OWNER="dance", GROUP="dance", MODE="0660"
  *
- * Refer to your distribution's documentation on how to properly apply a udev
- * rule.
+ * Refer to your distribution's documentation on how to properly apply a udev rule.
  *
  * -------------------------- NOTE --------------------------
  */
 
-#include <cstdint>
-
-#include "GameInput.h"
 #include "arch/Lights/LightsDriver.h"
+
+#include <cstdint>
 #include "archutils/Common/HidDevice.h"
 
 // static information about the device(s) in question.
@@ -49,30 +42,32 @@
 // total number of supported devices.
 #define STAC_MAX_NUMBER 2
 
-enum StacLightIndex {
-  STAC_LIGHTINDEX_BTN1 = 0,
-  STAC_LIGHTINDEX_BTN2 = 1,
-  STAC_LIGHTINDEX_BTN3 = 2,
-  STAC_LIGHTINDEX_BTN4 = 3,
-  STAC_LIGHTINDEX_BTN5 = 4,
-  STAC_LIGHTINDEX_MAX
+enum StacLightIndex
+{
+	STAC_LIGHTINDEX_BTN1 = 0,
+	STAC_LIGHTINDEX_BTN2 = 1,
+	STAC_LIGHTINDEX_BTN3 = 2,
+	STAC_LIGHTINDEX_BTN4 = 3,
+	STAC_LIGHTINDEX_BTN5 = 4,
+	STAC_LIGHTINDEX_MAX
 };
 
-class LightsDriver_stac : public LightsDriver {
- private:
-  HidDevice devs[STAC_MAX_NUMBER];
+class LightsDriver_stac : public LightsDriver
+{
+private:
+	HidDevice devs[STAC_MAX_NUMBER];
 
-  bool stateChanged[STAC_MAX_NUMBER];
-  uint8_t outputBuffer[STAC_MAX_NUMBER][STAC_HIDREPORT_SIZE];
+	bool stateChanged[STAC_MAX_NUMBER];
+	uint8_t outputBuffer[STAC_MAX_NUMBER][STAC_HIDREPORT_SIZE];
 
-  void HandleState(const LightsState* ls, GameController ctrlNum);
-  void SetBuffer(int index, bool lightState, GameController ctrlNum);
+	void HandleState(const LightsState *ls, GameController ctrlNum);
+	void SetBuffer(int index, bool lightState, GameController ctrlNum);
 
- public:
-  LightsDriver_stac();
-  virtual ~LightsDriver_stac();
+public:
+	LightsDriver_stac();
+	virtual ~LightsDriver_stac();
 
-  virtual void Set(const LightsState* ls);
+	virtual void Set(const LightsState *ls);
 };
 
 #endif

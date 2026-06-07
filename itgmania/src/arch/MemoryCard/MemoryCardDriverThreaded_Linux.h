@@ -1,22 +1,23 @@
 #ifndef MemoryCardDriverThreaded_Linux_H
-#define MemoryCardDriverThreaded_Linux_H
-
-#include <string>
-#include <vector>
+#define MemoryCardDriverThreaded_Linux_H 1
 
 #include "MemoryCardDriver.h"
 
-class MemoryCardDriverThreaded_Linux : public MemoryCardDriver {
- public:
-  virtual bool Mount(UsbStorageDevice* pDevice);
-  virtual void Unmount(UsbStorageDevice* pDevice);
+#include <vector>
 
- protected:
-  void GetUSBStorageDevices(std::vector<UsbStorageDevice>& vDevicesOut);
-  bool USBStorageDevicesChanged();
-  bool TestWrite(UsbStorageDevice* pDevice);
 
-  std::string m_sLastDevices;
+class MemoryCardDriverThreaded_Linux : public MemoryCardDriver
+{
+public:
+	virtual bool Mount( UsbStorageDevice* pDevice );
+	virtual void Unmount( UsbStorageDevice* pDevice );
+
+protected:
+	void GetUSBStorageDevices( std::vector<UsbStorageDevice>& vDevicesOut );
+	bool USBStorageDevicesChanged();
+	bool TestWrite( UsbStorageDevice* pDevice );
+
+	RString m_sLastDevices;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER

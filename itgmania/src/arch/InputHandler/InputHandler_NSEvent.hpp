@@ -9,22 +9,18 @@
 #define InputHandler_NSEvent_hpp
 
 #include "InputHandler.h"
-#include "archutils/Darwin/CocoaEventDispatcher.h"
 
-class InputHandler_NSEvent : public InputHandler {
- public:
-  InputHandler_NSEvent();
-  ~InputHandler_NSEvent();
+#include <cstdio>
+#include <vector>
 
-  void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
 
- protected:
-  void HandleEvent(EVENT_TYPE e);
-  void InitKeyCodeMap();
+class InputHandler_NSEvent : public InputHandler
+{
+public:
+    InputHandler_NSEvent();
+    ~InputHandler_NSEvent();
 
- private:
-  DeviceButton m_NSKeyCodeMap[0x100];
-  unsigned m_ResponderID;
+    void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 };
 
 #endif /* InputHandler_NSEvent_hpp */

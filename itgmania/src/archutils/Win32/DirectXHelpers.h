@@ -1,16 +1,11 @@
 #ifndef DIRECTX_HELPERS_H
 #define DIRECTX_HELPERS_H
+#include "windows.h"
+#include "VersionHelpers.h"
 
-// clang-format off
-#include <windows.h>
-#include <versionhelpers.h>
-// clang-format on
+RString hr_ssprintf( int hr, const char *fmt, ... );
 
-#include <string>
-
-std::string hr_ssprintf(int hr, const char* fmt, ...);
-
-std::string GetErrorString(HRESULT hr);
+RString GetErrorString(HRESULT hr);
 
 // These defined need to be exposed anywhere this is included.
 #define DIRECTINPUT_VERSION 0x0800

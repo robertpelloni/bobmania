@@ -95,14 +95,14 @@ REGISTER_SCREEN_CLASS( ScreenTestInput );
 
 bool ScreenTestInput::Input( const InputEventPlus &input )
 {
-	RString sMessage = input.device_input_.ToString();
+	RString sMessage = input.DeviceI.ToString();
 	bool bHandled = false;
-	switch( input.type_ )
+	switch( input.type )
 	{
 		case IET_FIRST_PRESS:
 		case IET_RELEASE:
 		{
-			switch( input.type_ )
+			switch( input.type )
 			{
 				case IET_FIRST_PRESS:	sMessage += "Pressed";	break;
 				case IET_RELEASE:	sMessage += "Released";	break;
@@ -125,7 +125,7 @@ bool ScreenTestInput::MenuStart( const InputEventPlus &input )
 
 bool ScreenTestInput::MenuBack( const InputEventPlus &input )
 {
-	if( input.type_ != IET_REPEAT )
+	if( input.type != IET_REPEAT )
 		return false;	// ignore
 
 	if( IsTransitioning() )

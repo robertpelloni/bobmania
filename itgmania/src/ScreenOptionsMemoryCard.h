@@ -1,42 +1,38 @@
 #ifndef ScreenOptionsMemoryCard_H
 #define ScreenOptionsMemoryCard_H
 
-#include <string>
-#include <vector>
-
-#include "BitmapText.h"
-#include "InputEventPlus.h"
-#include "MessageManager.h"
-#include "PlayerNumber.h"
-#include "ScreenMessage.h"
 #include "ScreenOptions.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"
 
-class ScreenOptionsMemoryCard : public ScreenOptions {
- public:
-  virtual void Init();
-  void BeginScreen();
+#include <vector>
 
-  virtual void HandleScreenMessage(const ScreenMessage SM);
 
- protected:
-  virtual void AfterChangeRow(PlayerNumber pn);
+class ScreenOptionsMemoryCard : public ScreenOptions
+{
+public:
+	virtual void Init();
+	void BeginScreen();
 
- private:
-  void ImportOptions(int iRow, const std::vector<PlayerNumber>& vpns);
-  void ExportOptions(int iRow, const std::vector<PlayerNumber>& vpns);
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-  void HandleMessage(const Message& msg);
+protected:
+	virtual void AfterChangeRow( PlayerNumber pn );
 
-  void ProcessMenuStart(const InputEventPlus& input);
+private:
+	void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+	void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 
-  void CreateMenu();
-  void SelectRowWithMemoryCard(const std::string& sOsMountPoint);
+	void HandleMessage( const Message &msg );
 
-  bool UpdateCurrentUsbStorageDevices();
-  std::vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
+	void ProcessMenuStart( const InputEventPlus &input );
 
-  BitmapText m_textOsMountDir;
+	void CreateMenu();
+	void SelectRowWithMemoryCard( const RString &sOsMountPoint );
+
+	bool UpdateCurrentUsbStorageDevices();
+	std::vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
+
+	BitmapText m_textOsMountDir;
 };
 
 #endif

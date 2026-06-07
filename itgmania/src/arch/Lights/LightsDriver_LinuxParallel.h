@@ -5,12 +5,13 @@
 
 #include "LightsDriver.h"
 
-class LightsDriver_LinuxParallel : public LightsDriver {
- public:
-  LightsDriver_LinuxParallel();
+class LightsDriver_LinuxParallel : public LightsDriver
+{
+public:
+	LightsDriver_LinuxParallel();
 
-  virtual ~LightsDriver_LinuxParallel();
-  virtual void Set(const LightsState* ls);
+	virtual ~LightsDriver_LinuxParallel();
+	virtual void Set( const LightsState *ls );
 };
 
 #endif
@@ -18,7 +19,7 @@ class LightsDriver_LinuxParallel : public LightsDriver {
 /*
  * (c) 2004 Hugo Hromic M. <hhromic@udec.cl>
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -28,7 +29,7 @@ class LightsDriver_LinuxParallel : public LightsDriver {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

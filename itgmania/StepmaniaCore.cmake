@@ -345,9 +345,9 @@ elseif(LINUX OR BSD)
   find_package(udev REQUIRED)
 endif(WIN32) # LINUX OR BSD, APPLE
 
-configure_file("${SM_SRC_DIR}/config.hpp.in"
+configure_file("${SM_SRC_DIR}/config.in.hpp"
                "${SM_GENERATED_SRC_DIR}/config.hpp")
-configure_file("${SM_SRC_DIR}/verstub.cpp.in"
+configure_file("${SM_SRC_DIR}/verstub.in.cpp"
                "${SM_GENERATED_SRC_DIR}/verstub.cpp")
 
 # Define installer based items for cpack.

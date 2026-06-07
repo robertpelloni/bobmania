@@ -1,27 +1,26 @@
 #ifndef ARCH_HOOKS_UNIX_H
 #define ARCH_HOOKS_UNIX_H
 
-#include <cstdint>
-#include <ctime>
-#include <string>
-
 #include "ArchHooks.h"
 
-class ArchHooks_Unix : public ArchHooks {
- public:
-  void Init();
-  std::string GetArchName() const { return "Unix"; }
-  void DumpDebugInfo();
+#include <cstdint>
 
-  void SetTime(tm newtime);
-  int64_t GetSystemTimeInMicroseconds();
+class ArchHooks_Unix: public ArchHooks
+{
+public:
+	void Init();
+	RString GetArchName() const { return "Unix"; }
+	void DumpDebugInfo();
 
-  void MountInitialFilesystems(const std::string& sDirOfExecutable);
-  float GetDisplayAspectRatio() { return 4.0f / 3; }
+	void SetTime( tm newtime );
+	int64_t GetSystemTimeInMicroseconds();
 
-  static clockid_t GetClock();
+	void MountInitialFilesystems( const RString &sDirOfExecutable );
+	float GetDisplayAspectRatio() { return 4.0f/3; }
 
-  std::string GetClipboard();
+	static clockid_t GetClock();
+
+	RString GetClipboard();
 };
 
 #ifdef ARCH_HOOKS

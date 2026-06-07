@@ -3,28 +3,24 @@
 #ifndef RAGEBITMAPTEXTURE_H
 #define RAGEBITMAPTEXTURE_H
 
-#include <cstddef>
-#include <cstdint>
-
 #include "RageTexture.h"
-#include "RageTextureID.h"
 
-class RageBitmapTexture : public RageTexture {
- public:
-  RageBitmapTexture(RageTextureID name);
-  virtual ~RageBitmapTexture();
-  /* only called by RageTextureManager::InvalidateTextures */
-  virtual void Invalidate() { m_uTexHandle = 0; /* don't Destroy() */ }
-  virtual void Reload();
-  virtual uintptr_t GetTexHandle() const {
-    return m_uTexHandle;
-  };  // accessed by RageDisplay
+#include <cstddef>
 
- private:
-  void Create();  // called by constructor and Reload
-  void Destroy();
-  uintptr_t
-      m_uTexHandle;  // treat as unsigned in OpenGL, IDirect3DTexture9* for D3D
+class RageBitmapTexture : public RageTexture
+{
+public:
+	RageBitmapTexture( RageTextureID name );
+	virtual ~RageBitmapTexture();
+	/* only called by RageTextureManager::InvalidateTextures */
+	virtual void Invalidate() { m_uTexHandle = 0; /* don't Destroy() */}
+	virtual void Reload();
+	virtual uintptr_t GetTexHandle() const { return m_uTexHandle; };	// accessed by RageDisplay
+
+private:
+	void Create();	// called by constructor and Reload
+	void Destroy();
+	uintptr_t m_uTexHandle;	// treat as unsigned in OpenGL, IDirect3DTexture9* for D3D
 };
 
 #endif
@@ -53,3 +49,4 @@ class RageBitmapTexture : public RageTexture {
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

@@ -1,22 +1,24 @@
 #ifndef INPUT_HANDLER_MONKEY_SCRIPT
 #define INPUT_HANDLER_MONKEY_SCRIPT
 
+#include "InputHandler.h"
+#include "RageTimer.h"
+#include "RageInputDevice.h"
+
 #include <vector>
 
-#include "InputHandler.h"
-#include "RageInputDevice.h"
-#include "RageTimer.h"
 
-class InputHandler_MonkeyKeyboard : public InputHandler {
- public:
-  void Update();
-  InputHandler_MonkeyKeyboard();
-  ~InputHandler_MonkeyKeyboard();
-  void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
+class InputHandler_MonkeyKeyboard: public InputHandler
+{
+public:
+	void Update();
+	InputHandler_MonkeyKeyboard();
+	~InputHandler_MonkeyKeyboard();
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 
- private:
-  RageTimer m_timerPressButton;
-  DeviceButton m_dbLast;  // Last input that we sent
+private:
+	RageTimer m_timerPressButton;
+	DeviceButton m_dbLast;	// Last input that we sent
 };
 
 #endif
@@ -45,3 +47,4 @@ class InputHandler_MonkeyKeyboard : public InputHandler {
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

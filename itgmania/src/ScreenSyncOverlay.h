@@ -1,23 +1,25 @@
 #ifndef ScreenSyncOverlay_H
 #define ScreenSyncOverlay_H
 
-#include "AutoActor.h"
 #include "Screen.h"
+#include "AutoActor.h"
 /** @brief Credits and statistics drawn on top of everything else. */
-class ScreenSyncOverlay : public Screen {
- public:
-  virtual void Init();
+class ScreenSyncOverlay : public Screen
+{
+public:
+	virtual void Init();
+	
+	bool Input( const InputEventPlus &input );
+	void Update( float fDeltaTime );
 
-  bool Input(const InputEventPlus& input);
-  void Update(float fDeltaTime);
+private:
+	void UpdateText();
+	void ShowHelp();
+	void HideHelp();
 
- private:
-  void UpdateText();
-  void ShowHelp();
-  void HideHelp();
-
-  AutoActor m_overlay;
+	AutoActor m_overlay;
 };
+
 
 #endif
 
@@ -26,7 +28,7 @@ class ScreenSyncOverlay : public Screen {
  * @author Chris Danford (c) 2001-2005
  * @section LICENSE
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -36,7 +38,7 @@ class ScreenSyncOverlay : public Screen {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

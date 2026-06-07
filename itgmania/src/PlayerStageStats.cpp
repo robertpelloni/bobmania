@@ -13,6 +13,9 @@
 #include <cfloat>
 #include <cmath>
 #include <cstddef>
+#include <cfloat>
+#include <cmath>
+#include <cstddef>
 #include <numeric>
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
@@ -52,6 +55,8 @@ void PlayerStageStats::InternalInit()
 	m_iScore = 0;
 	m_iMaxScore = 0;
 	m_iCurMaxScore = 0;
+	m_fWifeScore = 0.0f;
+	m_fCurMaxWifeScore = 0.0f;
 	m_iSongsPassed = 0;
 	m_iSongsPlayed = 0;
 	m_fLifeRemainingSeconds = 0;
@@ -111,6 +116,8 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	m_iScore += other.m_iScore;
 	m_iMaxScore += other.m_iMaxScore;
 	m_iCurMaxScore += other.m_iCurMaxScore;
+	m_fWifeScore += other.m_fWifeScore;
+	m_fCurMaxWifeScore += other.m_fCurMaxWifeScore;
 	m_radarPossible += other.m_radarPossible;
 	m_radarActual += other.m_radarActual;
 	m_iSongsPassed += other.m_iSongsPassed;
@@ -362,7 +369,7 @@ void PlayerStageStats::ResetScoreForLesson()
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 {
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
-	if( GAMESTATE->cur_course_ && GAMESTATE->cur_course_->IsEndless() )
+	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
 
 	if( fStepsSecond < 0 )
@@ -482,7 +489,7 @@ float PlayerStageStats::GetCurrentLife() const
 void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {
 	// Don't save combo stats in endless courses, or could run OOM in a few hours.
-	if( GAMESTATE->cur_course_ && GAMESTATE->cur_course_->IsEndless() )
+	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
 		return;
 
 	if( fSecond < 0 )
@@ -646,7 +653,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	if( bGaveUp || bUsedAutoplay )
 		return;
 
-	std::deque<StageAward> &vPdas = GAMESTATE->last_stage_awards_[p];
+	std::deque<StageAward> &vPdas = GAMESTATE->m_vLastStageAwards[p];
 
 	//LOG->Trace( "per difficulty awards" );
 
@@ -700,11 +707,11 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 		bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
 		//LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
 		if( bCrossedLevel )
-			GAMESTATE->last_peak_combo_awards_[p].push_back( pca );
+			GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
 	}
 
-	if( !GAMESTATE->last_peak_combo_awards_[p].empty() )
-		m_PeakComboAward = GAMESTATE->last_peak_combo_awards_[p].back();
+	if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
+		m_PeakComboAward = GAMESTATE->m_vLastPeakComboAwards[p].back();
 	else
 		m_PeakComboAward = PeakComboAward_Invalid;
 
@@ -739,6 +746,8 @@ public:
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( GetScore,					m_iScore )
 	DEFINE_METHOD( GetCurMaxScore,				m_iCurMaxScore )
+	DEFINE_METHOD( GetWifeScore,				m_fWifeScore )
+	DEFINE_METHOD( GetCurMaxWifeScore,			m_fCurMaxWifeScore )
 	DEFINE_METHOD( GetTapNoteScores,			m_iTapNoteScores[Enum::Check<TapNoteScore>(L, 1)] )
 	DEFINE_METHOD( GetHoldNoteScores,			m_iHoldNoteScores[Enum::Check<HoldNoteScore>(L, 1)] )
 	DEFINE_METHOD( FullCombo,					FullCombo() )
@@ -793,7 +802,7 @@ public:
 	static int GetComboList( T* p, lua_State *L )
 	{
 		lua_createtable(L, p->m_ComboList.size(), 0);
-		for( std::size_t i= 0; i < p->m_ComboList.size(); ++i)
+		for( size_t i= 0; i < p->m_ComboList.size(); ++i)
 		{
 			lua_createtable(L, 0, 6);
 			lua_pushstring(L, "StartSecond");
@@ -883,6 +892,7 @@ public:
 		COMMON_RETURN_SELF;
 	}
 
+
 	static int FailPlayer( T* p, lua_State *L )
 	{
 		p->m_bFailed = true;
@@ -900,6 +910,8 @@ public:
 		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( GetScore );
 		ADD_METHOD( GetCurMaxScore );
+		ADD_METHOD( GetWifeScore );
+		ADD_METHOD( GetCurMaxWifeScore );
 		ADD_METHOD( GetTapNoteScores );
 		ADD_METHOD( GetHoldNoteScores );
 		ADD_METHOD( FullCombo );

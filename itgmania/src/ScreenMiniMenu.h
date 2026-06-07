@@ -9,6 +9,9 @@
 #include <vector>
 
 
+#include <vector>
+
+
 typedef bool (*MenuRowUpdateEnabled)();
 
 struct MenuRowDef
@@ -20,6 +23,9 @@ struct MenuRowDef
 	EditMode	emShowIn;
 	int			iDefaultChoice;
 	std::vector<RString>		choices;
+	EditMode	emShowIn;
+	int			iDefaultChoice;
+	vector<RString>		choices;
 	bool		bThemeTitle;
 	bool		bThemeItems;
 
@@ -40,6 +46,20 @@ struct MenuRowDef
 		   const char *c19=nullptr, const char *c20=nullptr,
 		   const char *c21=nullptr, const char *c22=nullptr,
 		   const char *c23=nullptr, const char *c24=nullptr,
+		   bool bTT, bool bTI, int d, const char *c0=NULL, 
+		   const char *c1=NULL, const char *c2=NULL, 
+		   const char *c3=NULL, const char *c4=NULL, 
+		   const char *c5=NULL, const char *c6=NULL, 
+		   const char *c7=NULL, const char *c8=NULL, 
+		   const char *c9=NULL, const char *c10=NULL, 
+		   const char *c11=NULL, const char *c12=NULL, 
+		   const char *c13=NULL, const char *c14=NULL, 
+		   const char *c15=NULL, const char *c16=NULL, 
+		   const char *c17=NULL, const char *c18=NULL, 
+		   const char *c19=NULL, const char *c20=NULL, 
+		   const char *c21=NULL, const char *c22=NULL, 
+		   const char *c23=NULL, const char *c24=NULL, 
+		   const char *c25=NULL ): iRowCode(r), sName(n),
 		   const char *c25=nullptr ): iRowCode(r), sName(n),
 			bEnabled(true), pfnEnabled(pe), emShowIn(s),
 			iDefaultChoice(d), choices(),
@@ -53,6 +73,9 @@ struct MenuRowDef
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
 	}
+
+	MenuRowDef(int r, RString n, bool e, EditMode s,
+			   bool bTT, bool bTI, int d, std::vector<RString> options):
 
 	MenuRowDef(int r, RString n, bool e, EditMode s,
 			   bool bTT, bool bTI, int d, std::vector<RString> options):
@@ -79,6 +102,19 @@ struct MenuRowDef
 		   const char *c18=nullptr, const char *c19=nullptr,
 		   const char *c20=nullptr, const char *c21=nullptr,
 		   const char *c22=nullptr, const char *c23=nullptr,
+		   int d, const char *c0=NULL, const char *c1=NULL, 
+		   const char *c2=NULL, const char *c3=NULL, 
+		   const char *c4=NULL, const char *c5=NULL, 
+		   const char *c6=NULL, const char *c7=NULL, 
+		   const char *c8=NULL, const char *c9=NULL, 
+		   const char *c10=NULL, const char *c11=NULL, 
+		   const char *c12=NULL, const char *c13=NULL, 
+		   const char *c14=NULL, const char *c15=NULL, 
+		   const char *c16=NULL, const char *c17=NULL, 
+		   const char *c18=NULL, const char *c19=NULL, 
+		   const char *c20=NULL, const char *c21=NULL, 
+		   const char *c22=NULL, const char *c23=NULL, 
+		   const char *c24=NULL, const char *c25=NULL ):
 		   const char *c24=nullptr, const char *c25=nullptr ):
 		iRowCode(r), sName(n), bEnabled(e), pfnEnabled(nullptr),
 		emShowIn(s), iDefaultChoice(d), choices(),
@@ -92,6 +128,7 @@ struct MenuRowDef
 		PUSH(c23);PUSH(c23);PUSH(c24);PUSH(c25);
 #undef PUSH
 	}
+
 
 	MenuRowDef( int r, RString n, bool e, EditMode s, bool bTT, bool bTI,
 		   int d, int low, int high ):
@@ -164,6 +201,8 @@ class ScreenMiniMenu : public ScreenOptions
 public:
 	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK,
 			     ScreenMessage smSendOnCancel = SM_None,
+	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK,
+			     ScreenMessage smSendOnCancel = SM_None,
 			     float fX = 0, float fY = 0 );
 
 	void Init();
@@ -172,6 +211,8 @@ public:
 
 protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
+	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	virtual void ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 
@@ -198,6 +239,7 @@ public:
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
  *
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -207,6 +249,7 @@ public:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+ *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

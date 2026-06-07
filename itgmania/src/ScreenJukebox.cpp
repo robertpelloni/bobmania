@@ -1,10 +1,10 @@
+#include "global.h"
 #include "ScreenJukebox.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
-#include "GameManager.h"
 #include "GameSoundManager.h"
 #include "Steps.h"
 #include "ScreenAttract.h"
@@ -21,60 +21,18 @@
 #include "AdjustSync.h"
 #include "SongUtil.h"
 #include "Song.h"
-#include "RageUtil/RandomNumbers.h"
 
-#include <string>
 #include <vector>
 
-#include "AdjustSync.h"
-#include "Attack.h"
-#include "CommonMetrics.h"
-#include "Course.h"
-#include "Difficulty.h"
-#include "EnumHelper.h"
-#include "GameConstantsAndTypes.h"
-#include "GameInput.h"
-#include "GameSoundManager.h"
-#include "GameState.h"
-#include "InputEventPlus.h"
-#include "InputFilter.h"
-#include "LocalizedString.h"
-#include "ModsGroup.h"
-#include "PlayerNumber.h"
-#include "PlayerOptions.h"
-#include "PlayerState.h"
-#include "PrefsManager.h"
-#include "RageUtil.h"
-#include "RageUtil/RandomNumbers.h"
-#include "Screen.h"
-#include "ScreenAttract.h"
-#include "ScreenGameplay.h"
-#include "ScreenManager.h"
-#include "ScreenMessage.h"
-#include "Song.h"
-#include "SongManager.h"
-#include "SongOptions.h"
-#include "SongUtil.h"
-#include "StatsManager.h"
-#include "StdString.h"
-#include "Steps.h"
-#include "Style.h"
-#include "ThemeManager.h"
-#include "ThemeMetric.h"
-#include "UnlockManager.h"
-#include "global.h"
 
-#define SHOW_COURSE_MODIFIERS_PROBABILITY \
-  THEME->GetMetricF(m_sName, "ShowCourseModifiersProbability")
+#define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
 REGISTER_SCREEN_CLASS( ScreenJukebox );
 void ScreenJukebox::SetSong()
 {
-	GAMESTATE->m_pCurSong.Set( nullptr );
-
 	ThemeMetric<bool>	ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
 
-  std::vector<Song*> vSongs;
+	std::vector<Song*> vSongs;
 
 	/* Check to see if there is a theme course. If there is a course that has
 	 * the exact same name as the theme, then we pick a song from this course. */
@@ -82,29 +40,14 @@ void ScreenJukebox::SetSong()
 	if( pCourse != nullptr )
 		for ( unsigned i = 0; i < pCourse->m_vEntries.size(); i++ )
 			if( pCourse->m_vEntries[i].IsFixedSong() )
-				vSongs.push_back( pCourse->m_vEntries[i].song_id_.ToSong() );
+				vSongs.push_back( pCourse->m_vEntries[i].songID.ToSong() );
 
 	if ( vSongs.size() == 0 )
-		vSongs = SONGMAN->GetSongs( GAMESTATE->preferred_song_group_ );
+		vSongs = SONGMAN->GetSongs( GAMESTATE->m_sPreferredSongGroup );
 	// Still nothing?
 	if( vSongs.size() == 0 )
 		return;
 
-  // Calculate what difficulties to show
-  std::vector<Difficulty> vDifficultiesToShow;
-  if (m_bDemonstration) {
-    // HACK: This belongs in ScreenDemonstration.
-    ThemeMetricDifficultiesToShow DIFFICULTIES_TO_SHOW_HERE(
-        m_sName, "DifficultiesToShow");
-    vDifficultiesToShow = DIFFICULTIES_TO_SHOW_HERE.GetValue();
-  } else {
-    if (GAMESTATE->m_PreferredDifficulty[PLAYER_1] != Difficulty_Invalid) {
-      vDifficultiesToShow.push_back(GAMESTATE->m_PreferredDifficulty[PLAYER_1]);
-    } else {
-      FOREACH_ENUM(Difficulty, dc)
-      vDifficultiesToShow.push_back(dc);
-    }
-  }
 
 	// Calculate what difficulties to show
 	std::vector<Difficulty> vDifficultiesToShow;
@@ -116,9 +59,9 @@ void ScreenJukebox::SetSong()
 	}
 	else
 	{
-		if( GAMESTATE->preferred_difficulty_[PLAYER_1] != Difficulty_Invalid )
+		if( GAMESTATE->m_PreferredDifficulty[PLAYER_1] != Difficulty_Invalid )
 		{
-			vDifficultiesToShow.push_back( GAMESTATE->preferred_difficulty_[PLAYER_1] );
+			vDifficultiesToShow.push_back( GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
 		}
 		else
 		{
@@ -127,42 +70,36 @@ void ScreenJukebox::SetSong()
 		}
 	}
 
-  // Search for a Song and Steps to play during the demo.
-  for (int i = 0; i < 1000; i++) {
-    Song* pSong = vSongs[RandomInt(vSongs.size())];
-
-	bool bTriedFallback = false;
-TryAgain:
+	ASSERT( !vDifficultiesToShow.empty() );
 
 	// Search for a Song and Steps to play during the demo.
 	for( int i=0; i<1000; i++ )
 	{
 		Song* pSong = vSongs[RandomInt(vSongs.size())];
 
-    Difficulty dc = vDifficultiesToShow[RandomInt(vDifficultiesToShow.size())];
-    Steps* pSteps = SongUtil::GetStepsByDifficulty(
-        pSong, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, dc);
+		ASSERT( pSong != nullptr );
+		if( !pSong->HasMusic() )
+			continue;	// skip
+		if( !pSong->NormallyDisplayed() )
+			continue;
+		if( !pSong->ShowInDemonstrationAndRanking() )
+			continue;	// skip
 
-    if (pSteps == nullptr) {
-      continue;  // skip
-    }
+		Difficulty dc = vDifficultiesToShow[ RandomInt(vDifficultiesToShow.size()) ];
+		Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType, dc );
 
-    if (!PREFSMAN->m_bAutogenSteps && pSteps->IsAutogen()) {
-      continue;  // skip
-    }
+		if( pSteps == nullptr )
+			continue;	// skip
 
-    // Found something we can use!
-    GAMESTATE->m_pCurSong.Set(pSong);
-    // We just changed the song. Reset the original sync data.
-    AdjustSync::ResetOriginalSyncData();
-    FOREACH_PlayerNumber(p) GAMESTATE->m_pCurSteps[p].Set(pSteps);
+		if( !PREFSMAN->m_bAutogenSteps && pSteps->IsAutogen())
+			continue;	// skip
 
 		// Found something we can use!
-		GAMESTATE->cur_song_.Set( pSong );
+		GAMESTATE->m_pCurSong.Set( pSong );
 		// We just changed the song. Reset the original sync data.
 		AdjustSync::ResetOriginalSyncData();
 		FOREACH_PlayerNumber( p )
-			GAMESTATE->cur_steps_[p].Set( pSteps );
+			GAMESTATE->m_pCurSteps[p].Set( pSteps );
 
 		bool bShowModifiers = randomf(0,1) <= SHOW_COURSE_MODIFIERS_PROBABILITY;
 		if( bShowModifiers )
@@ -177,20 +114,20 @@ TryAgain:
 			{
 				Course *lCourse = apCourses[j];
 				const CourseEntry *pEntry = lCourse->FindFixedSong( pSong );
-				if( pEntry == nullptr || pEntry->attacks_.size() == 0 )
+				if( pEntry == nullptr || pEntry->attacks.size() == 0 )
 					continue;
 
 				if( !ALLOW_ADVANCED_MODIFIERS )
 				{
 					// There are some confusing mods that we don't want to show in demonstration.
 					bool bModsAreOkToShow = true;
-					AttackArray aAttacks = pEntry->attacks_;
-					if( !pEntry->modifiers_.empty() )
-						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers_ ) );
+					AttackArray aAttacks = pEntry->attacks;
+					if( !pEntry->sModifiers.empty() )
+						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->sModifiers ) );
 					for (Attack const &a: aAttacks)
 					{
 						RString s = a.sModifiers;
-						MakeLower(s);
+						s.MakeLower();
 						// todo: allow themers to modify this list? -aj
 						if( s.find("dark") != std::string::npos ||
 							s.find("stealth") != std::string::npos )
@@ -203,29 +140,23 @@ TryAgain:
 						continue;	// skip
 				}
 
-      if (!apOptions.empty()) {
-        int iIndex = RandomInt(apOptions.size());
-        m_pCourseEntry = apOptions[iIndex];
-        Course* lCourse = apPossibleCourses[iIndex];
+				apOptions.push_back( pEntry );
+				apPossibleCourses.push_back( pCourse );
+			}
 
-        PlayMode pm = CourseTypeToPlayMode(lCourse->GetCourseType());
-        GAMESTATE->m_PlayMode.Set(pm);
-        GAMESTATE->m_pCurCourse.Set(lCourse);
-        FOREACH_PlayerNumber(p) {
-          GAMESTATE->m_pCurTrail[p].Set(lCourse->GetTrail(
-              GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType));
-          ASSERT(GAMESTATE->m_pCurTrail[p] != nullptr);
-        }
-      }
-    }
+			if( !apOptions.empty() )
+			{
+				int iIndex = RandomInt( apOptions.size() );
+				m_pCourseEntry = apOptions[iIndex];
+				Course *lCourse = apPossibleCourses[iIndex];
 
 				PlayMode pm = CourseTypeToPlayMode( lCourse->GetCourseType() );
-				GAMESTATE->play_mode_.Set( pm );
-				GAMESTATE->cur_course_.Set( lCourse );
+				GAMESTATE->m_PlayMode.Set( pm );
+				GAMESTATE->m_pCurCourse.Set( lCourse );
 				FOREACH_PlayerNumber( p )
 				{
-					GAMESTATE->cur_trail_[p].Set( lCourse->GetTrail( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType ) );
-					ASSERT( GAMESTATE->cur_trail_[p] != nullptr );
+					GAMESTATE->m_pCurTrail[p].Set( lCourse->GetTrail( GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StepsType ) );
+					ASSERT( GAMESTATE->m_pCurTrail[p] != nullptr );
 				}
 			}
 		}
@@ -233,35 +164,13 @@ TryAgain:
 		return;	// done looking
 	}
 
-	// If we didn't find a song, and we are in Routine mode, try falling back to Single.
-	if( GAMESTATE->m_pCurSong == nullptr )
-	{
-		if( !bTriedFallback )
-		{
-			const Style* pCurrentStyle = GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
-			if( pCurrentStyle && pCurrentStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
-			{
-				std::vector<const Style*> vStyles;
-				GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
-				for (const Style* s : vStyles)
-				{
-					if (s->m_StyleType == StyleType_OnePlayerOneSide)
-					{
-						GAMESTATE->SetCurrentStyle(s, PLAYER_INVALID);
-						bTriedFallback = true;
-						goto TryAgain;
-					}
-				}
-			}
-		}
-	}
-
 	return;	// didn't find a song
 }
 
-ScreenJukebox::ScreenJukebox() {
-  m_bDemonstration = false;
-  m_pCourseEntry = nullptr;
+ScreenJukebox::ScreenJukebox()
+{
+	m_bDemonstration = false;
+	m_pCourseEntry = nullptr;
 }
 
 static LocalizedString NO_MATCHING_STEPS("ScreenJukebox", "NoMatchingSteps");
@@ -269,13 +178,13 @@ void ScreenJukebox::Init()
 {
 	// ScreenJukeboxMenu must set this
 	ASSERT( GAMESTATE->GetCurrentStyle(PLAYER_INVALID) != nullptr );
-	GAMESTATE->play_mode_.Set( PLAY_MODE_REGULAR );
+	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
-  SetSong();
+	SetSong();
 
-  //	ASSERT( GAMESTATE->m_pCurSong );
+//	ASSERT( GAMESTATE->m_pCurSong );
 
-  GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
+	GAMESTATE->SetMasterPlayerNumber(PLAYER_1);
 
 	// choose some cool options
 	int Benchmark = 0;
@@ -287,62 +196,63 @@ void ScreenJukebox::Init()
 		{
 			/* Lots and lots of arrows. This might even bias to arrows a little
 			 * too much. */
-			PO_GROUP_CALL( GAMESTATE->player_state_[p]->m_PlayerOptions, ModsLevel_Stage, Init );
-			PO_GROUP_ASSIGN( GAMESTATE->player_state_[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
-			PO_GROUP_ASSIGN( GAMESTATE->player_state_[p]->m_PlayerOptions, ModsLevel_Stage, m_fPerspectiveTilt, -1.0f );
-			PO_GROUP_ASSIGN_N( GAMESTATE->player_state_[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects, PlayerOptions::EFFECT_TINY, 1.0f );
-			PO_GROUP_ASSIGN( GAMESTATE->player_state_[p]->m_PlayerOptions, ModsLevel_Stage, m_LifeType, LifeType_Battery );
+			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fPerspectiveTilt, -1.0f );
+			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects, PlayerOptions::EFFECT_TINY, 1.0f );
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_LifeType, LifeType_Battery );
 		}
 	}
 
-  FOREACH_EnabledPlayer(p) {
-    // Reset score between songs.
-    STATSMAN->m_CurStageStats.m_player[p].ResetScoreForLesson();
+	FOREACH_EnabledPlayer( p )
+	{
+		// Reset score between songs.
+		STATSMAN->m_CurStageStats.m_player[p].ResetScoreForLesson();
 
 		// This eats any noteskins that may have been set in ScreenJukeboxMenu. -aj
-		if( GAMESTATE->jukebox_uses_modifiers_ )
+		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
 			PlayerOptions po;
 			GAMESTATE->GetDefaultPlayerOptions( po );
 			po.ChooseRandomModifiers();
-			GAMESTATE->player_state_[p]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
 		}
 	}
 
 	SongOptions so;
 	GAMESTATE->GetDefaultSongOptions( so );
-	GAMESTATE->song_options_.Assign( ModsLevel_Stage, so );
+	GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 
 	FOREACH_EnabledPlayer( p )
-		PO_GROUP_ASSIGN( GAMESTATE->player_state_[p]->m_PlayerOptions, ModsLevel_Stage, m_FailType, FailType_Off );
+		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_FailType, FailType_Off );
 
-	GAMESTATE->demonstration_or_jukebox_ = true;
+	GAMESTATE->m_bDemonstrationOrJukebox = true;
 
-  // Now that we've set up, init the base class.
-  ScreenGameplay::Init();
+	// Now that we've set up, init the base class.
+	ScreenGameplay::Init();
 
-	if( GAMESTATE->cur_song_ == nullptr )	// we didn't find a song.
+	if( GAMESTATE->m_pCurSong == nullptr )	// we didn't find a song.
 	{
 		SCREENMAN->SystemMessage( NO_MATCHING_STEPS );
 		this->PostScreenMessage( SM_GoToPrevScreen, 0 );	// Abort demonstration.
 		return;
 	}
 
-  ClearMessageQueue();  // remove all of the messages set in ScreenGameplay that
-                        // animate "ready", "here we go", etc.
+	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 
-	GAMESTATE->gameplay_lead_in_.Set( false );
+	GAMESTATE->m_bGameplayLeadIn.Set( false );
 
-  m_DancingState = STATE_DANCING;
+	m_DancingState = STATE_DANCING;
 }
 
-bool ScreenJukebox::Input(const InputEventPlus& input) {
-  // LOG->Trace( "ScreenJukebox::Input()" );
+bool ScreenJukebox::Input( const InputEventPlus &input )
+{
+	//LOG->Trace( "ScreenJukebox::Input()" );
 
-	if( input.type_ != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return false; // ignore
 
-	switch( input.menu_input_ )
+	switch( input.MenuI )
 	{
 		case GAME_BUTTON_LEFT:
 		case GAME_BUTTON_RIGHT:
@@ -352,64 +262,68 @@ bool ScreenJukebox::Input(const InputEventPlus& input) {
 			break;
 	}
 
-  return ScreenAttract::AttractInput(input, this);
+	return ScreenAttract::AttractInput( input, this );
 }
 
-void ScreenJukebox::HandleScreenMessage(const ScreenMessage SM) {
-  if (SM == SM_NotesEnded) {
-    if (m_Out.IsTransitioning() || m_Out.IsFinished()) {
-      return;  // ignore - we're already fading or faded
-    }
-    m_Out.StartTransitioning(SM_GoToNextScreen);
-    return;
-  } else if (SM == SM_GoToNextScreen) {
-    if (m_pSoundMusic) {
-      m_pSoundMusic->Stop();
-    }
-  } else if (SM == SM_GoToStartScreen) {
-    ScreenAttract::GoToStartScreen(m_sName);
-  }
+void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
+{
+	if( SM == SM_NotesEnded )
+	{
+		if( m_Out.IsTransitioning() || m_Out.IsFinished() )
+			return;	// ignore - we're already fading or faded
+		m_Out.StartTransitioning( SM_GoToNextScreen );
+		return;
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
+		if( m_pSoundMusic )
+			m_pSoundMusic->Stop();
+	}
+	else if( SM == SM_GoToStartScreen )
+	{
+		ScreenAttract::GoToStartScreen( m_sName );
+	}
 
-  ScreenGameplay::HandleScreenMessage(SM);
+	ScreenGameplay::HandleScreenMessage( SM );
 }
 
-void ScreenJukebox::InitSongQueues() {
-  ScreenGameplay::InitSongQueues();
+void ScreenJukebox::InitSongQueues()
+{
+	ScreenGameplay::InitSongQueues();
 
-  // Pare down to just the song in the course that we want.
+	// Pare down to just the song in the course that we want.
 
 	int iIndexToKeep = -1;
 	for( unsigned i=0; i<m_apSongsQueue.size(); i++ )
 	{
-		if( m_apSongsQueue[i] == GAMESTATE->cur_song_ )
+		if( m_apSongsQueue[i] == GAMESTATE->m_pCurSong )
 		{
 			iIndexToKeep = i;
 			break;
 		}
 	}
 
-  ASSERT(iIndexToKeep != -1);
+	ASSERT( iIndexToKeep != -1 );
 
-  for (int i = (m_apSongsQueue.size()) - 1; i >= 0; i--) {
-    if (i != iIndexToKeep) {
-      m_apSongsQueue.erase(m_apSongsQueue.begin() + i);
-      FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
-        pi->m_vpStepsQueue.erase(pi->m_vpStepsQueue.begin() + i);
-        pi->m_asModifiersQueue.erase(pi->m_asModifiersQueue.begin() + i);
-      }
-    }
-  }
+	for( int i=(m_apSongsQueue.size())-1; i>=0; i-- )
+	{
+		if( i != iIndexToKeep )
+		{
+			m_apSongsQueue.erase( m_apSongsQueue.begin()+i );
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+			{
+				pi->m_vpStepsQueue.erase( pi->m_vpStepsQueue.begin()+i );
+				pi->m_asModifiersQueue.erase( pi->m_asModifiersQueue.begin()+i );
+			}
+		}
+	}
 
-  ASSERT_M(
-      m_apSongsQueue.size() == 1, ssprintf("%i", (int)m_apSongsQueue.size()));
-  FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
-    ASSERT_M(
-        pi->m_vpStepsQueue.size() == 1,
-        ssprintf("%i", (int)pi->m_vpStepsQueue.size()));
-    ASSERT_M(
-        pi->m_asModifiersQueue.size() == 1,
-        ssprintf("%i", (int)pi->m_asModifiersQueue.size()));
-  }
+	ASSERT_M( m_apSongsQueue.size() == 1, ssprintf("%i", (int) m_apSongsQueue.size()) );
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		ASSERT_M( pi->m_vpStepsQueue.size() == 1, ssprintf("%i", (int) pi->m_vpStepsQueue.size()) );
+		ASSERT_M( pi->m_asModifiersQueue.size() == 1, ssprintf("%i", (int) pi->m_asModifiersQueue.size()) );
+	}
 }
 
 /*

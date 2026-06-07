@@ -22,6 +22,7 @@ static bool CodePageConvert( RString &sText, int iCodePage )
 	}
 
 	std::wstring sOut;
+	std::wstring sOut;
 	sOut.append( iSize, ' ' );
 	/* Nonportable: */
 	iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), (wchar_t *) sOut.data(), iSize );
@@ -36,6 +37,7 @@ static bool AttemptKoreanConversion( RString &sText ) { return CodePageConvert( 
 static bool AttemptJapaneseConversion( RString &sText ) { return CodePageConvert( sText, 932 ); }
 
 #elif defined(HAVE_ICONV)
+#include <cstddef>
 #include <cstddef>
 #include <errno.h>
 #include <iconv.h>
@@ -90,6 +92,7 @@ static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromChar
 
 #elif defined(MACOSX)
 #include <cstddef>
+#include <cstddef>
 #include <CoreFoundation/CoreFoundation.h>
 
 static bool ConvertFromCP( RString &sText, int iCodePage )
@@ -132,6 +135,7 @@ bool ConvertString( RString &str, const RString &encodings )
 	if( str.empty() )
 		return true;
 
+	std::vector<RString> lst;
 	std::vector<RString> lst;
 	split( encodings, ",", lst );
 

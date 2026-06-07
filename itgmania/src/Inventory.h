@@ -1,43 +1,45 @@
-#ifndef INVENTORY_H
-#define INVENTORY_H
-
-#include <vector>
+#ifndef Inventory_H
+#define Inventory_H
 
 #include "Actor.h"
 #include "PlayerNumber.h"
-#include "PlayerState.h"
 #include "RageSound.h"
 #include "ScreenMessage.h"
 
-AutoScreenMessage(SM_BattleDamageLevel1);
-AutoScreenMessage(SM_BattleDamageLevel2);
-AutoScreenMessage(SM_BattleDamageLevel3);
+#include <vector>
 
-// Inventory management for PLAY_MODE_BATTLE.
-class Inventory : public Actor {
- public:
-  Inventory();
-  ~Inventory();
-  void Load(PlayerState* player_state);
 
-  virtual void Update(float delta);
-  virtual void DrawPrimitives() {};
+AutoScreenMessage( SM_BattleDamageLevel1 );
+AutoScreenMessage( SM_BattleDamageLevel2 );
+AutoScreenMessage( SM_BattleDamageLevel3 );
 
-  void UseItem(int slot);
+class PlayerState;
+/** @brief Inventory management for PLAY_MODE_BATTLE. */
+class Inventory : public Actor
+{
+public:
+	Inventory();
+	~Inventory();
+	void Load( PlayerState* pPlayerState );
 
- protected:
-  void AwardItem(int item_index);
+	virtual void Update( float fDelta );
+	virtual void DrawPrimitives() {};
 
-  PlayerState* player_state_;
-  unsigned int last_seen_combo_;
+	void UseItem( int iSlot );
 
-  // A sound played when an item has been acquired.
-  RageSound sound_acquire_item_;
-  std::vector<RageSound*> sound_use_item_;
-  RageSound sound_item_ending_;
+protected:
+	void AwardItem( int iItemIndex );
+
+	PlayerState* m_pPlayerState;
+	unsigned int m_iLastSeenCombo;
+
+	/** @brief a sound played when an item has been acquired. */
+	RageSound m_soundAcquireItem;
+	std::vector<RageSound*> m_vpSoundUseItem;
+	RageSound m_soundItemEnding;
 };
 
-#endif  // INVENTORY_H
+#endif
 
 /**
  * @file

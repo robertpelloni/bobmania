@@ -1,34 +1,35 @@
 #ifndef DIALOG_BOX_H
 #define DIALOG_BOX_H
 
-#include <string>
+#include "global.h"
 
-namespace Dialog {
-/* ID can be used to identify a class of messages, for "don't display this
- * dialog"-type prompts. */
-void Init();
-void Shutdown();
+namespace Dialog
+{
+	/* ID can be used to identify a class of messages, for "don't display this
+	 * dialog"-type prompts. */
+	void Init();
+	void Shutdown();
 
-void SetWindowed(bool bWindowed);
+	void SetWindowed( bool bWindowed );
 
-enum Result { ok, cancel, abort, retry, ignore, yes, no };
-void Error(std::string sError, std::string sID = "");
-void OK(std::string sMessage, std::string sID = "");
-Result OKCancel(std::string sMessage, std::string sID = "");
-Result AbortRetryIgnore(std::string sMessage, std::string sID = "");
-Result AbortRetry(std::string sMessage, std::string sID = "");
-Result YesNo(std::string sMessage, std::string sID = "");
+	enum Result { ok, cancel, abort, retry, ignore, yes, no };
+	void Error( RString sError, RString sID = "" );
+	void OK( RString sMessage, RString sID = "" );
+	Result OKCancel( RString sMessage, RString sID = "" );
+	Result AbortRetryIgnore( RString sMessage, RString sID = "" );
+	Result AbortRetry( RString sMessage, RString sID = "" );
+	Result YesNo( RString sMessage, RString sID = "" );
 
-/* for DialogDrivers */
-void IgnoreMessage(std::string sID);
-}  // namespace Dialog
+	/* for DialogDrivers */
+	void IgnoreMessage( RString sID );
+}
 
 #endif
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -38,7 +39,7 @@ void IgnoreMessage(std::string sID);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

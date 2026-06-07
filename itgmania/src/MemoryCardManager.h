@@ -1,90 +1,83 @@
 #ifndef MemoryCardManager_H
 #define MemoryCardManager_H
 
-#include <string>
-#include <vector>
-
-#include "GameConstantsAndTypes.h"  // for MemoryCardState
+#include "GameConstantsAndTypes.h"	// for MemoryCardState
 #include "PlayerNumber.h"
-#include "Preference.h"
 #include "RageSound.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"
+#include "Preference.h"
 
-extern const std::string MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
+#include <vector>
 
-class MemoryCardManager {
- public:
-  MemoryCardManager();
-  ~MemoryCardManager();
 
-  void Update();
+extern const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
 
-  MemoryCardState GetCardState(PlayerNumber pn) const { return m_State[pn]; }
-  std::string GetCardError(PlayerNumber pn) const { return m_sError[pn]; }
+class MemoryCardManager
+{
+public:
+	MemoryCardManager();
+	~MemoryCardManager();
 
-  void WaitForCheckingToComplete();
-  bool CardInserted(PlayerNumber pn);
-  void LockCard(
-      PlayerNumber pn);  // prevent removing or changing of memory card
-  void UnlockCard(PlayerNumber pn);
-  bool MountCard(PlayerNumber pn, int iTimeout = 10);
-  bool MountCard(PlayerNumber pn, const UsbStorageDevice& d, int iTimeout = 10);
-  void UnmountCard(PlayerNumber pn);
+	void Update();
 
-  bool IsMounted(PlayerNumber pn) const { return m_bMounted[pn]; }
+	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
+	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 
-  // When paused, no changes in memory card state will be noticed until
-  // unpaused.
-  void PauseMountingThread(int iTimeout = 20);
-  void UnPauseMountingThread();
+	void WaitForCheckingToComplete();
+	bool CardInserted( PlayerNumber pn );
+	void LockCard( PlayerNumber pn ); // prevent removing or changing of memory card
+	void UnlockCard( PlayerNumber pn );
+	bool MountCard( PlayerNumber pn, int iTimeout = 10 );
+	bool MountCard( PlayerNumber pn, const UsbStorageDevice &d, int iTimeout = 10 );
+	void UnmountCard( PlayerNumber pn );
 
-  bool GetCardLocked(PlayerNumber pn) const { return m_bCardLocked[pn]; }
+	bool IsMounted( PlayerNumber pn ) const { return m_bMounted[pn]; }
 
-  bool PathIsMemCard(std::string sDir) const;
+	// When paused, no changes in memory card state will be noticed until unpaused.
+	void PauseMountingThread( int iTimeout = 20 );
+	void UnPauseMountingThread();
 
-  bool IsNameAvailable(PlayerNumber pn) const;
-  std::string GetName(PlayerNumber pn) const;
+	bool GetCardLocked( PlayerNumber pn ) const { return m_bCardLocked[pn]; }
 
-  const std::vector<UsbStorageDevice>& GetStorageDevices() {
-    return m_vStorageDevices;
-  }
+	bool PathIsMemCard( RString sDir ) const;
 
-  static Preference1D<std::string> m_sMemoryCardOsMountPoint;
-  static Preference1D<int> m_iMemoryCardUsbBus;
-  static Preference1D<int> m_iMemoryCardUsbPort;
-  static Preference1D<int> m_iMemoryCardUsbLevel;
+	bool IsNameAvailable( PlayerNumber pn ) const;
+	RString GetName( PlayerNumber pn ) const;
 
-  static Preference<std::string> m_sEditorMemoryCardOsMountPoint;
+	const std::vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
-  // Lua
-  void PushSelf(lua_State* L);
+	static Preference1D<RString>	m_sMemoryCardOsMountPoint;
+	static Preference1D<int>	m_iMemoryCardUsbBus;
+	static Preference1D<int>	m_iMemoryCardUsbPort;
+	static Preference1D<int>	m_iMemoryCardUsbLevel;
 
- protected:
-  void UpdateAssignments();
-  void CheckStateChanges();
+	static Preference<RString>	m_sEditorMemoryCardOsMountPoint;
 
-  std::vector<UsbStorageDevice> m_vStorageDevices;  // all currently connected
+	// Lua
+	void PushSelf( lua_State *L );
 
-  bool m_bCardLocked[NUM_PLAYERS];
-  bool m_bMounted[NUM_PLAYERS];  // card is currently mounted
+protected:
+	void UpdateAssignments();
+	void CheckStateChanges();
 
-  UsbStorageDevice
-      m_Device[NUM_PLAYERS];  // device in the memory card slot, blank if none
-  UsbStorageDevice
-      m_FinalDevice[NUM_PLAYERS];  // device in the memory card slot when we
-                                   // finalized, blank if none
+	std::vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 
-  MemoryCardState m_State[NUM_PLAYERS];
-  std::string m_sError[NUM_PLAYERS];  // if MemoryCardState_Error
+	bool	m_bCardLocked[NUM_PLAYERS];
+	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted
 
-  RageSound m_soundReady;
-  RageSound m_soundError;
-  RageSound m_soundTooLate;
-  RageSound m_soundDisconnect;
+	UsbStorageDevice m_Device[NUM_PLAYERS];	// device in the memory card slot, blank if none
+	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
+
+	MemoryCardState m_State[NUM_PLAYERS];
+	RString m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
+
+	RageSound m_soundReady;
+	RageSound m_soundError;
+	RageSound m_soundTooLate;
+	RageSound m_soundDisconnect;
 };
 
-extern MemoryCardManager*
-    MEMCARDMAN;  // global and accessible from anywhere in our program
+extern MemoryCardManager*	MEMCARDMAN;	// global and accessible from anywhere in our program
 
 #endif
 

@@ -1,66 +1,64 @@
 #ifndef INPUT_QUEUE_H
 #define INPUT_QUEUE_H
 
+#include "GameInput.h"
+#include "InputFilter.h"
+
 #include <vector>
 
-#include "GameInput.h"
-#include "InputEventPlus.h"
-#include "InputFilter.h"
-#include "RageTimer.h"
 
-// Stores a list of the most recently pressed MenuInputs for each player.
-class InputQueue {
- public:
-  InputQueue();
+class InputEventPlus;
+class RageTimer;
 
-  void RememberInput(const InputEventPlus& game_input);
-  bool WasPressedRecently(
-      GameController game_controller, const GameButton game_button,
-      const RageTimer& oldest_time_allowed,
-      InputEventPlus* input_event_plus = nullptr);
-  const std::vector<InputEventPlus>& GetQueue(
-      GameController game_controller) const {
-    return queue_[game_controller];
-  }
-  void ClearQueue(GameController game_controller);
+/** @brief Stores a list of the most recently pressed MenuInputs for each player. */
+class InputQueue
+{
+public:
+	InputQueue();
 
- protected:
-  std::vector<InputEventPlus> queue_[NUM_GameController];
+	void RememberInput( const InputEventPlus &gi );
+	bool WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP = nullptr );
+	const std::vector<InputEventPlus> &GetQueue( GameController c ) const { return m_aQueue[c]; }
+	const std::vector<InputEventPlus> &GetQueue( GameController c ) const { return m_aQueue[c]; }
+	void ClearQueue( GameController c );
+
+protected:
+	std::vector<InputEventPlus> m_aQueue[NUM_GameController];
 };
 
-struct InputQueueCode {
- public:
-  bool Load(RString button_names);
-  bool EnteredCode(GameController game_controller) const;
+struct InputQueueCode
+{
+public:
+	bool Load( RString sButtonsNames );
+	bool EnteredCode( GameController controller ) const;
 
-  InputQueueCode() : presses_() {}
+	InputQueueCode(): m_aPresses() {}
 
- private:
-  struct ButtonPress {
-    ButtonPress()
-        : buttons_to_hold_(),
-          buttons_to_not_hold_(),
-          buttons_to_press_(),
-          allow_intermediate_presses_(false) {
-      memset(input_types_, 0, sizeof(input_types_));
-      input_types_[IET_FIRST_PRESS] = true;
-    }
-    std::vector<GameButton> buttons_to_hold_;
-    std::vector<GameButton> buttons_to_not_hold_;
-    std::vector<GameButton> buttons_to_press_;
+private:
+	struct ButtonPress
+	{
+		ButtonPress(): m_aButtonsToHold(), m_aButtonsToNotHold(),
+			m_aButtonsToPress(),
+			m_bAllowIntermediatePresses(false)
+		{
+			memset( m_InputTypes, 0, sizeof(m_InputTypes) );
+			m_InputTypes[IET_FIRST_PRESS] = true;
+		}
+		std::vector<GameButton> m_aButtonsToHold;
+		std::vector<GameButton> m_aButtonsToNotHold;
+		std::vector<GameButton> m_aButtonsToPress;
 
-    bool input_types_[NUM_InputEventType];
-    bool allow_intermediate_presses_;
-  };
-  std::vector<ButtonPress> presses_;
+		bool m_InputTypes[NUM_InputEventType];
+		bool m_bAllowIntermediatePresses;
+	};
+	std::vector<ButtonPress> m_aPresses;
 
-  float max_seconds_back_;
+	float m_fMaxSecondsBack;
 };
 
-// Global and accessible from anywhere in our program.
-extern InputQueue* INPUTQUEUE;
+extern InputQueue*	INPUTQUEUE;	// global and accessible from anywhere in our program
 
-#endif  // INPUT_QUEUE_H
+#endif
 
 /*
  * (c) 2001-2007 Chris Danford, Glenn Maynard

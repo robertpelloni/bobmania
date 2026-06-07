@@ -41,6 +41,8 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 	Trail *pRet = nullptr;
 	if( st != StepsType_Invalid && cd != Difficulty_Invalid )
 		pRet = p->GetTrail( st, cd );
+	if( st != StepsType_Invalid && cd != Difficulty_Invalid )
+		pRet = p->GetTrail( st, cd );
 
 	if( !bAllowNull && pRet == nullptr )
 		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->GetDisplayFullTitle().c_str() );	
@@ -52,7 +54,7 @@ XNode* TrailID::CreateNode() const
 {
 	XNode* pNode = new XNode( "Trail" );
 
-	pNode->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(st).name );
+	pNode->AppendAttr( "StepsType", GAMEMAN->GetStepsTypeInfo(st).szName );
 	pNode->AppendAttr( "CourseDifficulty", DifficultyToString(cd) );
 
 	return pNode;
@@ -73,7 +75,7 @@ void TrailID::LoadFromNode( const XNode* pNode )
 
 RString TrailID::ToString() const
 {
-	RString s = GAMEMAN->GetStepsTypeInfo(st).name;
+	RString s = GAMEMAN->GetStepsTypeInfo(st).szName;
 	s += " " + DifficultyToString( cd );
 	return s;
 }

@@ -1,29 +1,26 @@
 #ifndef SCORE_DISPLAY_BATTLE_H
 #define SCORE_DISPLAY_BATTLE_H
 
-#include <string>
-
-#include "GameConstantsAndTypes.h"
-#include "RageTexturePreloader.h"
 #include "ScoreDisplay.h"
+#include "GameConstantsAndTypes.h"
 #include "Sprite.h"
+#include "RageTexturePreloader.h"
 
 /** @brief ScoreDisplay implementation for PLAY_MODE_BATTLE. */
-class ScoreDisplayBattle : public ScoreDisplay {
- public:
-  ScoreDisplayBattle();
-  virtual void Init(
-      const PlayerState* pPlayerState,
-      const PlayerStageStats* pPlayerStageStats);
+class ScoreDisplayBattle : public ScoreDisplay
+{
+public:
+	ScoreDisplayBattle();
+	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
-  virtual void Update(float fDelta);
+	virtual void Update( float fDelta );
 
- protected:
-  Sprite m_sprFrame;
-  Sprite m_ItemIcon[NUM_INVENTORY_SLOTS];
+protected:
+	Sprite	m_sprFrame;
+	Sprite	m_ItemIcon[NUM_INVENTORY_SLOTS];
 
-  std::string m_iLastSeenInventory[NUM_INVENTORY_SLOTS];
-  RageTexturePreloader m_TexturePreload;
+	RString m_iLastSeenInventory[NUM_INVENTORY_SLOTS];
+	RageTexturePreloader m_TexturePreload;
 };
 
 #endif
@@ -31,7 +28,7 @@ class ScoreDisplayBattle : public ScoreDisplay {
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -41,7 +38,7 @@ class ScoreDisplayBattle : public ScoreDisplay {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

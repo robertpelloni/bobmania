@@ -10,6 +10,7 @@
 
 #include "global.h"
 #include "Preference.h"
+#include "Preference.h"
 #include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_SpeedChange.h"
 #include "RageSoundReader_Resample_Good.h"

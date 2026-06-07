@@ -1,12 +1,7 @@
 # Set up version numbers according to the new scheme.
-file(READ "${SM_ROOT_DIR}/VERSION.md" SM_VERSION_STRING)
-string(STRIP "${SM_VERSION_STRING}" SM_VERSION_STRING)
-string(REPLACE "." ";" SM_VERSION_LIST "${SM_VERSION_STRING}")
-list(GET SM_VERSION_LIST 0 SM_VERSION_MAJOR)
-list(GET SM_VERSION_LIST 1 SM_VERSION_MINOR)
-list(GET SM_VERSION_LIST 2 SM_VERSION_PATCH)
-
-
+set(SM_VERSION_MAJOR 5)
+set(SM_VERSION_MINOR 4)
+set(SM_VERSION_PATCH 0)
 set(SM_VERSION_TRADITIONAL
     "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
 
@@ -22,32 +17,60 @@ if(NOT (ret STREQUAL "0"))
       "git was not found on your path. If you collect bug reports, please add git to your path and rerun cmake."
     )
   set(SM_VERSION_GIT_HASH "UNKNOWN")
-  if(WITH_FULL_RELEASE)
-    set(SM_VERSION_GIT
-        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
-  else()
-    if(WITH_NIGHTLY_RELEASE)
-      set(SM_VERSION_GIT
-        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}-NIGHTLY-${SM_VERSION_GIT_HASH}")
-    else()
-      set(SM_VERSION_GIT
-          "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}-BETA-${SM_VERSION_GIT_HASH}")
-    endif()
-  endif()
+  set(SM_VERSION_FULL
+      "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
+  set(SM_VERSION_GIT
+      "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-${SM_VERSION_GIT_HASH}")
 else()
   if(WITH_FULL_RELEASE)
+    set(SM_VERSION_FULL
+        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
     set(SM_VERSION_GIT
         "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}")
   else()
-    if(WITH_NIGHTLY_RELEASE)
-      set(SM_VERSION_GIT
-        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}-NIGHTLY-git-${SM_VERSION_GIT_HASH}")
-    else()
-      set(SM_VERSION_GIT
-          "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}.${SM_VERSION_PATCH}-BETA-git-${SM_VERSION_GIT_HASH}")
-    endif()
+    set(SM_VERSION_FULL
+        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
+    set(SM_VERSION_GIT
+        "${SM_VERSION_MAJOR}.${SM_VERSION_MINOR}-git-${SM_VERSION_GIT_HASH}")
   endif()
 endif()
 
-string(TIMESTAMP SM_TIMESTAMP_DATE "%Y%m%d")
-string(TIMESTAMP SM_TIMESTAMP_TIME "%H:%M:%S" UTC)
+if(CMAKE_MAJOR_VERSION STREQUAL "3")
+  # Use the CMake 3 approach whenever possible.
+  string(TIMESTAMP SM_TIMESTAMP_DATE "%Y%m%d")
+  string(TIMESTAMP SM_TIMESTAMP_TIME "%H:%M:%S" UTC)
+else()
+  if(MSVC)
+    message(
+      STATUS
+        "Getting date and time information via PowerShell. This may take a few seconds."
+      )
+    execute_process(COMMAND powershell get-date -format "{yyyyMMdd}"
+                    OUTPUT_VARIABLE SM_TIMESTAMP_DATE
+                    RESULT_VARIABLE ret
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    execute_process(COMMAND powershell get-date -format "{HH:mm:ss zzz}"
+                    OUTPUT_VARIABLE SM_TIMESTAMP_TIME
+                    RESULT_VARIABLE ret
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  else()
+    execute_process(COMMAND date "+%Y%m%d"
+                    OUTPUT_VARIABLE SM_TIMESTAMP_DATE
+                    RESULT_VARIABLE ret
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    execute_process(COMMAND date "+%H:%M:%S %z"
+                    OUTPUT_VARIABLE SM_TIMESTAMP_TIME
+                    RESULT_VARIABLE ret
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  endif()
+
+  if(NOT (ret STREQUAL "0"))
+    set(SM_TIMESTAMP_DATE "xxxxyyzz")
+  endif()
+
+  if(NOT (ret STREQUAL "0"))
+    set(SM_TIMESTAMP_TIME "xx:yy:zz ???")
+  endif()
+endif()

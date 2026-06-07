@@ -1,36 +1,35 @@
 #ifndef INPUT_HANDLER_LINUX_JOYSTICK_H
 #define INPUT_HANDLER_LINUX_JOYSTICK_H 1
 
-#include <string>
-#include <vector>
-
 #include "InputHandler.h"
-#include "RageInputDevice.h"
 #include "RageThreads.h"
 
-class InputHandler_Linux_Joystick : public InputHandler {
- public:
-  InputHandler_Linux_Joystick();
-  ~InputHandler_Linux_Joystick();
-  bool TryDevice(std::string dev);
-  bool DevicesChanged() { return m_bDevicesChanged; }
-  void GetDevicesAndDescriptions(std::vector<InputDeviceInfo>& vDevicesOut);
+#include <vector>
 
- private:
-  void StartThread();
-  void StopThread();
-  static int InputThread_Start(void* p);
-  void InputThread();
+class InputHandler_Linux_Joystick: public InputHandler
+{
+public:
+	InputHandler_Linux_Joystick();
+	~InputHandler_Linux_Joystick();
+	bool TryDevice(RString dev);
+	bool DevicesChanged() { return m_bDevicesChanged; }
+	void GetDevicesAndDescriptions( std::vector<InputDeviceInfo>& vDevicesOut );
 
-  struct FileDescriptor {
-    int fd = -1;
-    std::string description = "";
-  };
+private:
+	void StartThread();
+	void StopThread();
+	static int InputThread_Start( void *p );
+	void InputThread();
 
-  std::vector<FileDescriptor> m_files;
-  RageThread m_InputThread;
-  bool m_bShutdown = false;
-  bool m_bDevicesChanged = false;
+	struct FileDescriptor {
+		int fd = -1;
+		RString description = "";
+	};
+
+	std::vector<FileDescriptor> m_files;
+	RageThread m_InputThread;
+	bool m_bShutdown = false;
+	bool m_bDevicesChanged = false;
 };
 
 #endif

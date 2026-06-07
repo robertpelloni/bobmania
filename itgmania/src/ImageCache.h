@@ -2,46 +2,48 @@
 #define IMAGE_CACHE_H
 
 #include "IniFile.h"
+
 #include "RageTexture.h"
 
-// Maintains a cache of reduced-quality images.
-class ImageCache {
- public:
-  ImageCache();
-  ~ImageCache();
-  void ReadFromDisk();
-  void WriteToDisk();
+class LoadingWindow;
+/** @brief Maintains a cache of reduced-quality images. */
+class ImageCache
+{
+public:
+	ImageCache();
+	~ImageCache();
+	void ReadFromDisk();
+	void WriteToDisk();
 
-  RageTextureID LoadCachedImage(RString image_dir, RString image_path);
-  void CacheImage(RString image_dir, RString image_path);
-  void LoadImage(RString image_dir, RString image_path);
+	RageTextureID LoadCachedImage( RString sImageDir, RString sImagePath );
+	void CacheImage( RString sImageDir, RString sImagePath );
+	void LoadImage( RString sImageDir, RString sImagePath );
 
-  void Demand(RString image_dir);
-  void Undemand(RString image_dir);
+	void Demand( RString sImageDir );
+	void Undemand( RString sImageDir );
 
-  void OutputStats() const;
+	void OutputStats() const;
 
-  bool delay_save_cache;
+	bool delay_save_cache;
 
- private:
-  static RString GetImageCachePath(RString image_dir, RString image_path);
-  void UnloadAllImages();
-  void CacheImageInternal(RString image_dir, RString image_path);
+private:
+	static RString GetImageCachePath( RString sImageDir, RString sImagePath );
+	void UnloadAllImages();
+	void CacheImageInternal( RString sImageDir, RString sImagePath );
 
-  IniFile image_data_;
+	IniFile ImageData;
 };
 
-// Global and accessible from anywhere in our program.
-extern ImageCache* IMAGECACHE;
+extern ImageCache *IMAGECACHE; // global and accessible from anywhere in our program
 
-#endif  // IMAGE_CACHE_H
+#endif
 
 /**
  * @file
  * @author Glenn Maynard (c) 2003
  * @section LICENSE
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -51,7 +53,7 @@ extern ImageCache* IMAGECACHE;
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

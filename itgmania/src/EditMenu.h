@@ -1,23 +1,19 @@
 #ifndef EDIT_MENU_H
 #define EDIT_MENU_H
 
-#include <string>
-#include <vector>
-
-#include "Actor.h"
 #include "ActorFrame.h"
-#include "AutoActor.h"
-#include "BitmapText.h"
-#include "Difficulty.h"
-#include "EnumHelper.h"
 #include "FadingBanner.h"
-#include "GameConstantsAndTypes.h"
-#include "RageSound.h"
-#include "StepsDisplay.h"
 #include "TextBanner.h"
+#include "GameConstantsAndTypes.h"
+#include "StepsDisplay.h"
+#include "RageSound.h"
+#include "EnumHelper.h"
 #include "ThemeMetric.h"
 
-// What type of row is needed for the EditMenu?
+#include <vector>
+
+
+/** @brief What type of row is needed for the EditMenu? */
 enum EditMenuRow
 {
 	ROW_GROUP,
@@ -27,82 +23,95 @@ enum EditMenuRow
 	ROW_SOURCE_STEPS_TYPE,
 	ROW_SOURCE_STEPS,
 	ROW_ACTION,
-	NUM_EditMenuRow // The number of EditMenuRows available.
+	NUM_EditMenuRow /**< The number of EditMenuRows available. */
 };
-// Loop through each EditMenuRow.
+/** @brief Loop through each EditMenuRow. */
 #define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, r )
-// Turn the EditMenuRow into a string.
+/**
+ * @brief Turn the EditMenuRow into a string.
+ * @param r the row.
+ * @return the string. */
 const RString& EditMenuRowToString( EditMenuRow r );
-// Turn the EditMenuRow into a localized string.
+/**
+ * @brief Turn the EditMenuRow into a localized string.
+ * @param r the row.
+ * @return the localized string. */
 const RString& EditMenuRowToLocalizedString( EditMenuRow r );
 
-// The different actions one can take on a step.
+/** @brief The different actions one can take on a step. */
 enum EditMenuAction
 {
-	// Modify the current step for the Song.
-	EditMenuAction_Edit,
-	// Remove the current step from the Song.
-	EditMenuAction_Delete,
-	// Create a new step for the Song.
-	EditMenuAction_Create,
-	// Practice the current step for the Song.
-	EditMenuAction_Practice,
+	EditMenuAction_Edit, /**< Modify the current step for the Song. */
+	EditMenuAction_Delete, /**< Remove the current step from the Song. */
+	EditMenuAction_Create, /**< Create a new step for the Song. */
+	EditMenuAction_Practice, /**< Practice the current step for the Song. */
 	EditMenuAction_LoadAutosave,
-	// The number of MenuActions available to choose from.
-	NUM_EditMenuAction,
+	NUM_EditMenuAction, /**< The number of MenuActions available to choose from. */
 	EditMenuAction_Invalid
 };
-// Loop through each EditMenuAction.
+/** @brief Loop through each EditMenuAction. */
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, ema )
-// Turn the EditMenuAction into a string.
+/**
+ * @brief Turn the EditMenuAction into a string.
+ * @param ema the action.
+ * @return the string. */
 const RString& EditMenuActionToString( EditMenuAction ema );
-// Turn the EditMenuAction into a localized string.
+/**
+ * @brief Turn the EditMenuAction into a localized string.
+ * @param ema the action.
+ * @return the localized string. */
 const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
 
-// How many arrows are used for the EditMenu?
+/** @brief How many arrows are used for the EditMenu? */
 const int NUM_ARROWS = 2;
 
-// UI on Edit Menu screen.
-// Create Steps, delete Steps, or launch Steps in editor.
+/**
+ * @brief UI on Edit Menu screen.
+ *
+ * Create Steps, delete Steps, or launch Steps in editor. */
 class EditMenu: public ActorFrame
 {
 public:
-	// Set up the EditMenu.
+	/** @brief Set up the EditMenu. */
 	EditMenu();
-	// Destroy the EditMenu.
+	/** @brief Destroy the EditMenu. */
 	~EditMenu();
 	void Load( const RString &sType );
 
-	// Determine if we can move up.
+	/** @brief Determine if we can move up.
+	 * @return true if we can, false otherwise. */
 	bool CanGoUp();
-	// Determine if we can move down.
+	/** @brief Determine if we can move down.
+	 * @return true if we can, false otherwise. */
 	bool CanGoDown();
-	// Determine if we can move left.
+	/** @brief Determine if we can move left.
+	 * @return true if we can, false otherwise. */
 	bool CanGoLeft();
-	// Determine if we can move right.
+	/** @brief Determine if we can move right.
+	 * @return true if we can, false otherwise. */
 	bool CanGoRight();
-	// Determine if the EditMenuRow is selectable.
+	/** @brief Determine if the EditMenuRow is selectable.
+	 * @param row the row in question.
+	 * @return true if it can be selected, false otherwise. */
 	bool RowIsSelectable( EditMenuRow row );
 
-	// Move up to the next selection.
+	/** @brief Move up to the next selection. */
 	void Up();
-	// Move down to the next selection.
+	/** @brief Move down to the next selection. */
 	void Down();
-	// Move left to the next selection.
+	/** @brief Move left to the next selection. */
 	void Left();
-	// Move right to the next selection.
+	/** @brief Move right to the next selection. */
 	void Right();
 
-  void RefreshAll();
+	void RefreshAll();
 
-  bool SafeToUse();
+	bool SafeToUse();
 
-#define RETURN_IF_INVALID(check, retval) \
-  if (check) {                           \
-    return retval;                       \
-  }
+#define RETURN_IF_INVALID(check, retval) if(check) { return retval; }
 
-	// Retrieve the currently selected group.
+	/** @brief Retrieve the currently selected group.
+	 * @return the current group. */
 	RString	GetSelectedGroup() const
 	{
 		if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL;
@@ -110,56 +119,64 @@ public:
 		RETURN_IF_INVALID(m_iSelection[ROW_GROUP] >= groups, "");
 		return m_sGroups[m_iSelection[ROW_GROUP]];
 	}
-	// Retrieve the currently selected song.
+	/** @brief Retrieve the currently selected song.
+	 * @return the current song. */
 	Song*	GetSelectedSong() const
 	{
 		RETURN_IF_INVALID(m_pSongs.empty() ||
 			m_iSelection[ROW_SONG] >= (int)m_pSongs.size(), nullptr);
 		return m_pSongs[m_iSelection[ROW_SONG]];
 	}
-	// Retrieve the currently selected steps type.
+	/** @brief Retrieve the currently selected steps type.
+	 * @return the current steps type. */
 	StepsType GetSelectedStepsType() const
 	{
 		RETURN_IF_INVALID(m_StepsTypes.empty() ||
 			m_iSelection[ROW_STEPS_TYPE] >= (int)m_StepsTypes.size(), StepsType_Invalid);
 		return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]];
 	}
-	// Retrieve the currently selected steps.
+	/** @brief Retrieve the currently selected steps.
+	 * @return the current steps. */
 	Steps*	GetSelectedSteps() const
 	{
 		RETURN_IF_INVALID(m_vpSteps.empty() ||
 			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), nullptr);
 		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps;
 	}
-	// Retrieve the currently selected difficulty.
+	/** @brief Retrieve the currently selected difficulty.
+	 * @return the current difficulty. */
 	Difficulty GetSelectedDifficulty() const
 	{
 		RETURN_IF_INVALID(m_vpSteps.empty() ||
 			m_iSelection[ROW_STEPS] >= (int)m_vpSteps.size(), Difficulty_Invalid);
 		return m_vpSteps[m_iSelection[ROW_STEPS]].dc;
 	}
-	// Retrieve the currently selected source steps type.
+	/** @brief Retrieve the currently selected source steps type.
+	 * @return the current source steps type. */
 	StepsType GetSelectedSourceStepsType() const
 	{
 		RETURN_IF_INVALID(m_StepsTypes.empty() ||
 			m_iSelection[ROW_SOURCE_STEPS_TYPE] >= (int)m_StepsTypes.size(), StepsType_Invalid);
 		return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]];
 	}
-	// Retrieve the currently selected source steps.
+	/** @brief Retrieve the currently selected source steps.
+	 * @return the current source steps. */
 	Steps* GetSelectedSourceSteps() const
 	{
 		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
 			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), nullptr);
 		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps;
 	}
-	// Retrieve the currently selected difficulty.
+	/** @brief Retrieve the currently selected difficulty.
+	 * @return the current difficulty. */
 	Difficulty GetSelectedSourceDifficulty() const
 	{
 		RETURN_IF_INVALID(m_vpSourceSteps.empty() ||
 			m_iSelection[ROW_SOURCE_STEPS] >= (int)m_vpSourceSteps.size(), Difficulty_Invalid);
 		return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc;
 	}
-	// Retrieve the currently selected action.
+	/** @brief Retrieve the currently selected action.
+	 * @return the current action. */
 	EditMenuAction GetSelectedAction() const
 	{
 		RETURN_IF_INVALID(m_Actions.empty() ||
@@ -169,62 +186,58 @@ public:
 
 #undef RETURN_IF_INVALID
 
-	// Retrieve the currently selected row.
+	/** @brief Retrieve the currently selected row.
+	 * @return the current row. */
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
- private:
-  struct StepsAndDifficulty;
+private:
+	struct StepsAndDifficulty;
 
-  void StripLockedStepsAndDifficulty(std::vector<StepsAndDifficulty>& v);
-  void GetSongsToShowForGroup(
-      const std::string& sGroup, std::vector<Song*>& vpSongsOut);
-  void GetGroupsToShow(std::vector<std::string>& vsGroupsOut);
+	void StripLockedStepsAndDifficulty( std::vector<StepsAndDifficulty> &v );
+	void GetSongsToShowForGroup( const RString &sGroup, std::vector<Song*> &vpSongsOut );
+	void GetGroupsToShow( std::vector<RString> &vsGroupsOut );
 
-  void UpdateArrows();
-  AutoActor m_sprArrows[NUM_ARROWS];
+	void UpdateArrows();
+	AutoActor	m_sprArrows[NUM_ARROWS];
 
-  EditMenuRow m_SelectedRow;
-  EditMenuRow GetFirstRow() const {
-    return SHOW_GROUPS.GetValue() ? ROW_GROUP : ROW_SONG;
-  }
-  int GetRowSize(EditMenuRow er) const;
-  int m_iSelection[NUM_EditMenuRow];
-  BitmapText m_textLabel[NUM_EditMenuRow];
-  BitmapText m_textValue[NUM_EditMenuRow];
+	EditMenuRow m_SelectedRow;
+	EditMenuRow GetFirstRow() const { return SHOW_GROUPS.GetValue()? ROW_GROUP:ROW_SONG; }
+	int GetRowSize( EditMenuRow er ) const;
+	int		m_iSelection[NUM_EditMenuRow];
+	BitmapText	m_textLabel[NUM_EditMenuRow];
+	BitmapText	m_textValue[NUM_EditMenuRow];
 
-	// The group's banner.
+	/** @brief The group's banner. */
 	FadingBanner	m_GroupBanner;
-	// The Song's banner.
+	/** @brief The Song's banner. */
 	FadingBanner	m_SongBanner;
 	TextBanner	m_SongTextBanner;
 	StepsDisplay	m_StepsDisplay;
 	StepsDisplay	m_StepsDisplaySource;
 
-  struct StepsAndDifficulty {
-    StepsAndDifficulty(Steps* s, Difficulty d) {
-      pSteps = s;
-      dc = d;
-    }
-    Steps* pSteps;
-    Difficulty dc;
-  };
+	struct StepsAndDifficulty
+	{
+		StepsAndDifficulty( Steps *s, Difficulty d ) { pSteps = s; dc = d; }
+		Steps *pSteps;
+		Difficulty dc;
+	};
 
-	// The list of groups.
+	/** @brief The list of groups. */
 	std::vector<RString>			m_sGroups;
-	// The list of Songs in a group.
+	/** @brief The list of Songs in a group. */
 	std::vector<Song*>			m_pSongs;
 	std::vector<StepsType>		m_StepsTypes;
 	std::vector<StepsAndDifficulty>	m_vpSteps;
 	std::vector<StepsAndDifficulty>	m_vpSourceSteps;
 	std::vector<EditMenuAction>		m_Actions;
 
-  void OnRowValueChanged(EditMenuRow row);
-  void ChangeToRow(EditMenuRow newRow);
+	void OnRowValueChanged( EditMenuRow row );
+	void ChangeToRow( EditMenuRow newRow );
 
-  RageSound m_soundChangeRow;
-  RageSound m_soundChangeValue;
+	RageSound m_soundChangeRow;
+	RageSound m_soundChangeValue;
 
-	// A metric to determine if groups are shown.
+	/** @brief A metric to determine if groups are shown. */
 	ThemeMetric<bool> SHOW_GROUPS;
 	ThemeMetric1D<float> ARROWS_X;
 	ThemeMetric<apActorCommands> ARROWS_ENABLED_COMMAND;
@@ -235,7 +248,7 @@ public:
 	ThemeMetric<RString>  TEXT_BANNER_TYPE;
 };
 
-#endif  // EDIT_MENU_H
+#endif
 
 /**
  * @file

@@ -1,6 +1,9 @@
+#include "global.h"
 #include "StepMania.h"
 
-int main(int argc, char* argv[]) { return sm_main(argc, argv); }
+int main(int argc, char* argv[]) {
+	return sm_main(argc, argv);
+}
 
 /*
  * (c) 2014 Jason Felds

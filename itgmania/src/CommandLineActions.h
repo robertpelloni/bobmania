@@ -1,33 +1,34 @@
 #ifndef CommandLineActions_H
 #define CommandLineActions_H
 
-#include <string>
 #include <vector>
 
-#include "arch/LoadingWindow/LoadingWindow.h"
 
-// The collection of command line actions.
-namespace CommandLineActions {
+class LoadingWindow;
 
-// Perform a utility function, then exit.
-// pLW the LoadingWindow that is presently not used?
-void Handle(LoadingWindow* pLW);
+/** @brief The collection of command line actions. */
+namespace CommandLineActions
+{
+	/**
+	 * @brief Perform a utility function, then exit.
+	 * @param pLW the LoadingWindow that is presently not used? */
+	void Handle(LoadingWindow* pLW);
 
-// The housing for the command line arguments.
-class CommandLineArgs {
- public:
-  // the arguments in question.
-  std::vector<RString> argv;
-};
+	/** @brief The housing for the command line arguments. */
+	class CommandLineArgs
+	{
+	public:
+		/** @brief the arguments in question. */
+		std::vector<RString> argv;
+	};
+	/**
+	 * @brief A list of command line arguemnts to process while the game is running.
+	 * These args could have come from this process or passed to this process
+	 * from another process. */
+	extern std::vector<CommandLineArgs> ToProcess;
+}
 
-// A list of command line arguemnts to process while the game is running.
-// These args could have come from this process or passed to this process
-// from another process.
-extern std::vector<CommandLineArgs> ToProcess;
-
-}  // namespace CommandLineActions
-
-#endif  // CommandLineActions_H
+#endif
 
 /**
  * @file
@@ -55,3 +56,4 @@ extern std::vector<CommandLineArgs> ToProcess;
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

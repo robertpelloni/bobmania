@@ -3,11 +3,10 @@
 #ifndef RAGE_SOUND_READER_RESAMPLE_GOOD_H
 #define RAGE_SOUND_READER_RESAMPLE_GOOD_H
 
-#include <string>
+#include "RageSoundReader_Filter.h"
+
 #include <vector>
 
-#include "RageSoundReader.h"
-#include "RageSoundReader_Filter.h"
 
 class RageSoundResampler_Polyphase;
 
@@ -22,32 +21,31 @@ public:
 	int Read( float *pBuf, int iFrames );
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
-	bool SetProperty( const RString &sProperty, double fValue );
+	bool SetProperty( const RString &sProperty, float fValue );
 	int GetNextSourceFrame() const;
-	double GetStreamToSourceRatio() const;
+	float GetStreamToSourceRatio() const;
 
 	/**
 	 * @brief Change the rate of a sound without changing the sample rate.
 	 * @param fRatio the ratio for changing. */
-	void SetRate( double fRatio );
+	void SetRate( float fRatio );
 
 	/**
 	 * @brief Retrieve the exact rate.
 	 * @return the exact rate. */
-	double GetRate() const;
+	float GetRate() const;
 
-  int GetSampleRate() const { return m_iSampleRate; }
+	int GetSampleRate() const { return m_iSampleRate; }
 
- private:
-  void Reset();
-  void ReopenResampler();
-  void GetFactors(int& iDownFactor, int& iUpFactor) const;
+private:
+	void Reset();
+	void ReopenResampler();
+	void GetFactors( int &iDownFactor, int &iUpFactor ) const;
 
-  std::vector<RageSoundResampler_Polyphase*>
-      m_apResamplers; /* one per channel */
+	std::vector<RageSoundResampler_Polyphase*> m_apResamplers; /* one per channel */
 
 	int m_iSampleRate;
-	double m_fRate;
+	float m_fRate;
 };
 
 #endif

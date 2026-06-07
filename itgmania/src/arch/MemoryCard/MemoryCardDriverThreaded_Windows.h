@@ -1,26 +1,28 @@
 #ifndef MemoryCardDriverThreaded_Windows_H
 #define MemoryCardDriverThreaded_Windows_H
 
-#include <windows.h>
-
-#include <vector>
-
 #include "MemoryCardDriver.h"
 
-class MemoryCardDriverThreaded_Windows : public MemoryCardDriver {
- public:
-  MemoryCardDriverThreaded_Windows();
-  virtual ~MemoryCardDriverThreaded_Windows();
+#include <vector>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
-  virtual bool Mount(UsbStorageDevice* pDevice);
-  virtual void Unmount(UsbStorageDevice* pDevice);
 
- private:
-  void GetUSBStorageDevices(std::vector<UsbStorageDevice>& vDevicesOut);
-  bool USBStorageDevicesChanged();
-  bool TestWrite(UsbStorageDevice* pDevice);
+class MemoryCardDriverThreaded_Windows: public MemoryCardDriver
+{
+public:
+	MemoryCardDriverThreaded_Windows();
+	virtual ~MemoryCardDriverThreaded_Windows();
 
-  DWORD m_dwLastLogicalDrives;
+	virtual bool Mount( UsbStorageDevice* pDevice );
+	virtual void Unmount( UsbStorageDevice* pDevice );
+
+private:
+	void GetUSBStorageDevices( std::vector<UsbStorageDevice>& vDevicesOut );
+	bool USBStorageDevicesChanged();
+	bool TestWrite( UsbStorageDevice* pDevice );
+
+	DWORD m_dwLastLogicalDrives;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER

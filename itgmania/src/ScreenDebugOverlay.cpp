@@ -41,6 +41,9 @@ static RageTimer g_HaltTimer(RageZeroTimer);
 static float g_fImageScaleCurrent = 1;
 static float g_fImageScaleDestination = 1;
 
+// This will disable the debug menu ENTIRELY - including F6 for autosync, F8 for autoplay, etc
+static bool g_bEnableDebugMenu = true;
+
 // DebugLine theming
 static const ThemeMetric<RageColor>	BACKGROUND_COLOR	("ScreenDebugOverlay", "BackgroundColor");
 static const ThemeMetric<RageColor>	LINE_ON_COLOR	("ScreenDebugOverlay", "LineOnColor");
@@ -61,10 +64,14 @@ static LocalizedString MUTE_ACTIONS_OFF ("ScreenDebugOverlay", "Mute actions off
 
 class IDebugLine;
 static std::vector<IDebugLine*> *g_pvpSubscribers = nullptr;
+static std::vector<IDebugLine*> *g_pvpSubscribers = nullptr;
 class IDebugLine
 {
 public:
 	IDebugLine()
+	{
+		if( g_pvpSubscribers == nullptr )
+			g_pvpSubscribers = new std::vector<IDebugLine*>;
 	{
 		if( g_pvpSubscribers == nullptr )
 			g_pvpSubscribers = new std::vector<IDebugLine*>;
@@ -104,16 +111,17 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 
 	for (BitmapText *p : m_vptextPages)
 	{
-		SAFE_DELETE(p);
+		RageUtil::SafeDelete(p);
 	}
 	for (BitmapText *p : m_vptextButton)
 	{
-		SAFE_DELETE(p);
+		RageUtil::SafeDelete(p);
 	}
 	m_vptextButton.clear();
 	for (BitmapText *p : m_vptextFunction)
 	{
-		SAFE_DELETE(p);
+		RageUtil::SafeDelete(p);
+		RageUtil::SafeDelete(p);
 	}
 	m_vptextFunction.clear();
 }
@@ -156,7 +164,7 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 	case IDebugLine::all_screens:
 		return s;
 	case IDebugLine::gameplay_only:
-		return ssprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
+		return ssprintf( IN_GAMEPLAY.GetValue().c_str(), s.c_str() );
 	default:
 		FAIL_M(ssprintf("Invalid debug line type: %i", type));
 	}
@@ -179,7 +187,14 @@ static bool GetKeyFromMap( const std::map<U, V> &m, const V &val, U &key )
 static LocalizedString DEBUG_MENU( "ScreenDebugOverlay", "Debug Menu" );
 void ScreenDebugOverlay::Init()
 {
+	g_bEnableDebugMenu = PREFSMAN->m_bDebugMenuEnabled.Get();
+
 	Screen::Init();
+
+	if (!g_bEnableDebugMenu)
+	{
+		return;
+	}
 
 	// Init debug mappings
 	// TODO: Arch-specific?
@@ -269,6 +284,7 @@ void ScreenDebugOverlay::Init()
 
 	auto start = m_asPages.begin();
 	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
 		int iPage = s - start;
 
@@ -318,6 +334,11 @@ void ScreenDebugOverlay::Init()
 
 void ScreenDebugOverlay::Update( float fDeltaTime )
 {
+	if (!g_bEnableDebugMenu)
+	{
+		return;
+	}
+	
 	{
 		float fRate = 1;
 		if( INPUTFILTER->IsBeingPressed(g_Mappings.holdForFast) )
@@ -364,6 +385,7 @@ void ScreenDebugOverlay::UpdateText()
 {
 	auto start = m_asPages.begin();
 	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
+	for (std::vector<RString>::const_iterator s = m_asPages.begin(); s != m_asPages.end(); ++s)
 	{
 		int iPage = s - start;
 		m_vptextPages[iPage]->PlayCommand( (iPage == m_iCurrentPage) ? "GainFocus" :  "LoseFocus" );
@@ -372,6 +394,7 @@ void ScreenDebugOverlay::UpdateText()
 	// todo: allow changing of various spacing/location things -aj
 	int iOffset = 0;
 	auto subStart = g_pvpSubscribers->begin();
+	for (std::vector<IDebugLine*>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
 	for (std::vector<IDebugLine*>::const_iterator p = subStart; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
@@ -439,8 +462,13 @@ static bool GetValueFromMap( const std::map<U, V> &m, const U &key, V &val )
 
 bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 {
-	if( input.device_input_ == g_Mappings.holdForDebug1 ||
-		input.device_input_ == g_Mappings.holdForDebug2 )
+	if (!g_bEnableDebugMenu)
+	{
+		return Screen::Input(input);
+	}
+
+	if( input.DeviceI == g_Mappings.holdForDebug1 ||
+		input.DeviceI == g_Mappings.holdForDebug2 )
 	{
 		bool bHoldingNeither =
 			(!g_Mappings.holdForDebug1.IsValid() || !INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug1)) &&
@@ -456,16 +484,16 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 		else
 			g_bIsDisplayed = false;
 	}
-	if(input.device_input_ == g_Mappings.toggleMute)
+	if(input.DeviceI == g_Mappings.toggleMute)
 	{
 		PREFSMAN->m_MuteActions.Set(!PREFSMAN->m_MuteActions);
 		SCREENMAN->SystemMessage(PREFSMAN->m_MuteActions ? MUTE_ACTIONS_ON.GetValue() : MUTE_ACTIONS_OFF.GetValue());
 	}
 
 	int iPage = 0;
-	if( g_bIsDisplayed && GetValueFromMap(g_Mappings.pageButton, input.device_input_, iPage) )
+	if( g_bIsDisplayed && GetValueFromMap(g_Mappings.pageButton, input.DeviceI, iPage) )
 	{
-		if( input.type_ != IET_FIRST_PRESS )
+		if( input.type != IET_FIRST_PRESS )
 			return true; // eat the input but do nothing
 		m_iCurrentPage = iPage;
 		CLAMP( m_iCurrentPage, 0, (int) m_asPages.size()-1 );
@@ -473,6 +501,7 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 	}
 
 	auto start = g_pvpSubscribers->begin();
+	for (std::vector<IDebugLine*>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
 	for (std::vector<IDebugLine*>::const_iterator p = start; p != g_pvpSubscribers->end(); ++p)
 	{
 		RString sPageName = (*p)->GetPageName();
@@ -498,9 +527,9 @@ bool ScreenDebugOverlay::Input( const InputEventPlus &input )
 			FAIL_M(ssprintf("Invalid debug line type: %i", type));
 		}
 
-		if( input.device_input_ == (*p)->m_Button )
+		if( input.DeviceI == (*p)->m_Button )
 		{
-			if( input.type_ != IET_FIRST_PRESS )
+			if( input.type != IET_FIRST_PRESS )
 				return true; // eat the input but do nothing
 
 			// do the action
@@ -601,7 +630,7 @@ static LocalizedString SYNC_TEMPO		( "ScreenDebugOverlay", "Tempo" );
 
 class DebugLineAutoplay : public IDebugLine
 {
-	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue() + " (+Shift = AI) (+Alt = hide)"; }
+	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue() + " (+Shift = AI)"; }
 	virtual RString GetDisplayValue()
 	{
 		PlayerController pc = GamePreferences::m_AutoPlay.Get();
@@ -619,7 +648,7 @@ class DebugLineAutoplay : public IDebugLine
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
-		PlayerController pc = GAMESTATE->player_state_[GAMESTATE->GetMasterPlayerNumber()]->m_PlayerController;
+		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->GetMasterPlayerNumber()]->m_PlayerController;
 		bool bHoldingShift =
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT) );
@@ -629,9 +658,9 @@ class DebugLineAutoplay : public IDebugLine
 			pc = (pc==PC_AUTOPLAY) ? PC_HUMAN : PC_AUTOPLAY;
 		GamePreferences::m_AutoPlay.Set( pc );
 		FOREACH_HumanPlayer(p)
-			GAMESTATE->player_state_[p]->m_PlayerController = GamePreferences::m_AutoPlay;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 		FOREACH_MultiPlayer(p)
-			GAMESTATE->multiplayer_state_[p]->m_PlayerController = GamePreferences::m_AutoPlay;
+			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 
 		IDebugLine::DoAndLog( sMessageOut );
 	}
@@ -643,27 +672,27 @@ class DebugLineAssist : public IDebugLine
 	virtual Type GetType() const { return gameplay_only; }
 	virtual RString GetDisplayValue() {
 		SongOptions so;
-		so.m_bAssistClap = GAMESTATE->song_options_.GetSong().m_bAssistClap;
-		so.m_bAssistMetronome = GAMESTATE->song_options_.GetSong().m_bAssistMetronome;
+		so.m_bAssistClap = GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
+		so.m_bAssistMetronome = GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
 		if( so.m_bAssistClap || so.m_bAssistMetronome )
 			return so.GetLocalizedString();
 		else
 			return OFF.GetValue();
 	}
-	virtual bool IsEnabled() { return GAMESTATE->song_options_.GetSong().m_bAssistClap || GAMESTATE->song_options_.GetSong().m_bAssistMetronome; }
+	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistClap || GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->GetMasterPlayerNumber() != PLAYER_INVALID );
 		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
 		bool b;
 		if( bHoldingShift )
-			b = !GAMESTATE->song_options_.GetSong().m_bAssistMetronome;
+			b = !GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
 		else
-			b = !GAMESTATE->song_options_.GetSong().m_bAssistClap;
+			b = !GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
 		if( bHoldingShift )
-			SO_GROUP_ASSIGN( GAMESTATE->song_options_, ModsLevel_Preferred, m_bAssistMetronome, b );
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Preferred, m_bAssistMetronome, b );
 		else
-			SO_GROUP_ASSIGN( GAMESTATE->song_options_, ModsLevel_Preferred, m_bAssistClap, b );
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Preferred, m_bAssistClap, b );
 
 		IDebugLine::DoAndLog( sMessageOut );
 	}
@@ -674,7 +703,7 @@ class DebugLineAutosync : public IDebugLine
 	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
 	virtual RString GetDisplayValue()
 	{
-		AutosyncType type = GAMESTATE->song_options_.GetSong().m_AutosyncType;
+		AutosyncType type = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType;
 		switch( type )
 		{
 		case AutosyncType_Off: 	return OFF.GetValue();  		break;
@@ -686,16 +715,16 @@ class DebugLineAutosync : public IDebugLine
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
-	virtual bool IsEnabled() { return GAMESTATE->song_options_.GetSong().m_AutosyncType!=AutosyncType_Off; }
+	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=AutosyncType_Off; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
-		int as = GAMESTATE->song_options_.GetSong().m_AutosyncType + 1;
+		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
 		if( !bAllowSongAutosync  &&
 		  ( as == AutosyncType_Song || as == AutosyncType_Tempo ) )
 			as = AutosyncType_Machine;
 		wrap( as, NUM_AutosyncType );
-		SO_GROUP_ASSIGN( GAMESTATE->song_options_, ModsLevel_Song, m_AutosyncType, AutosyncType(as) );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, AutosyncType(as) );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
 		IDebugLine::DoAndLog( sMessageOut );
 	}
@@ -934,6 +963,7 @@ static void FillProfileStats( Profile *pProfile )
 	for (Course const *pCourse : vpAllCourses)
 	{
 		std::vector<Trail*> vpAllTrails;
+		std::vector<Trail*> vpAllTrails;
 		pCourse->GetAllTrails( vpAllTrails );
 		for (Trail const *pTrail : vpAllTrails)
 		{
@@ -1077,7 +1107,7 @@ class DebugLineReloadTheme : public IDebugLine
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
-		NOTESKIN->RefreshNoteSkinData( GAMESTATE->cur_game_ );
+		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 		CodeDetector::RefreshCacheItems();
 		// HACK: Don't update text below. Return immediately because this screen
 		// was just destroyed as part of the theme reload.
@@ -1147,7 +1177,7 @@ class DebugLineConvertXML : public IDebugLine
 	virtual RString GetPageName() const { return "Theme"; }
 	virtual void DoAndLog( RString &sMessageOut )
 	{
-		Song* cur_song= GAMESTATE->cur_song_;
+		Song* cur_song= GAMESTATE->m_pCurSong;
 		if(cur_song)
 		{
 			convert_xmls_in_dir(cur_song->GetSongDir() + "/");
@@ -1319,15 +1349,41 @@ class DebugLineForceCrash : public IDebugLine
 class DebugLineUptime : public IDebugLine
 {
 	virtual RString GetDisplayTitle() { return UPTIME.GetValue(); }
-	virtual RString GetDisplayValue() { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
+	virtual RString GetDisplayValue() { return MicrosecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStartMicroseconds()); }
 	virtual bool IsEnabled() { return false; }
 	virtual void DoAndLog( RString &sMessageOut ) {}
 };
 
-/* #ifdef out the lines below if you don't want them to appear on certain
- * platforms.  This is easier than #ifdefing the whole DebugLine definitions
- * that can span pages.
- */
+/* If you comment out a DECLARE_ONE at the end of the file, it will remove that debug
+ * menu line, but it will also change the arrangement of keys to debug menu options.
+ * We need a way to generate fake classes in order to preserve the Debug Menu key
+ * mappings, so we can instead swap in one of these fake classes for the class we
+ * want to remove. DEFINE_FAKE_CLASS1 handles menu options which need to return a
+ * page title, and DEFINE_FAKE_CLASS2 handles the normal (F5) menu options. */
+#define DEFINE_FAKE_CLASS1(className, pageName) \
+class className : public IDebugLine \
+{ \
+public: \
+    virtual RString GetDisplayTitle() { return "(disabled)"; } \
+    virtual RString GetDisplayValue() { return "(disabled)"; } \
+    virtual bool IsEnabled() { return false; } \
+    virtual RString GetPageName() const { return pageName; } \
+    virtual void DoAndLog(RString& sMessageOut) { sMessageOut = "(disabled)"; } \
+};
+
+#define DEFINE_FAKE_CLASS2(className) \
+class className : public IDebugLine \
+{ \
+public: \
+    virtual RString GetDisplayTitle() { return "(disabled)"; } \
+    virtual bool IsEnabled() { return false; } \
+    virtual void DoAndLog(RString& sMessageOut) { sMessageOut = "(disabled)"; } \
+};
+
+DEFINE_FAKE_CLASS1(FakeClearProfileStats, "Profiles")
+DEFINE_FAKE_CLASS1(FakeFillProfileStats, "Profiles")
+DEFINE_FAKE_CLASS2(FakeDebugLine1)
+DEFINE_FAKE_CLASS2(FakeDebugLine2)
 
 #define DECLARE_ONE( x ) static x g_##x
 DECLARE_ONE( DebugLineAutoplay );
@@ -1337,14 +1393,17 @@ DECLARE_ONE( DebugLineCoinMode );
 DECLARE_ONE( DebugLineSlow );
 DECLARE_ONE( DebugLineHalt );
 DECLARE_ONE( DebugLineLightsDebug );
-DECLARE_ONE( DebugLineMonkeyInput );
+//DECLARE_ONE( DebugLineMonkeyInput );
+DECLARE_ONE(FakeDebugLine1); // monkey input
 DECLARE_ONE( DebugLineStats );
 DECLARE_ONE( DebugLineVsync );
 DECLARE_ONE( DebugLineAllowMultitexture );
 DECLARE_ONE( DebugLineShowMasks );
 DECLARE_ONE( DebugLineProfileSlot );
-DECLARE_ONE( DebugLineClearProfileStats );
-DECLARE_ONE( DebugLineFillProfileStats );
+//DECLARE_ONE( DebugLineClearProfileStats );
+DECLARE_ONE(FakeClearProfileStats); // clear profile stats
+//DECLARE_ONE( DebugLineFillProfileStats );
+DECLARE_ONE(FakeFillProfileStats); // fill profile stats
 DECLARE_ONE( DebugLineSendNotesEnded );
 DECLARE_ONE( DebugLineReloadCurrentScreen );
 DECLARE_ONE( DebugLineRestartCurrentScreen );
@@ -1366,7 +1425,8 @@ DECLARE_ONE( DebugLineVolumeDown );
 DECLARE_ONE( DebugLineVolumeUp );
 DECLARE_ONE( DebugLineVisualDelayDown );
 DECLARE_ONE( DebugLineVisualDelayUp );
-DECLARE_ONE( DebugLineForceCrash );
+//DECLARE_ONE( DebugLineForceCrash );
+DECLARE_ONE(FakeDebugLine2); // force crash
 DECLARE_ONE( DebugLineUptime );
 DECLARE_ONE( DebugLineResetKeyMapping );
 DECLARE_ONE( DebugLineMuteActions );

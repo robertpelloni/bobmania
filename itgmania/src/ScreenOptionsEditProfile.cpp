@@ -32,7 +32,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 
 	std::vector<OptionRowHandler*> vHands;
 
-	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->edit_local_profile_id_ );
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile != nullptr );
 
 	{
@@ -66,7 +66,7 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 
 void ScreenOptionsEditProfile::ImportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
-	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->edit_local_profile_id_ );
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 
@@ -80,7 +80,7 @@ void ScreenOptionsEditProfile::ImportOptions( int iRow, const std::vector<Player
 
 void ScreenOptionsEditProfile::ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns )
 {
-	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->edit_local_profile_id_ );
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile != nullptr );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
@@ -108,7 +108,7 @@ void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{
-		PROFILEMAN->SaveLocalProfile( GAMESTATE->edit_local_profile_id_ );
+		PROFILEMAN->SaveLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
@@ -123,7 +123,7 @@ void ScreenOptionsEditProfile::AfterChangeValueInRow( int iRow, PlayerNumber pn 
 	ScreenOptions::AfterChangeValueInRow( iRow, pn );
 
 	// cause the overlay to reload
-	GAMESTATE->edit_local_profile_id_.Set( GAMESTATE->edit_local_profile_id_ );
+	GAMESTATE->m_sEditLocalProfileID.Set( GAMESTATE->m_sEditLocalProfileID );
 }
 
 void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )

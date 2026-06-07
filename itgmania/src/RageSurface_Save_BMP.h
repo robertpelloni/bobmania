@@ -6,8 +6,9 @@
 struct RageSurface;
 class RageFile;
 /** @brief Utility functions for the RageSurfaces. */
-namespace RageSurfaceUtils {
-bool SaveBMP(RageSurface* surface, RageFile& f);
+namespace RageSurfaceUtils
+{
+	bool SaveBMP( RageSurface *surface, RageFile &f );
 };
 
 #endif
@@ -15,7 +16,7 @@ bool SaveBMP(RageSurface* surface, RageFile& f);
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -25,7 +26,7 @@ bool SaveBMP(RageSurface* surface, RageFile& f);
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

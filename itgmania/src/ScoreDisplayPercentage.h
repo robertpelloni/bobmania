@@ -1,21 +1,20 @@
 #ifndef SCORE_DISPLAY_PERCENTAGE_H
 #define SCORE_DISPLAY_PERCENTAGE_H
 
-#include "AutoActor.h"
-#include "PercentageDisplay.h"
 #include "ScoreDisplay.h"
+#include "PercentageDisplay.h"
+#include "AutoActor.h"
 
 /** @brief ScoreDisplay implementation for a percentage display. */
-class ScoreDisplayPercentage : public ScoreDisplay {
- public:
-  ScoreDisplayPercentage();
-  void Init(
-      const PlayerState* pPlayerState,
-      const PlayerStageStats* pPlayerStageStats);
+class ScoreDisplayPercentage: public ScoreDisplay
+{
+public:
+	ScoreDisplayPercentage();
+	void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
- private:
-  AutoActor m_sprFrame;
-  PercentageDisplay m_Percent;
+private:
+	AutoActor		m_sprFrame;
+	PercentageDisplay	m_Percent;
 };
 
 #endif
@@ -23,7 +22,7 @@ class ScoreDisplayPercentage : public ScoreDisplay {
 /*
  * (c) 2003 Glenn Maynard
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -33,7 +32,7 @@ class ScoreDisplayPercentage : public ScoreDisplay {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

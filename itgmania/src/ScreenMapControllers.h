@@ -3,134 +3,129 @@
 #ifndef SCREEN_MAP_CONTROLLERS_H
 #define SCREEN_MAP_CONTROLLERS_H
 
-#include <set>
-#include <string>
+#include "ScreenWithMenuElements.h"
+#include "BitmapText.h"
+#include "InputMapper.h"
+#include "ActorScroller.h"
+#include "RageSound.h"
+
 #include <vector>
 
-#include "Actor.h"
-#include "ActorFrame.h"
-#include "ActorScroller.h"
-#include "AutoActor.h"
-#include "BitmapText.h"
-#include "GameInput.h"
-#include "InputMapper.h"
-#include "InputQueue.h"
-#include "MessageManager.h"
-#include "RageInputDevice.h"
-#include "RageSound.h"
-#include "RageTimer.h"
-#include "ScreenMessage.h"
-#include "ScreenWithMenuElements.h"
 
-class ScreenMapControllers : public ScreenWithMenuElements {
- public:
-  ScreenMapControllers();
-  ~ScreenMapControllers();
-  virtual void Init();
-  virtual void BeginScreen();
+class ScreenMapControllers : public ScreenWithMenuElements
+{
+public:
+	ScreenMapControllers();
+	~ScreenMapControllers();
+	virtual void Init();
+	virtual void BeginScreen();
 
-  virtual void Update(float fDeltaTime);
-  virtual bool Input(const InputEventPlus& input);
-  virtual void HandleMessage(const Message& msg);
-  virtual void HandleScreenMessage(const ScreenMessage SM);
+	virtual void Update( float fDeltaTime );
+	virtual bool Input( const InputEventPlus &input );
+	virtual void HandleMessage( const Message &msg );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
- private:
-  Actor* GetActorWithFocus();
-  void BeforeChangeFocus();
-  void AfterChangeFocus();
-  void Refresh();
-  void DismissWarning();
-  bool CursorOnAction();
-  bool CursorOnHeader();
-  bool CursorOnKey();
-  bool CursorCanGoUp();
-  bool CursorCanGoDown();
-  bool CursorCanGoLeft();
-  bool CursorCanGoRight();
-  int CurKeyIndex();
-  int CurActionIndex();
-  void SetCursorFromSetListCurrent();
-  void StartWaitingForPress();
+private:
 
-  unsigned int m_CurController;
-  unsigned int m_CurButton;
-  unsigned int m_CurSlot;
-  unsigned int m_MaxDestItem;
+	Actor *GetActorWithFocus();
+	void BeforeChangeFocus();
+	void AfterChangeFocus();
+	void Refresh();
+	void DismissWarning();
+	bool CursorOnAction();
+	bool CursorOnHeader();
+	bool CursorOnKey();
+	bool CursorCanGoUp();
+	bool CursorCanGoDown();
+	bool CursorCanGoLeft();
+	bool CursorCanGoRight();
+	int CurKeyIndex();
+	int CurActionIndex();
+	void SetCursorFromSetListCurrent();
+	void StartWaitingForPress();
 
-  bool m_ChangeOccurred;
+	unsigned int m_CurController;
+	unsigned int m_CurButton;
+	unsigned int m_CurSlot;
+	unsigned int m_MaxDestItem;
 
-  RageTimer m_WaitingForPress;
-  DeviceInput m_DeviceIToMap;
+	bool m_ChangeOccurred;
 
-  struct KeyToMap {
-    GameButton m_GameButton;
+	RageTimer m_WaitingForPress;
+	DeviceInput m_DeviceIToMap;
 
-    // owned by m_Line
-    BitmapText* m_textMappedTo[NUM_GameController]
-                              [NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
-  };
-  std::vector<KeyToMap> m_KeysToMap;
+	struct KeyToMap
+	{
+		GameButton m_GameButton;
 
-  BitmapText m_textDevices;
+		// owned by m_Line
+		BitmapText	*m_textMappedTo[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
+	};
+	std::vector<KeyToMap> m_KeysToMap;
 
-  BitmapText m_textLabel[NUM_GameController];
-  BitmapText m_ListHeaderCenter;
-  BitmapText m_ListHeaderLabels[NUM_GameController]
-                               [NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
+	BitmapText m_textDevices;
 
-  float m_AutoDismissWarningSecs;
-  AutoActor m_Warning;
+	BitmapText m_textLabel[NUM_GameController];
+	BitmapText m_ListHeaderCenter;
+	BitmapText m_ListHeaderLabels[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 
-  float m_AutoDismissNoSetListPromptSecs;
-  AutoActor m_NoSetListPrompt;
+	float m_AutoDismissWarningSecs;
+	AutoActor m_Warning;
 
-  float m_AutoDismissSanitySecs;
-  AutoActor m_SanityMessage;
+	float m_AutoDismissNoSetListPromptSecs;
+	AutoActor m_NoSetListPrompt;
 
-  struct SetListEntry {
-    int m_button;
-    int m_controller;
-    int m_slot;
-    SetListEntry(int b, int c, int s)
-        : m_button(b), m_controller(c), m_slot(s) {}
-    bool operator<(const SetListEntry& rhs) const {
-      if (m_controller != rhs.m_controller) {
-        return m_controller < rhs.m_controller;
-      }
-      if (m_button != rhs.m_button) {
-        return m_button < rhs.m_button;
-      }
-      return m_slot < rhs.m_slot;
-    }
-  };
-  std::set<SetListEntry> m_SetList;
-  std::set<SetListEntry>::iterator m_SetListCurrent;
-  bool m_InSetListMode;
+	float m_AutoDismissSanitySecs;
+	AutoActor m_SanityMessage;
 
-  typedef void (ScreenMapControllers::*action_fun_t)();
-  struct ActionRow {
-    std::string m_name;
-    AutoActor m_actor;
-    action_fun_t m_action;
-    void Load(
-        const std::string& scr_name, const std::string& name,
-        ScreenMapControllers::action_fun_t action, ActorFrame* line,
-        ActorScroller* scroller);
-  };
-  void ClearToDefault();
-  void ReloadFromDisk();
-  void SaveToDisk();
-  void SetListMode();
-  void ExitAction();
-  bool SanityCheckWrapper();
+	struct SetListEntry
+	{
+		int m_button;
+		int m_controller;
+		int m_slot;
+		SetListEntry(int b, int c, int s)
+			:m_button(b), m_controller(c), m_slot(s) {}
+		bool operator<(SetListEntry const& rhs) const
+		{
+			if(m_controller != rhs.m_controller)
+			{
+				return m_controller < rhs.m_controller;
+			}
+			if(m_button != rhs.m_button)
+			{
+				return m_button < rhs.m_button;
+			}
+			return m_slot < rhs.m_slot;
+		}
+	};
+	std::set<SetListEntry> m_SetList;
+	std::set<SetListEntry>::iterator m_SetListCurrent;
+	bool m_InSetListMode;
 
-  std::vector<ActionRow> m_Actions;
+	typedef void (ScreenMapControllers::* action_fun_t)();
+	struct ActionRow
+	{
+		RString m_name;
+		AutoActor m_actor;
+		action_fun_t m_action;
+		void Load(RString const& scr_name, RString const& name,
+			ScreenMapControllers::action_fun_t action, ActorFrame* line,
+			ActorScroller* scroller);
+	};
+	void ClearToDefault();
+	void ReloadFromDisk();
+	void SaveToDisk();
+	void SetListMode();
+	void ExitAction();
+	bool SanityCheckWrapper();
 
-  std::vector<ActorFrame*> m_Line;
-  ActorScroller m_LineScroller;
+	std::vector<ActionRow> m_Actions;
 
-  RageSound m_soundChange;
-  RageSound m_soundDelete;
+	std::vector<ActorFrame*> m_Line;
+	ActorScroller m_LineScroller;
+
+	RageSound m_soundChange;
+	RageSound m_soundDelete;
 };
 
 #endif

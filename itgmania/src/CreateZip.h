@@ -3,30 +3,35 @@
 #ifndef CreateZip_H
 #define CreateZip_H
 
+
 // ZIP functions -- for creating zip files
 // This file is a repackaged form of the Info-Zip source code available
 // at www.info-zip.org. The original copyright notice may be found in
 // zip.cpp. The repackaging was done by Lucian Wischik to simplify and
 // extend its use in Windows/C++. Also to add encryption and unicode.
 
-#include "RageFile.h"
 
 class TZip;
+class RageFile;
 
 typedef unsigned long ZRESULT;
 // return codes from any of the zip functions. Listed later.
 
-class CreateZip {
-  TZip* hz;
 
- public:
-  CreateZip();
-  bool Start(RageFile* f);
-  bool AddFile(RString fn);
-  bool AddDir(RString fn);
-  bool Finish();
-  RString GetError();
+class CreateZip
+{
+	TZip* hz;
+public:
+	CreateZip();
+	bool Start(RageFile *f);
+	bool AddFile(RString fn);
+	bool AddDir(RString fn);
+	bool Finish();
+	RString GetError();
 };
+
+
+
 
 // e.g.
 //
@@ -36,8 +41,7 @@ class CreateZip {
 //     ZipAdd(hz,"znsimple.txt", "c:\\simple.txt");
 //     CloseZip(hz);
 //
-// (2) Memory use, creating an auto-allocated mem-based zip file from various
-// sources
+// (2) Memory use, creating an auto-allocated mem-based zip file from various sources
 //     HZIP hz = CreateZip(0,100000, 0);
 //     // adding a conventional file...
 //     ZipAdd(hz,"src1.txt",  "c:\\src1.txt");
@@ -59,8 +63,7 @@ class CreateZip {
 //                   }
 //     // and now that the zip is created, let's do something with it:
 //     void *zbuf; unsigned long zlen; ZipGetMemory(hz,&zbuf,&zlen);
-//     HANDLE hfz =
-//     CreateFile("test2.zip",GENERIC_WRITE,0,0,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,0);
+//     HANDLE hfz = CreateFile("test2.zip",GENERIC_WRITE,0,0,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,0);
 //     DWORD writ; WriteFile(hfz,zbuf,zlen,&writ,nullptr);
 //     CloseHandle(hfz);
 //     CloseZip(hz);
@@ -79,10 +82,12 @@ class CreateZip {
 //                     char buf[1000];
 //                     for(;;)
 //                     { DWORD red; ReadFile(hread,buf,1000,&red,nullptr);
-//                       // ... and do something with this zip data we're
-//                       receiving if (red==0) break;
+//                       // ... and do something with this zip data we're receiving
+//                       if (red==0) break;
 //                     }
 //                     CloseHandle(hread);
-//                     return 0;
+//                     return 0; 
 //                   }
 
+
+#endif

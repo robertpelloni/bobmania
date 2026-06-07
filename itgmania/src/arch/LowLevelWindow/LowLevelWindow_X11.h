@@ -3,47 +3,51 @@
 #ifndef LOW_LEVEL_WINDOW_X11_H
 #define LOW_LEVEL_WINDOW_X11_H
 
-#include <string>
-
+#include "RageDisplay.h" // VideoModeParams
 #include "LowLevelWindow.h"
-#include "RageDisplay.h"  // VideoModeParams
 
-class LowLevelWindow_X11 : public LowLevelWindow {
- public:
-  LowLevelWindow_X11();
-  ~LowLevelWindow_X11();
+class LowLevelWindow_X11 : public LowLevelWindow
+{
+public:
+	LowLevelWindow_X11();
+	~LowLevelWindow_X11();
 
-  void* GetProcAddress(std::string s);
-  std::string TryVideoMode(const VideoModeParams& p, bool& bNewDeviceOut);
-  void LogDebugInformation() const;
-  bool IsSoftwareRenderer(std::string& sError);
-  void SwapBuffers();
+	void *GetProcAddress(RString s);
+	RString TryVideoMode(const VideoModeParams &p, bool &bNewDeviceOut);
+	void LogDebugInformation() const;
+	bool IsSoftwareRenderer( RString &sError );
+	void SwapBuffers();
 
-  const ActualVideoModeParams GetActualVideoModeParams() const {
-    return CurrentParams;
-  }
+	const ActualVideoModeParams GetActualVideoModeParams() const { return CurrentParams; }
 
-  void GetDisplaySpecs(DisplaySpecs& out) const;
+	void GetDisplaySpecs(DisplaySpecs &out) const;
 
-  bool SupportsRenderToTexture() const;
-  RenderTarget* CreateRenderTarget();
+	bool SupportsRenderToTexture() const;
+	RenderTarget *CreateRenderTarget();
 
-  bool SupportsFullscreenBorderlessWindow() const;
+	bool SupportsFullscreenBorderlessWindow() const;
 
-  bool SupportsThreadedRendering();
-  void BeginConcurrentRenderingMainThread();
-  void EndConcurrentRenderingMainThread();
-  void BeginConcurrentRendering();
-  void EndConcurrentRendering();
+	bool SupportsThreadedRendering();
+	void BeginConcurrentRenderingMainThread();
+	void EndConcurrentRenderingMainThread();
+	void BeginConcurrentRendering();
+	void EndConcurrentRendering();
 
- private:
-  void RestoreOutputConfig();
+	void SetWindowPosition( int x, int y );
+	void SetWindowSize( int w, int h );
+	void SetWindowTitle( const RString &sTitle );
 
-  bool m_bWasWindowed;
-  ActualVideoModeParams CurrentParams;
+private:
+	void RestoreOutputConfig();
 
-  float m_lastScreensaverInterrupt = 0.0f;
-  float m_screensaverInterruptInterval = 60.0f;
+	bool m_bWasWindowed;
+	ActualVideoModeParams CurrentParams;
+
+	float m_lastScreensaverInterrupt = 0.0f;
+	float m_screensaverInterruptInterval = 60.0f;
+
+	float m_lastScreensaverInterrupt = 0.0f;
+	float m_screensaverInterruptInterval = 60.0f;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

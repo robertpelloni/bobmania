@@ -6,6 +6,9 @@
 #include "LoadingWindow_Gtk.h"
 
 #include <cstdint>
+#include "LoadingWindow_Gtk.h"
+
+#include <cstdint>
 
 #include <gtk/gtk.h>
 
@@ -31,6 +34,8 @@ RString LoadingWindow_Gtk::Init()
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS );
 	gtk_widget_set_size_request(window,-1,-1);
+	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
+	gtk_widget_set_size_request(window,468,-1);
 	gtk_window_set_deletable( GTK_WINDOW(window), FALSE );
 	gtk_window_set_resizable(GTK_WINDOW(window),FALSE);
 	gtk_window_set_role( GTK_WINDOW(window), "sm-startup" );
@@ -71,15 +76,20 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 void LoadingWindow_Gtk::SetText( RString s )
 {
 	gtk_label_set_text(GTK_LABEL(label), s.c_str());
+void LoadingWindow_Gtk::SetText( RString s )
+{
+	gtk_label_set_text(GTK_LABEL(label), s.c_str());
 	gtk_widget_show(label);
 	gtk_main_iteration_do(FALSE);
 }
 
 static void DeletePixels( guchar *pixels, gpointer data )
+static void DeletePixels( guchar *pixels, gpointer data )
 {
 	delete[] (uint8_t *)pixels;
 }
 
+static GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 static GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 {
 	RageSurface *pSurface = CreateSurface( pSrc->w, pSrc->h, 32,
@@ -99,6 +109,9 @@ static GdkPixbuf *MakePixbuf( const RageSurface *pSrc )
 void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
 {
 	GdkPixbuf *pBuf = MakePixbuf( pIcon );
+void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
+{
+	GdkPixbuf *pBuf = MakePixbuf( pIcon );
 	if( pBuf != nullptr )
 	{
 		gtk_window_set_icon( GTK_WINDOW(window), pBuf );
@@ -107,6 +120,7 @@ void LoadingWindow_Gtk::SetIcon( const RageSurface *pIcon )
 	gtk_main_iteration_do(FALSE);
 }
 
+void LoadingWindow_Gtk::SetSplash( const RageSurface *pSplash )
 void LoadingWindow_Gtk::SetSplash( const RageSurface *pSplash )
 {
 	GdkPixbuf *pBuf = MakePixbuf( pSplash );
@@ -118,6 +132,7 @@ void LoadingWindow_Gtk::SetSplash( const RageSurface *pSplash )
 	gtk_main_iteration_do(FALSE);
 }
 
+static void UpdateProgress( int progress, int totalWork )
 static void UpdateProgress( int progress, int totalWork )
 {
 	gdouble fraction = ( totalWork > 0 ? progress / (gdouble)totalWork : 0 );
@@ -152,6 +167,7 @@ void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
  * (c) 2003-2004 Glenn Maynard, Sean Burke
  * All rights reserved.
  *
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -161,6 +177,7 @@ void LoadingWindow_Gtk::SetIndeterminate( bool indeterminate )
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+ *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

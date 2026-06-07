@@ -2,50 +2,49 @@
 #define BACKGROUND_H
 
 #include "ActorFrame.h"
-#include "BackgroundUtil.h"
-#include "PlayerNumber.h"
 #include "Quad.h"
+#include "PlayerNumber.h"
+#include "BackgroundUtil.h"
 
 #include <vector>
 
-#include "ActorFrame.h"
-#include "BackgroundUtil.h"
 
 class DancingCharacters;
 class Song;
 class BackgroundImpl;
+/** @brief the Background that is behind the notes while playing. */
+class Background : public ActorFrame
+{
+public:
+	Background();
+	~Background();
+	void Init();
 
-// The Background that is behind the notes while playing.
-class Background : public ActorFrame {
- public:
-  Background();
-  ~Background();
-  void Init();
+	virtual void LoadFromSong( const Song *pSong );
+	virtual void Unload();
 
-  virtual void LoadFromSong(const Song* song);
-  virtual void Unload();
+	void FadeToActualBrightness();
+	void SetBrightness( float fBrightness ); // overrides pref and Cover
 
-  void FadeToActualBrightness();
-  void SetBrightness(float brightness);  // overrides pref and Cover
+	// One more piece of the puzzle that puts the notefield board above the bg
+	// and under everything else.  m_disable_draw exists so that
+	// ScreenGameplay can draw the background manually, and still have it as a
+	// child. -Kyz
+	bool m_disable_draw;
+	virtual bool EarlyAbortDraw() const { return m_disable_draw; }
 
-  // NOTE(Kyz): One more piece of the puzzle that puts the notefield board above
-	// the bg and under everything else. disable_draw_ exists so that
-  // ScreenGameplay can draw the background manually, and still have it as a
-  // child.
-  bool disable_draw_;
-  virtual bool EarlyAbortDraw() const { return disable_draw_; }
+	/**
+	 * @brief Retrieve whatever dancing characters are in use.
+	 * @return the dancing characters. */
+	DancingCharacters* GetDancingCharacters();
 
-  // Retrieve whatever dancing characters are in use.
-  DancingCharacters* GetDancingCharacters();
+	void GetLoadedBackgroundChanges( std::vector<BackgroundChange> **pBackgroundChangesOut );
 
-  void GetLoadedBackgroundChanges(
-      std::vector<BackgroundChange>** background_changes_out);
-
- protected:
-  BackgroundImpl* background_impl_;
+protected:
+	BackgroundImpl *m_pImpl;
 };
 
-#endif  // BACKGROUND_H
+#endif
 
 /**
  * @file

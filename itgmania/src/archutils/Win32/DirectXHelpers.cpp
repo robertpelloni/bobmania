@@ -1,41 +1,56 @@
-#include "DirectXHelpers.h"
-
-// clang-format off
-#include <mmsystem.h>  // dsound.h needs this
-#include <d3d9.h>
-#include <dinput.h>
-#include <dsound.h>
-// clang-format on
-
-#include <cstdarg>
-#include <stdexcept>
-#include <string>
-
-#include "RageUtil.h"
 #include "global.h"
+#include "DirectXHelpers.h"
+#include "RageUtil.h"
+#include <cstdarg>
+#include <dinput.h>
+#include <d3d9.h>
+#include <mmsystem.h> // dsound.h needs this
+#include <dsound.h>
+#include <stdexcept>
 
-std::string GetErrorString(HRESULT hr);
+RString GetErrorString(HRESULT hr);
 
-std::string hr_ssprintf(int hr, const char* fmt, ...) {
-  va_list va;
-  va_start(va, fmt);
-  std::string s = vssprintf(fmt, va);
-  va_end(va);
+RString GetErrorString(HRESULT hr);
 
-  std::string szError = GetErrorString(hr);
-  return s + ssprintf(" (%s)", szError.c_str());
+RString hr_ssprintf( int hr, const char *fmt, ... )
+{
+	va_list	va;
+	va_start(va, fmt);
+	RString s = vssprintf( fmt, va );
+	va_end(va);
+
+	RString szError = GetErrorString(hr);
+	return s + ssprintf(" (%s)", szError.c_str());
 }
 
-#define DXERRMSG(hrcode, dummy) \
-  case hrcode:                  \
-    return #hrcode;
+#define DXERRMSG(hrcode, dummy) case hrcode: return #hrcode;
 
-std::string GetErrorString(HRESULT hr) {
-  switch (hr) {
+RString GetErrorString(HRESULT hr)
+{
+	switch (hr)
+	{
 #include "DirectXErrorList.h"
-    default:
-      return ssprintf("unknown HRESULT 0x%8.8X", hr);
-  }
+	default: return ssprintf("unknown HRESULT 0x%8.8X", hr);
+	}
+}
+
+// needed for defines
+#define DIRECTINPUT_VERSION 0x0800
+#define DIRECTSOUND_VERSION 0x0700
+#include <dinput.h>
+#include <d3d9.h>
+#include <mmsystem.h> // dsound.h needs this
+#include <dsound.h>
+
+#define DXERRMSG(hrcode, dummy) case hrcode: return #hrcode;
+
+RString GetErrorString(HRESULT hr)
+{
+	switch (hr)
+	{
+#include "DirectXErrorList.h"
+	default: return ssprintf("unknown HRESULT 0x%8.8X", hr);
+	}
 }
 
 /*

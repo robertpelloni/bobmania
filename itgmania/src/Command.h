@@ -1,53 +1,49 @@
+/* Commands - Actor command parsing and reading helpers. */
 
 #ifndef Commands_H
 #define Commands_H
 
-#include "global.h"
-
 #include <vector>
 
-// - Actor command parsing and reading helpers.
-class Command {
- public:
-  void Load(const RString& commands_str);
 
-  // Used when reporting an error in number of args.
-  RString GetOriginalCommandString() const;
-  // The command name is the first argument in all-lowercase .
-  RString GetName() const;
+class Command
+{
+public:
+	void Load( const RString &sCommand );
 
-  void Clear() { args_.clear(); }
+	RString GetOriginalCommandString() const;	// used when reporting an error in number of args
+	RString GetName() const;	// the command name is the first argument in all-lowercase
 
-  struct Arg {
-    RString s;
-    Arg() : s("") {}
-  };
-  Arg GetArg(unsigned index) const;
+	void Clear() { m_vsArgs.clear(); }
 
-  std::vector<RString> args_;
+	struct Arg
+	{
+		RString s;
+		Arg(): s("") {}
+	};
+	Arg GetArg( unsigned index ) const;
 
-  Command() : args_() {}
+	std::vector<RString> m_vsArgs;
+
+	Command(): m_vsArgs() {}
 };
 
-class Commands {
- public:
-  std::vector<Command> v;
+class Commands
+{
+public:
+	std::vector<Command> v;
 
-  // Used when reporting an error in number of args.
-  RString GetOriginalCommandString() const;
+	RString GetOriginalCommandString() const;	// used when reporting an error in number of args
 };
 
 // Take a command list string and return pointers to each of the tokens in the
 // string. sCommand list is a list of commands separated by ';'.
-//
-// TODO: This is expensive to do during the game. Eventually,  move all calls to
-// ParseCommands to happen during load, then execute from the parsed Command
-// structures.
-void ParseCommands(
-    const RString& commands_str, Commands& commands_out, bool legacy);
-Commands ParseCommands(const RString& commands_str);
+// TODO: This is expensive to do during the game.  Eventually,  move all calls to
+// ParseCommands to happen during load, then execute from the parsed Command structures.
+void ParseCommands( const RString &sCmds, Commands &vCmdsOut, bool bLegacy );
+Commands ParseCommands( const RString &sCmds );
 
-#endif  // Commands_H
+#endif
 
 /*
  * (c) 2004 Chris Danford

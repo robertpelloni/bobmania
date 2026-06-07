@@ -1,80 +1,77 @@
 #ifndef LIFEMETERBAR_H
 #define LIFEMETERBAR_H
 
-#include "AutoActor.h"
 #include "LifeMeter.h"
-#include "Quad.h"
 #include "Sprite.h"
-#include "StreamDisplay.h"
+#include "AutoActor.h"
+#include "Quad.h"
 #include "ThemeMetric.h"
+class StreamDisplay;
 
-// The player's life represented as a bar.
-class LifeMeterBar : public LifeMeter {
- public:
-  LifeMeterBar();
-  ~LifeMeterBar();
+/** @brief The player's life represented as a bar. */
+class LifeMeterBar : public LifeMeter
+{
+public:
+	LifeMeterBar();
+	~LifeMeterBar();
 
-  virtual void Load(
-      const PlayerState* player_state, PlayerStageStats* player_stage_stats);
+	virtual void Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
-  virtual void Update(float delta);
+	virtual void Update( float fDeltaTime );
 
-  virtual void ChangeLife(TapNoteScore tns);
-  virtual void ChangeLife(HoldNoteScore hns, TapNoteScore tns);
-  virtual void ChangeLife(float delta_life_percent);
-  virtual void SetLife(float value);
-  virtual void HandleTapScoreNone();
-  virtual void AfterLifeChanged();
-  virtual bool IsInDanger() const;
-  virtual bool IsHot() const;
-  virtual bool IsFailing() const;
-  virtual float GetLife() const { return life_percentage_; }
+	virtual void ChangeLife( TapNoteScore score );
+	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore  );
+	virtual void ChangeLife( float fDeltaLifePercent );
+	virtual void SetLife(float value);
+	virtual void HandleTapScoreNone();
+	virtual void AfterLifeChanged();
+	virtual bool IsInDanger() const;
+	virtual bool IsHot() const;
+	virtual bool IsFailing() const;
+	virtual float GetLife() const { return m_fLifePercentage; }
 
-  void UpdateNonstopLifebar();
-  void FillForHowToPlay(int num_w2s, int num_misses);
-  // this function is solely for HowToPlay
+	void UpdateNonstopLifebar();
+	void FillForHowToPlay(int NumT2s, int NumMisses);
+	// this function is solely for HowToPlay
 
- private:
-  ThemeMetric<float> DANGER_THRESHOLD;
-  ThemeMetric<float> INITIAL_VALUE;
-  ThemeMetric<float> HOT_VALUE;
-  ThemeMetric<float> LIFE_MULTIPLIER;
-  ThemeMetric<bool> FORCE_LIFE_DIFFICULTY_ON_EXTRA_STAGE;
-  ThemeMetric<TapNoteScore> MIN_STAY_ALIVE;
-  ThemeMetric<float> EXTRA_STAGE_LIFE_DIFFICULTY;
+private:
+	ThemeMetric<float> DANGER_THRESHOLD;
+	ThemeMetric<float> INITIAL_VALUE;
+	ThemeMetric<float> HOT_VALUE;
+	ThemeMetric<float> LIFE_MULTIPLIER;
+	ThemeMetric<bool> FORCE_LIFE_DIFFICULTY_ON_EXTRA_STAGE;
+	ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE;
+	ThemeMetric<float>	EXTRA_STAGE_LIFE_DIFFICULTY;
 
-  ThemeMetric1D<float> life_percent_change_;
+	ThemeMetric1D<float> m_fLifePercentChange;
 
-  AutoActor under_;
-  AutoActor danger_;
-  StreamDisplay* stream_;
-  AutoActor over_;
+	AutoActor		m_sprUnder;
+	AutoActor		m_sprDanger;
+	StreamDisplay*	m_pStream;
+	AutoActor		m_sprOver;
 
-  float life_percentage_;
+	float		m_fLifePercentage;
 
-  float passing_alpha_;
-  float hot_alpha_;
+	float		m_fPassingAlpha;
+	float		m_fHotAlpha;
 
-  bool merciful_beginner_in_effect_;
-  float base_life_difficulty_;
-	// Essentially same as pref
-  float life_difficulty_;
+	bool		m_bMercifulBeginnerInEffect;
+	float		m_fBaseLifeDifficulty;
+	float		m_fLifeDifficulty;		// essentially same as pref
 
-	// cached from prefs
-  int progressive_life_bar_;
-  // The current number of progressive W5/miss rankings.
-  int miss_combo_;
-  // The combo needed before the life bar starts to fill up after a Player
-	// failed.
-  int combo_to_regain_life_;
+	int			m_iProgressiveLifebar;		// cached from prefs
+	/** @brief The current number of progressive W5/miss rankings. */
+	int			m_iMissCombo;
+	/** @brief The combo needed before the life bar starts to fill up after a Player failed. */
+	int			m_iComboToRegainLife;
 };
 
-#endif  // LIFEMETERBAR_H
+#endif
 
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -84,7 +81,7 @@ class LifeMeterBar : public LifeMeter {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

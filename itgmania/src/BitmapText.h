@@ -1,100 +1,156 @@
 #ifndef BITMAP_TEXT_H
 #define BITMAP_TEXT_H
 
+#include "Actor.h"
+
 #include <cstddef>
 #include <map>
-#include <string>
 #include <vector>
 
-#include "Actor.h"
-#include "Font.h"
-#include "RageTexture.h"
 
-// An actor that holds a Font and draws text to the screen.
-class BitmapText : public Actor {
- public:
-  BitmapText();
-  BitmapText(const BitmapText& cpy);
-  BitmapText& operator=(const BitmapText& cpy);
-  virtual ~BitmapText();
+class RageTexture;
+class Font;
+struct FontPageTextures;
+/** @brief An actor that holds a Font and draws text to the screen. */
+class BitmapText : public Actor
+{
+public:
+	BitmapText();
+	BitmapText( const BitmapText &cpy );
+	BitmapText &operator=(const BitmapText &cpy);
+	virtual ~BitmapText();
 
-  virtual void LoadFromNode(const XNode* pNode) override;
-  virtual BitmapText* Copy() const override;
+	virtual void LoadFromNode( const XNode* pNode ) override;
+	virtual BitmapText *Copy() const override;
 
-  struct BMT_TweenState {
-    // NOTE(Midiman): We'd be better off not adding strokes to things we can't
-    // controlthemewise (ScreenDebugOverlay for example).
-    BMT_TweenState() : m_stroke_color(RageColor(0, 0, 0, 0)) {}
-    static void MakeWeightedAverage(
-        BMT_TweenState& out, const BMT_TweenState& from,
-        const BMT_TweenState& to, float between);
-    bool operator==(const BMT_TweenState& other) const;
-    bool operator!=(const BMT_TweenState& other) const {
-      return !operator==(other);
-    }
-    void SetStrokeColor(const RageColor& c) { m_stroke_color = c; }
-    const RageColor& GetStrokeColor() { return m_stroke_color; }
+	struct BMT_TweenState
+	{
+		// We'd be better off not adding strokes to things we can't control
+		// themewise (ScreenDebugOverlay for example). -Midiman
+		BMT_TweenState(): m_stroke_color(RageColor(0,0,0,0)) {}
+		static void MakeWeightedAverage(BMT_TweenState& out,
+			BMT_TweenState const& from, BMT_TweenState const& to, float between);
+		bool operator==(BMT_TweenState const& other) const;
+		bool operator!=(BMT_TweenState const& other) const { return !operator==(other); }
+		void SetStrokeColor(RageColor const& c) { m_stroke_color= c; }
+		RageColor const& GetStrokeColor() { return m_stroke_color; }
+	private:
+		RageColor m_stroke_color;
+	};
 
-   private:
-    RageColor m_stroke_color;
-  };
+	BMT_TweenState& BMT_DestTweenState()
+	{
+		if(BMT_Tweens.empty())
+		{ return BMT_current; }
+		else
+		{ return BMT_Tweens.back(); }
+	}
+	BMT_TweenState const& BMT_DestTweenState() const { return const_cast<BitmapText*>(this)->BMT_DestTweenState(); }
 
-  BMT_TweenState& BMT_DestTweenState() {
-    if (BMT_Tweens.empty()) {
-      return BMT_current;
-    } else {
-      return BMT_Tweens.back();
-    }
-  }
-  const BMT_TweenState& BMT_DestTweenState() const {
-    return const_cast<BitmapText*>(this)->BMT_DestTweenState();
-  }
+	virtual void SetCurrentTweenStart() override;
+	virtual void EraseHeadTween() override;
+	virtual void UpdatePercentThroughTween(float between) override;
+	virtual void BeginTweening(float time, ITween* interp) override;
+	// This function exists because the compiler tried to connect a call of
+	// "BeginTweening(1.2f)" to the function above. -Kyz
+	virtual void BeginTweening(float time, TweenType tt = TWEEN_LINEAR) override
+	{ Actor::BeginTweening(time, tt); }
+	virtual void StopTweening() override;
+	virtual void FinishTweening() override;
 
+	bool LoadFromFont( const RString& sFontName );
+	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
+	virtual void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
+	void SetVertSpacing( int iSpacing );
+	void SetMaxWidth( float fMaxWidth );
+	void SetMaxHeight( float fMaxHeight );
+	void SetMaxDimUseZoom(bool use);
+	void SetWrapWidthPixels( int iWrapWidthPixels );
+	void CropLineToWidth(size_t l, int width);
+	void CropToWidth(int width);
 
-  Attribute GetDefaultAttribute() const;
-  void AddAttribute(size_t iPos, const Attribute& attr);
-  void ClearAttributes();
+	virtual bool EarlyAbortDraw() const override;
+	virtual void DrawPrimitives() noexcept override;
 
-  // Commands
-  virtual void PushSelf(lua_State* L) override;
+	void SetUppercase( bool b );
+	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
+	void SetJitter( bool b )	{ m_bJitter = b; }
+	void SetDistortion( float f );
+	void UnSetDistortion();
+	void set_mult_attrs_with_diffuse(bool m);
+	bool get_mult_attrs_with_diffuse();
 
- protected:
-  Font* m_pFont;
-  bool m_bUppercase;
-  RString m_sText;
-  std::vector<std::wstring> m_wTextLines;
-  std::vector<int> m_iLineWidths;
-  int m_iWrapWidthPixels;          // -1 = no wrap
-  float m_fMaxWidth;               // 0 = no max
-  float m_fMaxHeight;              // 0 = no max
-  bool m_MaxDimensionUsesZoom;
-  bool m_bRainbowScroll;
-  bool m_bJitter;
-  bool m_bUsingDistortion;
-  bool m_mult_attrs_with_diffuse;
-  float m_fDistortion;
-  int m_iVertSpacing;
+	void SetHorizAlign( float f ) override;
 
+	void SetStrokeColor(RageColor c) { BMT_DestTweenState().SetStrokeColor(c); }
+	RageColor const& GetStrokeColor()		{ return BMT_DestTweenState().GetStrokeColor(); }
+	void SetCurrStrokeColor(RageColor c) { BMT_current.SetStrokeColor(c); }
+	RageColor const& GetCurrStrokeColor() { return BMT_current.GetStrokeColor(); }
 
-  std::vector<FontPageTextures*> m_vpFontPageTextures;
-  std::map<size_t, Attribute> m_mAttributes;
-  bool m_bHasGlowAttribute;
+	void SetTextGlowMode( TextGlowMode tgm )	{ m_TextGlowMode = tgm; }
 
-  TextGlowMode m_TextGlowMode;
+	void GetLines( std::vector<std::wstring> &wTextLines ) const { wTextLines = m_wTextLines; }
+	const std::vector<std::wstring> &GetLines() const { return m_wTextLines; }
 
-  // Recalculate the items in SetText()
-  void BuildChars();
-  void DrawChars(bool bUseStrokeTexture);
-  void UpdateBaseZoom();
+	RString GetText() const { return m_sText; }
+	// Return true if the string 's' will use an alternate string, if available.
+	bool StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const;
 
- private:
-  void SetTextInternal();
-  std::vector<BMT_TweenState> BMT_Tweens;
-  BMT_TweenState BMT_current;
-  BMT_TweenState BMT_start;
+	struct Attribute
+	{
+		Attribute() : length(-1), glow() { }
+		int		length;
+		RageColor	diffuse[NUM_DIFFUSE_COLORS];
+		RageColor	glow;
+
+		void FromStack( lua_State *L, int iPos );
+	};
+
+	Attribute GetDefaultAttribute() const;
+	void AddAttribute( size_t iPos, const Attribute &attr );
+	void ClearAttributes();
+
+	// Commands
+	virtual void PushSelf( lua_State *L ) override;
+
+protected:
+	Font		*m_pFont;
+	bool		m_bUppercase;
+	RString		m_sText;
+	std::vector<std::wstring>		m_wTextLines;
+	std::vector<int>		m_iLineWidths;	// in source pixels
+	int			m_iWrapWidthPixels;		// -1 = no wrap
+	float		m_fMaxWidth;			// 0 = no max
+	float		m_fMaxHeight;			// 0 = no max
+	bool		m_MaxDimensionUsesZoom;
+	bool		m_bRainbowScroll;
+	bool		m_bJitter;
+	bool		m_bUsingDistortion;
+	bool m_mult_attrs_with_diffuse;
+	float		m_fDistortion;
+	int			m_iVertSpacing;
+
+	std::vector<RageSpriteVertex>	m_aVertices;
+
+	std::vector<FontPageTextures*>		m_vpFontPageTextures;
+	std::map<size_t, Attribute>	m_mAttributes;
+	bool								m_bHasGlowAttribute;
+
+	TextGlowMode	m_TextGlowMode;
+
+	// recalculate the items in SetText()
+	void BuildChars();
+	void DrawChars( bool bUseStrokeTexture );
+	void UpdateBaseZoom();
+
+private:
+	void SetTextInternal();
+	std::vector<BMT_TweenState> BMT_Tweens;
+	BMT_TweenState BMT_current;
+	BMT_TweenState BMT_start;
 };
 
-#endif  // BITMAP_TEXT_H
+#endif
 
 /**
  * @file

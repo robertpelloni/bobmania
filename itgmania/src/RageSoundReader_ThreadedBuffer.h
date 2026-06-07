@@ -25,8 +25,8 @@ public:
 	virtual int GetLength_Fast() const;
 	virtual int GetSampleRate() const { return m_iSampleRate; }
 	virtual unsigned GetNumChannels() const { return m_iChannels; }
-	virtual bool SetProperty( const RString &sProperty, double fValue );
-	virtual double GetStreamToSourceRatio() const;
+	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual float GetStreamToSourceRatio() const;
 	virtual RageSoundReader *GetSource() { return nullptr; }
 
 	/* Enable and disable threaded buffering.  Disable buffering before accessing
@@ -52,10 +52,11 @@ private:
 	{
 		int iFramesBuffered;
 		int iPositionOfFirstFrame;
-		double fRate;
+		float fRate;
 		Mapping(): iFramesBuffered(0), iPositionOfFirstFrame(0),
-			fRate(1.0) {}
+			fRate(1.0f) {}
 	};
+	std::list<Mapping> m_StreamPosition;
 	std::list<Mapping> m_StreamPosition;
 
 	bool m_bEOF;

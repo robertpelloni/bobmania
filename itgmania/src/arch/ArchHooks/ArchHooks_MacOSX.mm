@@ -1,512 +1,409 @@
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+#include "global.h"
 #include "ArchHooks_MacOSX.h"
-#include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "SpecialFiles.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
-#include "global.h"
+#include "ProductInfo.h"
 
 #include <cstddef>
 #include <cstdint>
-#include <vector>
 
-#include <ApplicationServices/ApplicationServices.h>
 #include <CoreServices/CoreServices.h>
-#include <mach/mach.h>
-#include <sys/sysctl.h>
+#include <ApplicationServices/ApplicationServices.h>
 #include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/mach.h>
 extern "C" {
-#include <IOKit/graphics/IOGraphicsLib.h>
 #include <mach/mach_time.h>
+#include <IOKit/graphics/IOGraphicsLib.h>
 }
-#include <IOKit/IOKitKeys.h>
 #include <IOKit/IOKitLib.h>
-#include <IOKit/network/IOEthernetController.h>
+#include <IOKit/IOKitKeys.h>
 #include <IOKit/network/IOEthernetInterface.h>
 #include <IOKit/network/IONetworkInterface.h>
+#include <IOKit/network/IOEthernetController.h>
 
 #import <AppKit/NSScreen.h>
 #import <Foundation/Foundation.h>
 
-static bool IsFatalSignal(int signal) {
-  switch (signal) {
-    case SIGINT:
-    case SIGTERM:
-    case SIGHUP:
-      return false;
-    default:
-      return true;
-  }
+static bool IsFatalSignal( int signal )
+{
+	switch( signal )
+	{
+	case SIGINT:
+	case SIGTERM:
+	case SIGHUP:
+		return false;
+	default:
+		return true;
+	}
 }
 
-static bool DoCleanShutdown(int signal, siginfo_t* si, const ucontext_t* uc) {
-  if (IsFatalSignal(signal)) {
-    return false;
-  }
+static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	if( IsFatalSignal(signal) )
+		return false;
 
-  // ^C.
-  ArchHooks::SetUserQuit();
-  return true;
+	// ^C.
+	ArchHooks::SetUserQuit();
+	return true;
 }
 
-static bool DoCrashSignalHandler(int signal, siginfo_t* si, const ucontext_t* uc) {
-  // Don't dump a debug file if the user just hit ^C.
-  if (!IsFatalSignal(signal)) {
-    return true;
-  }
+static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	// Don't dump a debug file if the user just hit ^C.
+	if( !IsFatalSignal(signal) )
+		return true;
 
-  CrashHandler::CrashSignalHandler(signal, si, uc);
-  return true;  // Unreached
+	CrashHandler::CrashSignalHandler( signal, si, uc );
+	return true; // Unreached
 }
 
-static bool DoEmergencyShutdown(int signal, siginfo_t* si, const ucontext_t* us) {
-  if (IsFatalSignal(signal)) {
-    _exit(1);  // We ran the crash handler already
-  }
-  return false;
+static bool DoEmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *us )
+{
+	if( IsFatalSignal(signal) )
+		_exit( 1 ); // We ran the crash handler already
+	return false;
 }
 
-void ArchHooks_MacOSX::Init() {
-  // First, handle non-fatal termination signals.
-  SignalHandler::OnClose(DoCleanShutdown);
-  CrashHandler::CrashHandlerHandleArgs(g_argc, g_argv);
-  CrashHandler::InitializeCrashHandler();
-  SignalHandler::OnClose(DoCrashSignalHandler);
-  SignalHandler::OnClose(DoEmergencyShutdown);
+void ArchHooks_MacOSX::Init()
+{
+	// First, handle non-fatal termination signals.
+	SignalHandler::OnClose( DoCleanShutdown );
+	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
+	CrashHandler::InitializeCrashHandler();
+	SignalHandler::OnClose( DoCrashSignalHandler );
+	SignalHandler::OnClose( DoEmergencyShutdown );
 
-  // Now that the crash handler is set up, disable crash reporter.
-  // Breaks gdb
-  // task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0
-  // );
+	// Now that the crash handler is set up, disable crash reporter.
+	// Breaks gdb
+	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
 
-  // CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
-  CFStringRef key = CFSTR("ApplicationBundlePath");
+	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
+	CFStringRef key = CFSTR( "ApplicationBundlePath" );
 
-  CFBundleRef bundle = CFBundleGetMainBundle();
-  CFStringRef appID = CFBundleGetIdentifier(bundle);
-  if (appID == nil) {
-    // We were probably launched through a symlink. Don't bother hunting down the real path.
-    return;
-  }
-  CFStringRef version =
-      CFStringRef(CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleVersionKey));
-  CFPropertyListRef old = CFPreferencesCopyAppValue(key, appID);
-  CFURLRef path = CFBundleCopyBundleURL(bundle);
-  CFPropertyListRef value = CFURLCopyFileSystemPath(path, kCFURLPOSIXPathStyle);
-  CFMutableDictionaryRef newDict = nil;
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef appID = CFBundleGetIdentifier( bundle );
+	if( appID == nil)
+	{
+		// We were probably launched through a symlink. Don't bother hunting down the real path.
+		return;
+	}
+	CFStringRef version = CFStringRef( CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleVersionKey) );
+	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
+	CFURLRef path = CFBundleCopyBundleURL( bundle );
+	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
+	CFMutableDictionaryRef newDict = nil;
 
-  if (old && CFGetTypeID(old) != CFDictionaryGetTypeID()) {
-    CFRelease(old);
-    old = nil;
-  }
+	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
+	{
+		CFRelease( old );
+		old = nil;
+	}
 
-  if (!old) {
-    newDict = CFDictionaryCreateMutable(
-        kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CFDictionaryAddValue(newDict, version, value);
-  } else {
-    CFTypeRef oldValue;
-    CFDictionaryRef dict = CFDictionaryRef(old);
+	if( !old )
+	{
+		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+						     &kCFTypeDictionaryValueCallBacks );
+		CFDictionaryAddValue( newDict, version, value );
+	}
+	else
+	{
+		CFTypeRef oldValue;
+		CFDictionaryRef dict = CFDictionaryRef( old );
 
-    if (!CFDictionaryGetValueIfPresent(dict, version, &oldValue) || !CFEqual(oldValue, value)) {
-      // The value is either not present or it is but it is different
-      newDict = CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, dict);
-      CFDictionarySetValue(newDict, version, value);
-    }
-    CFRelease(old);
-  }
+		if( !CFDictionaryGetValueIfPresent(dict, version, &oldValue) || !CFEqual(oldValue, value) )
+		{
+			// The value is either not present or it is but it is different
+			newDict = CFDictionaryCreateMutableCopy( kCFAllocatorDefault, 0, dict );
+			CFDictionarySetValue( newDict, version, value );
+		}
+		CFRelease( old );
+	}
 
-  if (newDict) {
-    CFPreferencesSetAppValue(key, newDict, appID);
-    if (!CFPreferencesAppSynchronize(appID)) {
-      LOG->Warn("Failed to record the run path.");
-    }
-    CFRelease(newDict);
-  }
-  CFRelease(value);
-  CFRelease(path);
+	if( newDict )
+	{
+		CFPreferencesSetAppValue( key, newDict, appID );
+		if( !CFPreferencesAppSynchronize(appID) )
+			LOG->Warn( "Failed to record the run path." );
+		CFRelease( newDict );
+	}
+	CFRelease( value );
+	CFRelease( path );
 }
 
-std::string ArchHooks_MacOSX::GetArchName() const {
+RString ArchHooks_MacOSX::GetArchName() const
+{
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+>>>>>>> main
 #if defined(__x86_64__)
-  return "macOS (x86_64)";
+	return "macOS (x86_64)";
 #elif defined(__aarch64__) || defined(__arm64__)
-  return "macOS (arm64)";
+	return "macOS (arm64)";
+<<<<<<< HEAD
+=======
+=======
+#if defined(__i386__)
+	return "Mac OS X (i386)";
+#elif defined(__x86_64__)
+	return "Mac OS X (x86_64)";
+#elif defined(__aarch64__) || defined(__arm64__)
+	return "macOS (ARM64)";
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+>>>>>>> main
 #else
 #error What arch?
 #endif
 }
 
-void ArchHooks_MacOSX::DumpDebugInfo() {
-  // Get system version (like 10.x.x)
-  std::string SystemVersion;
-  {
-    // http://stackoverflow.com/a/891336
-    NSDictionary* version = [NSDictionary
-        dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
-    NSString* productVersion = version[@"ProductVersion"];
-    SystemVersion = ssprintf(
-        "macOS %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
-  }
+void ArchHooks_MacOSX::DumpDebugInfo()
+{
+	// Get system version (like 10.x.x)
+	RString SystemVersion;
+	{
+		// http://stackoverflow.com/a/891336
+		NSDictionary *version = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+		NSString *productVersion = version[@"ProductVersion"];
+		SystemVersion = ssprintf("macOS %s", [productVersion cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+	}
 
-  size_t size;
-#define GET_PARAM(name, var) (size = sizeof(var), sysctlbyname(name, &var, &size, nil, 0))
-  // Get memory
-  float fRam;
-  char ramPower;
-  {
-    uint64_t iRam = 0;
-    GET_PARAM("hw.memsize", iRam);
+	size_t size;
+#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nil, 0) )
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+	// Get memory
+	float fRam;
+	char ramPower;
+	{
+		uint64_t iRam = 0;
+		GET_PARAM( "hw.memsize", iRam );
 
-    fRam = float(double(iRam) / 1073741824.0);
-    ramPower = 'G';
-  }
+		fRam = float( double(iRam) / 1073741824.0 );
+		ramPower = 'G';
+	}
 
-  // Get processor information
-  int iMaxCPUs = 0;
-  int iCPUs = 0;
-  float fFreq;
-  char freqPower;
-  std::string sModel("Unknown");
-  do {
-    char szModel[128];
-    uint64_t iFreq;
+	// Get processor information
+	int iMaxCPUs = 0;
+	int iCPUs = 0;
+	float fFreq;
+	char freqPower;
+	RString sModel("Unknown");
+	do {
+		char szModel[128];
+		uint64_t iFreq;
 
-    GET_PARAM("hw.logicalcpu_max", iMaxCPUs);
-    GET_PARAM("hw.logicalcpu", iCPUs);
-    GET_PARAM("hw.cpufrequency", iFreq);
+		GET_PARAM( "hw.logicalcpu_max", iMaxCPUs );
+		GET_PARAM( "hw.logicalcpu", iCPUs );
+		GET_PARAM( "hw.cpufrequency", iFreq );
 
-    fFreq = float(double(iFreq) / 1000000000.0);
-    freqPower = 'G';
+		fFreq = float( double(iFreq) / 1000000000.0 );
+		freqPower = 'G';
 
-    if (GET_PARAM("hw.model", szModel) != 0) {
-      break;
-    }
+		if( GET_PARAM("hw.model", szModel) != 0 )
+			break;
 
-    sModel = szModel;
+		sModel = szModel;
 
-    NSURL* url =
-        [NSURL fileURLWithPath:@"//System/Library/PrivateFrameworks/ServerInformation.framework/"
-                               @"Versions/A/Resources/en.lproj/SIMachineAttributes.plist"];
-    NSDictionary* machineAttributes = [NSDictionary dictionaryWithContentsOfURL:url];
-    if (machineAttributes == nil) {
-      break;
-    }
+		NSURL* url = [NSURL fileURLWithPath:@"//System/Library/PrivateFrameworks/ServerInformation.framework/Versions/A/Resources/en.lproj/SIMachineAttributes.plist"];
+		NSDictionary* machineAttributes = [NSDictionary dictionaryWithContentsOfURL:url];
+		if (machineAttributes == nil)
+			break;
 
-    NSString* key = [NSString stringWithUTF8String:szModel];
-    NSString* val = machineAttributes[key][@"_LOCALIZABLE_"][@"marketingModel"];
-    if (val != nil) {
-      sModel = [val UTF8String];
-    }
-  } while (false);
+		NSString* key = [NSString stringWithUTF8String:szModel];
+		NSString* val = machineAttributes[key][@"_LOCALIZABLE_"][@"marketingModel"];
+		if (val != nil)
+			sModel = [val UTF8String];
+	} while( false );
 #undef GET_PARAM
 
-  // Send all of the information to the log
-  LOG->Info("Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs);
-  LOG->Info("Clock speed %.2f %cHz", fFreq, freqPower);
-  LOG->Info("%s", SystemVersion.c_str());
-  LOG->Info("Memory: %.2f %cB", fRam, ramPower);
+	// Send all of the information to the log
+	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
+	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
+	LOG->Info( "%s", SystemVersion.c_str());
+	LOG->Info( "Memory: %.2f %cB", fRam, ramPower );
 }
 
-std::string ArchHooks::GetPreferredLanguage() {
-  CFStringRef app = kCFPreferencesCurrentApplication;
-  CFTypeRef t = CFPreferencesCopyAppValue(CFSTR("AppleLanguages"), app);
-  std::string ret = "en";
+RString ArchHooks::GetPreferredLanguage()
+{
+	CFStringRef app = kCFPreferencesCurrentApplication;
+	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
+	RString ret = "en";
 
-  if (t == nil) {
-    return ret;
-  }
-  if (CFGetTypeID(t) != CFArrayGetTypeID()) {
-    CFRelease(t);
-    return ret;
-  }
+	if( t == nil)
+		return ret;
+	if( CFGetTypeID(t) != CFArrayGetTypeID() )
+	{
+		CFRelease( t );
+		return ret;
+	}
 
-  CFArrayRef languages = CFArrayRef(t);
-  CFStringRef lang;
+	CFArrayRef languages = CFArrayRef( t );
+	CFStringRef lang;
 
-<<<<<<< HEAD
 	if( CFArrayGetCount(languages) > 0 &&
 		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nil)
 	{
-		char buf[128];
-		if( CFStringGetCString(lang, buf, sizeof(buf), kCFStringEncodingUTF8) )
+		// MacRoman agrees with ASCII in the low-order 7 bits.
+		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
+		if( str )
 		{
-			RString sLang = buf;
-			if (sLang.size() >= 2)
+			ret = RString( str, 2 );
+			if (ret == "zh")
 			{
-				if (sLang.substr(0, 2) == "zh")
-				{
-					if (sLang.size() >= 7)
-					{
-						ret = sLang.substr(0, 7);
-						if (ret[2] == '_') ret[2] = '-';
-					}
-					else
-					{
-						ret = sLang;
-					}
-				}
-				else
-				{
-					ret = sLang.substr(0, 2);
-				}
+				ret = RString(str, 7);
+				ret[2] = '-';
 			}
 		}
 		else
-		{
 			LOG->Warn( "Unable to determine system language. Using English." );
-		}
 	}
-=======
-  if (CFArrayGetCount(languages) > 0 &&
-      (lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nil) {
-    // MacRoman agrees with ASCII in the low-order 7 bits.
-    const char* str = CFStringGetCStringPtr(lang, kCFStringEncodingMacRoman);
-    if (str) {
-      ret = std::string(str, 2);
-      if (ret == "zh") {
-        ret = std::string(str, 7);
-        ret[2] = '-';
-      }
-    } else {
-      LOG->Warn("Unable to determine system language. Using English.");
-    }
-  }
->>>>>>> upstream/release
 
-  CFRelease(languages);
-  return ret;
+	CFRelease( languages );
+	return ret;
 }
 
-int64_t ArchHooks::GetSystemTimeInMicroseconds() {
-  // http://developer.apple.com/qa/qa2004/qa1398.html
-  static double factor = 0.0;
+int64_t ArchHooks::GetSystemTimeInMicroseconds()
+{
+	// http://developer.apple.com/qa/qa2004/qa1398.html
+	static double factor = 0.0;
 
-  if (unlikely(factor == 0.0)) {
-    mach_timebase_info_data_t timeBase;
+	if( unlikely(factor == 0.0) )
+	{
+		mach_timebase_info_data_t timeBase;
 
-    mach_timebase_info(&timeBase);
-    factor = timeBase.numer / (1000.0 * timeBase.denom);
-  }
-  return int64_t(mach_absolute_time() * factor);
+		mach_timebase_info( &timeBase );
+		factor = timeBase.numer / ( 1000.0 * timeBase.denom );
+	}
+	return int64_t( mach_absolute_time() * factor );
 }
 
 #include "RageFileManager.h"
 
-void MountDirectories(const std::string& baseDir) {
-  const std::vector<std::string> macDirectoryStructureITGm = {
-      "/Announcers",
-      "/BGAnimations",
-      "/BackgroundEffects",
-      "/BackgroundTransitions",
-      "/Cache",
-      "/CDTitles",
-      "/Characters",
-      "/Courses",
-      "/Downloads",
-      "/Logs",
-      "/NoteSkins",
-      "/Packages",
-      "/Save",
-      "/Screenshots",
-      "/Songs",
-      "/RandomMovies",
-      "/Themes"};
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+{
+	FILEMAN->Mount("dirro", sDirOfExecutable, "/");
 
-  for (const std::string& dir : macDirectoryStructureITGm) {
-    FILEMAN->Mount("dir", baseDir + dir, dir);
-  }
+	bool portable = DoesFileExist("/Portable.ini");
+
+	NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
+	if( resourcePath )
+	{
+		const char* resourcePathUTF8String = [resourcePath UTF8String];
+		FILEMAN->Mount( "dirro", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String), "/BackgroundTransitions" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Packages", resourcePathUTF8String), "/Packages" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes" );
+		FILEMAN->Mount( "dirro", ssprintf("%s/Data", resourcePathUTF8String), "/Data" );
+	}
+
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nil);
+	if( dataUrl )
+	{
+		char dir[PATH_MAX];
+
+		CFStringRef dataPath = CFURLCopyFileSystemPath( dataUrl, kCFURLPOSIXPathStyle );
+		CFStringGetCString( dataPath, dir, PATH_MAX, kCFStringEncodingUTF8 );
+
+		if( strncmp(sDirOfExecutable.c_str(), dir, sDirOfExecutable.length()) == 0 )
+			FILEMAN->Mount( "zip", dir + sDirOfExecutable.length(), "/" );
+		CFRelease( dataPath );
+		CFRelease( dataUrl );
+	}
+
+	if (portable)
+	{
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Announcers", "/Announcers");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BGAnimations", "/BGAnimations");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BackgroundEffects", "/BackgroundEffects");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/BackgroundTransitions", "/BackgroundTransitions");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Cache", "/Cache");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/CDTitles", "/CDTitles");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Characters", "/Characters");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Courses", "/Courses");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Downloads", "/Downloads");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Logs", "/Logs");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/NoteSkins", "/NoteSkins");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Packages", "/Packages");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Save", "/Save");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Screenshots", "/Screenshots");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Songs", "/Songs");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/RandomMovies", "/RandomMovies");
+		FILEMAN->Mount("dir", sDirOfExecutable + "/Themes", "/Themes");
+	}
 }
 
-void ArchHooks::MountInitialFilesystems(const std::string& sDirOfExecutable) {
-  FILEMAN->Mount("dirro", sDirOfExecutable, "/");
+static std::string PathForDirectory( NSSearchPathDirectory directory )
+{
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	NSURL *url = [fileManager URLForDirectory:directory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+	if (url == nil)
+		FAIL_M( "URLForDirectory() failed." );
 
-  bool portable = DoesFileExist("/Portable.ini");
-
-  NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
-  if (resourcePath) {
-    const char* resourcePathUTF8String = [resourcePath UTF8String];
-    FILEMAN->Mount("dirro", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers");
-    FILEMAN->Mount("dirro", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations");
-    FILEMAN->Mount(
-        "dirro", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects");
-    FILEMAN->Mount(
-        "dirro", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String),
-        "/BackgroundTransitions");
-    FILEMAN->Mount("dirro", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles");
-    FILEMAN->Mount("dirro", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters");
-    FILEMAN->Mount("dirro", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses");
-    FILEMAN->Mount("dirro", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins");
-    FILEMAN->Mount("dirro", ssprintf("%s/Packages", resourcePathUTF8String), "/Packages");
-    FILEMAN->Mount("dirro", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs");
-    FILEMAN->Mount("dirro", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies");
-    FILEMAN->Mount("dirro", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes");
-    FILEMAN->Mount("dirro", ssprintf("%s/Data", resourcePathUTF8String), "/Data");
-  }
-
-  CFURLRef dataUrl =
-      CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nil);
-  if (dataUrl) {
-    char dir[PATH_MAX];
-
-    CFStringRef dataPath = CFURLCopyFileSystemPath(dataUrl, kCFURLPOSIXPathStyle);
-    CFStringGetCString(dataPath, dir, PATH_MAX, kCFStringEncodingUTF8);
-
-    if (strncmp(sDirOfExecutable.c_str(), dir, sDirOfExecutable.length()) == 0) {
-      FILEMAN->Mount("zip", dir + sDirOfExecutable.length(), "/");
-    }
-    CFRelease(dataPath);
-    CFRelease(dataUrl);
-  }
-
-  if (portable) {
-    MountDirectories(sDirOfExecutable);
-  }
+	return [url fileSystemRepresentation];
 }
 
-static std::string PathForDirectory(NSSearchPathDirectory directory) {
-  NSFileManager* fileManager = [NSFileManager defaultManager];
-  NSURL* url = [fileManager URLForDirectory:directory
-                                   inDomain:NSUserDomainMask
-                          appropriateForURL:nil
-                                     create:NO
-                                      error:nil];
-  if (url == nil) {
-    FAIL_M("URLForDirectory() failed.");
-  }
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	// /Save -> ~/Library/Preferences/PRODUCT_ID
+	std::string libraryDir = PathForDirectory(NSLibraryDirectory);
+	FILEMAN->Mount( "dir", libraryDir + "/Preferences/" PRODUCT_ID, "/Save" );
 
-  return [url fileSystemRepresentation];
+	// Other stuff -> ~/Library/Application Support/PRODUCT_ID/*
+	std::string appSupportDir = PathForDirectory(NSApplicationSupportDirectory);
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Announcers", "/Announcers" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/BGAnimations", "/BGAnimations" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/BackgroundEffects", "/BackgroundEffects" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/BackgroundTransitions", "/BackgroundTransitions" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/CDTitles", "/CDTitles" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Characters", "/Characters" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Courses", "/Courses" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Downloads", "/Downloads" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/NoteSkins", "/NoteSkins" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Packages", "/Packages" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Songs", "/Songs" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/RandomMovies", "/RandomMovies" );
+	FILEMAN->Mount( "dir", appSupportDir + "/" PRODUCT_ID "/Themes", "/Themes" );
+
+	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
+	std::string picturesDir = PathForDirectory(NSCachesDirectory);
+	FILEMAN->Mount( "dir", picturesDir + "/" PRODUCT_ID " Screenshots", "/Screenshots" );
+
+	// /Cache -> ~/Library/Caches/PRODUCT_ID
+	std::string cachesDir = PathForDirectory(NSCachesDirectory);
+	FILEMAN->Mount( "dir", cachesDir + "/" PRODUCT_ID, "/Cache" );
+
+	// /Logs -> ~/Library/Logs/PRODUCT_ID
+	FILEMAN->Mount( "dir", libraryDir + "/Logs/" PRODUCT_ID, "/Logs" );
 }
 
-static void MigrateLegacyDirectory(const std::string& oldPath, const std::string& newPath) {
-  NSFileManager* fileManager = [NSFileManager defaultManager];
-  NSString* source = [NSString stringWithUTF8String:oldPath.c_str()];
-  NSString* destination = [NSString stringWithUTF8String:newPath.c_str()];
+static inline int GetIntValue( CFTypeRef r )
+{
+	int ret;
 
-  if (source == nil || destination == nil) {
-    return;
-  }
-
-  BOOL sourceIsDirectory = NO;
-  if (![fileManager fileExistsAtPath:source isDirectory:&sourceIsDirectory] || !sourceIsDirectory) {
-    return;
-  }
-
-  NSString* destinationParent = [destination stringByDeletingLastPathComponent];
-  NSError* error = nil;
-  if (![fileManager createDirectoryAtPath:destinationParent
-              withIntermediateDirectories:YES
-                               attributes:nil
-                                    error:&error]) {
-    return;
-  }
-
-  BOOL destinationExists = [fileManager fileExistsAtPath:destination];
-  BOOL destinationIsDirectory = NO;
-  if (destinationExists && ![fileManager fileExistsAtPath:destination
-                                              isDirectory:&destinationIsDirectory]) {
-    return;
-  }
-
-  // Fast path: if destination does not exist, a full move preserves directory contents.
-  if (!destinationExists) {
-    error = nil;
-    if ([fileManager moveItemAtPath:source toPath:destination error:&error]) {
-      return;
-    }
-    return;
-  }
-
-  if (!destinationIsDirectory) {
-    return;
-  }
-
-  // Merge source into destination so migration still works when startup created folders already.
-  NSArray<NSString*>* sourceEntries = [fileManager contentsOfDirectoryAtPath:source error:&error];
-  if (sourceEntries == nil) {
-    return;
-  }
-
-  // Iterate through the source directory, moving each file/folder individually.
-  // If the destination entry already exists, recurse if it's a directory, otherwise skip (to
-  // prevent overwriting).
-  for (NSString* entry in sourceEntries) {
-    NSString* sourceEntryPath = [source stringByAppendingPathComponent:entry];
-    NSString* destinationEntryPath = [destination stringByAppendingPathComponent:entry];
-
-    BOOL destinationEntryExists = [fileManager fileExistsAtPath:destinationEntryPath];
-    if (!destinationEntryExists) {
-      [fileManager moveItemAtPath:sourceEntryPath toPath:destinationEntryPath error:nil];
-      continue;
-    }
-
-    BOOL sourceEntryIsDirectory = NO;
-    BOOL destinationEntryIsDirectory = NO;
-    BOOL sourceEntryExists = [fileManager fileExistsAtPath:sourceEntryPath
-                                               isDirectory:&sourceEntryIsDirectory];
-    [fileManager fileExistsAtPath:destinationEntryPath isDirectory:&destinationEntryIsDirectory];
-
-    if (sourceEntryExists && sourceEntryIsDirectory && destinationEntryIsDirectory) {
-      std::string sourceChild = [sourceEntryPath fileSystemRepresentation];
-      std::string destinationChild = [destinationEntryPath fileSystemRepresentation];
-      MigrateLegacyDirectory(sourceChild, destinationChild);
-    }
-  }
-
-  // Clean up if nothing is left after merge.
-  [fileManager removeItemAtPath:source error:nil];
+	if( !r || CFGetTypeID(r) != CFNumberGetTypeID() || !CFNumberGetValue(CFNumberRef(r), kCFNumberIntType, &ret) )
+		return 0;
+	return ret;
 }
 
-static void RemoveLegacyDirectory(const std::string& oldPath) {
-  NSFileManager* fileManager = [NSFileManager defaultManager];
-  NSString* source = [NSString stringWithUTF8String:oldPath.c_str()];
-  NSError* error = nil;
 
-  if (source == nil) {
-    return;
-  }
-
-  BOOL sourceIsDirectory = NO;
-  if (![fileManager fileExistsAtPath:source isDirectory:&sourceIsDirectory] || !sourceIsDirectory) {
-    return;
-  }
-
-  [fileManager removeItemAtPath:source error:&error];
-}
-
-void ArchHooks::MountUserFilesystems(const std::string& sDirOfExecutable) {
-  std::string libraryDir = PathForDirectory(NSLibraryDirectory);
-  std::string cachesDir = PathForDirectory(NSCachesDirectory);
-  std::string appSupportDir = PathForDirectory(NSApplicationSupportDirectory);
-  std::string appSupportPath = ssprintf("%s/" PRODUCT_ID, appSupportDir.c_str());
-
-  // Do a best effort to migrate the save folder and screenshots.
-  MigrateLegacyDirectory(libraryDir + "/Preferences/" PRODUCT_ID, appSupportPath + "/Save");
-  MigrateLegacyDirectory(
-      cachesDir + "/" PRODUCT_ID " Screenshots", appSupportPath + "/Screenshots");
-  // It's fine to just delete the old Cache directory, and just let the game regenerate it on boot.
-  RemoveLegacyDirectory(cachesDir + "/" PRODUCT_ID);
-  // It's fine to just delete the old Logs directory, as the contents of the data will get
-  // regenerated on boot. In that case, we can just avoid the complexity of migrating directories.
-  RemoveLegacyDirectory(libraryDir + "/Logs/" PRODUCT_ID);
-
-  MountDirectories(appSupportPath);
-}
-
-static inline int GetIntValue(CFTypeRef r) {
-  int ret;
-
-  if (!r || CFGetTypeID(r) != CFNumberGetTypeID() ||
-      !CFNumberGetValue(CFNumberRef(r), kCFNumberIntType, &ret)) {
-    return 0;
-  }
-  return ret;
-}
-
-float ArchHooks_MacOSX::GetDisplayAspectRatio() {
-  NSScreen* screen = [NSScreen mainScreen];
-  return screen.frame.size.width / screen.frame.size.height;
+float ArchHooks_MacOSX::GetDisplayAspectRatio()
+{
+	NSScreen *screen = [NSScreen mainScreen];
+	return screen.frame.size.width / screen.frame.size.height;
 }
 
 /*
@@ -533,3 +430,564 @@ float ArchHooks_MacOSX::GetDisplayAspectRatio() {
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+=======
+#include "global.h"
+#include "ArchHooks_MacOSX.h"
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "archutils/Unix/CrashHandler.h"
+#include "archutils/Unix/SignalHandler.h"
+#include "SpecialFiles.h"
+#include "ProductInfo.h"
+#include <CoreServices/CoreServices.h>
+#include <ApplicationServices/ApplicationServices.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <mach/mach.h>
+extern "C" {
+#include <mach/mach_time.h>
+#include <IOKit/graphics/IOGraphicsLib.h>
+}
+#include <IOKit/IOKitLib.h>
+#include <IOKit/IOKitKeys.h>
+#include <IOKit/network/IOEthernetInterface.h>
+#include <IOKit/network/IONetworkInterface.h>
+#include <IOKit/network/IOEthernetController.h>
+
+static bool IsFatalSignal( int signal )
+{
+	switch( signal )
+	{
+	case SIGINT:
+	case SIGTERM:
+	case SIGHUP:
+		return false;
+	default:
+		return true;
+	}
+}
+
+static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	if( IsFatalSignal(signal) )
+		return false;
+
+	// ^C.
+	ArchHooks::SetUserQuit();
+	return true;
+}
+
+static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	// Don't dump a debug file if the user just hit ^C.
+	if( !IsFatalSignal(signal) )
+		return true;
+
+	CrashHandler::CrashSignalHandler( signal, si, uc );
+	return true; // Unreached
+}
+
+static bool DoEmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *us )
+{
+	if( IsFatalSignal(signal) )
+		_exit( 1 ); // We ran the crash handler already
+	return false;
+}
+
+void ArchHooks_MacOSX::Init()
+{
+	// First, handle non-fatal termination signals.
+	SignalHandler::OnClose( DoCleanShutdown );
+	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
+	CrashHandler::InitializeCrashHandler();
+	SignalHandler::OnClose( DoCrashSignalHandler );
+	SignalHandler::OnClose( DoEmergencyShutdown );
+
+	// Now that the crash handler is set up, disable crash reporter.
+	// Breaks gdb
+	// task_set_exception_ports( mach_task_self(), EXC_MASK_ALL, MACH_PORT_NULL, EXCEPTION_DEFAULT, 0 );
+
+	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
+	CFStringRef key = CFSTR( "ApplicationBundlePath" );
+
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef appID = CFBundleGetIdentifier( bundle );
+	if( appID == nullptr )
+	{
+		// We were probably launched through a symlink. Don't bother hunting down the real path.
+		return;
+	}
+	CFStringRef version = CFStringRef( CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleVersionKey) );
+	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
+	CFURLRef path = CFBundleCopyBundleURL( bundle );
+	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
+	CFMutableDictionaryRef newDict = nullptr;
+
+	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
+	{
+		CFRelease( old );
+		old = nullptr;
+	}
+
+	if( !old )
+	{
+		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+						     &kCFTypeDictionaryValueCallBacks );
+		CFDictionaryAddValue( newDict, version, value );
+	}
+	else
+	{
+		CFTypeRef oldValue;
+		CFDictionaryRef dict = CFDictionaryRef( old );
+
+		if( !CFDictionaryGetValueIfPresent(dict, version, &oldValue) || !CFEqual(oldValue, value) )
+		{
+			// The value is either not present or it is but it is different
+			newDict = CFDictionaryCreateMutableCopy( kCFAllocatorDefault, 0, dict );
+			CFDictionarySetValue( newDict, version, value );
+		}
+		CFRelease( old );
+	}
+
+	if( newDict )
+	{
+		CFPreferencesSetAppValue( key, newDict, appID );
+		if( !CFPreferencesAppSynchronize(appID) )
+			LOG->Warn( "Failed to record the run path." );
+		CFRelease( newDict );
+	}
+	CFRelease( value );
+	CFRelease( path );
+}
+
+RString ArchHooks_MacOSX::GetArchName() const
+{
+#if defined(__ppc__)
+	return "Mac OS X (ppc)";
+#elif defined(__i386__)
+	return "Mac OS X (i386)";
+#else
+#error What arch?
+#endif
+}
+
+
+RString ArchHooks_MacOSX::GetMachineId() const
+{
+	RString ret;
+	CFMutableDictionaryRef dict = IOServiceMatching( "IOPlatformExpertDevice" );
+	CFMutableDictionaryRef property;
+	io_service_t service;
+
+	if( dict )
+	{
+		// This consumes the reference.
+		service = IOServiceGetMatchingService( kIOMasterPortDefault, dict );
+
+		if( service )
+		{
+			CFTypeRef serial;
+			CFStringRef key = CFSTR( "IOPlatformSerialNumber" ); // kIOPlatformSerialNumberKey
+
+			serial = IORegistryEntryCreateCFProperty( service, key, kCFAllocatorDefault, 0 );
+
+			if( serial )
+			{
+				const char *str = CFStringGetCStringPtr( (CFStringRef)serial, CFStringGetSystemEncoding() );
+				ret = str? str:"";
+				CFRelease( serial );
+			}
+			IOObjectRelease( service );
+		}
+	}
+
+	dict = IOServiceMatching( kIOEthernetInterfaceClass );
+
+	if( !dict )
+		return ret;
+
+	property = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+					      &kCFTypeDictionaryValueCallBacks );
+
+	if( !property )
+	{
+		CFRelease( dict );
+		return ret;
+	}
+
+	CFDictionarySetValue( property, CFSTR(kIOPrimaryInterface), kCFBooleanTrue );
+	CFDictionarySetValue( dict, CFSTR(kIOPropertyMatchKey), property );
+	CFRelease( property );
+
+	io_iterator_t iter;
+
+	if( IOServiceGetMatchingServices(kIOMasterPortDefault, dict, &iter) != KERN_SUCCESS )
+		return ret;
+	while( (service = IOIteratorNext(iter)) )
+	{
+		CFTypeRef data;
+		io_object_t controller;
+
+		if( IORegistryEntryGetParentEntry(service, kIOServicePlane, &controller) != KERN_SUCCESS )
+		{
+			IOObjectRelease( service );
+			continue;
+		}
+
+		data = IORegistryEntryCreateCFProperty( controller, CFSTR(kIOMACAddress),
+							kCFAllocatorDefault, 0 );
+		if( data )
+		{
+			const uint8_t *p = CFDataGetBytePtr( (CFDataRef)data );
+			
+			ret += ssprintf( "-%02x:%02x:%02x:%02x:%02x:%02x",
+					 p[0], p[1], p[2], p[3], p[4], p[5] );
+			CFRelease( data );
+		}
+		IOObjectRelease( controller );
+		IOObjectRelease( service );
+	}
+	IOObjectRelease( iter );
+	return ret;
+}
+
+void ArchHooks_MacOSX::DumpDebugInfo()
+{
+	// Get system version
+	RString sSystemVersion;
+	{
+		long major = 0, minor = 0, bugFix = 0;
+
+		Gestalt( gestaltSystemVersionMajor, &major );
+		Gestalt( gestaltSystemVersionMinor, &minor );
+		Gestalt( gestaltSystemVersionBugFix, &bugFix );
+		if( bugFix )
+			sSystemVersion = ssprintf( "Mac OS X %ld.%ld.%ld", major, minor, bugFix );
+		else
+			sSystemVersion = ssprintf( "Mac OS X %ld.%ld", major, minor );
+	}
+
+	size_t size;
+#define GET_PARAM( name, var ) (size = sizeof(var), sysctlbyname(name, &var, &size, nullptr, 0) )
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+	// Get memory
+	float fRam;
+	char ramPower;
+	{
+		uint64_t iRam = 0;
+		GET_PARAM( "hw.memsize", iRam );
+		if( iRam >= 1073741824 )
+		{
+			fRam = float( double(iRam) / 1073741824.0 );
+			ramPower = 'G';
+		}
+		else
+		{
+			fRam = float( double(iRam) / 1048576.0 );
+			ramPower = 'M';
+		}
+	}
+
+	// Get processor information
+	int iMaxCPUs = 0;
+	int iCPUs = 0;
+	float fFreq;
+	char freqPower;
+	RString sModel;
+	do {
+		char szModel[128];
+		uint64_t iFreq;
+
+		GET_PARAM( "hw.logicalcpu_max", iMaxCPUs );
+		GET_PARAM( "hw.logicalcpu", iCPUs );
+		GET_PARAM( "hw.cpufrequency", iFreq );
+
+		if( iFreq >= 1000000000 )
+		{
+			fFreq = float( double(iFreq) / 1000000000.0 );
+			freqPower = 'G';
+		}
+		else
+		{
+			fFreq = float( double(iFreq) / 1000000.0 );
+			freqPower = 'M';
+		}
+
+		if( GET_PARAM("hw.model", szModel) )
+		{
+			sModel = "Unknown";
+			break;
+		}
+		sModel = szModel;
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nullptr, nullptr );
+
+		if( urlRef == nullptr )
+			break;
+		CFDataRef dataRef = nullptr;
+		SInt32 error;
+		CFURLCreateDataAndPropertiesFromResource( NULL, urlRef, &dataRef, nullptr, nullptr, &error );
+		CFRelease( urlRef );
+		if( dataRef == nullptr )
+			break;
+		// This also works with binary property lists for some reason.
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( NULL, dataRef, kCFPropertyListImmutable, nullptr );
+		CFRelease( dataRef );
+		if( plRef == nullptr )
+=======
+		CFURLRef urlRef = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("Hardware.plist"), nil, nil);
+
+		if( urlRef == nil)
+			break;
+		CFDataRef dataRef = nil;
+		SInt32 error;
+		CFURLCreateDataAndPropertiesFromResource( nil, urlRef, &dataRef, nil, nil, &error );
+		CFRelease( urlRef );
+		if( dataRef == nil)
+			break;
+		// This also works with binary property lists for some reason.
+		CFPropertyListRef plRef = CFPropertyListCreateFromXMLData( nil, dataRef, kCFPropertyListImmutable, nil);
+		CFRelease( dataRef );
+		if( plRef == nil)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+			break;
+		if( CFGetTypeID(plRef) != CFDictionaryGetTypeID() )
+		{
+			CFRelease( plRef );
+			break;
+		}
+		CFStringRef keyRef = CFStringCreateWithCStringNoCopy( nil, szModel, kCFStringEncodingMacRoman, kCFAllocatorNull );
+		CFStringRef modelRef = (CFStringRef)CFDictionaryGetValue( (CFDictionaryRef)plRef, keyRef );
+		if( modelRef )
+			sModel = CFStringGetCStringPtr( modelRef, kCFStringEncodingMacRoman );
+		CFRelease( keyRef );
+		CFRelease( plRef );
+	} while( false );
+#undef GET_PARAM
+
+	// Send all of the information to the log 
+	LOG->Info( "Model: %s (%d/%d)", sModel.c_str(), iCPUs, iMaxCPUs );
+	LOG->Info( "Clock speed %.2f %cHz", fFreq, freqPower );
+	LOG->Info( "%s", sSystemVersion.c_str());
+	LOG->Info( "Memory: %.2f %cB", fRam, ramPower );
+}
+
+RString ArchHooks::GetPreferredLanguage()
+{
+	CFStringRef app = kCFPreferencesCurrentApplication;
+	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
+	RString ret = "en";
+
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+	if( t == nullptr )
+=======
+	if( t == nil)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+		return ret;
+	if( CFGetTypeID(t) != CFArrayGetTypeID() )
+	{
+		CFRelease( t );
+		return ret;
+	}
+
+	CFArrayRef languages = CFArrayRef( t );
+	CFStringRef lang;
+
+	if( CFArrayGetCount(languages) > 0 &&
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nullptr )
+=======
+		(lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != nil)
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+	{
+		// MacRoman agrees with ASCII in the low-order 7 bits.
+		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
+		if( str )
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+			ret = str;
+=======
+		{
+			ret = RString( str, 2 );
+			if (ret == "zh")
+			{
+				ret = RString(str, 7);
+				ret[2] = '-';
+			}
+		}
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+		else
+			LOG->Warn( "Unable to determine system language. Using English." );
+
+		ret = RString( str, 2 );
+	}
+
+	CFRelease( languages );
+	return ret;
+}
+
+bool ArchHooks_MacOSX::GoToURL( RString sUrl )
+{
+	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+						 sUrl.length(), kCFStringEncodingUTF8, nullptr );
+	OSStatus result = LSOpenCFURLRef( url, nullptr );
+=======
+						 sUrl.length(), kCFStringEncodingUTF8, nil);
+	OSStatus result = LSOpenCFURLRef( url, nil);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+
+	CFRelease( url );
+	return result == 0;
+}
+
+int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+{
+	// http://developer.apple.com/qa/qa2004/qa1398.html
+	static double factor = 0.0;
+
+	if( unlikely(factor == 0.0) )
+	{
+		mach_timebase_info_data_t timeBase;
+
+		mach_timebase_info( &timeBase );
+		factor = timeBase.numer / ( 1000.0 * timeBase.denom );
+	}
+	return int64_t( mach_absolute_time() * factor );
+}
+
+#include "RageFileManager.h"
+
+static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
+{
+	FSRef fs;
+
+	if( FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &fs) )
+		FAIL_M( ssprintf("FSFindFolder(%lu) failed.", folderType) );
+	if( FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
+		FAIL_M( "FSRefMakePath() failed." );
+}
+
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
+{
+	char dir[PATH_MAX];
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nullptr );
+=======
+	CFURLRef dataUrl = CFBundleCopyResourceURL( CFBundleGetMainBundle(), CFSTR("StepMania"), CFSTR("smzip"), nil);
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm
+
+	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
+
+	if( dataUrl )
+	{
+		CFStringRef dataPath = CFURLCopyFileSystemPath( dataUrl, kCFURLPOSIXPathStyle );
+		CFStringGetCString( dataPath, dir, PATH_MAX, kCFStringEncodingUTF8 );
+
+		if( strncmp(sDirOfExecutable, dir, sDirOfExecutable.length()) == 0 )
+			FILEMAN->Mount( "zip", dir + sDirOfExecutable.length(), "/" );
+		CFRelease( dataPath );
+		CFRelease( dataUrl );
+	}
+}
+
+void ArchHooks::MountUserFilesystems( const RString &sDirOfExecutable )
+{
+	char dir[PATH_MAX];
+
+	// /Save -> ~/Library/Preferences/PRODUCT_ID
+	PathForFolderType( dir, kPreferencesFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
+
+	// /UserPackages -> ~/Library/Application Support/PRODUCT_ID/Packages
+	PathForFolderType( dir, kApplicationSupportFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Packages", dir), "/" + SpecialFiles::USER_PACKAGES_DIR );
+
+	// /Screenshots -> ~/Pictures/PRODUCT_ID Screenshots
+	PathForFolderType( dir, kPictureDocumentsFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
+
+	// /Cache -> ~/Library/Caches/PRODUCT_ID
+	PathForFolderType( dir, kCachedDataFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Cache" );
+
+	// /Logs -> ~/Library/Logs/PRODUCT_ID
+	PathForFolderType( dir, kDomainLibraryFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
+    
+    NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
+    if( resourcePath )
+    {
+        const char* resourcePathUTF8String = [resourcePath UTF8String];
+        FILEMAN->Mount( "dir", ssprintf("%s/Announcers", resourcePathUTF8String), "/Announcers" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BGAnimations", resourcePathUTF8String), "/BGAnimations" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundEffects", resourcePathUTF8String), "/BackgroundEffects" );
+        FILEMAN->Mount( "dir", ssprintf("%s/BackgroundTransitions", resourcePathUTF8String), "/BackgroundTransitions" );
+        FILEMAN->Mount( "dir", ssprintf("%s/CDTitles", resourcePathUTF8String), "/CDTitles" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Characters", resourcePathUTF8String), "/Characters" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Courses", resourcePathUTF8String), "/Courses" );
+        FILEMAN->Mount( "dir", ssprintf("%s/NoteSkins", resourcePathUTF8String), "/NoteSkins" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Packages", resourcePathUTF8String), "/" + SpecialFiles::USER_PACKAGES_DIR );
+        FILEMAN->Mount( "dir", ssprintf("%s/Songs", resourcePathUTF8String), "/Songs" );
+        FILEMAN->Mount( "dir", ssprintf("%s/RandomMovies", resourcePathUTF8String), "/RandomMovies" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Themes", resourcePathUTF8String), "/Themes" );
+        FILEMAN->Mount( "dir", ssprintf("%s/Data", resourcePathUTF8String), "/Data" );
+    }
+
+	// /Desktop -> /Users/<user>/Desktop/PRODUCT_ID
+	PathForFolderType( dir, kDesktopFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Desktop" );
+}
+
+static inline int GetIntValue( CFTypeRef r )
+{
+	int ret;
+
+	if( !r || CFGetTypeID(r) != CFNumberGetTypeID() || !CFNumberGetValue(CFNumberRef(r), kCFNumberIntType, &ret) )
+		return 0;
+	return ret;
+}
+
+
+float ArchHooks_MacOSX::GetDisplayAspectRatio()
+{
+	io_connect_t displayPort = CGDisplayIOServicePort( CGMainDisplayID() );
+	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
+	int width = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayHorizontalImageSize)) );
+	int height = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayVerticalImageSize)) );
+
+	CFRelease( dict );
+
+	if( width && height )
+		return float(width)/height;
+	return 4/3.f;
+}	
+
+/*
+ * (c) 2003-2006 Steve Checkoway
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+<<<<<<< HEAD:itgmania/src/arch/ArchHooks/ArchHooks_MacOSX.mm
+>>>>>>> origin/c++11:src/arch/ArchHooks/ArchHooks_MacOSX.cpp
+=======
+>>>>>>> origin/unified-ui-features-13937230807013224518:src/arch/ArchHooks/ArchHooks_MacOSX.mm

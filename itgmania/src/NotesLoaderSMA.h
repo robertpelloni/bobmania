@@ -1,10 +1,9 @@
 #ifndef NOTES_LOADER_SMA_H
 #define NOTES_LOADER_SMA_H
 
-#include <string>
-
-#include "BackgroundUtil.h"
+#include "GameConstantsAndTypes.h"
 #include "NotesLoaderSM.h"
+#include "BackgroundUtil.h"
 
 class MsdFile;
 class Song;
@@ -12,22 +11,21 @@ class Steps;
 class TimingData;
 
 /** @brief Reads a Song from a .SMA file. */
-struct SMALoader : public SMLoader {
-  SMALoader() : SMLoader(".sma") {}
+struct SMALoader : public SMLoader
+{	
+	SMALoader() : SMLoader(".sma") {}
+	
+	virtual bool LoadFromSimfile( const RString &sPath, Song &out, bool bFromCache = false );
 
-  virtual bool LoadFromSimfile(
-      const std::string& sPath, Song& out, bool bFromCache = false);
-
-  void ProcessBeatsPerMeasure(TimingData& out, const std::string sParam);
-  void ProcessMultipliers(
-      TimingData& out, const int iRowsPerBeat, const std::string sParam);
-  /**
-   * @brief Process the Speed Segments from the string.
-   * @param out the TimingData being modified.
-   * @param line the string in question.
-   * @param rowsPerBeat the number of rows per beat for this purpose. */
-  virtual void ProcessSpeeds(
-      TimingData& out, const std::string line, const int rowsPerBeat);
+	
+	void ProcessBeatsPerMeasure( TimingData &out, const RString sParam );
+	void ProcessMultipliers( TimingData &out, const int iRowsPerBeat, const RString sParam );
+	/**
+	 * @brief Process the Speed Segments from the string.
+	 * @param out the TimingData being modified.
+	 * @param line the string in question.
+	 * @param rowsPerBeat the number of rows per beat for this purpose. */
+	virtual void ProcessSpeeds( TimingData &out, const RString line, const int rowsPerBeat );
 };
 
 #endif
@@ -37,7 +35,7 @@ struct SMALoader : public SMLoader {
  * @author Aldo Fregoso, Jason Felds (c) 2009-2011
  * @section LICENSE
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -47,7 +45,7 @@ struct SMALoader : public SMLoader {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

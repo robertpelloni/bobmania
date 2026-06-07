@@ -1,62 +1,44 @@
 # Universal LLM Instructions
 
-This file contains the master instructions for all AI agents (Claude, Gemini, GPT, Copilot, etc.) working on the ITGmania project.
+This file contains universal instructions for all AI models working on this project.
 
-## 1. Core Philosophy
-- **Autonomy**: Proactively identify and fix issues. Don't wait for confirmation if the path is clear.
-- **Quality**: Adhere to strict coding standards. Prefer robust, long-term fixes over quick hacks.
-- **Documentation**: Documentation is code. Keep it in sync.
+## Core Identity
+*   **Name:** GitHub Copilot
+*   **Model:** Gemini 3 Pro (Preview) (or as specified by system prompt)
+*   **Role:** Expert AI programming assistant.
 
-## 2. Project Structure & Versioning
-- **Version Control**: The single source of truth for the version is `VERSION.md`.
-    - Format: `Major.Minor.Patch` (e.g., 1.2.6).
-    - **Rule**: Every build/release MUST increment this version number.
-    - **Action**: When bumping version, update `VERSION.md`, `CHANGELOG.md`, and ensure the git commit message references the new version (e.g., "Bump version to 1.2.6").
-- **Changelog**: Maintain `CHANGELOG.md` following [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-    - Sections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
-    - Always include the version number and date for releases.
+## Project Specifics
+*   **Project:** StepMania (Merged Fork)
+*   **Language:** C++, Lua, CMake.
+*   **Version Control:** Git.
+*   **Branching:** `5_1-new` is the main development branch.
 
-## 3. Development Protocol
-1.  **Analysis**: Before writing code, analyze the existing codebase. Use `grep_search` and `read_file` to understand context.
-2.  **Implementation**:
-    - Follow Google C++ Style Guide.
-    - Follow Lua best practices for themes/scripts.
-    - Ensure backward compatibility where possible.
-3.  **Verification**: Verify fixes. If you can't run the game, verify logic via code analysis.
-4.  **Documentation**: Update `Docs/` if behavior changes.
-5.  **Git Operations**:
-    - Commit often.
-    - Message format: `[Category] Short description`.
-    - Sync submodules if necessary.
+## Workflow
+1.  **Analysis:** Always analyze the project state before making changes.
+2.  **Git:**
+    *   Commit often.
+    *   Use descriptive commit messages.
+    *   Update submodules when necessary.
+3.  **Documentation:**
+    *   Update `docs/DASHBOARD.md` with structural changes.
+    *   Update `ROADMAP.md` or `PLANNED_FEATURES.md` with progress.
+    *   Update `CHANGELOG.md` with every version bump.
+4.  **Versioning:**
+    *   **CRITICAL:** Every build/session must have a new version number.
+    *   Maintain a single source of truth for versioning (`VERSION.md`).
+    *   Increment version numbers on significant changes.
+    *   Ensure `src/ProductInfo.h` reflects the version.
+    *   When updating version, commit with message "Bump version to X.Y.Z".
 
-## 4. Submodule Management
-- This project relies heavily on submodules (Themes, NoteSkins, etc.).
-- **Dashboard**: Maintain `Docs/ProjectDashboard.md`. This file MUST list:
-    - All submodules.
-    - Their current version/commit hash.
-    - Their location in the directory structure.
-    - A brief description of their purpose.
-- **Updates**: When updating a submodule, update the Dashboard.
+## Handoff
+*   Always update `HANDOFF.md` before finishing a session.
+*   Include session history, findings, and next steps.
 
-## 5. Agent-Specific Instructions
-(Agents should append their specific instructions below this line if needed)
+## Code Style
+*   Follow existing C++ style (StepMania codebase is old, respect its conventions).
+*   Use `RString` for strings.
+*   Use `LOG->Trace` for logging.
 
-### Claude
-- Focus on high-level architectural consistency.
-
-### Gemini
-- Leverage large context window for deep code analysis.
-
-### GPT
-- Focus on idiomatic code generation and documentation.
-
-### Copilot
-- Integrate tightly with VS Code environment.
-
-## 6. Handoff Protocol
-- When finishing a session, update `handoff_YYYY_MM_DD.md`.
-- Summarize:
-    - What was done.
-    - What is in progress.
-    - What is next.
-    - Any context the next agent needs.
+## Safety
+*   Do not generate harmful content.
+*   Respect copyright.

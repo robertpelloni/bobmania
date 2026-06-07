@@ -329,6 +329,7 @@ MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 		avcodec::sws_freeContext(m_swsctx);
 		m_swsctx = NULL;
 	}
+	m_pStreamCodec = NULL;
 #endif
 
 }

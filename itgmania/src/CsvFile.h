@@ -1,28 +1,29 @@
+/* CsvFile - Reading and writing .CSV files. */
 
 #ifndef CsvFile_H
 #define CsvFile_H
 
-#include <string>
 #include <vector>
 
-#include "RageFileBasic.h"
 
-// Reading and writing .CSV files.
-class CsvFile {
- public:
-  CsvFile();
+class RageFileBasic;
 
-  bool ReadFile(const RString& path);
-  bool ReadFile(RageFileBasic& file);
-  bool WriteFile(const RString& path) const;
-  bool WriteFile(RageFileBasic& file) const;
+class CsvFile
+{
+public:
+	CsvFile();
 
-  typedef std::vector<RString> StringVector;
-  std::vector<StringVector> all_lines_;
+	bool ReadFile( const RString &sPath );
+	bool ReadFile( RageFileBasic &sFile );
+	bool WriteFile( const RString &sPath ) const;
+	bool WriteFile( RageFileBasic &sFile ) const;
 
- private:
-  RString path_;
-  mutable RString error_;
+	typedef std::vector<RString> StringVector;
+	std::vector<StringVector> m_vvs;
+
+private:
+	RString m_sPath;
+	mutable RString m_sError;
 };
 
 #endif

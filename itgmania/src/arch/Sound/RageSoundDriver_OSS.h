@@ -1,37 +1,38 @@
 #ifndef RAGE_SOUND_WAVEOUT
 #define RAGE_SOUND_WAVEOUT
 
-#include <cstdint>
-#include <string>
-
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
+#include "RageTimer.h"
 
-class RageSoundDriver_OSS : public RageSoundDriver {
-  int fd;
+#include <cstdint>
 
-  bool shutdown;
-  int last_cursor_pos;
-  int samplerate;
+class RageSoundDriver_OSS: public RageSoundDriver
+{
+	int fd;
 
-  static int MixerThread_start(void* p);
-  void MixerThread();
-  RageThread MixingThread;
+	bool shutdown;
+	int last_cursor_pos;
+	int samplerate;
 
-  static std::string CheckOSSVersion(int fd);
+	static int MixerThread_start(void *p);
+	void MixerThread();
+	RageThread MixingThread;
 
- public:
-  bool GetData();
-  int GetSampleRate() const { return samplerate; }
+	static RString CheckOSSVersion( int fd );
 
-  /* virtuals: */
-  int64_t GetPosition() const;
-  float GetPlayLatency() const;
-  void SetupDecodingThread();
+public:
+	bool GetData();
+	int GetSampleRate() const { return samplerate; }
 
-  RageSoundDriver_OSS();
-  std::string Init();
-  ~RageSoundDriver_OSS();
+	/* virtuals: */
+	int64_t GetPosition() const;
+	float GetPlayLatency() const;
+	void SetupDecodingThread();
+
+	RageSoundDriver_OSS();
+	RString Init();
+	~RageSoundDriver_OSS();
 };
 
 #endif

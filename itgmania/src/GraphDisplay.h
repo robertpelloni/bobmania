@@ -1,50 +1,47 @@
 #ifndef GRAPH_DISPLAY_H
 #define GRAPH_DISPLAY_H
 
-#include <vector>
-
 #include "ActorFrame.h"
 #include "AutoActor.h"
-#include "GraphDisplay.h"
-#include "PlayerStageStats.h"
-#include "StageStats.h"
 
-// TODO(teejusb): These are defined in the cpp. Move them to their own headers.
+#include <vector>
+
+
+class StageStats;
+class PlayerStageStats;
 class GraphLine;
 class GraphBody;
+/** @brief A graph of the player's life over the course of Gameplay, used on Evaluation. */
+class GraphDisplay: public ActorFrame
+{
+public:
+	GraphDisplay();
+	~GraphDisplay();
+	virtual GraphDisplay *Copy() const;
 
-// A graph of the player's life over the course of Gameplay, used on Evaluation.
-class GraphDisplay : public ActorFrame {
- public:
-  GraphDisplay();
-  ~GraphDisplay();
-  virtual GraphDisplay* Copy() const;
+	void Load( RString sMetricsGroup );
+	void Set( const StageStats &ss, const PlayerStageStats &s );
 
-  void Load(RString metrics_group);
-  void Set(
-      const StageStats& stage_stats,
-      const PlayerStageStats& player_stage_stats);
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
-  // Lua
-  virtual void PushSelf(lua_State* L);
+private:
+	void UpdateVerts();
 
- private:
-  void UpdateVerts();
+	std::vector<float> m_Values;
 
-  std::vector<float> values_;
+	RectF m_quadVertices;
 
-  RectF quad_vertices_;
+	std::vector<Actor*> m_vpSongBoundaries;
+	AutoActor m_sprBarely;
+	AutoActor m_sprBacking;
+	AutoActor m_sprSongBoundary;
 
-  std::vector<Actor*> song_boundaries_;
-  AutoActor barely_;
-  AutoActor backing_;
-  AutoActor song_boundary_;
-
-  GraphLine* graph_line_;
-  GraphBody* graph_body_;
+	GraphLine *m_pGraphLine;
+	GraphBody *m_pGraphBody;
 };
 
-#endif  // GRAPH_DISPLAY_H
+#endif
 
 /*
  * (c) 2003 Glenn Maynard

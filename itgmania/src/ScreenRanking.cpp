@@ -34,7 +34,7 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 #define TIME_X(row)	(TIME_START_X+ROW_SPACING_X*row)
 #define TIME_Y(row)	(TIME_START_Y+ROW_SPACING_Y*row)
 
-static RString STEPS_TYPE_COLOR_NAME( std::size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
+static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
 void ScreenRanking::Init()
 {
@@ -255,11 +255,11 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(st, pts.category);
 				HighScore hs;
 				bool bRecentHighScore = false;
-				if( l < (int)hsl.high_scores_.size() )
+				if( l < (int)hsl.vHighScores.size() )
 				{
-					hs = hsl.high_scores_[l];
-					RString *psName = hsl.high_scores_[l].GetNameMutable();
-					bRecentHighScore = find( GAMESTATE->names_that_were_filled_.begin(), GAMESTATE->names_that_were_filled_.end(), psName ) != GAMESTATE->names_that_were_filled_.end();
+					hs = hsl.vHighScores[l];
+					RString *psName = hsl.vHighScores[l].GetNameMutable();
+					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{
@@ -295,11 +295,11 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 			{
 				HighScore hs;
 				bool bRecentHighScore = false;
-				if( l < (int)hsl.high_scores_.size() )
+				if( l < (int)hsl.vHighScores.size() )
 				{
-					hs = hsl.high_scores_[l];
-					const RString *psName = hsl.high_scores_[l].GetNameMutable();
-					bRecentHighScore = find( GAMESTATE->names_that_were_filled_.begin(), GAMESTATE->names_that_were_filled_.end(), psName ) != GAMESTATE->names_that_were_filled_.end();
+					hs = hsl.vHighScores[l];
+					const RString *psName = hsl.vHighScores[l].GetNameMutable();
+					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{

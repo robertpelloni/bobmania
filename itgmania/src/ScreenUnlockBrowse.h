@@ -1,21 +1,20 @@
 #ifndef ScreenUnlockBrowse_H
 #define ScreenUnlockBrowse_H
 
-#include "FadingBanner.h"
-#include "InputQueue.h"
-#include "MessageManager.h"
 #include "ScreenSelectMaster.h"
+#include "FadingBanner.h"
 
-class ScreenUnlockBrowse : public ScreenSelectMaster {
- public:
-  virtual void Init();
-  virtual void BeginScreen();
-  virtual bool MenuStart(const InputEventPlus& input);
+class ScreenUnlockBrowse : public ScreenSelectMaster
+{
+public:
+	virtual void Init();
+	virtual void BeginScreen();
+	virtual bool MenuStart( const InputEventPlus &input );
 
-  virtual void HandleMessage(const Message& msg);
+	virtual void HandleMessage( const Message &msg );
 
- protected:
-  FadingBanner m_banner;
+protected:
+	FadingBanner m_banner;
 };
 
 #endif
@@ -23,7 +22,7 @@ class ScreenUnlockBrowse : public ScreenSelectMaster {
 /*
  * (c) 2006 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -33,7 +32,7 @@ class ScreenUnlockBrowse : public ScreenSelectMaster {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

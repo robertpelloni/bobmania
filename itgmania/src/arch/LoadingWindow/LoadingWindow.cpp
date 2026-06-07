@@ -7,6 +7,9 @@
 #include <vector>
 
 
+#include <vector>
+
+
 LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
@@ -17,6 +20,8 @@ LoadingWindow *LoadingWindow::Create()
 	// Don't load nullptr by default.
 	const RString drivers = "win32,macosx,gtk";
 	std::vector<RString> DriversToTry;
+	const RString drivers = "win32,macosx,gtk";
+	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
 	ASSERT( DriversToTry.size() != 0 );
@@ -29,15 +34,15 @@ LoadingWindow *LoadingWindow::Create()
 		Driver = DriversToTry[i];
 
 #ifdef USE_LOADING_WINDOW_MACOSX
-		if( !CompareNoCase(DriversToTry[i], "MacOSX") )	ret = new LoadingWindow_MacOSX;
+		if( !DriversToTry[i].CompareNoCase("MacOSX") )	ret = new LoadingWindow_MacOSX;
 #endif
 #ifdef USE_LOADING_WINDOW_GTK
-		if( !CompareNoCase(DriversToTry[i], "Gtk") )	ret = new LoadingWindow_Gtk;
+		if( !DriversToTry[i].CompareNoCase("Gtk") )	ret = new LoadingWindow_Gtk;
 #endif
 #ifdef USE_LOADING_WINDOW_WIN32
-		if( !CompareNoCase(DriversToTry[i], "Win32") )	ret = new LoadingWindow_Win32;
+		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
 #endif
-		if( !CompareNoCase(DriversToTry[i], "Null") )	ret = new LoadingWindow_Null;
+		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
 
 		if( ret == nullptr )
 			continue;
@@ -46,6 +51,7 @@ LoadingWindow *LoadingWindow::Create()
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
+			RageUtil::SafeDelete( ret );
 			RageUtil::SafeDelete( ret );
 		}
 	}
@@ -63,6 +69,7 @@ LoadingWindow *LoadingWindow::Create()
  * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
  *
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -72,6 +79,7 @@ LoadingWindow *LoadingWindow::Create()
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+ *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

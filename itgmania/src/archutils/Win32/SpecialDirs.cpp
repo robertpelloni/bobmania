@@ -1,46 +1,48 @@
+#include "global.h"
 #include "SpecialDirs.h"
-
 #include <shlobj.h>
 
-#include <string>
-
-#include "global.h"
-
-static std::string GetSpecialFolderPath(int csidl) {
-  std::string sDir;
-  TCHAR szDir[MAX_PATH] = "";
-  HRESULT hResult =
-      SHGetFolderPath(nullptr, csidl, nullptr, SHGFP_TYPE_CURRENT, szDir);
-  ASSERT(hResult == S_OK);
-  sDir = szDir;
-  sDir += "/";
-  return sDir;
+static RString GetSpecialFolderPath( int csidl )
+{
+	RString sDir;
+	TCHAR szDir[MAX_PATH] = "";
+	HRESULT hResult = SHGetFolderPath( nullptr, csidl, nullptr, SHGFP_TYPE_CURRENT, szDir );
+	ASSERT( hResult == S_OK );
+	sDir = szDir;
+	sDir += "/";
+	return sDir;
 }
 
-std::string SpecialDirs::GetAppDataDir() {
-  return GetSpecialFolderPath(CSIDL_APPDATA);
+RString SpecialDirs::GetAppDataDir()
+{
+	return GetSpecialFolderPath( CSIDL_APPDATA );
 }
 
-std::string SpecialDirs::GetLocalAppDataDir() {
-  return GetSpecialFolderPath(CSIDL_LOCAL_APPDATA);
+RString SpecialDirs::GetLocalAppDataDir()
+{
+	return GetSpecialFolderPath( CSIDL_LOCAL_APPDATA );
 }
 
-std::string SpecialDirs::GetCommonAppDataDir() {
-  return GetSpecialFolderPath(CSIDL_COMMON_APPDATA);
+RString SpecialDirs::GetCommonAppDataDir()
+{
+	return GetSpecialFolderPath( CSIDL_COMMON_APPDATA );
 }
 
-std::string SpecialDirs::GetPicturesDir() {
-  return GetSpecialFolderPath(CSIDL_MYPICTURES);
+RString SpecialDirs::GetPicturesDir()
+{
+	return GetSpecialFolderPath( CSIDL_MYPICTURES );
 }
 
-std::string SpecialDirs::GetDesktopDir() {
-  return GetSpecialFolderPath(CSIDL_DESKTOP);
+RString SpecialDirs::GetDesktopDir()
+{
+	return GetSpecialFolderPath( CSIDL_DESKTOP );
 }
+
 
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -50,7 +52,7 @@ std::string SpecialDirs::GetDesktopDir() {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

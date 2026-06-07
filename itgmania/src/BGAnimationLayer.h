@@ -1,52 +1,56 @@
 #ifndef BGANIMATIONLAYER_H
 #define BGANIMATIONLAYER_H
 
+#include "GameConstantsAndTypes.h"
+#include "ActorFrame.h"
+
 #include <map>
 #include <vector>
 
-#include "ActorFrame.h"
-#include "GameConstantsAndTypes.h"
-#include "XmlFile.h"
 
-// Layer elements used by BGAnimation.
-class BGAnimationLayer : public ActorFrame {
- public:
-  BGAnimationLayer();
-  ~BGAnimationLayer();
+class XNode;
 
-  void LoadFromAniLayerFile(const RString& sPath);
-  void LoadFromNode(const XNode* pNode);
+/** @brief Layer elements used by BGAnimation. */
+class BGAnimationLayer : public ActorFrame
+{
+public:
+	BGAnimationLayer();
+	~BGAnimationLayer();
 
-  void UpdateInternal(float fDeltaTime);
+	void LoadFromAniLayerFile( const RString& sPath );
+	void LoadFromNode( const XNode* pNode );
 
-  float GetMaxTweenTimeLeft() const;
+	void UpdateInternal( float fDeltaTime );
 
- protected:
-  std::vector<RageVector3> m_vParticleVelocity;
+	float GetMaxTweenTimeLeft() const;
 
-  enum Type {
-    TYPE_SPRITE,
-    TYPE_PARTICLES,
-    TYPE_TILES,
-    NUM_TYPES,
-  } m_Type;
+protected:
+	std::vector<RageVector3> m_vParticleVelocity;
 
-  // stretch stuff
-  float m_fTexCoordVelocityX;
-  float m_fTexCoordVelocityY;
+	enum Type
+	{
+		TYPE_SPRITE,
+		TYPE_PARTICLES,
+		TYPE_TILES,
+		NUM_TYPES,
+	} m_Type;
 
-  // particles stuff
-  bool m_bParticlesBounce;
+	// stretch stuff
+	float m_fTexCoordVelocityX;
+	float m_fTexCoordVelocityY;
 
-  // tiles stuff
-  int m_iNumTilesWide;
-  int m_iNumTilesHigh;
-  float m_fTilesStartX;
-  float m_fTilesStartY;
-  float m_fTilesSpacingX;
-  float m_fTilesSpacingY;
-  float m_fTileVelocityX;
-  float m_fTileVelocityY;
+	// particles stuff
+	bool  m_bParticlesBounce;
+
+	// tiles stuff
+	int m_iNumTilesWide;
+	int m_iNumTilesHigh;
+	float m_fTilesStartX;
+	float m_fTilesStartY;
+	float m_fTilesSpacingX;
+	float m_fTilesSpacingY;
+	float m_fTileVelocityX;
+	float m_fTileVelocityY;
 };
 
 #endif

@@ -1,35 +1,35 @@
 #ifndef SCREEN_EDIT_MENU_H
 #define SCREEN_EDIT_MENU_H
 
-#include "BitmapText.h"
-#include "EditMenu.h"
-#include "InputQueue.h"
-#include "ScreenMessage.h"
 #include "ScreenWithMenuElements.h"
+#include "EditMenu.h"
+#include "BitmapText.h"
 
-class ScreenEditMenu : public ScreenWithMenuElements {
- public:
-  virtual void Init();
+class ScreenEditMenu : public ScreenWithMenuElements
+{
+public:
+	virtual void Init();
 
-  virtual void HandleScreenMessage(const ScreenMessage SM);
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
- private:
-  bool MenuUp(const InputEventPlus& input);
-  bool MenuDown(const InputEventPlus& input);
-  bool MenuLeft(const InputEventPlus& input);
-  bool MenuRight(const InputEventPlus& input);
-  bool MenuBack(const InputEventPlus& input);
-  bool MenuStart(const InputEventPlus& input);
+private:
 
-  void RefreshExplanationText();
-  void RefreshNumStepsLoadedFromProfile();
+	bool MenuUp( const InputEventPlus &input );
+	bool MenuDown( const InputEventPlus &input );
+	bool MenuLeft( const InputEventPlus &input );
+	bool MenuRight( const InputEventPlus &input );
+	bool MenuBack( const InputEventPlus &input );
+	bool MenuStart( const InputEventPlus &input );
 
-  EditMenu m_Selector;
+	void RefreshExplanationText();
+	void RefreshNumStepsLoadedFromProfile();
 
- private:
-  BitmapText m_textExplanation;
-  BitmapText m_textNumStepsLoadedFromProfile;
-  BitmapText m_NoSongsMessage;
+	EditMenu		m_Selector;
+
+private:
+	BitmapText		m_textExplanation;
+	BitmapText		m_textNumStepsLoadedFromProfile;
+	BitmapText m_NoSongsMessage;
 };
 
 #endif
@@ -37,7 +37,7 @@ class ScreenEditMenu : public ScreenWithMenuElements {
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -47,7 +47,7 @@ class ScreenEditMenu : public ScreenWithMenuElements {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

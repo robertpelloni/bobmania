@@ -1,17 +1,18 @@
 #ifndef SCREEN_SONG_OPTIONS_H
 #define SCREEN_SONG_OPTIONS_H
 
-#include <vector>
-
-#include "PlayerNumber.h"
 #include "ScreenOptionsMaster.h"
 
-class ScreenSongOptions : public ScreenOptionsMaster {
- public:
-  virtual void Init();
+#include <vector>
 
- private:
-  virtual void ExportOptions(int iRow, const std::vector<PlayerNumber>& vpns);
+
+class ScreenSongOptions : public ScreenOptionsMaster
+{
+public:
+	virtual void Init();
+
+private:
+	virtual void ExportOptions( int iRow, const std::vector<PlayerNumber> &vpns );
 };
 
 #endif

@@ -1,8 +1,8 @@
 #ifndef NOTE_DATA_WITH_SCORING_H
 #define NOTE_DATA_WITH_SCORING_H
 
-#include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 
 struct RadarValues;
 class NoteData;
@@ -10,27 +10,20 @@ class PlayerStageStats;
 struct TapNote;
 
 /** @brief NoteData with scores for each TapNote and HoldNote. */
-namespace NoteDataWithScoring {
-/**
- * @brief Has the current row of NoteData been judged completely?
- * @param in the entire Notedata.
- * @param iRow the row to check.
- * @plnum If valid, only consider notes for that PlayerNumber
- * @return true if it has been completley judged, or false otherwise. */
-bool IsRowCompletelyJudged(
-    const NoteData& in, unsigned iRow,
-    PlayerNumber plnum = PlayerNumber_Invalid);
-TapNoteScore MinTapNoteScore(
-    const NoteData& in, unsigned iRow,
-    PlayerNumber plnum = PlayerNumber_Invalid);
-const TapNote& LastTapNoteWithResult(
-    const NoteData& in, unsigned iRow,
-    PlayerNumber plnum = PlayerNumber_Invalid);
+namespace NoteDataWithScoring
+{
+	/**
+	 * @brief Has the current row of NoteData been judged completely?
+	 * @param in the entire Notedata.
+	 * @param iRow the row to check.
+	 * @return true if it has been completley judged, or false otherwise. */
+	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, PlayerNumber plnum = PlayerNumber_Invalid );
+	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow, PlayerNumber plnum = PlayerNumber_Invalid );
+	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber plnum = PlayerNumber_Invalid );
 
-void GetActualRadarValues(
-    const NoteData& in, const PlayerStageStats& pss, float song_seconds,
-    RadarValues& out);
-};  // namespace NoteDataWithScoring
+	void GetActualRadarValues(const NoteData &in, const PlayerStageStats &pss,
+		float song_seconds, RadarValues& out);
+};
 
 #endif
 
@@ -39,7 +32,7 @@ void GetActualRadarValues(
  * @author Chris Danford, Glenn Maynard (c) 2001-2004
  * @section LICENSE
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -49,7 +42,7 @@ void GetActualRadarValues(
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

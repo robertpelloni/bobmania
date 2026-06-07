@@ -1,40 +1,42 @@
 #ifndef GHOSTARROWROW_H
 #define GHOSTARROWROW_H
 
-#include <vector>
-
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
-#include "NoteDisplay.h"
 #include "NoteTypes.h"
-#include "PlayerState.h"
+#include "NoteDisplay.h"
+
+#include <vector>
+
 
 class PlayerState;
-// Row of GhostArrow Actors.
-class GhostArrowRow : public ActorFrame {
- public:
-  virtual ~GhostArrowRow();
-  virtual void Update(float delta);
-  virtual void DrawPrimitives();
+/** @brief Row of GhostArrow Actors. */
+class GhostArrowRow : public ActorFrame
+{
+public:
+	virtual ~GhostArrowRow();
+	virtual void Update( float fDeltaTime );
+	virtual void DrawPrimitives();
 
-  void Load(const PlayerState* player_state, float y_reverse_offset);
-  void SetColumnRenderers(std::vector<NoteColumnRenderer>& renderers);
+	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
+	void SetColumnRenderers(std::vector<NoteColumnRenderer>& renderers);
 
-  void DidTapNote(int col, TapNoteScore tns, bool bright);
-  void DidHoldNote(int col, HoldNoteScore hns, bool bright);
-  void SetHoldShowing(int col, const TapNote& tn);
+	void DidTapNote( int iCol, TapNoteScore tns, bool bBright );
+	void DidHoldNote( int iCol, HoldNoteScore hns, bool bBright );
+	void SetHoldShowing( int iCol, const TapNote &tn );
 
- protected:
-  float y_reverse_offset_pixels_;
-  const PlayerState* player_state_;
+protected:
+	float m_fYReverseOffsetPixels;
+	const PlayerState* m_pPlayerState;
 
-  const std::vector<NoteColumnRenderer>* renderers_;
-  std::vector<Actor*> ghost_;
-  std::vector<TapNoteSubType> hold_showing_;
-  std::vector<TapNoteSubType> last_hold_showing_;
+	std::vector<NoteColumnRenderer> const* m_renderers;
+	std::vector<Actor *> 	m_Ghost;
+	std::vector<TapNoteSubType> m_bHoldShowing;
+	std::vector<TapNoteSubType> m_bLastHoldShowing;
 };
 
-#endif  // GHOSTARROWROW_H
+
+#endif
 
 /**
  * @file

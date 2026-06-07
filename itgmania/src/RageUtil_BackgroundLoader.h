@@ -3,66 +3,62 @@
 #ifndef RAGE_UTIL_BACKGROUND_LOADER_H
 #define RAGE_UTIL_BACKGROUND_LOADER_H
 
+#include "RageThreads.h"
+
 #include <map>
-#include <string>
 #include <vector>
 
-#include "RageThreads.h"
 
 class RageFileDriverCached;
 
-class BackgroundLoader {
- public:
-  BackgroundLoader();
+class BackgroundLoader
+{
+public:
+	BackgroundLoader();
 
-  /* Note that destruction of this object will wait for any existing requests
-   * to finish aborting before returning. */
-  ~BackgroundLoader();
+	/* Note that destruction of this object will wait for any existing requests
+	 * to finish aborting before returning. */
+	~BackgroundLoader();
 
-  /* Read the file in a background thread.  Files will be read in the order
-   * requested. */
-  void CacheFile(const std::string& file);
+	/* Read the file in a background thread.  Files will be read in the order requested. */
+	void CacheFile( const RString &file );
 
-  /* Return true if the requested CacheFile request has finished.  If true is
-   * returned, the cached file can be read using the path returned in
-   * sActualPath. */
-  bool IsCacheFileFinished(const std::string& sFile, std::string& sActualPath);
+	/* Return true if the requested CacheFile request has finished.  If true is returned,
+	 * the cached file can be read using the path returned in sActualPath. */
+	bool IsCacheFileFinished( const RString &sFile, RString &sActualPath );
 
-  /* Call this when finished with a cached file, to release any resources. */
-  void FinishedWithCachedFile(std::string sFile);
+	/* Call this when finished with a cached file, to release any resources. */
+	void FinishedWithCachedFile( RString sFile );
 
-  /* Abort all loads. */
-  void Abort();
+	/* Abort all loads. */
+	void Abort();
 
- private:
-  RageThread m_LoadThread;
-  bool m_bShutdownThread;
-  void LoadThread();
-  static int LoadThread_Start(void* p) {
-    ((BackgroundLoader*)p)->LoadThread();
-    return 0;
-  }
+private:
+	RageThread m_LoadThread;
+	bool m_bShutdownThread;
+	void LoadThread();
+	static int LoadThread_Start( void *p ) { ((BackgroundLoader *) p)->LoadThread(); return 0; }
 
-  std::string GetRequest();
+	RString GetRequest();
 
-  std::string GetCachePath(std::string sPath) const;
-  std::string m_sCachePathPrefix;
+	RString GetCachePath( RString sPath ) const;
+	RString m_sCachePathPrefix;
 
-  RageSemaphore m_StartSem;
+	RageSemaphore m_StartSem;
 
-  /* Lock before accessing any of the rest of the object.  Don't keep this
-   * locked while doing expensive operations, like reading files. */
-  RageMutex m_Mutex;
+	/* Lock before accessing any of the rest of the object.  Don't keep this locked
+	 * while doing expensive operations, like reading files. */
+	RageMutex m_Mutex;
 
-  std::vector<std::string> m_CacheRequests;
+	std::vector<RString> m_CacheRequests;
 
-  /* Filename to number of completed requests */
-  std::map<std::string, int> m_FinishedRequests;
+	/* Filename to number of completed requests */
+	std::map<RString, int> m_FinishedRequests;
 
-  bool m_sThreadIsActive;
-  bool m_sThreadShouldAbort;
+	bool m_sThreadIsActive;
+	bool m_sThreadShouldAbort;
 
-  RageFileDriverCached* m_pDriver;
+	RageFileDriverCached *m_pDriver;
 };
 
 #endif

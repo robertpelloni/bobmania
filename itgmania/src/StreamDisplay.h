@@ -11,6 +11,9 @@
 #include <vector>
 
 
+#include <vector>
+
+
 enum StreamType
 {
 	StreamType_Normal,
@@ -36,6 +39,7 @@ public:
 
 private:
 	std::vector<Sprite*>	m_vpSprPill[NUM_StreamType];
+	std::vector<Sprite*>	m_vpSprPill[NUM_StreamType];
 
 	LuaExpressionTransform		m_transformPill;	// params: self,offsetFromCenter,itemIndex,numItems
 	ThemeMetric<float> VELOCITY_MULTIPLIER;
@@ -60,6 +64,7 @@ private:
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
  *
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -69,6 +74,7 @@ private:
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
+ *
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

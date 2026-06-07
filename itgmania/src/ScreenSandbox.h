@@ -2,14 +2,14 @@
 #define SCREEN_SANDBOX_H
 
 #include "Screen.h"
-#include "ScreenMessage.h"
 
-class ScreenSandbox : public Screen {
- public:
-  virtual bool Input(const InputEventPlus& input);
-  virtual void HandleScreenMessage(const ScreenMessage SM);
-  virtual void Update(float f);
-  virtual void DrawPrimitives();
+class ScreenSandbox : public Screen
+{
+public:
+	virtual bool Input( const InputEventPlus &input );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void Update(float f);
+	virtual void DrawPrimitives();
 };
 
 #endif
@@ -17,7 +17,7 @@ class ScreenSandbox : public Screen {
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -27,7 +27,7 @@ class ScreenSandbox : public Screen {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -38,3 +38,4 @@ class ScreenSandbox : public Screen {
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

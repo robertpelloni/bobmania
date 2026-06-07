@@ -6,6 +6,7 @@
 #include "IniFile.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "Group.h"
 #include "RageLog.h"
 #include "Song.h"
 #include "SongManager.h"
@@ -46,6 +47,7 @@ const RString EDIT_STEPS_SUBDIR    = "Edits/";
 const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 //const RString UPLOAD_SUBDIR         = "Upload/";
 const RString RIVAL_SUBDIR         = "Rivals/";
+const RString SONGS_SUBDIR         = "Songs/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
 static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
@@ -84,17 +86,22 @@ void Profile::ClearSongs()
 	{
 		return;
 	}
-	Song* gamestate_curr_song= GAMESTATE->cur_song_;
-	for(std::size_t i= 0; i < m_songs.size(); ++i)
+	Song* gamestate_curr_song= GAMESTATE->m_pCurSong;
+	for(size_t i= 0; i < m_songs.size(); ++i)
 	{
 		Song* curr_song= m_songs[i];
 		if(curr_song == gamestate_curr_song)
 		{
-			GAMESTATE->cur_song_.Set(nullptr);
+			GAMESTATE->m_pCurSong.Set(nullptr);
 		}
 		delete curr_song;
 	}
 	m_songs.clear();
+	if (m_group != nullptr)
+	{
+		RageUtil::SafeDelete( m_group);
+
+	}
 }
 
 int Profile::HighScoresForASong::GetNumTimesPlayed() const
@@ -239,7 +246,7 @@ Character *Profile::GetCharacter() const
 	CHARMAN->GetCharacters( vpCharacters );
 	for (Character *c : vpCharacters)
 	{
-		if( c->character_id_.CompareNoCase(m_sCharacterID)==0 )
+		if( c->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
 			return c;
 	}
 	return CHARMAN->GetDefaultCharacter();
@@ -316,10 +323,10 @@ int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) co
 				continue;	// skip
 
 			const HighScoreList &hsl = GetStepsHighScoreList( pSong, pSteps );
-			if( hsl.high_scores_.empty() )
+			if( hsl.vHighScores.empty() )
 				continue;	// skip
 
-			if( hsl.high_scores_[0].GetGrade() == g )
+			if( hsl.vHighScores[0].GetGrade() == g )
 				iCount++;
 		}
 	}
@@ -346,10 +353,10 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 			continue;
 
 		const HighScoreList &hsl = GetCourseHighScoreList( pCourse, pTrail );
-		if( hsl.high_scores_.empty() )
+		if( hsl.vHighScores.empty() )
 			continue;	// skip
 
-		if( hsl.high_scores_[0].GetGrade() == g )
+		if( hsl.vHighScores[0].GetGrade() == g )
 			iCount++;
 	}
 
@@ -550,7 +557,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 bool Profile::GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const
 {
 	std::map<RString, RString>::const_iterator it;
-	it = m_sDefaultModifiers.find( pGameType->name );
+	it = m_sDefaultModifiers.find( pGameType->m_szName );
 	if( it == m_sDefaultModifiers.end() )
 		return false;
 	sModifiersOut = it->second;
@@ -560,9 +567,9 @@ bool Profile::GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut
 void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifiers )
 {
 	if( sModifiers == "" )
-		m_sDefaultModifiers.erase( pGameType->name );
+		m_sDefaultModifiers.erase( pGameType->m_szName );
 	else
-		m_sDefaultModifiers[pGameType->name] = sModifiers;
+		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
 }
 
 bool Profile::IsCodeUnlocked( RString sUnlockEntryID ) const
@@ -798,8 +805,8 @@ void Profile::GetAllUsedHighScoreNames(std::set<RString>& names)
 				sub_entry != main_entry->second.sub_member.end(); ++sub_entry) \
 		{ \
 			for(std::vector<HighScore>::iterator high_score= \
-						sub_entry->second.hsl.high_scores_.begin(); \
-					high_score != sub_entry->second.hsl.high_scores_.end(); \
+						sub_entry->second.hsl.vHighScores.begin(); \
+					high_score != sub_entry->second.hsl.vHighScores.end(); \
 					++high_score) \
 			{ \
 				if(high_score->GetName().size() > 0) \
@@ -924,13 +931,13 @@ void Profile::MergeScoresFromOtherProfile(Profile* other, bool skip_totals,
 	{
 		// The old screenshot count is stored so we know where to start in the
 		// list when copying the screenshot images.
-		std::size_t old_count= m_vScreenshots.size();
+		size_t old_count= m_vScreenshots.size();
 		m_vScreenshots.insert(m_vScreenshots.end(),
 			other->m_vScreenshots.begin(), other->m_vScreenshots.end());
-		for(std::size_t sid= old_count; sid < m_vScreenshots.size(); ++sid)
+		for(size_t sid= old_count; sid < m_vScreenshots.size(); ++sid)
 		{
-			RString old_path= from_dir + "Screenshots/" + m_vScreenshots[sid].file_name;
-			RString new_path= to_dir + "Screenshots/" + m_vScreenshots[sid].file_name;
+			RString old_path= from_dir + "Screenshots/" + m_vScreenshots[sid].sFileName;
+			RString new_path= to_dir + "Screenshots/" + m_vScreenshots[sid].sFileName;
 			// Only move the old screenshot over if it exists and won't stomp an
 			// existing screenshot.
 			if(FILEMAN->DoesFileExist(old_path) && (!FILEMAN->DoesFileExist(new_path)))
@@ -1180,25 +1187,30 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 // entire song list to remove custom songs when unloading the profile is
 // wasteful. -Kyz
 
-void Profile::LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot)
+void Profile::LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot, bool isMemoryCard)
 {
 	if(!PREFSMAN->m_custom_songs_enable)
 	{
 		return;
 	}
 	RString songs_folder= dir + "Songs";
-	if(FILEMAN->DoesFileExist(songs_folder))
+	if(FILEMAN->DoesFileExist(songs_folder) && isMemoryCard)
 	{
 		LOG->Trace("Found songs folder in profile.");
 		std::vector<RString> song_folders;
 		RageTimer song_load_start_time;
 		song_load_start_time.Touch();
 		FILEMAN->GetDirListing(songs_folder + "/*", song_folders, true, true);
+
 		StripCvsAndSvn(song_folders);
 		StripMacResourceForks(song_folders);
+
+		Group* group = new Group(songs_folder, GetDisplayNameOrHighScoreName(), true);
+		m_group = group;
+
 		LOG->Trace("Found %i songs in profile.", int(song_folders.size()));
 		// Only songs that are successfully loaded count towards the limit. -Kyz
-		for(std::size_t song_index= 0; song_index < song_folders.size()
+		for(size_t song_index= 0; song_index < song_folders.size()
 					&& m_songs.size() < PREFSMAN->m_custom_songs_max_count;
 				++song_index)
 		{
@@ -1222,6 +1234,11 @@ void Profile::LoadSongsFromDir(RString const& dir, ProfileSlot prof_slot)
 		}
 		float load_time= song_load_start_time.Ago();
 		LOG->Trace("Successfully loaded %zu songs in %.6f from profile.", m_songs.size(), load_time);
+		
+		if (m_songs.empty()) {
+			delete m_group;
+			m_group = nullptr;
+		} 
 	}
 	else
 	{
@@ -1257,7 +1274,7 @@ ProfileLoadResult Profile::LoadStatsFromDir(RString dir, bool require_signature)
 	if(compressed)
 	{
 		RString sError;
-		std::uint32_t iCRC32;
+		uint32_t iCRC32;
 		RageFileObjInflate *pInflate = GunzipFile(pFile.release(), sError, &iCRC32);
 		if(pInflate == nullptr)
 		{
@@ -1408,6 +1425,8 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 		FILEMAN->CreateDir( sDir + EDIT_STEPS_SUBDIR );
 	if( ProfileManager::m_bProfileCourseEdits )
 		FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
+	if (PREFSMAN->m_custom_songs_enable)
+		FILEMAN->CreateDir( sDir + SONGS_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 	FILEMAN->CreateDir( sDir + RIVAL_SUBDIR );
 
@@ -1553,7 +1572,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "LastDifficulty",		DifficultyToString(m_LastDifficulty) );
 	pGeneralDataNode->AppendChild( "LastCourseDifficulty",		DifficultyToString(m_LastCourseDifficulty) );
 	if( m_LastStepsType != StepsType_Invalid )
-		pGeneralDataNode->AppendChild( "LastStepsType",			GAMEMAN->GetStepsTypeInfo(m_LastStepsType).name );
+		pGeneralDataNode->AppendChild( "LastStepsType",			GAMEMAN->GetStepsTypeInfo(m_LastStepsType).szName );
 	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
 	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
 	pGeneralDataNode->AppendChild( "CurrentCombo", m_iCurrentCombo );
@@ -2192,7 +2211,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 			continue;
 
 		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType" );
-		pStepsTypeNode->AppendAttr( "Type", GAMEMAN->GetStepsTypeInfo(st).name );
+		pStepsTypeNode->AppendAttr( "Type", GAMEMAN->GetStepsTypeInfo(st).szName );
 
 		FOREACH_ENUM( RankingCategory,rc )
 		{
@@ -2553,22 +2572,22 @@ public:
 		HighScore* hs= Luna<HighScore>::check(L, 1);
 		RString filename= SArg(2);
 		Screenshot screenshot;
-		screenshot.file_name= filename;
-		screenshot.md5= BinaryToHex(CRYPTMAN->GetMD5ForFile(filename));
-		screenshot.high_score= *hs;
+		screenshot.sFileName= filename;
+		screenshot.sMD5= BinaryToHex(CRYPTMAN->GetMD5ForFile(filename));
+		screenshot.highScore= *hs;
 		p->AddScreenshot(screenshot);
 		COMMON_RETURN_SELF;
 	}
 	DEFINE_METHOD(GetType, m_Type);
 	DEFINE_METHOD(GetPriority, m_ListPriority);
 
-	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName.c_str() ); return 1; }
 	static int SetDisplayName( T* p, lua_State *L )
 	{
 		p->m_sDisplayName= SArg(1);
 		COMMON_RETURN_SELF;
 	}
-	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName ); return 1; }
+	static int GetLastUsedHighScoreName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastUsedHighScoreName.c_str() ); return 1; }
 	static int SetLastUsedHighScoreName( T* p, lua_State *L )
 	{
 		p->m_sLastUsedHighScoreName= SArg(1);
@@ -2718,7 +2737,7 @@ public:
 	static int GetTotalGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iTotalGameplaySeconds ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties(Enum::Check<StepsType>(L, 1)) ); return 1; }
 	static int GetTotalCaloriesBurned( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fTotalCaloriesBurned ); return 1; }
-	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
+	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned().c_str() ); return 1; }
 	static int GetMostPopularSong( T* p, lua_State *L )
 	{
 		Song *p2 = p->GetMostPopularSong();
@@ -2784,7 +2803,7 @@ public:
 	{
 		lua_createtable(L, p->m_songs.size(), 0);
 		int song_tab= lua_gettop(L);
-		for(std::size_t i= 0; i < p->m_songs.size(); ++i)
+		for(size_t i= 0; i < p->m_songs.size(); ++i)
 		{
 			p->m_songs[i]->PushSelf(L);
 			lua_rawseti(L, song_tab, i+1);

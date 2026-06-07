@@ -3,8 +3,6 @@
 #ifndef RAGE_FILE_DRIVER_DIRECT_HELPERS_H
 #define RAGE_FILE_DRIVER_DIRECT_HELPERS_H
 
-#include <string>
-
 #if defined(HAVE_FCNTL_H)
 #include <fcntl.h>
 #endif
@@ -23,7 +21,6 @@
 #define DoWrite _write
 #define DoGetCwd _getcwd
 #else
-#include <unistd.h>
 #define DoOpen open
 #define DoRmdir rmdir
 #define DoLseek lseek
@@ -32,28 +29,28 @@
 #define DoWrite write
 #define DoGetCwd getcwd
 #endif
-std::string DoPathReplace(const std::string& sPath);
+RString DoPathReplace( const RString &sPath );
 
 #if defined(WIN32)
-bool WinMoveFile(std::string sOldPath, std::string sNewPath);
+bool WinMoveFile( RString sOldPath, RString sNewPath );
 #endif
 
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
 
-bool CreateDirectories(std::string sPath);
+bool CreateDirectories( RString sPath );
 
 #include "RageUtil_FileDB.h"
-class DirectFilenameDB : public FilenameDB {
- public:
-  DirectFilenameDB(std::string root);
-  void SetRoot(std::string root);
-  void CacheFile(const std::string& sPath);
-
- protected:
-  virtual void PopulateFileSet(FileSet& fs, const std::string& sPath);
-  std::string root;
+class DirectFilenameDB: public FilenameDB
+{
+public:
+	DirectFilenameDB( RString root );
+	void SetRoot( RString root );
+	void CacheFile( const RString &sPath );
+protected:
+	virtual void PopulateFileSet( FileSet &fs, const RString &sPath );
+	RString root;
 };
 
 #endif

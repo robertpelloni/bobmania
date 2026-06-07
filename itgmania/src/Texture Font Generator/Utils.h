@@ -1,26 +1,25 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <cstdio>
-
 #include "config.hpp"
-#include "stdafx.h"
+#include "config.hpp"
 
-struct Surface {
-  Surface() { pRGBA = NULL; }
-  ~Surface() { delete[] pRGBA; }
-  Surface(const Surface& cpy);
-  int iWidth;
-  int iHeight;
-  int iPitch;
-  unsigned char* pRGBA;
+struct Surface
+{
+	Surface() { pRGBA = NULL; }
+	~Surface() { delete [] pRGBA; }
+	Surface( const Surface &cpy );
+	int iWidth;
+	int iHeight;
+	int iPitch;
+	unsigned char *pRGBA;
 };
 
-void BitmapToSurface(HBITMAP hBitmap, Surface* pSurf);
-void GrayScaleToAlpha(Surface* pSurf);
-void GetBounds(const Surface* pSurf, RECT* out);
+void BitmapToSurface( HBITMAP hBitmap, Surface *pSurf );
+void GrayScaleToAlpha( Surface *pSurf );
+void GetBounds( const Surface *pSurf, RECT *out );
 
-bool SavePNG(FILE* f, char szErrorbuf[1024], const Surface* pSurf);
+bool SavePNG( FILE *f, char szErrorbuf[1024], const Surface *pSurf );
 
 #endif
 

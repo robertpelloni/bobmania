@@ -14,7 +14,7 @@ public:
 	virtual RageSoundReader *Copy() const = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const = 0;
-	virtual bool SetProperty( const RString & /* sProperty */, double /* fValue */ ) { return false; }
+	virtual bool SetProperty( const RString & /* sProperty */, float /* fValue */ ) { return false; }
 	virtual RageSoundReader *GetSource() { return nullptr; }
 
 	/* Return values for Read(). */
@@ -37,10 +37,10 @@ public:
 	 * for extrapolating the source frames of the remainder of the block.  These
 	 * values are valid so long as no parameters are changed before the next Read(). */
 	virtual int GetNextSourceFrame() const = 0;
-	virtual double GetStreamToSourceRatio() const = 0;
+	virtual float GetStreamToSourceRatio() const = 0;
 
 	virtual RString GetError() const = 0;
-	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = nullptr, double *fRate = nullptr );
+	int RetriedRead( float *pBuffer, int iFrames, int *iSourceFrame = nullptr, float *fRate = nullptr );
 };
 
 #endif

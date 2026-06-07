@@ -1,38 +1,37 @@
+#include "global.h"
 #include "LightsDriver_SystemMessage.h"
-
-#include <string>
-
-#include "EnumHelper.h"
-#include "GameInput.h"
-#include "LightsManager.h"
-#include "PrefsManager.h"
-#include "RageUtil.h"
 #include "ScreenManager.h"
-#include "arch/Lights/LightsDriver.h"
+#include "InputMapper.h"
+#include "PrefsManager.h"
 
 REGISTER_LIGHTS_DRIVER_CLASS(SystemMessage);
 
-LightsDriver_SystemMessage::LightsDriver_SystemMessage() {}
+LightsDriver_SystemMessage::LightsDriver_SystemMessage()
+{
+}
 
-LightsDriver_SystemMessage::~LightsDriver_SystemMessage() {}
+LightsDriver_SystemMessage::~LightsDriver_SystemMessage()
+{
+}
 
-void LightsDriver_SystemMessage::Set(const LightsState* ls) {
-  if (!PREFSMAN || !LIGHTSMAN || !SCREENMAN) {
-    return;
-  }
+void LightsDriver_SystemMessage::Set( const LightsState *ls )
+{
+	if (!PREFSMAN || !LIGHTSMAN || !SCREENMAN)
+	{
+		return;
+	}
 
-  if (!PREFSMAN->m_bDebugLights) {
-    return;
-  }
+	if( !PREFSMAN->m_bDebugLights )
+		return;
 
-  std::string s;
+	RString s;
 
-  s += LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
+	s += LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
 
 	s += "Cabinet: ";
 	FOREACH_CabinetLight( cl )
 	{
-		s += ls->cabinet_lights[cl] ? '1' : '0';
+		s += ls->m_bCabinetLights[cl] ? '1' : '0';
 	}
 	s += "\n";
 
@@ -41,18 +40,18 @@ void LightsDriver_SystemMessage::Set(const LightsState* ls) {
 		s += ssprintf("Controller%d: ",gc+1);
 		FOREACH_ENUM( GameButton,  gb )
 		{
-			s += ls->game_button_lights[gc][gb] ? '1' : '0';
+			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
 		}
 		s += "\n";
 	}
 
-  SCREENMAN->SystemMessageNoAnimate(s);
+	SCREENMAN->SystemMessageNoAnimate( s );
 }
 
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -62,7 +61,7 @@ void LightsDriver_SystemMessage::Set(const LightsState* ls) {
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

@@ -1,57 +1,58 @@
 #include "global.h"
-
 #include "ActiveAttackList.h"
-
+#include "RageUtil.h"
+#include "GameState.h"
+#include "Inventory.h"
+#include "RageTimer.h"
 #include "PlayerOptions.h"
 #include "PlayerState.h"
 
-#include <string>
 #include <vector>
 
-ActiveAttackList::ActiveAttackList() {}
-
-void ActiveAttackList::Init(const PlayerState* player_state) {
-  player_state_ = player_state;
+ActiveAttackList::ActiveAttackList()
+{
 }
 
-void ActiveAttackList::Update(float delta) {
-  bool time_to_refresh =
-      IsFirstUpdate() || // check this before running Actor::Update()
-      player_state_->m_bAttackBeganThisUpdate ||
-      player_state_->m_bAttackEndedThisUpdate;
-
-  BitmapText::Update(delta);
-
-  if (time_to_refresh) {
-    Refresh();
-  }
+void ActiveAttackList::Init( const PlayerState* pPlayerState )
+{
+	m_pPlayerState = pPlayerState;
 }
 
-void ActiveAttackList::Refresh() {
-  const AttackArray& attacks = player_state_->m_ActiveAttacks;
+void ActiveAttackList::Update( float fDelta )
+{
+	bool bTimeToRefresh =
+		IsFirstUpdate() || // check this before running Actor::Update()
+		m_pPlayerState->m_bAttackBeganThisUpdate ||
+		m_pPlayerState->m_bAttackEndedThisUpdate;
 
-  std::vector<RString> vsThemedMods;
-  for (unsigned i = 0; i < attacks.size(); ++i) {
-    const Attack& attack = attacks[i];
+	BitmapText::Update( fDelta );
 
-    if (!attack.bOn) {
-      // Attack hasn't started yet.
-      continue;
-    }
+	if( bTimeToRefresh )
+		Refresh();
+}
 
-    if (!attack.bShowInAttackList) {
-      continue;
-    }
+void ActiveAttackList::Refresh()
+{
+	const AttackArray& attacks = m_pPlayerState->m_ActiveAttacks;
 
-    PlayerOptions po;
-    po.FromString(attack.sModifiers);
-    po.GetLocalizedMods(vsThemedMods);
-  }
+	std::vector<RString> vsThemedMods;
+	for( unsigned i=0; i<attacks.size(); i++ )
+	{
+		const Attack& attack = attacks[i];
 
-  RString s = join("\n", vsThemedMods);
+		if( !attack.bOn )
+			continue; // hasn't started yet
+		if( !attack.bShowInAttackList )
+			continue;
 
-  // BitmapText will not rebuild vertices if these strings are the same.
-  this->SetText(s);
+		PlayerOptions po;
+		po.FromString( attack.sModifiers );
+		po.GetLocalizedMods( vsThemedMods );
+	}
+
+	RString s = join( "\n", vsThemedMods );
+
+	this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
 }
 
 /*

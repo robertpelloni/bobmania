@@ -1,21 +1,22 @@
 #ifndef GAME_LOOP_H
 #define GAME_LOOP_H
-<<<<<<< HEAD
+/** @brief Main rendering and update loop. */
+namespace GameLoop
+{
+	void RunGameLoop();
+	void UpdateAllButDraw( bool bRunningFromVBLANK);
+	void SetUpdateRate(float fUpdateRate);
+	float GetUpdateRate();
+	void SetUpdateRate(float fUpdateRate);
+	float GetUpdateRate();
+	void ChangeTheme(const RString &sNewTheme);
+	void ChangeGame(const RString& new_game, const RString& new_theme= "");
+	void StartConcurrentRendering();
+	void FinishConcurrentRendering();
 
-//  Main rendering and update loop.
-namespace GameLoop {
+};
 
-void RunGameLoop();
-void UpdateAllButDraw(bool is_running_from_vblank);
-void SetUpdateRate(float update_rate);
-void ChangeTheme(const RString& new_theme);
-void ChangeGame(const RString& new_game, const RString& new_theme = "");
-void StartConcurrentRendering();
-void FinishConcurrentRendering();
-
-};  // namespace GameLoop
-
-#endif  // GAME_LOOP_H
+#endif
 
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
