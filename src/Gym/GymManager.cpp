@@ -25,6 +25,7 @@ GymManager::GymManager()
     m_Profile.TotalCaloriesBurned = 0.0f;
     m_Profile.StreakDays = 0;
     m_Profile.CaloriesToday = 0.0f;
+    m_Profile.ELO = 1200;
     m_Profile.LastLoginDate = "";
 }
 
@@ -48,6 +49,7 @@ void GymManager::LoadFromNode( const XNode *pNode )
     pNode->GetChildValue( "DailyGoal", m_Profile.DailyGoal );
     pNode->GetChildValue( "TotalCalories", m_Profile.TotalCaloriesBurned );
     pNode->GetChildValue( "Streak", m_Profile.StreakDays );
+    pNode->GetChildValue( "ELO", m_Profile.ELO );
 
     RString sLastLogin;
     pNode->GetChildValue( "LastLogin", sLastLogin );
@@ -78,6 +80,7 @@ XNode* GymManager::CreateNode() const
     xml->AppendChild( "DailyGoal", m_Profile.DailyGoal );
     xml->AppendChild( "TotalCalories", m_Profile.TotalCaloriesBurned );
     xml->AppendChild( "Streak", m_Profile.StreakDays );
+    xml->AppendChild( "ELO", m_Profile.ELO );
     xml->AppendChild( "LastLogin", m_Profile.LastLoginDate );
 
     XNode *pHistory = xml->AppendChild( "History" );
@@ -150,6 +153,13 @@ void GymManager::SetDailyGoal( float fGoal )
     m_Profile.DailyGoal = fGoal;
 }
 
+void GymManager::UpdateELO( int iChange )
+{
+    m_Profile.ELO += iChange;
+    if( m_Profile.ELO < 0 ) m_Profile.ELO = 0;
+    LOG->Trace("GymManager: ELO updated by %d. New ELO: %d", iChange, m_Profile.ELO);
+}
+
 void GymManager::LogWorkout( const RString& sPlaylist, float fDuration, float fCalories )
 {
     WorkoutSession s;
@@ -190,6 +200,7 @@ public:
         lua_pushstring(L, "TotalCaloriesBurned"); lua_pushnumber(L, prof.TotalCaloriesBurned); lua_settable(L, -3);
         lua_pushstring(L, "StreakDays"); lua_pushnumber(L, prof.StreakDays); lua_settable(L, -3);
         lua_pushstring(L, "TodayCalories"); lua_pushnumber(L, prof.CaloriesToday); lua_settable(L, -3);
+        lua_pushstring(L, "ELO"); lua_pushnumber(L, prof.ELO); lua_settable(L, -3);
         return 1;
     }
 
