@@ -258,10 +258,14 @@ Player::Player( NoteData &nd, StepsType st, bool bVisibleParts ) : m_NoteData(nd
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = nullptr;
+	m_pGhostNoteField = nullptr;
 	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
+
+		m_pGhostNoteField = new NoteField;
+		m_pGhostNoteField->SetName( "GhostNoteField" );
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -272,6 +276,7 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	SAFE_DELETE( m_pGhostNoteField );
 	SAFE_DELETE( currentStep );
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
@@ -718,6 +723,12 @@ void Player::Load()
 	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+
+		if (m_pGhostNoteField) {
+			m_pGhostNoteField->SetY( fNoteFieldMiddle );
+			m_pGhostNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+			m_pGhostNoteField->SetDiffuseAlpha( 0.5f ); // Transparent ghost
+		}
 	}
 
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
@@ -886,6 +897,21 @@ void Player::Update( float fDeltaTime )
 
 		if( m_pNoteField )
 			m_pNoteField->Update( fDeltaTime );
+
+	if (m_pGhostNoteField && REPLAYMAN && REPLAYMAN->IsPlaying()) {
+		m_pGhostNoteField->Update( fDeltaTime );
+
+		std::vector<GameInput> vInputs;
+		std::vector<bool> vDown;
+		if (REPLAYMAN->GetPlaybackInputAtTime(m_pPlayerState->m_Position.m_fMusicSeconds, vInputs, vDown)) {
+			for (size_t i = 0; i < vInputs.size(); ++i) {
+				// ReplayManager's GameInput stores the controller and button.
+				// We need to map this to a column for the NoteField.
+				// For this ghost field, we simplify and assume the column is the button index for now.
+				m_pGhostNoteField->set_pressed(vInputs[i].button, vDown[i]);
+			}
+		}
+	}
 
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 		float fTinyPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
@@ -1296,9 +1322,13 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	bool bIsHoldingButton = true;
 	for (TrackRowTapNote const &trtn : vTN)
 	{
-		int iTrack = trtn->iTrack;
+		/* if this hold is already done, pretend it's always being pressed.
+		 * fixes/masks the phantom hold issue. -FSX / itgmania */
+		if (!IMMEDIATE_HOLD_LET_GO || (iStartRow + trtn.pTN->iDuration) > iSongRow)
+		{
+			int iTrack = trtn.iTrack;
 
-		// TODO: Remove use of PlayerNumber.
+			// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
@@ -1317,6 +1347,7 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 			// this previously read as bIsHoldingButton &=
 			// was there a specific reason for this? - Friez
 			bIsHoldingButton &= INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+		}
 		}
 	}
 
@@ -1632,7 +1663,15 @@ void Player::DrawPrimitives()
 		m_pNoteField->SetY( fOriginalY + fYOffset );
 		m_pNoteField->SetZoom( fZoom );
 		m_pNoteField->SetRotationX( fTiltDegrees );
+
 		m_pNoteField->Draw();
+
+		if (m_pGhostNoteField && REPLAYMAN && REPLAYMAN->IsPlaying()) {
+			m_pGhostNoteField->SetY( fOriginalY + fYOffset );
+			m_pGhostNoteField->SetZoom( fZoom );
+			m_pGhostNoteField->SetRotationX( fTiltDegrees );
+			m_pGhostNoteField->Draw();
+		}
 
 		m_pNoteField->SetY( fOriginalY );
 	}
@@ -2325,7 +2364,12 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 			case TapNote::mine:
 				// Stepped too close to mine?
-				if( !bRelease && ( !REQUIRE_STEP_ON_MINES || !bHeld ) &&
+				/* Mine Fix: ensure mines trigger correctly based on REQUIRE_STEP_ON_MINES.
+				 * ( REQUIRE_STEP_ON_MINES == !bHeld )
+				 * If RequireStepOnMines is true, they only hit if NOT held (i.e. you step).
+				 * If RequireStepOnMines is false, they hit if you ARE held (i.e. you are already on the pad).
+				 * This matches ITGmania/DinsFire64 fix. */
+				if( !bRelease && ( REQUIRE_STEP_ON_MINES == !bHeld ) &&
 				   fSecondsFromExact <= GetWindowSeconds(TW_Mine) &&
 				   m_Timing->IsJudgableAtRow(iSongRow))
 					score = TNS_HitMine;   
