@@ -7,14 +7,13 @@ UnifiedNetwork* UNIFIED_NET = nullptr;
 
 UnifiedNetwork::UnifiedNetwork()
 {
-    m_pSocket = new EzSockets();
+    m_pSocket = std::make_unique<EzSockets>();
     m_bConnected = false;
 }
 
 UnifiedNetwork::~UnifiedNetwork()
 {
     Disconnect();
-    SAFE_DELETE( m_pSocket );
 }
 
 void UnifiedNetwork::Init()

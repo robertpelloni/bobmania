@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include <vector>
+#include <memory>
 
 #include "Bridge/BobcoinBridge.h"
 
@@ -32,7 +33,7 @@ public:
 
 private:
     long long m_iBalance;
-    BobcoinBridge* m_pBridge;
+    std::unique_ptr<BobcoinBridge> m_pBridge;
 };
 
 extern EconomyManager* ECONOMYMAN;

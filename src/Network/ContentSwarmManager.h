@@ -3,6 +3,7 @@
 
 #include "RageUtil.h"
 #include <vector>
+#include <memory>
 
 struct lua_State;
 
@@ -27,6 +28,7 @@ public:
     void StartDiscovery();
     const std::vector<ContentPack>& GetAvailablePacks() const;
     void RequestPack( const RString& sPackID );
+    void AddLocalPack( const RString& sPath );
 
     void Update( float fDeltaTime );
 
@@ -36,7 +38,7 @@ public:
 private:
     std::vector<ContentPack> m_AvailablePacks;
     bool m_bDiscovering;
-    class FileTransfer* m_pTransfer;
+    std::unique_ptr<class FileTransfer> m_pTransfer;
 };
 
 extern ContentSwarmManager* SWARMMAN;

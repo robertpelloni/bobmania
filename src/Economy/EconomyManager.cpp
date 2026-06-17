@@ -18,11 +18,10 @@ static Preference<RString> m_sMasterAddress("BobcoinMasterAddress", "BOB-MAIN-ST
 const RString ECONOMY_FALLBACK_FILE = "Save/Economy.xml";
 
 EconomyManager::EconomyManager() : m_iBalance(0) {
-    m_pBridge = new BobcoinBridge();
+    m_pBridge = std::make_unique<BobcoinBridge>();
 }
 
 EconomyManager::~EconomyManager() {
-    delete m_pBridge;
 }
 
 void EconomyManager::Init() {

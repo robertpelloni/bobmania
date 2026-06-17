@@ -12,30 +12,27 @@ HeartRateManager* HEARTRATEMAN = nullptr;
 HeartRateManager::HeartRateManager() : m_pDriver(nullptr), m_iCurrentBPM(0) {}
 
 HeartRateManager::~HeartRateManager() {
-    Shutdown();
 }
 
 void HeartRateManager::Init() {
     // Determine which driver to use based on OS.
 #ifdef _WIN32
-    m_pDriver = new HeartRateDriver_WinRT();
+    m_pDriver = std::make_unique<HeartRateDriver_WinRT>();
 #elif defined(LINUX)
-    m_pDriver = new HeartRateDriver_BlueZ();
+    m_pDriver = std::make_unique<HeartRateDriver_BlueZ>();
 #else
-    m_pDriver = new HeartRateDriver_Mock();
+    m_pDriver = std::make_unique<HeartRateDriver_Mock>();
 #endif
 
     if (m_pDriver && !m_pDriver->Init()) {
-        delete m_pDriver;
-        m_pDriver = nullptr;
+        m_pDriver.reset();
     }
 }
 
 void HeartRateManager::Shutdown() {
     if (m_pDriver) {
         m_pDriver->Shutdown();
-        delete m_pDriver;
-        m_pDriver = nullptr;
+        m_pDriver.reset();
     }
 }
 

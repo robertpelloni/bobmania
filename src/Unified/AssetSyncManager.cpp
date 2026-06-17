@@ -7,7 +7,7 @@ AssetSyncManager* ASSETSYNCMAN = nullptr;
 
 AssetSyncManager::AssetSyncManager()
 {
-    m_pDownloader = new FileDownload();
+    m_pDownloader = std::make_unique<FileDownload>();
     m_bSyncing = false;
     m_fProgress = 0.0f;
     m_sStatus = "Idle";
@@ -15,7 +15,6 @@ AssetSyncManager::AssetSyncManager()
 
 AssetSyncManager::~AssetSyncManager()
 {
-    SAFE_DELETE( m_pDownloader );
 }
 
 void AssetSyncManager::Init()

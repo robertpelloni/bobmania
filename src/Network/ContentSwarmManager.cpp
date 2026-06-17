@@ -15,7 +15,6 @@ ContentSwarmManager::ContentSwarmManager()
 
 ContentSwarmManager::~ContentSwarmManager()
 {
-    SAFE_DELETE( m_pTransfer );
 }
 
 void ContentSwarmManager::Init()
@@ -53,16 +52,22 @@ void ContentSwarmManager::RequestPack( const RString& sPackID )
         return;
     }
 
-    SAFE_DELETE( m_pTransfer );
-    m_pTransfer = new FileTransfer();
+    m_pTransfer = std::make_unique<FileTransfer>();
 
-    // In a real P2P system, this would resolve to a magnet link or tracker.
-    // For our Unified backend, we construct an HTTP stub.
-    RString sURL = "http://127.0.0.1:8080/packs/" + sPackID + ".smzip";
+    // For the Content Swarm, we communicate with the local Supernode (Node.js/webtorrent)
+    // In the future, this will be a direct magnet link resolution.
+    RString sURL = "http://127.0.0.1:8081/add-torrent"; // P2P Supernode Port
     RString sDest = "Packages/" + sPackID + ".smzip";
 
+    // Simulate requesting the supernode to join the swarm
     m_pTransfer->StartDownload( sURL, sDest );
-    SCREENMAN->SystemMessage("Downloading pack: " + sPackID + "...");
+    SCREENMAN->SystemMessage("ContentSwarm: Joining swarm for " + sPackID + "...");
+}
+
+void ContentSwarmManager::AddLocalPack( const RString& sPath )
+{
+    LOG->Trace("ContentSwarmManager: Adding local pack to swarm: %s", sPath.c_str());
+    // In a real scenario, we'd POST the file to the local Supernode /upload endpoint
 }
 
 void ContentSwarmManager::Update( float fDeltaTime )
@@ -81,7 +86,7 @@ void ContentSwarmManager::Update( float fDeltaTime )
             {
                 SCREENMAN->SystemMessage("Download Failed: " + m_pTransfer->GetStatus());
             }
-            SAFE_DELETE( m_pTransfer );
+            m_pTransfer.reset();
         }
     }
 }
@@ -118,11 +123,18 @@ public:
         return 0;
     }
 
+    static int AddLocalPack( T* p, lua_State *L )
+    {
+        p->AddLocalPack(SArg(1));
+        return 0;
+    }
+
     LunaContentSwarmManager()
     {
         ADD_METHOD( StartDiscovery );
         ADD_METHOD( GetAvailablePacks );
         ADD_METHOD( RequestPack );
+        ADD_METHOD( AddLocalPack );
     }
 };
 
