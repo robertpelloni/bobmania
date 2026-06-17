@@ -1,6 +1,11 @@
 #include "HeartRateManager.h"
 #include "HeartRateDriver_Mock.h"
-// In the future: #include "HeartRateDriver_BlueZ.h" (Linux), "HeartRateDriver_WinRT.h" (Windows)
+
+#ifdef _WIN32
+#include "HeartRateDriver_WinRT.h"
+#elif defined(LINUX)
+#include "HeartRateDriver_BlueZ.h"
+#endif
 
 HeartRateManager* HEARTRATEMAN = nullptr;
 
@@ -11,9 +16,14 @@ HeartRateManager::~HeartRateManager() {
 }
 
 void HeartRateManager::Init() {
-    // Determine which driver to use. For now, use the Mock.
-    // In the future, this would be determined by #ifdef WIN32 / LINUX
+    // Determine which driver to use based on OS.
+#ifdef _WIN32
+    m_pDriver = new HeartRateDriver_WinRT();
+#elif defined(LINUX)
+    m_pDriver = new HeartRateDriver_BlueZ();
+#else
     m_pDriver = new HeartRateDriver_Mock();
+#endif
 
     if (m_pDriver && !m_pDriver->Init()) {
         delete m_pDriver;

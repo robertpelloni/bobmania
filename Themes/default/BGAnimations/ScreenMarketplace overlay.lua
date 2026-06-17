@@ -28,9 +28,12 @@ t[#t+1] = LoadFont("Common Normal") .. {
 local items = {}
 if ECONOMYMAN then
     items = ECONOMYMAN:GetMarketplaceItems()
-else
+end
+
+-- Fallback if still empty
+if not items or #items == 0 then
     items = {
-        { ID="song_pack_1", Name="Song Pack 1", Price=500 },
+        { ID="song_pack_1", Name="Song Pack 1 (Offline)", Price=500 },
         { ID="avatar_frame_gold", Name="Gold Avatar Frame", Price=2000 },
         { ID="xp_boost_1h", Name="XP Boost (1 Hour)", Price=100 },
     }
