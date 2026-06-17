@@ -114,7 +114,7 @@ local function Input(event)
             if ECONOMYMAN:HasItem(item.ID) then
                 msg:playcommand("ShowMessage", {text="Already Owned!", color=color("#FFFF00")})
             else
-                if ECONOMYMAN:BuyItem(item.ID) then
+                if ECONOMYMAN:BuyItem(item.ID, item.Price) then
                     msg:playcommand("ShowMessage", {text="Purchased " .. item.Name .. "!", color=color("#00FF00")})
                     t:playcommand("UpdateBalance")
                 else
