@@ -1,20 +1,13 @@
 # TODO - Immediate Tasks & Bug Fixes
 
 ## 1. Engine Stability & Bug Fixes
-- [x] **Overlapping Hold Bug:** Implemented phantom hold fix from ITGmania.
-- [x] **Mine Fix Verification:** Integrated DinsFire64's mine fix.
-- [ ] **Memory Management:** Audit the use of `SAFE_DELETE` vs modern smart pointers in the new Manager classes.
+- [ ] **Memory Management:** Continue auditing manual memory management in legacy engine parts.
+- [ ] **Async Networking:** Transition `BobcoinBridge` and `AssetSyncManager` to non-blocking network calls to prevent frame stutters.
 
-## 2. Feature Completion (Replacing Mocks)
-- [x] **Economy Backend:** Implemented JSON-RPC communication in `BobcoinBridge.cpp`.
-- [x] **Heart Rate Driver:** Infrastructure for `WinRT` and `BlueZ` drivers created.
-- [x] **Replay Ghosting:** Implemented "Ghost NoteField" in `Player.cpp`.
+## 2. Feature Completion
+- [ ] **Tournament Brackets:** Implement visual bracket rendering in `ScreenTournamentLadder`.
+- [ ] **P2P Swarm:** Move beyond stubs to actual `libtorrent` integration for pack distribution.
 
 ## 3. UI & UX Improvements
-- [x] **Marketplace Polishing:** Enhanced item list fetching and feedback.
-- [x] **Asset Sync Feedback:** Real progress and status reporting implemented.
-- [x] **Unified Dashboard:** All major shortcuts wired and functional.
-
-## 4. Documentation & Versioning
-- [x] **Centralized Versioning:** Engine pulls version string from `VERSION.md`.
-- [ ] **API Documentation:** Generate up-to-date Lua API documentation for all new `MANAGER` singletons.
+- [ ] **Skin Customization:** Add a dedicated UI for managing purchased NoteSkins and Avatars.
+- [ ] **Chat Polishing:** Implement emojis and rich text in the global chat.

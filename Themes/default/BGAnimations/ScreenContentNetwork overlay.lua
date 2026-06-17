@@ -34,6 +34,12 @@ t[#t+1] = Def.ActorFrame {
         InitCommand=function(self) self:y(-200):zoom(1.5):diffuse(Color.Orange) end
     },
 
+    -- Seed Button
+    LoadFont("Common Normal")..{
+        Text="[S] SEED CURRENT SONG",
+        InitCommand=function(self) self:xy(250, -220):zoom(0.6):diffuse(Color.Green) end
+    },
+
     -- Status
     LoadFont("Common Normal")..{
         Text="Status: Searching for Peers...",
@@ -109,6 +115,13 @@ local function InputHandler(event)
         if p and SWARMMAN then
             SWARMMAN:RequestPack(p.ID)
             SCREENMAN:SystemMessage("Requested Pack: " .. p.Name)
+            SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
+        end
+    elseif event.DeviceI == "DeviceButton_s" then
+        if SWARMMAN and GAMESTATE:GetCurrentSong() then
+            local s = GAMESTATE:GetCurrentSong()
+            SWARMMAN:AddLocalPack(s:GetSongDir())
+            SCREENMAN:SystemMessage("Seeding: " .. s:GetDisplayMainTitle())
             SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
         end
     elseif event.GameButton == "Back" then
