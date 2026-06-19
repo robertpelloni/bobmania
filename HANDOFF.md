@@ -100,3 +100,9 @@ StepMania Unified - Handoff Notes
 
 StepMania Unified - Handoff Notes
 
+
+### Summary of Recent CI Fixes & Structural Refinements
+*   **Submodule Cleanup:** `bobcoin` and `Themes/Simply-Love-SM5` nested `.gitmodules` entries inside `itgmania/` have been removed to prevent recursive checkout failures in GitHub Actions, since these were already correctly defined in the root repository.
+*   **CMake Test Code Restoration:** Missing test code (`CMake/TestCode/test_external.c` and `test_broken.c`) needed by `StepmaniaCore.cmake` compilation checks were correctly relocated to the root build environment to ensure pipeline compilation succeeds.
+*   **Ghost Replay Fix:** Fixed `Player.cpp` where incorrect assumptions about `GameInput` enum values were resulting in non-mapped injection. Implemented the proper `GAMESTATE->GetCurrentStyle()->GameInputToColumn(vGhostInputs[i])` map for ghost note processing.
+*   **Doc Syncing:** Mirrored core workspace docs to the root level.
