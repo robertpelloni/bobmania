@@ -46,3 +46,4 @@ This document tracks the next generation of immediate, actionable tasks and miss
 - Fix `NoteField.cpp:1702` TODO: Implement checkpoint holds as a subtype.
 - Remove `StdString.h` requirement per `CMakeData-globals.cmake:15`.
 - Expose `BothAtOnce` to the UI effectively.
+- Verify Rust-Lattice integrations fetched from bobcoin submodule.

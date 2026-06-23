@@ -819,6 +819,7 @@ void Player::Update( float fDeltaTime )
 		std::vector<GameInput> vGhostInputs;
 		std::vector<bool> vGhostDown;
 
+
 		if (REPLAYMAN->GetPlaybackInputAtTime(fCurrentTime, vGhostInputs, vGhostDown)) {
 			const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
 			if (pStyle != nullptr) {
