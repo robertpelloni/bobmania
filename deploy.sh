@@ -2,7 +2,7 @@
 
 # Simulated Deployment Script for StepMania Network
 
-echo "[DEPLOY] Starting Deployment Sequence for v5.7.3-Unified-Beta..."
+echo "[DEPLOY] Starting Deployment Sequence for v5.7.4-Unified-Beta..."
 
 # 1. Build Client
 echo "[DEPLOY] Building Client..."
@@ -27,4 +27,4 @@ echo "[DEPLOY] Restarting Game Server..."
 # pm2 restart stepmania-server (Simulated)
 echo "[DEPLOY] Service Restarted."
 
-echo "[DEPLOY] Deployment Successful! Version 5.7.3-Unified-Beta is live."
+echo "[DEPLOY] Deployment Successful! Version 5.7.4-Unified-Beta is live."
