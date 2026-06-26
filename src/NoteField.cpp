@@ -440,7 +440,7 @@ void NoteFieldColumn::fill_quantum_anime_data(mod_val_inputs& input,
 	data.parts_per_beat= m_quantization_parts_per_beat.evaluate(input);
 	data.row_id= input.row_id;
 	data.beat= fmod(input.eval_beat, 1.0) * m_status.anim_percent;
-	data.rainbow_mode= false; // [COMPLETED]: Logic hooks for NoteSkin Draw remain false natively unless overridden by PlayerOptions Lua binds if implemented.
+	data.rainbow_mode= false; // TODO: Rainbow mode.
 	if(m_playerize_mode == NPM_Quanta)
 	{
 		data.player_mode= true;

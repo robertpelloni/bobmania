@@ -1,2 +1,1 @@
-- Bumped version to 5.7.2-Unified-Beta
-- Bumped version to 5.7.5-Unified-Beta per Executive Protocol synchronization.
+- Bumped version to 5.7.5-Unified-Beta. Executed branch sync.

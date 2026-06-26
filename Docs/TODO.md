@@ -41,9 +41,3 @@ This document tracks the next generation of immediate, actionable tasks and miss
 ### 1. Remove `RageFile` XML Dependencies
 - **Issue:** `XmlFile` is notoriously slow and brittle. Modern modding and web services use JSON.
 - **Action:** Systematically replace all instances of `XmlFile.Load()` (such as in `Profile.cpp` and `Missions.xml`) with `jsoncpp`. Profiles should be saved and loaded strictly as JSON objects to ensure frictionless syncing with the Node.js backend.
-# Immediate Action Items
-- Fix `NoteField.cpp:443` TODO: Rainbow mode support.
-- Fix `NoteField.cpp:1702` TODO: Implement checkpoint holds as a subtype.
-- Remove `StdString.h` requirement per `CMakeData-globals.cmake:15`.
-- Expose `BothAtOnce` to the UI effectively.
-- Verify Rust-Lattice integrations fetched from bobcoin submodule.
