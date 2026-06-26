@@ -1,32 +1,34 @@
-# Unified StepMania ROADMAP.md
+# ROADMAP: Unified StepMania
+# Unified StepMania: Ultimate Vision & Design Philosophy
 
-This document serves as the master blueprint for the structural and architectural evolution of Unified StepMania.
+## The Ultimate Goal
+The overarching goal of the Unified StepMania project is to eliminate the severe fragmentation that has plagued the rhythm gaming community for over a decade. By aggressively merging features from disparate forks—StepMania 5.1/5.2, OutFox, NotITG, and Etterna—into a single, modular, and universally compatible engine, we seek to create the definitive rhythm game platform.
 
-## Phase 1: Foundational Mocks & UIs (Completed)
-*   **Status:** Complete. `ScreenMarketplace`, `ScreenTournamentLadder`, `ScreenGymWorkout`, `ScreenMissionSelect`, `ScreenSpectate`, `ScreenContentNetwork`, `ScreenAssetSync`, and `ScreenReplayMenu`.
+This platform will serve all player archetypes simultaneously:
+1.  **The Competitor (Etterna/ITG):** Seeking millisecond precision, judge scaling, strict timing windows, global ELO ladders, and robust replay systems.
+2.  **The Modder (NotITG):** Requiring deep Lua shader hooks, spline-based NotePaths, arbitrary viewport manipulation, and dynamic field generation.
+3.  **The Fitness Enthusiast (Gym Mode):** Needing structured workouts, heart rate monitoring, calorie tracking, and dynamic playlist generation.
+4.  **The Economist (Bobcoin/Marketplace):** Engaging in a "play-to-earn" ecosystem where physical effort translates to virtual currency (Bobcoin), used to purchase themes, songs, and boosts.
 
-## Phase 2: Live Backend Injection (Completed)
-*   **Status:** Complete.
-    1.  **Hardware Heart Rate Integration:** (COMPLETE) Hooks in `HeartRateManager.cpp` and `IHeartRateDriver`.
-    2.  **True Network Backend:** (COMPLETE) `server/mock_server.js` manages matchmaking queue, Elo ratings, and WebSockets. Legacy `EzSockets` replaced with modern C++ `UnifiedNetwork`.
-    3.  **Bobcoin Blockchain Sync:** (COMPLETE) `EconomyManager` fully integrated with `BobcoinBridge`. RPC endpoints implemented. `Luna<T>` bindings map `BuyItem`, `AwardMiningReward`, and `GetTransactionHistory` to Lua overlays (`ScreenMarketplace`, `ScreenWalletHistory`).
-    4.  **BitTorrent P2P Downloader:** (COMPLETE) `ContentSwarmManager` mimics `libtorrent` for `.smzip` seeding/leeching.
+## Design Philosophy
 
-## Phase 3: The "Etterna-NotITG" Gameplay Merge (Completed)
-*   **Status:** Complete.
-    1.  **Etterna Parity:** (COMPLETE) `ScoreKeeperUnified` decouples generic `TNS_W1` DDR logic, calculating pure Wife3 J-Scale curves natively from millisecond offsets.
-    2.  **NotITG Parity:** (COMPLETE) `NotePath` spline mathematics implemented. Lua bindings allow dynamic frame-by-frame 3D arrow viewport manipulation.
-    3.  **Ghost Replay Rendering:** (COMPLETE) `ReplayManager` records and loads CSV arrays. `Player.cpp` dynamically triggers inputs according to millisecond timestamps in the `Update` loop.
+### 1. The "Manager" Paradigm
+Instead of polluting the core `StepMania.cpp` and `ScreenGameplay.cpp` files with endless conditional logic, we have adopted a modular "Manager" pattern.
+*   **Encapsulation:** Subsystems like Economy (`ECONOMYMAN`), Gym (`GYMMAN`), and Networking (`UNIFIED_NET`) are encapsulated within `src/` subdirectories.
+*   **Global Accessibility:** These managers are instantiated globally during boot and are cleanly destroyed upon exit, allowing any other C++ class to query their state safely.
+*   **Sandboxed Hooks:** Core gameplay loops only invoke these managers through lightweight hooks (e.g., calling `ECONOMYMAN->AwardMiningReward()` at the end of a song), preventing structural rot.
 
-## Phase 4: Graphics & Engine Modernization (Completed)
-*   **Status:** Complete.
-    1.  **Vulkan Port:** (COMPLETE) `RageDisplay_Vulkan` implemented with `BeginFrame`/`EndFrame` stubs for SPIR-V command buffers. Registered in CMake.
-    2.  **VR Rendering Hooks:** (COMPLETE) `ArchHooks_VR` retrieves Oculus/OpenVR matrices. Hooks injected into `RageDisplay_OGL`. UI toggles available in `12_VR.lua`.
-    3.  **Plugin API:** (COMPLETE) `PluginManager` loads external `.dll`/`.so` modules. Stable C-ABI in `PluginAPI.h` allows modders to read `EconomyManager` and inject `RageInput` without full compilation.
+### 2. Deep UI Separation (Lua 5.1)
+The C++ backend handles the math, the networking, and the file I/O. The Lua frontend (specifically the standard `Themes/default/` structure) handles 100% of the UI.
+*   **No Hardcoded UIs:** We do not build menus in C++. All new features (Marketplace, Tournaments) are exposed to Lua via bindings (`Luna<T>`).
+*   **Legacy Preservation:** By maintaining strictly Lua 5.1 compatibility, thousands of legacy themes and noteskins remain fully functional without modification.
 
-## Phase 5: The "1.0" Release (Current Priority)
-*   Unified StepMania acts as the decentralized hub for Rhythm Gaming.
-*   **Next Milestones:**
-    1.  **Replace XML with JSON:** Completely decouple legacy `RageFile` XML routines from the `ProfileManager` in favor of rapid, web-compatible JSON syncs.
-    2.  **Database Persistence:** Move the Node.js backend from memory Maps to a robust SQL database.
-    3.  **Libuv Implementation:** Complete the transition of `UnifiedNetwork` from raw `sys/socket.h` stubs to cross-platform asynchronous event loops.
+### 3. Asynchronous by Default
+Systems that interact with the outside world (Blockchain RPC, Swarm P2P Downloads, Heart Rate Bluetooth LE) must never block the main rendering thread.
+*   They utilize background polling, threaded downloads (`FileDownload.cpp`), and event-driven callbacks.
+
+## The Future State
+When the Unified StepMania vision is fully realized, a player will be able to boot the game, have their profile automatically fetched from a decentralized cloud, join a live-streamed tournament bracket, wager Bobcoin on the outcome, and play a visually stunning NotITG-style chart with Etterna-strict timing—all from the exact same executable, without swapping binaries or tweaking config files.
+## Incomplete Backend/UI Features
+- Implement full Multiplayer Matchmaking logic.
+- Reconcile NotITG specific hold mechanics.

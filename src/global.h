@@ -19,3 +19,9 @@ namespace Checkpoints {
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
 #endif
+
+
+
+// Gym Singletons
+class HeartRateManager;
+extern HeartRateManager* HEARTRATEMAN;
