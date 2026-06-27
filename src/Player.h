@@ -187,7 +187,6 @@ protected:
 
 	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
-	NoteField		*m_pGhostNoteField;
 	Steps			*currentStep;
 
 	vector<HoldJudgment*>	m_vpHoldJudgment;

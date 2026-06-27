@@ -1,6 +1,6 @@
-[submodule "Themes/Simply-Love-SM5"]
-	path = Themes/Simply-Love-SM5
-	url = https://github.com/robertpelloni/Simply-Love-SM5.git
 [submodule "bobcoin"]
 	path = bobcoin
 	url = https://github.com/robertpelloni/bobcoin
+[submodule "Themes/Simply-Love-SM5"]
+	path = Themes/Simply-Love-SM5
+	url = https://github.com/robertpelloni/Simply-Love-SM5.git

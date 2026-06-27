@@ -1,2 +1,2 @@
 - Bumped version to 5.7.2-Unified-Beta
-- Bumped version to 5.7.7-Unified-Beta. Implemented Ghost Replay rendering in Player.cpp.
+- Bumped version to 5.70.0-Unified-Beta. Re-synced bobcoin and Simply-Love-SM5.

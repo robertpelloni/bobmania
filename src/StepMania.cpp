@@ -1176,8 +1176,8 @@ int sm_main(int argc, char* argv[])
 	ECONOMYMAN->Init();
 	GYMMAN		= new GymManager;
 	GYMMAN->Init();
-	HEARTRATEMAN		= new HeartRateManager;
-	HEARTRATEMAN->Init();
+	HRMAN		= new HeartRateManager;
+	HRMAN->Init();
 	TOURNAMENTMAN = new TournamentManager;
 	TOURNAMENTMAN->Init();
 	ASSETSYNCMAN = new AssetSyncManager;
