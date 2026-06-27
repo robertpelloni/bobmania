@@ -258,10 +258,15 @@ Player::Player( NoteData &nd, StepsType st, bool bVisibleParts ) : m_NoteData(nd
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = nullptr;
+	m_pGhostNoteField = nullptr;
 	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
+		if (REPLAYMAN) {
+			m_pGhostNoteField = new NoteField;
+			m_pGhostNoteField->SetName( "GhostNoteField" );
+		}
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -272,6 +277,7 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	SAFE_DELETE( m_pGhostNoteField );
 	SAFE_DELETE( currentStep );
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
@@ -535,7 +541,13 @@ void Player::Init(
 	if( m_pNoteField )
 	{
 		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+		if( m_pGhostNoteField ) {
+			m_pGhostNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+			m_pGhostNoteField->SetDiffuseAlpha(0.5f);
+		}
 		ActorUtil::LoadAllCommands( *m_pNoteField, sType );
+		if( m_pGhostNoteField )
+			ActorUtil::LoadAllCommands( *m_pGhostNoteField, sType );
 	}
 
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
@@ -717,7 +729,11 @@ void Player::Load()
 	if( m_pNoteField && !bOniDead )
 	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
+	if( m_pGhostNoteField && !bOniDead )
+		m_pGhostNoteField->SetY( fNoteFieldMiddle );
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+		if (m_pGhostNoteField)
+			m_pGhostNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
@@ -829,6 +845,9 @@ void Player::Update( float fDeltaTime )
 						tm.Touch();
 						// Pass the simulated inputs through normal note mechanics
 						StepStrumHopo(iCol, -1, tm, vGhostDown[i], !vGhostDown[i], ButtonType_Step);
+						if (m_pGhostNoteField) {
+							m_pGhostNoteField->SetPressed(iCol);
+						}
 					}
 				}
 			}
@@ -891,6 +910,8 @@ void Player::Update( float fDeltaTime )
 
 		if( m_pNoteField )
 			m_pNoteField->Update( fDeltaTime );
+		if( m_pGhostNoteField )
+			m_pGhostNoteField->Update( fDeltaTime );
 
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 		float fTinyPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
@@ -938,6 +959,8 @@ void Player::Update( float fDeltaTime )
 		float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
 		if( m_pNoteField )
 			m_pNoteField->SetZoom( fNoteFieldZoom );
+		if( m_pGhostNoteField )
+			m_pGhostNoteField->SetZoom( fNoteFieldZoom );
 		if( m_pActorWithJudgmentPosition != NULL )
 			m_pActorWithJudgmentPosition->SetZoom( m_pActorWithJudgmentPosition->GetZoom() * fJudgmentZoom );
 		if( m_pActorWithComboPosition != nullptr )
@@ -1640,6 +1663,8 @@ void Player::DrawPrimitives()
 		m_pNoteField->Draw();
 
 		m_pNoteField->SetY( fOriginalY );
+		if( m_pGhostNoteField && !IsOniDead() )
+			m_pGhostNoteField->Draw();
 	}
 
 	DISPLAY->CameraPopMatrix();
