@@ -2144,9 +2144,6 @@
     <ClInclude Include="SpecialFiles.h">
       <Filter>StepMania</Filter>
     </ClInclude>
-    <ClInclude Include="StdString.h">
-      <Filter>StepMania</Filter>
-    </ClInclude>
     <ClInclude Include="StepMania.h">
       <Filter>StepMania</Filter>
     </ClInclude>
