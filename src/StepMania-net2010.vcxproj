@@ -1951,6 +1951,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)</Command>
     <ClInclude Include="global.h" />
     <ClInclude Include="ProductInfo.h" />
     <ClInclude Include="SpecialFiles.h" />
+    <ClInclude Include="StdString.h" />
     <ClInclude Include="StepMania.h" />
     <ClInclude Include="arch\arch.h" />
     <ClInclude Include="arch\arch_default.h" />

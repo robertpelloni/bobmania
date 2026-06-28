@@ -31,9 +31,3 @@
 - **Backend:** Connected `EconomyManager` to Bobcoin RPC node stubs.
 ### Changed
 - **Documentation:** Massively updated `VISION.md`, `ROADMAP.md`, `TODO.md`, `HANDOFF.md`, and `UNIVERSAL_LLM_INSTRUCTIONS.md` to guide future development.
-## [v5.71.0] - Unified-Beta Phase 5 Prep
-- Resolved Phase 5 immediate action items from TODO.md.
-- Verified NoteField:443 rainbow mode support is already completed.
-- Implemented `TapNoteSubType_Checkpoint` for checkpoint holds in NoteField and NoteTypes.
-- Removed legacy `StdString.h` requirement globally (CMake lists & project files).
-- Exposed `BothAtOnce` explicitly via the Lua UI `ScreenUnifiedOptions` (mock and hook).

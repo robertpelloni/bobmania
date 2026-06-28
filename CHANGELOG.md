@@ -1,2 +1,2 @@
 - Bumped version to 5.7.2-Unified-Beta
-- Bumped version to 5.70.0-Unified-Beta. Re-synced bobcoin and Simply-Love-SM5.
+- Bumped version to 5.71.0-Unified-Beta. Re-synced bobcoin and Simply-Love-SM5.

@@ -18,13 +18,12 @@ t[#t+1] = LoadFont("Common Large") .. {
 
 -- Mock Preferences for the UI
 -- In a real environment, we'd query PREFSMAN:GetPreference("name")
--- We use PREFSMAN:GetPreference("name") where available, else fallback
 local prefs = {
     { Name = "Practice Mode", Value = false, Type = "Bool", Desc = "Forces all hits to Marvelous (W1) to practice timing." },
     { Name = "Ghost Tapping", Value = true, Type = "Bool", Desc = "Removes the penalty for tapping when no note is present." },
-    { Name = "Both At Once", PrefName = "BothAtOnce", Value = PREFSMAN:GetPreference("BothAtOnce") or false, Type = "Bool", Desc = "Mirrors P1 inputs to P2 for co-op or dual-pad play." },
+    { Name = "Both At Once", Value = false, Type = "Bool", Desc = "Mirrors P1 inputs to P2 for co-op or dual-pad play." },
     { Name = "FOV Override", Value = 45.0, Type = "Number", Step = 5.0, Min = 10, Max = 120, Desc = "Custom Field of View for NotITG-style 3D charts." },
-    { Name = "Pitch Dependent Rate", PrefName = "PitchDependentRate", Value = PREFSMAN:GetPreference("PitchDependentRate") or true, Type = "Bool", Desc = "Rate mods affect audio pitch (vinyl effect) vs time stretch." },
+    { Name = "Pitch Dependent Rate", Value = true, Type = "Bool", Desc = "Rate mods affect audio pitch (vinyl effect) vs time stretch." },
     { Name = "VR Mode (Beta)", Value = false, Type = "Bool", Desc = "Enables side-by-side stereoscopic rendering." }
 }
 
@@ -132,11 +131,7 @@ local function Input(event)
         list:playcommand("UpdateValue")
         SOUND:PlayOnce(THEME:GetPathS("Common", "value"))
     elseif event.GameButton == "Start" or event.GameButton == "Back" then
-        for i, pref in ipairs(prefs) do
-            if pref.PrefName then
-                PREFSMAN:SetPreference(pref.PrefName, pref.Value)
-            end
-        end
+        -- In a real engine, we'd PREFSMAN:SetPreference("name", val) here.
         SCREENMAN:SystemMessage("Unified Settings Saved.")
         SOUND:PlayOnce(THEME:GetPathS("Common", "start"))
         SCREENMAN:SetNewScreen("ScreenUnifiedDashboard")
