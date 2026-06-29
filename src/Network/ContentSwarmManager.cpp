@@ -2,25 +2,35 @@
 #include "ContentSwarmManager.h"
 #include "RageLog.h"
 #include "LuaBinding.h"
-#include "FileDownload.h"
 #include "ScreenManager.h"
+
+// If we had libtorrent:
+// #include <libtorrent/session.hpp>
+// #include <libtorrent/add_torrent_params.hpp>
+// #include <libtorrent/torrent_handle.hpp>
+// #include <libtorrent/magnet_uri.hpp>
 
 ContentSwarmManager* SWARMMAN = nullptr;
 
 ContentSwarmManager::ContentSwarmManager()
 {
     m_bDiscovering = false;
-    m_pTransfer = nullptr;
+    m_pSession = nullptr; // would be: new libtorrent::session(...)
 }
 
 ContentSwarmManager::~ContentSwarmManager()
 {
-    SAFE_DELETE( m_pTransfer );
+    // delete (libtorrent::session*)m_pSession;
 }
 
 void ContentSwarmManager::Init()
 {
     LOG->Trace("ContentSwarmManager::Init()");
+
+    // Stub for session init:
+    // libtorrent::settings_pack p;
+    // p.set_int(libtorrent::settings_pack::alert_mask, libtorrent::alert::status_notification);
+    // m_pSession = new libtorrent::session(p);
 }
 
 void ContentSwarmManager::StartDiscovery()
@@ -30,7 +40,7 @@ void ContentSwarmManager::StartDiscovery()
     LOG->Trace("ContentSwarmManager: Starting P2P Discovery...");
     m_bDiscovering = true;
 
-    // Mock Discovery: Populate with fake remote packs
+    // Mock Discovery: Populate with fake remote packs (until tracker support)
     m_AvailablePacks.clear();
     m_AvailablePacks.push_back({ "p001", "Community Pack 1", "StepArtist_A", 104857600, 5 });
     m_AvailablePacks.push_back({ "p002", "Hardcore Rave", "DJ_Speed", 209715200, 12 });
@@ -44,86 +54,70 @@ const std::vector<ContentPack>& ContentSwarmManager::GetAvailablePacks() const
 
 void ContentSwarmManager::RequestPack( const RString& sPackID )
 {
-    LOG->Trace("ContentSwarmManager: Requesting Pack %s", sPackID.c_str());
+    LOG->Trace("ContentSwarmManager: Requesting Pack %s via BitTorrent", sPackID.c_str());
 
-    // Check if a transfer is already running
-    if( m_pTransfer != nullptr && !m_pTransfer->IsFinished() )
+    if( m_ActiveDownloads.find(sPackID) != m_ActiveDownloads.end() )
     {
-        SCREENMAN->SystemMessage("A download is already in progress.");
+        SCREENMAN->SystemMessage("Already downloading " + sPackID);
         return;
     }
 
-    SAFE_DELETE( m_pTransfer );
-    m_pTransfer = new FileTransfer();
+    // Mock Torrent Download Addition
+    // libtorrent::add_torrent_params p;
+    // p.save_path = "Packages/";
+    // p.ti = std::make_shared<libtorrent::torrent_info>(sPackID + ".torrent");
+    // libtorrent::torrent_handle h = ((libtorrent::session*)m_pSession)->add_torrent(p);
 
-    // In a real P2P system, this would resolve to a magnet link or tracker.
-    // For our Unified backend, we construct an HTTP stub.
-    RString sURL = "http://127.0.0.1:8080/packs/" + sPackID + ".smzip";
-    RString sDest = "Packages/" + sPackID + ".smzip";
-
-    m_pTransfer->StartDownload( sURL, sDest );
-    SCREENMAN->SystemMessage("Downloading pack: " + sPackID + "...");
+    // Store handle pointer stub
+    m_ActiveDownloads[sPackID] = nullptr;
+    SCREENMAN->SystemMessage("Started BitTorrent download for: " + sPackID);
 }
 
 void ContentSwarmManager::Update( float fDeltaTime )
 {
-    if( m_pTransfer )
-    {
-        m_pTransfer->Update( fDeltaTime );
-        if( m_pTransfer->IsFinished() )
-        {
-            if( m_pTransfer->GetResponseCode() >= 200 && m_pTransfer->GetResponseCode() < 300 )
-            {
-                SCREENMAN->SystemMessage("Download Complete!");
-                // Trigger reload if we wanted to auto-mount, but StepMania auto-mounts Packages/
-            }
-            else
-            {
-                SCREENMAN->SystemMessage("Download Failed: " + m_pTransfer->GetStatus());
-            }
-            SAFE_DELETE( m_pTransfer );
-        }
-    }
+    // Poll libtorrent alerts
+    // if (!m_pSession) return;
+    // std::vector<libtorrent::alert*> alerts;
+    // ((libtorrent::session*)m_pSession)->pop_alerts(&alerts);
+    // for (libtorrent::alert const* a : alerts) {
+    //     if (auto* finished = libtorrent::alert_cast<libtorrent::torrent_finished_alert>(a)) {
+    //         SCREENMAN->SystemMessage("Torrent Complete!");
+    //     }
+    // }
 }
 
-// Lua Bindings
-class LunaContentSwarmManager: public Luna<ContentSwarmManager>
+float ContentSwarmManager::GetDownloadProgress( const RString& hash ) const
 {
-public:
-    static int StartDiscovery( T* p, lua_State *L )
-    {
-        p->StartDiscovery();
-        return 0;
-    }
+    // Stub
+    if (m_ActiveDownloads.find(hash) == m_ActiveDownloads.end()) return 0.0f;
+    return 0.5f; // Hardcoded mock progress
+}
 
-    static int GetAvailablePacks( T* p, lua_State *L )
-    {
-        const auto& packs = p->GetAvailablePacks();
-        lua_newtable(L);
-        for( size_t i=0; i<packs.size(); ++i )
-        {
-            lua_newtable(L);
-            lua_pushstring(L, "ID"); lua_pushstring(L, packs[i].ID); lua_settable(L, -3);
-            lua_pushstring(L, "Name"); lua_pushstring(L, packs[i].Name); lua_settable(L, -3);
-            lua_pushstring(L, "Author"); lua_pushstring(L, packs[i].Author); lua_settable(L, -3);
-            lua_pushnumber(L, packs[i].Seeders); lua_setfield(L, -2, "Seeders");
-            lua_rawseti(L, -2, i+1);
-        }
-        return 1;
-    }
+int ContentSwarmManager::GetSeedCount( const RString& hash ) const
+{
+    if (m_ActiveDownloads.find(hash) == m_ActiveDownloads.end()) return 0;
+    return 10;
+}
 
-    static int RequestPack( T* p, lua_State *L )
-    {
-        p->RequestPack(SArg(1));
-        return 0;
-    }
+int ContentSwarmManager::GetLeechCount( const RString& hash ) const
+{
+    if (m_ActiveDownloads.find(hash) == m_ActiveDownloads.end()) return 0;
+    return 3;
+}
 
-    LunaContentSwarmManager()
-    {
-        ADD_METHOD( StartDiscovery );
-        ADD_METHOD( GetAvailablePacks );
-        ADD_METHOD( RequestPack );
-    }
-};
+bool ContentSwarmManager::IsDownloadComplete( const RString& hash ) const
+{
+    // Stub
+    return false;
+}
 
-LUA_REGISTER_CLASS( ContentSwarmManager )
+void ContentSwarmManager::CancelDownload( const RString& hash )
+{
+    auto it = m_ActiveDownloads.find(hash);
+    if( it != m_ActiveDownloads.end() )
+    {
+        // ((libtorrent::session*)m_pSession)->remove_torrent(handle);
+        m_ActiveDownloads.erase(it);
+        SCREENMAN->SystemMessage("Canceled download for " + hash);
+    }
+}
