@@ -27,10 +27,8 @@ This document tracks the next generation of immediate, actionable tasks and miss
 ## Immediate UI/Frontend Tasks
 
 ### 1. Ghost Replay Rendering
-- **Current State:** `ReplayManager` saves inputs to a CSV file. `ScreenReplayMenu` loads the mock list.
-- **Action:** Modify `Player.cpp` to accept a `ReplayData` object. If present, instantiate a secondary `NoteField` that consumes those inputs exactly at their recorded timestamps, drawing a translucent "Ghost" player.
-- **Current State:** `ReplayManager` saves inputs to a CSV file. `ScreenReplayMenu` loads the mock list. `ReplayManager::GetPlaybackInputAtTime` exposes a clean array of inputs at any given timestamp.
-- **Action:** Modify `Player.cpp` to query `REPLAYMAN->GetPlaybackInputAtTime()` on every tick. If present, instantiate a secondary `NoteField` that consumes those inputs exactly at their recorded timestamps, drawing a translucent "Ghost" player. *This is fully prepared for the implementor.*
+- **Current State:** `ReplayManager` saves inputs to a CSV file. `ScreenReplayMenu` loads the mock list. `ReplayManager::GetPlaybackInputAtTime` exposes a clean array of inputs at any given timestamp. `Player.cpp` correctly polls this during playback and draws a translucent ghost `NoteField`. (Completed by Jules).
+- **Action:** Refine the rendering to support specialized NoteSkins for ghost elements, and integrate ghost selection directly into the evaluation and pre-game lobbies.
 
 ### 2. NotITG Spline Editor (Debug Mode)
 - **Current State:** `NotePath` spline mathematics work in C++, and can be manipulated via Lua `13_NotePath.lua`.

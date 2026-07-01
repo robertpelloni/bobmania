@@ -258,10 +258,16 @@ Player::Player( NoteData &nd, StepsType st, bool bVisibleParts ) : m_NoteData(nd
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = nullptr;
+	m_pGhostNoteField = nullptr;
 	if( bVisibleParts )
 	{
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
+
+		m_pGhostNoteField = new NoteField;
+		m_pGhostNoteField->SetName( "GhostNoteField" );
+		// Ensure it appears slightly translucent to differentiate it
+		m_pGhostNoteField->SetDiffuse(RageColor(1.0f, 1.0f, 1.0f, 0.5f));
 	}
 	m_pJudgedRows = new JudgedRows;
 
@@ -272,6 +278,7 @@ Player::~Player()
 {
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	SAFE_DELETE( m_pGhostNoteField );
 	SAFE_DELETE( currentStep );
 	for( unsigned i = 0; i < m_vpHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vpHoldJudgment[i] );
@@ -538,6 +545,12 @@ void Player::Init(
 		ActorUtil::LoadAllCommands( *m_pNoteField, sType );
 	}
 
+	if( m_pGhostNoteField )
+	{
+		m_pGhostNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+		ActorUtil::LoadAllCommands( *m_pGhostNoteField, sType );
+	}
+
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 	FOREACH( bool, m_vbFretIsDown, b )
 		*b = false;
@@ -720,6 +733,12 @@ void Player::Load()
 		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
+	if( m_pGhostNoteField && !bOniDead )
+	{
+		m_pGhostNoteField->SetY( fNoteFieldMiddle );
+		m_pGhostNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
+	}
+
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->GetUsesCenteredArrows();
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
@@ -814,18 +833,19 @@ void Player::Update( float fDeltaTime )
 
 
 	// [Unified Replay] Inject ghost inputs if a replay is loaded
-	if (REPLAYMAN && REPLAYMAN->GetLoadedReplay().size() > 0) {
-		const std::vector<ReplayInput>& replays = REPLAYMAN->GetLoadedReplay();
+	if (REPLAYMAN && REPLAYMAN->IsPlaying() && m_pGhostNoteField) {
 		float fCurrentTime = m_pPlayerState->m_Position.m_fMusicSeconds;
+		std::vector<GameInput> vInputs;
+		std::vector<bool> vDown;
 
-		// Very basic simulation: if we crossed a replay timestamp this frame, simulate the press.
-		// A full implementation requires tracking an internal iterator across frames.
-		for (size_t i = 0; i < replays.size(); ++i) {
-			if (replays[i].fTime > fCurrentTime - fDeltaTime && replays[i].fTime <= fCurrentTime) {
-				RageTimer tm;
-				tm.Touch();
-				// Call StepStrumHopo with mocked args
-				StepStrumHopo(replays[i].iColumn, -1, tm, replays[i].bPressed, !replays[i].bPressed, ButtonType_Step);
+		if (REPLAYMAN->GetPlaybackInputAtTime(fCurrentTime, vInputs, vDown)) {
+			for (size_t i = 0; i < vInputs.size(); ++i) {
+				int iCol = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->GameInputToColumn(vInputs[i]);
+				if (iCol != Column_Invalid) {
+					if (vDown[i]) {
+						m_pGhostNoteField->Step(iCol, TNS_W1); // Provide visual feedback on the ghost field
+					}
+				}
 			}
 		}
 	}
@@ -886,6 +906,9 @@ void Player::Update( float fDeltaTime )
 
 		if( m_pNoteField )
 			m_pNoteField->Update( fDeltaTime );
+
+		if( m_pGhostNoteField )
+			m_pGhostNoteField->Update( fDeltaTime );
 
 		float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 		float fTinyPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
@@ -1633,6 +1656,13 @@ void Player::DrawPrimitives()
 		m_pNoteField->SetZoom( fZoom );
 		m_pNoteField->SetRotationX( fTiltDegrees );
 		m_pNoteField->Draw();
+
+		if (m_pGhostNoteField) {
+			m_pGhostNoteField->SetY( fOriginalY + fYOffset );
+			m_pGhostNoteField->SetZoom( fZoom );
+			m_pGhostNoteField->SetRotationX( fTiltDegrees );
+			m_pGhostNoteField->Draw();
+		}
 
 		m_pNoteField->SetY( fOriginalY );
 	}
