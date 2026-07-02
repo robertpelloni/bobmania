@@ -257,7 +257,7 @@ elseif(MACOSX)
   find_library(MAC_FRAME_VIDEOTOOLBOX VideoToolbox ${CMAKE_SYSTEM_FRAMEWORK_PATH} REQUIRED)
 
   if(NOT YASM_FOUND AND NOT NASM_FOUND)
-    message(WARNING
+    message(FATAL_ERROR
       "Neither NASM nor YASM were found. Please install at least one of them."
     )
   endif()
@@ -325,7 +325,7 @@ elseif(LINUX OR BSD)
 
   if( NOT (HAS_OSS OR HAS_JACK OR HAS_ALSA OR HAS_PULSE) )
     message(
-      WARNING
+      FATAL_ERROR
         "No sound libraries found (or selected). You will require at least one."
       )
   else()
@@ -336,7 +336,7 @@ elseif(LINUX OR BSD)
   endif()
 
   if(NOT YASM_FOUND AND NOT NASM_FOUND)
-    message(WARNING
+    message(FATAL_ERROR
       "Neither NASM nor YASM were found. Please install at least one of them."
     )
   endif()
@@ -346,7 +346,7 @@ elseif(LINUX OR BSD)
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL REQUIRED)
   if (NOT OPENGL_GLU_FOUND)  # it's an optional component of OpenGL, but we use it for glew build
-    message(WARNING "libglu was not found")
+    message(FATAL_ERROR "libglu was not found")
   endif()
 
   find_package(udev REQUIRED)
