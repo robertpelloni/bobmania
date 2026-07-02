@@ -86,11 +86,9 @@ To allow parallel development, many C++ Managers currently use "Mocks" or "Stubs
 *   `HeartRateManager`: Currently outputs a sine wave. **Action:** Replace with OS-specific Bluetooth LE driver polling.
 *   `EconomyManager`: Currently reads a local `Save/Economy.xml.sig`. **Action:** Replace with an HTTP JSON-RPC to a live `bobcoin` network node.
 *   `ContentSwarmManager`: Currently uses StepMania's legacy `FileDownload.cpp` (HTTP GET). **Action:** Replace with `libtorrent` to allow true P2P `.smzip` discovery.
-*   `ReplayManager`: Successfully records inputs to CSVs. **Action:** Refine NoteSkin integration and UI selection for ghosts. (The core C++ injection logic rendering a translucent "Ghost NoteField" reading those CSVs in real-time via `GetPlaybackInputAtTime` has been completed).
+*   `ReplayManager`: Successfully records inputs to CSVs. **Action:** Write C++ logic in `Player.cpp` that renders a translucent "Ghost NoteField" reading those CSVs in real-time.
 
 ## 3. WHAT HAS BEEN ACCOMPLISHED
-
-*   **Ghost Replay Rendering:** Implemented C++ logic in `Player.cpp` that instantiates a secondary translucent `m_pGhostNoteField` and dynamically fetches active replay inputs directly from `REPLAYMAN->GetPlaybackInputAtTime()` on every tick.
 
 ## 6. Excluded Features (Analysis)
 The following features from forks were analyzed but explicitly **excluded** from this merge:

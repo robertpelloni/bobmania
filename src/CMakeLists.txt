@@ -701,6 +701,7 @@ elseif(APPLE)
 else() # Unix / Linux
   # TODO: Remember to find and locate the zip archive files.
   if (HAS_FFMPEG)
+  endif()
   set_target_properties("${SM_EXE_NAME}"
                         PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
   set_target_properties("${SM_EXE_NAME}"
@@ -840,9 +841,11 @@ if(NOT APPLE)
     "${SM_EXTERN_DIR}/libjpeg"
     "${SM_EXTERN_DIR}/zlib"
   )
-  if(MSVC)
+endif()
+if(MSVC)
 list(APPEND SM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
             "${SM_SRC_DIR}/generated")
+endif()
 list(APPEND SM_INCLUDE_DIRS "${JPEG_INCLUDE_DIR}")
 if(NOT APPLE)
   if(NOT WITH_SYSTEM_GLEW)
