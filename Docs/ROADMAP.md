@@ -30,3 +30,9 @@ This document serves as the master blueprint for the structural and architectura
     1.  **Replace XML with JSON:** Completely decouple legacy `RageFile` XML routines from the `ProfileManager` in favor of rapid, web-compatible JSON syncs.
     2.  **Database Persistence:** Move the Node.js backend from memory Maps to a robust SQL database.
     3.  **Libuv Implementation:** Complete the transition of `UnifiedNetwork` from raw `sys/socket.h` stubs to cross-platform asynchronous event loops.
+
+### Phase 6: Sync and Stability Check (v5.95.0)
+- Protocol #73 alignment.
+- Verify ghost replay feature.
+- Ensure strict avoidance of instruction-watcher, depth-restriction, and client-config installer hallucinated requests.
+- Maintained stability after avoiding erroneous CMake hacks.

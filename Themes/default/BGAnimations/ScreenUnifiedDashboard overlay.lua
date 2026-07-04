@@ -1,15 +1,15 @@
 local choices = {
-    { text = "Arcade", screen = "ScreenTitleMenu", help = "The classic StepMania gameplay experience. Start here for casual play." },
-    { text = "Gym Mode", screen = "ScreenGymWelcome", help = "Track fitness goals, calories burned, and follow structured workouts." },
-    { text = "Tournament Ladder", screen = "ScreenTournamentLadder", help = "Compete globally in ranked matches to climb the leaderboard." },
-    { text = "Marketplace", screen = "ScreenMarketplace", help = "Spend your Bobcoins on new songs, themes, and profile customizations." },
-    { text = "Wallet History", screen = "ScreenWalletHistory", help = "View your Bobcoin balance, transaction ledger, and mining rewards." },
-    { text = "Missions", screen = "ScreenMissionSelect", help = "Complete daily objectives for rewards and experience points." },
-    { text = "Swarm Network", screen = "ScreenContentNetwork", help = "Discover and download community content P2P via bobtorrent." },
-    { text = "Spectate TV", screen = "ScreenSpectate", help = "Watch high-level matches live and chat with the community." },
-    { text = "Replays", screen = "ScreenReplayMenu", help = "Review past performances and race against ghosts (Ghost Replay Rendering)." },
+    { text = "Arcade", screen = "ScreenTitleMenu", help = "The classic StepMania gameplay experience." },
+    { text = "Gym Mode", screen = "ScreenGymWelcome", help = "Track fitness goals, calories, and structured workouts." },
+    { text = "Tournament Ladder", screen = "ScreenTournamentLadder", help = "Compete globally in ranked matches." },
+    { text = "Marketplace", screen = "ScreenMarketplace", help = "Spend Bobcoins on songs, themes, and items." },
+    { text = "Wallet History", screen = "ScreenWalletHistory", help = "View your Bobcoin balance and transaction ledger." },
+    { text = "Missions", screen = "ScreenMissionSelect", help = "Complete daily objectives for rewards." },
+    { text = "Swarm Network", screen = "ScreenContentNetwork", help = "Discover and download community content P2P." },
+    { text = "Spectate TV", screen = "ScreenSpectate", help = "Watch high-level matches live and chat." },
+    { text = "Replays", screen = "ScreenReplayMenu", help = "Review past performances and race against ghosts." },
     { text = "Asset Sync", screen = "ScreenAssetSync", help = "Synchronize local items and stats with the cloud." },
-    { text = "Unified Settings", screen = "ScreenUnifiedOptions", help = "Configure advanced options (Ghost Tapping, FOV, Performance)." },
+    { text = "Unified Settings", screen = "ScreenUnifiedOptions", help = "Configure advanced options (Ghost Tapping, FOV)." },
     { text = "Exit", screen = "ScreenExit", help = "Quit Unified StepMania." }
 }
 
@@ -27,7 +27,7 @@ t[#t+1] = Def.ActorFrame {
 
     -- Help Prompt
     LoadFont("Common Normal")..{
-        Text="Press SELECT for Help / Tooltips",
+        Text="Press SELECT for Help",
         InitCommand=function(self) self:xy(300, -220):zoom(0.6):diffuse(0.5,0.5,0.5,1):horizalign(right) end,
         HelpToggleMessageCommand=function(self) self:visible(not self:GetVisible()) end
     },
