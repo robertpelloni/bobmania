@@ -42,7 +42,5 @@ This document tracks the next generation of immediate, actionable tasks and miss
 - **Issue:** `XmlFile` is notoriously slow and brittle. Modern modding and web services use JSON.
 - **Action:** Systematically replace all instances of `XmlFile.Load()` (such as in `Profile.cpp` and `Missions.xml`) with `jsoncpp`. Profiles should be saved and loaded strictly as JSON objects to ensure frictionless syncing with the Node.js backend.
 
-- [x] Integrate v5.95.0 workspace sync (Protocol #73)
-- [x] Verify ghost replay compilation and integration
-- [x] Clean up any unintended local state from CMake dummy files
-- [ ] Migrate ProfileManager to JSON serialization
+- [x] Integrate v5.96.0 workspace sync (Protocol #74)
+- [x] Integrate v5.98.0 workspace sync (Protocol #76)

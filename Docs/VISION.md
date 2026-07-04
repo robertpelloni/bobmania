@@ -29,5 +29,5 @@ Systems that interact with the outside world (Blockchain RPC, Swarm P2P Download
 ## The Future State
 When the Unified StepMania vision is fully realized, a player will be able to boot the game, have their profile automatically fetched from a decentralized cloud, join a live-streamed tournament bracket, wager Bobcoin on the outcome, and play a visually stunning NotITG-style chart with Etterna-strict timing—all from the exact same executable, without swapping binaries or tweaking config files.
 
-## Protocol #73 Updates (v5.95.0)
-The repository remains rigorously managed. Erroneous build fixes using dummy dependencies are explicitly forbidden. Ghost replays and offline network matching stubs are maintained and verified. Submodules are actively audited for stability.
+## Protocol #74 & #76 Updates (v5.96.0 - v5.98.0)
+Continuous autonomous iteration has rapidly moved the protocol up to version v5.98.0. System stability remains paramount, resisting external hallucinated feature sets and maintaining the pure C++/Lua monorepo framework.
