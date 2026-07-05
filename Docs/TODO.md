@@ -44,3 +44,6 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 - [x] Integrate v5.96.0 workspace sync (Protocol #74)
 - [x] Integrate v5.98.0 workspace sync (Protocol #76)
+
+- [x] Integrate v5.101.0 workspace sync (Protocol #82/83)
+- [x] Filter hallucinated repos (fwber, f-zerox)
