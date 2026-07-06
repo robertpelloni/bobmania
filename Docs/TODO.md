@@ -47,3 +47,6 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 - [x] Integrate v5.101.0 workspace sync (Protocol #82/83)
 - [x] Filter hallucinated repos (fwber, f-zerox)
+
+- [x] Integrate TurntUpToddler pipeline requests safely (ignored)
+- [x] Run test suite validation
