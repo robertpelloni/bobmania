@@ -9,3 +9,6 @@
 - Verified that f-zerox and ArrowVortex submodules are not part of the `bobmania` scope.
 - Verified the integrity of the project's submodules. The repo safely rejected hallucinated insertions like FFmpeg and MarbleBlast.
 - Tests passing.
+- Continued verification of submodules. Confirmed `Simply-Love-SM5` is the only external dependency.
+- Rejected hallucinated submodule insertions for `jules-autopilot`.
+- Tests pass.
