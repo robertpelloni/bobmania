@@ -53,3 +53,6 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 - [x] Integrate v5.106.0 workspace sync (Protocol #87)
 - [x] Ignore hallucinated branches and requests
+
+- [x] Run baseline end-to-end integration tests via run_tests.sh for Protocol 87
+- [x] Reject TurntUpToddler, f-zerox, and ArrowVortex hallucinated dependencies
