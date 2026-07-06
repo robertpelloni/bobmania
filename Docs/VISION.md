@@ -37,3 +37,6 @@ The environment continues to advance to Protocol #83. Stability is verified by a
 
 ## TurntUpToddler Cycle
 All core testing logic has passed successfully. External hallucinated feature requests for Suno EDM pipelines and TurntUpToddler are explicitly rejected to maintain monorepo structure.
+
+## Protocol #87 Updates (v5.106.0)
+The repository correctly enforces boundaries around the StepMania framework, rejecting out-of-scope integrations like Suno EDM or external beatmappers, solidifying internal consistency.

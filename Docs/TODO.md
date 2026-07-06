@@ -50,3 +50,6 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 - [x] Integrate TurntUpToddler pipeline requests safely (ignored)
 - [x] Run test suite validation
+
+- [x] Integrate v5.106.0 workspace sync (Protocol #87)
+- [x] Ignore hallucinated branches and requests
