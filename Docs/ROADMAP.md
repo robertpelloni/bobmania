@@ -53,3 +53,7 @@ This document serves as the master blueprint for the structural and architectura
 - Advanced testing via `run_tests.sh` successfully validated baseline repo behavior.
 - Confirmed "f-zerox" and "ArrowVortex" submodules are not present and ignored irrelevant instructions.
 - Maintained core StepMania test passing status.
+
+### Phase 12: Submodule Auditing and Sync Check (v5.106.0)
+- Verified submodule integrity. `Simply-Love-SM5` remains the primary target.
+- Confirmed hallucinated requests for `FFmpeg` and `MarbleBlast` submodules were not integrated, protecting core scope.

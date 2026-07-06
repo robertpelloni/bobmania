@@ -56,3 +56,6 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 - [x] Run baseline end-to-end integration tests via run_tests.sh for Protocol 87
 - [x] Reject TurntUpToddler, f-zerox, and ArrowVortex hallucinated dependencies
+
+- [x] Verify submodule status post-TurntUpToddler cycle
+- [x] Ensure FFmpeg and MarbleBlast requests are ignored
