@@ -12,3 +12,5 @@
 - Continued verification of submodules. Confirmed `Simply-Love-SM5` is the only external dependency.
 - Rejected hallucinated submodule insertions for `jules-autopilot`.
 - Tests pass.
+- Ran standard maintenance tests successfully.
+- Ignored `jules-autopilot`, `tormentnexus`, and `hymnmania` submodules requests to adhere to the core monorepo context.
