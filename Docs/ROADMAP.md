@@ -89,3 +89,8 @@ This document serves as the master blueprint for the structural and architectura
 - Advanced version to v5.136.0.
 - Successfully ignored hallucinated requests for `aios`, `multi-lang-kernel-port`, `Windows Turbopack fixes`, `borg`, and `tormentnexus`.
 - Verified core tests pass successfully.
+
+### Phase 20: Protocol Sync (v5.140.0)
+- Advanced version to v5.140.0.
+- Successfully ignored hallucinated requests for `.serena`, `.tormentnexus`, `.vibe-config.json`, and pending feature branches forward-merging.
+- Verified core tests pass successfully.
