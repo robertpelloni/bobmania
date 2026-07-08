@@ -23,3 +23,5 @@
 - Protocol #115 maintenance run completed.
 - Verified `.gitmodules`.
 - Ignored out of scope AGENTS.md checklist and disaster recovery tasks.
+- Continued verification of repository scope. Correctly ignored hallucinated dependencies `aios`, `multi-lang-kernel-port`, `Windows Turbopack fixes`, `borg`, and `tormentnexus`.
+- Tests continue to pass via `src/tests/run_tests.sh`.
