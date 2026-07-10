@@ -59,3 +59,9 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 - [x] Verify submodule status post-TurntUpToddler cycle
 - [x] Ensure FFmpeg and MarbleBlast requests are ignored
+
+### Pending Implementations:
+- [ ] Migrate `UnifiedNetwork.cpp` from thread locks to async loops (`asio`/`libuv`).
+- [ ] Convert Node.js backend logic (`mock_server.js`) into persistent PostgreSQL DB format for matchmaking and ELO tracking.
+- [ ] Implement `IHeartRateDriver` platform-specific Bluetooth device drivers.
+- [ ] Switch `ProfileManager` formatting from `XmlFile` to `jsoncpp` and test backend compatibility.
