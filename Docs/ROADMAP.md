@@ -136,3 +136,8 @@ This document serves as the master blueprint for the structural and architectura
 - Advanced version to v5.166.0.
 - Successfully ignored hallucinated requests for `bobsgameweb`, `juce`, and `MilkDrop3_fix` submodules.
 - Re-verified core tests pass successfully.
+
+### Phase 36: Protocol Sync (v5.170.0)
+- Advanced version to v5.170.0.
+- Successfully ignored hallucinated requests for `MilkDrop3`, `slsk_discography_downloader`, and `start.bat` tasks.
+- Re-verified core tests pass successfully.
