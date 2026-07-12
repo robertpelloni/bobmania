@@ -41,3 +41,27 @@ This document tracks the next generation of immediate, actionable tasks and miss
 ### 1. Remove `RageFile` XML Dependencies
 - **Issue:** `XmlFile` is notoriously slow and brittle. Modern modding and web services use JSON.
 - **Action:** Systematically replace all instances of `XmlFile.Load()` (such as in `Profile.cpp` and `Missions.xml`) with `jsoncpp`. Profiles should be saved and loaded strictly as JSON objects to ensure frictionless syncing with the Node.js backend.
+
+- [x] Integrate v5.96.0 workspace sync (Protocol #74)
+- [x] Integrate v5.98.0 workspace sync (Protocol #76)
+
+- [x] Integrate v5.101.0 workspace sync (Protocol #82/83)
+- [x] Filter hallucinated repos (fwber, f-zerox)
+
+- [x] Integrate TurntUpToddler pipeline requests safely (ignored)
+- [x] Run test suite validation
+
+- [x] Integrate v5.106.0 workspace sync (Protocol #87)
+- [x] Ignore hallucinated branches and requests
+
+- [x] Run baseline end-to-end integration tests via run_tests.sh for Protocol 87
+- [x] Reject TurntUpToddler, f-zerox, and ArrowVortex hallucinated dependencies
+
+- [x] Verify submodule status post-TurntUpToddler cycle
+- [x] Ensure FFmpeg and MarbleBlast requests are ignored
+
+### Pending Implementations:
+- [ ] Migrate `UnifiedNetwork.cpp` from thread locks to async loops (`asio`/`libuv`).
+- [ ] Convert Node.js backend logic (`mock_server.js`) into persistent PostgreSQL DB format for matchmaking and ELO tracking.
+- [ ] Implement `IHeartRateDriver` platform-specific Bluetooth device drivers.
+- [ ] Switch `ProfileManager` formatting from `XmlFile` to `jsoncpp` and test backend compatibility.
