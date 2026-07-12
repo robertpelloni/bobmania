@@ -814,18 +814,23 @@ void Player::Update( float fDeltaTime )
 
 
 	// [Unified Replay] Inject ghost inputs if a replay is loaded
-	if (REPLAYMAN && REPLAYMAN->GetLoadedReplay().size() > 0) {
-		const std::vector<ReplayInput>& replays = REPLAYMAN->GetLoadedReplay();
+	if (REPLAYMAN) {
 		float fCurrentTime = m_pPlayerState->m_Position.m_fMusicSeconds;
+		std::vector<GameInput> vGhostInputs;
+		std::vector<bool> vGhostDown;
 
-		// Very basic simulation: if we crossed a replay timestamp this frame, simulate the press.
-		// A full implementation requires tracking an internal iterator across frames.
-		for (size_t i = 0; i < replays.size(); ++i) {
-			if (replays[i].fTime > fCurrentTime - fDeltaTime && replays[i].fTime <= fCurrentTime) {
-				RageTimer tm;
-				tm.Touch();
-				// Call StepStrumHopo with mocked args
-				StepStrumHopo(replays[i].iColumn, -1, tm, replays[i].bPressed, !replays[i].bPressed, ButtonType_Step);
+		if (REPLAYMAN->GetPlaybackInputAtTime(fCurrentTime, vGhostInputs, vGhostDown)) {
+			const Style* pStyle = GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+			if (pStyle != nullptr) {
+				for (size_t i = 0; i < vGhostInputs.size(); ++i) {
+					int iCol = pStyle->GameInputToColumn(vGhostInputs[i]);
+					if (iCol != Column_Invalid) {
+						RageTimer tm;
+						tm.Touch();
+						// Pass the simulated inputs through normal note mechanics
+						StepStrumHopo(iCol, -1, tm, vGhostDown[i], !vGhostDown[i], ButtonType_Step);
+					}
+				}
 			}
 		}
 	}

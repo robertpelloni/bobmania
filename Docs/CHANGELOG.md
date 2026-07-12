@@ -31,3 +31,7 @@
 - **Backend:** Connected `EconomyManager` to Bobcoin RPC node stubs.
 ### Changed
 - **Documentation:** Massively updated `VISION.md`, `ROADMAP.md`, `TODO.md`, `HANDOFF.md`, and `UNIVERSAL_LLM_INSTRUCTIONS.md` to guide future development.
+
+## [v5.71.1] - Unified-Beta Phase 5 Prep (libtorrent)
+- Addressed TODO.md: Implemented `libtorrent` skeleton logic inside `ContentSwarmManager` to replace legacy HTTP `FileDownload.cpp` routines.
+- Documented included security vulnerability fixes for Node dependencies as resolved in Executive Protocol #59 (ws DoS, uuid buffer check).
