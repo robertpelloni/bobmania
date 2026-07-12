@@ -3,9 +3,11 @@
 
 #include "global.h"
 #include <vector>
+#include <memory>
+
+#include "Bridge/BobcoinBridge.h"
 
 class BlockchainBridge; // Forward declaration
-struct TransactionRecord; // Forward declaration from Bridge
 
 /**
  * Singleton to manage the Economy interactions via Bobcoin RPC.
@@ -23,11 +25,15 @@ public:
     long long GetBalance() const;
     bool BuyItem(const RString& itemID, long long cost);
     void AwardMiningReward(long long rewardAmount);
+    void Deposit(long long amount, const RString& reason);
+    bool HasItem(const RString& itemID);
 
     std::vector<TransactionRecord> GetTransactionHistory() const;
+    std::vector<MarketplaceItem> GetMarketplaceItems() const;
 
 private:
     long long m_iBalance;
+    std::unique_ptr<BobcoinBridge> m_pBridge;
 };
 
 extern EconomyManager* ECONOMYMAN;

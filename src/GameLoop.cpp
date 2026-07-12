@@ -291,7 +291,7 @@ void GameLoop::UpdateAllButDraw(bool bRunningFromVBLANK)
 	NSMAN->Update(fDeltaTime);
 	UNIFIED_NET->Update(fDeltaTime);
 	ASSETSYNCMAN->Update(fDeltaTime);
-	HRMAN->Update(fDeltaTime);
+	HEARTRATEMAN->Update(fDeltaTime);
 	DISCORD->Update(fDeltaTime);
 	GROOVESTATSMAN->Update(fDeltaTime);
 

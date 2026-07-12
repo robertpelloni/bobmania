@@ -16,6 +16,7 @@ struct GymProfile {
     float TotalCaloriesBurned;
     int StreakDays;
     float CaloriesToday;
+    int ELO;
     std::string LastLoginDate;
 };
 
@@ -39,6 +40,7 @@ public:
     void UpdateWeight( float fWeight );
     void UpdateHeight( float fHeight );
     void SetDailyGoal( float fGoal );
+    void UpdateELO( int iChange );
 
     // Workout Tracking
     void LogWorkout( const RString& sPlaylist, float fDuration, float fCalories );

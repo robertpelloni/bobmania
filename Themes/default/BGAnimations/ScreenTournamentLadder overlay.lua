@@ -30,13 +30,28 @@ t[#t+1] = LoadFont("Common Normal") .. {
 }
 
 -- Mock Ladder Data
-local players = {
-    { Rank = 1, Name = "StepKing", ELO = 2450, Status = "In Match" },
-    { Rank = 2, Name = "ArrowSmasher", ELO = 2300, Status = "Online" },
-    { Rank = 3, Name = "RhythmMaster", ELO = 2150, Status = "Offline" },
-    { Rank = 4, Name = "BeatFreak", ELO = 1900, Status = "Online" },
-    { Rank = 5, Name = "You", ELO = 1200, Status = "Online" }
-}
+-- Ladder Data
+local players = {}
+local function FetchPlayers()
+    if TOURNAMENTMAN then
+        local rawLadder = TOURNAMENTMAN:GetLadder()
+        players = {}
+        for i, p in ipairs(rawLadder) do
+            players[i] = { Rank = i, Name = p.Opponent, ELO = p.ELO, Status = p.Status, ID = p.MatchID }
+        end
+    end
+
+    -- Fallback
+    if #players == 0 then
+        players = {
+            { Rank = 1, Name = "StepKing", ELO = 2450, Status = "Online" },
+            { Rank = 2, Name = "ArrowSmasher", ELO = 2300, Status = "Online" },
+            { Rank = 3, Name = "RhythmMaster", ELO = 2150, Status = "Offline" }
+        }
+    end
+end
+
+FetchPlayers()
 
 local selectedIndex = 1
 
@@ -150,6 +165,12 @@ t.OnCommand = function(self)
     if DiscordRPC then
         DiscordRPC.SetPresence("Climbing Ladder", "Tournament Mode")
     end
+end
+
+t.LadderChangedMessageCommand = function(self)
+    FetchPlayers()
+    -- Re-generate rows? (In real theme we would use an itemscroller)
+    SCREENMAN:SetNewScreen("ScreenTournamentLadder") -- Refresh screen for now
 end
 
 return t

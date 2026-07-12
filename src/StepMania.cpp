@@ -997,6 +997,8 @@ int sm_main(int argc, char* argv[])
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
 
+	InitProductVersion();
+
 	SetCommandlineArguments( argc, argv );
 
 	// Set up arch hooks first.  This may set up crash handling.
@@ -1176,8 +1178,8 @@ int sm_main(int argc, char* argv[])
 	ECONOMYMAN->Init();
 	GYMMAN		= new GymManager;
 	GYMMAN->Init();
-	HRMAN		= new HeartRateManager;
-	HRMAN->Init();
+	HEARTRATEMAN = new HeartRateManager;
+	HEARTRATEMAN->Init();
 	TOURNAMENTMAN = new TournamentManager;
 	TOURNAMENTMAN->Init();
 	ASSETSYNCMAN = new AssetSyncManager;

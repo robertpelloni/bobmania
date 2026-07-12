@@ -3,6 +3,7 @@
 
 #include "RageUtil.h"
 #include "FileDownload.h"
+#include <memory>
 
 struct lua_State;
 
@@ -26,7 +27,7 @@ public:
     void PushSelf( lua_State *L );
 
 private:
-    FileDownload* m_pDownloader;
+    std::unique_ptr<FileDownload> m_pDownloader;
     bool m_bSyncing;
     RString m_sStatus;
     float m_fProgress;

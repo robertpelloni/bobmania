@@ -20,6 +20,7 @@ add_custom_command(
 list(APPEND SMDATA_GLOBAL_FILES_SRC
   "GameLoop.cpp"
   "global.cpp"
+  "ver.cpp"
   "SpecialFiles.cpp"
   "StepMania.cpp" # TODO: Refactor into separate main project.
 )
@@ -27,6 +28,7 @@ list(APPEND SMDATA_GLOBAL_FILES_SRC
 list(APPEND SMDATA_GLOBAL_FILES_HPP
   "GameLoop.h"
   "global.h"
+  "ver.h"
   "ProductInfo.h" # TODO: Have this be auto-generated.
   "SpecialFiles.h"
   "StdString.h" # TODO: Remove the need for this file, transition to std::string.
@@ -552,6 +554,7 @@ if (WIN32)
   sm_add_link_flag("${SM_EXE_NAME}" "/LIBPATH:\"${SM_SRC_DIR}/archutils/Win32/ddk\"")
 list(APPEND SMDATA_LINK_LIB "lua-5.1")
 include(../extern/CMakeProject-mmmagic.cmake)
+include(../extern/CMakeProject-json.cmake)
 
 if(HAS_MP3)
   if(WITH_SYSTEM_MAD)

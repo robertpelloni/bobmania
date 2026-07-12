@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "IHeartRateDriver.h"
+#include <memory>
 
 /**
  * Global singleton that manages the heart rate hardware.
@@ -30,7 +31,7 @@ public:
     bool IsConnected() const;
 
 private:
-    IHeartRateDriver* m_pDriver;
+    std::unique_ptr<IHeartRateDriver> m_pDriver;
     int m_iCurrentBPM;
 };
 

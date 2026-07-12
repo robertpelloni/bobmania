@@ -18,11 +18,10 @@ static Preference<RString> m_sMasterAddress("BobcoinMasterAddress", "BOB-MAIN-ST
 const RString ECONOMY_FALLBACK_FILE = "Save/Economy.xml";
 
 EconomyManager::EconomyManager() : m_iBalance(0) {
-    m_pBridge = new BobcoinBridge();
+    m_pBridge = std::make_unique<BobcoinBridge>();
 }
 
 EconomyManager::~EconomyManager() {
-    delete m_pBridge;
 }
 
 void EconomyManager::Init() {
@@ -110,6 +109,10 @@ bool EconomyManager::BuyItem(const RString& itemID, long long cost) {
     return false;
 }
 
+bool EconomyManager::HasItem(const RString& itemID) {
+    return false; // Stub
+}
+
 void EconomyManager::AwardMiningReward(long long rewardAmount) {
     if (!m_pBridge || !m_pBridge->IsConnected()) {
         // Offline Mining Mode
@@ -128,4 +131,27 @@ void EconomyManager::AwardMiningReward(long long rewardAmount) {
     } else {
         LOG->Warn("EconomyManager::AwardMiningReward() - Failed to transfer mining reward.");
     }
+}
+
+void EconomyManager::Deposit(long long amount, const RString& reason) {
+    m_iBalance += amount;
+    SaveFallbackBalance();
+    LOG->Info("EconomyManager::Deposit() - Deposited %lld bobcoins. Reason: %s", amount, reason.c_str());
+}
+
+std::vector<TransactionRecord> EconomyManager::GetTransactionHistory() const {
+    if(m_pBridge && m_pBridge->IsConnected()) {
+        return m_pBridge->GetTransactionHistory(m_sBobcoinAddress.Get());
+    }
+    return std::vector<TransactionRecord>();
+}
+
+std::vector<MarketplaceItem> EconomyManager::GetMarketplaceItems() const {
+    if(m_pBridge && m_pBridge->IsConnected()) {
+        return m_pBridge->GetMarketplaceItems();
+    }
+    // Fallback stub items for offline mode
+    std::vector<MarketplaceItem> items;
+    items.push_back({"song_pack_1", "Song Pack 1 (Offline)", 500});
+    return items;
 }

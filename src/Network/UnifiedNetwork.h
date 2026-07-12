@@ -6,6 +6,7 @@
 #include "json/json.h" // Ensure JsonCpp is available
 #include <map>
 #include <functional>
+#include <memory>
 
 // Use std::function for flexible callbacks (requires C++11, which SM5 supports)
 typedef std::function<void(const Json::Value&)> PacketCallback;
@@ -31,7 +32,7 @@ public:
     void RegisterCallback( const RString& sMessageID, PacketCallback callback );
 
 private:
-    EzSockets* m_pSocket;
+    std::unique_ptr<EzSockets> m_pSocket;
     bool m_bConnected;
     RString m_sBuffer;
 

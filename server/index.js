@@ -7,8 +7,15 @@ const wss = new WebSocket.Server({ port: PORT });
 console.log(`StepMania Network Server running on port ${PORT}`);
 
 // State
-const clients = new Map(); // ws -> { id, username, state }
+const clients = new Map(); // ws -> { id, username, state, elo }
 const matchQueue = [];
+
+// Global Ladder State
+const globalLadder = [
+    { id: '1', user: 'StepKing', elo: 2450, song: 'Legend of MAX' },
+    { id: '2', user: 'ArrowSmasher', elo: 2300, song: 'Vertex Beta' },
+    { id: '3', user: 'RhythmMaster', elo: 2150, song: 'Paranoia' }
+];
 
 wss.on('connection', (ws) => {
     const id = uuidv4();
@@ -55,6 +62,10 @@ function handleMessage(ws, data) {
         case 'QUEUE_MATCH':
             console.log(`[Match] ${meta.username} joined queue.`);
             addToQueue(ws);
+            break;
+
+        case 'ladder_request':
+            send(ws, { id: 'ladder_data', payload: globalLadder });
             break;
 
         case 'SPECTATE':

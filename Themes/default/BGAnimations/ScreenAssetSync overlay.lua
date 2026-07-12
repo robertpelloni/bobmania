@@ -17,20 +17,28 @@ t[#t+1] = LoadFont("Common Large") .. {
 }
 
 -- Connection Status
-local bConnected = true
-t[#t+1] = LoadFont("Common Normal") .. {
-    Text = "Status: Connected to Unified Server",
-    InitCommand = function(self) self:xy(SCREEN_CENTER_X, 90):zoom(0.6):diffuse(0,1,0,1) end,
-    SyncMessageCommand = function(self)
-        self:settext("Status: Synchronizing...")
-        self:diffuse(1,1,0,1)
-        self:sleep(2):queuecommand("Done")
-    end,
-    DoneCommand = function(self)
-        self:settext("Status: Sync Complete")
-        self:diffuse(0,1,0,1)
-        MESSAGEMAN:Broadcast("UpdateStats")
-    end
+t[#t+1] = Def.ActorFrame {
+    OnCommand = function(self) self:SetUpdateFunction(function(self) self:playcommand("UpdateStatus") end) end,
+
+    LoadFont("Common Normal") .. {
+        Name = "StatusText",
+        Text = "Status: Initializing...",
+        InitCommand = function(self) self:xy(SCREEN_CENTER_X, 90):zoom(0.6) end,
+        UpdateStatusCommand = function(self)
+            if ASSETSYNCMAN then
+                local status = ASSETSYNCMAN:GetStatus()
+                local progress = ASSETSYNCMAN:GetProgress()
+                self:settext(string.format("Status: %s (%.0f%%)", status, progress * 100))
+
+                if status == "Complete" then self:diffuse(0,1,0,1)
+                elseif string.find(status, "Failed") then self:diffuse(1,0,0,1)
+                else self:diffuse(1,1,0,1) end
+            else
+                self:settext("Status: AssetSyncManager Missing")
+                self:diffuse(1,0,0,1)
+            end
+        end
+    }
 }
 
 -- Mock Stat Fetching

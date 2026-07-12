@@ -28,9 +28,12 @@ t[#t+1] = LoadFont("Common Normal") .. {
 local items = {}
 if ECONOMYMAN then
     items = ECONOMYMAN:GetMarketplaceItems()
-else
+end
+
+-- Fallback if still empty
+if not items or #items == 0 then
     items = {
-        { ID="song_pack_1", Name="Song Pack 1", Price=500 },
+        { ID="song_pack_1", Name="Song Pack 1 (Offline)", Price=500 },
         { ID="avatar_frame_gold", Name="Gold Avatar Frame", Price=2000 },
         { ID="xp_boost_1h", Name="XP Boost (1 Hour)", Price=100 },
     }
@@ -114,7 +117,7 @@ local function Input(event)
             if ECONOMYMAN:HasItem(item.ID) then
                 msg:playcommand("ShowMessage", {text="Already Owned!", color=color("#FFFF00")})
             else
-                if ECONOMYMAN:BuyItem(item.ID) then
+                if ECONOMYMAN:BuyItem(item.ID, item.Price) then
                     msg:playcommand("ShowMessage", {text="Purchased " .. item.Name .. "!", color=color("#00FF00")})
                     t:playcommand("UpdateBalance")
                 else

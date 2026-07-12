@@ -25,6 +25,10 @@ void TournamentManager::Init()
     if( UNIFIED_NET )
     {
         UNIFIED_NET->RegisterCallback("match_started", std::bind(&TournamentManager::HandleMatchStarted, this, std::placeholders::_1));
+        UNIFIED_NET->RegisterCallback("ladder_data", std::bind(&TournamentManager::HandleLadderData, this, std::placeholders::_1));
+
+        // Request initial ladder
+        UNIFIED_NET->SendJSON("ladder_request", Json::Value(Json::objectValue));
     }
 
     // Mock Ladder Data
@@ -80,6 +84,26 @@ void TournamentManager::HandleMatchStarted(const Json::Value& payload)
 
     // Here we would sync the GAMESTATE if we had full control
     SCREENMAN->SystemMessage("Opponent Connected: " + opponent);
+}
+
+void TournamentManager::HandleLadderData(const Json::Value& payload)
+{
+    if( !payload.isArray() ) return;
+
+    m_Ladder.clear();
+    for( unsigned i=0; i<payload.size(); ++i )
+    {
+        TournamentMatch m;
+        m.MatchID = payload[i]["id"].asString();
+        m.OpponentName = payload[i]["user"].asString();
+        m.OpponentELO = payload[i]["elo"].asInt();
+        m.SongTitle = payload[i]["song"].asString();
+        m.bCompleted = false;
+        m_Ladder.push_back(m);
+    }
+
+    LOG->Trace("TournamentManager: Received ladder with %d players", (int)m_Ladder.size());
+    MESSAGEMAN->Broadcast("LadderChanged");
 }
 
 void TournamentManager::ReportMatchResult(const RString& sMatchID, int iUserScore)

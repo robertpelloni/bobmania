@@ -34,6 +34,7 @@ public:
     void StartDiscovery();
     const std::vector<ContentPack>& GetAvailablePacks() const;
     void RequestPack( const RString& sPackID );
+    void AddLocalPack( const RString& sPath );
 
     void Update( float fDeltaTime );
 

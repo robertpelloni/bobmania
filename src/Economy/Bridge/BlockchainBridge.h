@@ -11,6 +11,12 @@ struct TransactionRecord {
     long long iTimestamp;
 };
 
+struct MarketplaceItem {
+    RString sID;
+    RString sName;
+    long long iPrice;
+};
+
 class BlockchainBridge
 {
 public:
@@ -25,6 +31,7 @@ public:
 
     // Added for Phase 2 UI Completeness
     virtual std::vector<TransactionRecord> GetTransactionHistory(const RString& sAddress) = 0;
+    virtual std::vector<MarketplaceItem> GetMarketplaceItems() = 0;
 };
 
 #endif

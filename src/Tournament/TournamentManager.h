@@ -34,6 +34,7 @@ public:
 
     // Callbacks
     void HandleMatchStarted(const Json::Value& payload);
+    void HandleLadderData(const Json::Value& payload);
 
     // Lua
     void PushSelf(lua_State *L);
