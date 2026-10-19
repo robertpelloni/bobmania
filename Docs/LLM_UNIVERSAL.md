@@ -1,2 +1,0 @@
-# Universal LLM Instructions
-

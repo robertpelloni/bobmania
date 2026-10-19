@@ -1,1 +1,0 @@
-This file has been deprecated in favor of a single source of truth. Please refer to `Docs/LLM_UNIVERSAL.md` for all instructions regarding project architecture, coding standards, versioning, and feature implementation.
