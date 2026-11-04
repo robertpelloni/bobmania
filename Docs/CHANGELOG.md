@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.172.0] - 2026-11-04
+### Added / Changed
+- **NotITG Spline Editor:** Integrated `ScreenSplineEditor overlay.lua` for chart authors to visually inspect and modify 3D NotePath spline control points.
+- **Metrics & Theme Registration:** Added `[ScreenSplineEditor]` metric definitions to `Themes/default/metrics.ini` and header strings in `Themes/default/Languages/en.ini`.
+- **Test Automation:** Added automated Lua syntax verification for `ScreenSplineEditor overlay.lua` to `src/tests/run_tests.sh`.
+
 ## [5.171.0] - 2026-11-04
 ### Added / Changed
 - **Dashboard Consolidation:** Re-architected `ScreenUnifiedDashboard` into a high-value, single-page command center.

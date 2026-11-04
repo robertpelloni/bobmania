@@ -148,3 +148,9 @@ This document serves as the master blueprint for the structural and architectura
 - Grouped 13 core modules into high-value primary sections (Core Rhythm & Fitness, Economy & Progression, Media & System Tools).
 - Integrated `HelpOverlay` context tooltips and badge markers for all modules.
 - Re-verified core test suite (`src/tests/run_tests.sh`) passes with 100% compliance.
+
+### Phase 38: NotITG Spline Editor Integration (v5.172.0)
+- Advanced version to v5.172.0.
+- Integrated `ScreenSplineEditor` UI overlay for interactive 3D NotePath manipulation.
+- Registered metrics and translations in `metrics.ini` and `en.ini`.
+- Updated test runner to validate spline editor Lua syntax.

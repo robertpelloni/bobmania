@@ -39,6 +39,10 @@
 - Consolidated all 13 modules (Economy, Quests, Media, P2P Swarm, Settings, Server/Exit controls) into singular page with badge tags and contextual tooltips.
 - Updated documentation (DASHBOARD.md, Manual_Unified.md, ROADMAP.md, CHANGELOG.md).
 - Advanced project version to v5.171.0. Core tests continue to pass via `src/tests/run_tests.sh`.
+- Integrated ScreenSplineEditor for NotITG NotePath spline authoring and debugging.
+- Configured theme metrics and language definitions for ScreenSplineEditor.
+- Added automated syntax verification for ScreenSplineEditor in test runner.
+- Advanced project version to v5.172.0.
 - Continued verification of repository scope. Verified `git submodule status` matches expectation.
 - Tests continue to pass via `src/tests/run_tests.sh`.
 - Continued verification of repository scope. Verified `git submodule status` matches expectation. No unexpected drift occurred.

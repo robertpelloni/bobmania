@@ -16,6 +16,7 @@ echo "NetworkSync... PASS"
 # 2. Lua Architecture & Syntax Verification
 echo "Validating Lua UI components..."
 python3 "$REPO_ROOT/scripts/validate_lua.py" "$REPO_ROOT/Themes/default/BGAnimations/ScreenUnifiedDashboard overlay.lua"
+python3 "$REPO_ROOT/scripts/validate_lua.py" "$REPO_ROOT/Themes/default/BGAnimations/ScreenSplineEditor overlay.lua"
 echo "Lua Syntax Validation... PASS"
 
 # 3. Consolidated Dashboard Screen & Metric Verification

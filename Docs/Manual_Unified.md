@@ -53,6 +53,7 @@ Upon launching the game (and bypassing the traditional Title Menu), you arrive a
 *   **P2P Content Swarm (`ScreenContentNetwork`):** Community pack sharing network using peer-to-peer distribution.
 *   **Unified Settings (`ScreenUnifiedOptions`):** Advanced engine options (Ghost Tapping, Both At Once, FOV overrides, VR modes).
 *   **Exit / Server Shutdown (`ScreenExit`):** Graceful server daemon and engine shutdown sequence.
+*   **Spline Editor (`ScreenSplineEditor`):** Visual interactive debugger for 3D NotePath spline control points (NotITG parity).
 
 ### Controls:
 *   `Up`/`Down`: Navigate the consolidated dashboard items.
