@@ -7,7 +7,13 @@ import re
 import sys
 
 def audit_dashboard():
-    dashboard_file = "Themes/default/BGAnimations/ScreenUnifiedDashboard overlay.lua"
+    # Resolve from this script's location, not the caller's CWD: the audit
+    # used to crash with FileNotFoundError when run from the bobmani root.
+    import os
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    dashboard_file = os.path.join(
+        repo_root, "Themes/default/BGAnimations/ScreenUnifiedDashboard overlay.lua"
+    )
 
     with open(dashboard_file, "r") as f:
         dash_content = f.read()
