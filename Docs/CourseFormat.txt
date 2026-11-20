@@ -62,7 +62,7 @@ Complete Course Template
 -- for testing or other purposes.
 -- * is a wildcard item, meaning that StepMania will always pick a random song
 -- for this part of the course.
--- You can also replace with BEST*,WORST*,GRADEBEST*, or GRADEWORST*, where * 
+-- You can also replace with BEST*,WORST*,GRADEBEST*, or GRADEWORST*, where *
 -- is a number to retrive the first of each category above.
 #SONG:BEST1:Medium:2x;
 -- As well as that, you may also do Group Random, like such:
@@ -79,7 +79,7 @@ Complete Course Template
 -- For example, forces the course to never be hidden, noshowcourse being the
 -- reverse of such.
 
--- nodifficult also exists to disable a player from changing difficulties, 
+-- nodifficult also exists to disable a player from changing difficulties,
 -- barring the player from making it easier or harder ( Gauntlets & Survivals
 -- do not allow you to change difficulties ).
 
@@ -91,8 +91,8 @@ Complete Course Template
 #SONGSELECT:GROUP=Stepmania 5:BPMRANGE=120-160:Difficulty=Medium:MODS=2x;
 -- #SONGSELECT is a new alternative to the #SONG tag, which will (hopefully)
 -- be easier to use and understand. Instead of relying on values input in a
--- very specific and poorly-documented order, this tag is composed of 
--- a series of PARAM=VALUE statements, separated by :'s. 
+-- very specific and poorly-documented order, this tag is composed of
+-- a series of PARAM=VALUE statements, separated by :'s.
 
 -- The following parameters are available for selecting a song:
 -- TITLE, GROUP, ARTIST, GENRE, DIFFICULTY, METER, BPMRANGE, DURATION, SORT
@@ -103,33 +103,33 @@ Complete Course Template
 
 -- Parameter Desciptions:
 --  TITLE= A list of one or more song titles, separated by commas.
---  Notes: 
+--  Notes:
 --  - The "title" here can be either the name of the song directory,
 --    the #TITLE, or the #TITLETRANSLIT.
 --  - Titles must be an *exact match*.
 --  - Unlike the #SONG tag, this will not take into account group names.
 --    If you want to specify a specific song from a specific group, use
 --    this along with the GROUP parameter.
---  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used,
 --    but they must be escaped (like `\#`, `\,`, etc).
---  Example: 
-#SONGSELECT:TITLE=Goin' Under,Springtime;  
+--  Example:
+#SONGSELECT:TITLE=Goin' Under,Springtime;
 #SONGSELECT:TITLE=thank u\, next;
 
 --  GROUP= A list of one or more song groups, separated by commas.
 --  Notes:
 --  - The "group" refers to the directory name of the song group.
 --  - Group names must be an *exact match*.
---  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used,
 --    but they must be escaped (like `\#`, `\,`, etc).
---  Example: 
+--  Example:
 #SONGSELECT:GROUP=Stepmania 5,In The Groove;
-  
+
 --  ARTIST= A list of one or more artist names, separated by commas.
 --  Notes:
 --  - The "artist" refers to either the #ARTIST or #ARTISTTRANSLIT value
 --    of the simfile.
---  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used,
 --    but they must be escaped (like `\#`, `\,`, etc).
 -- Example:
 #SONGSELECT:ARTIST=Kommisar,NegaRen;
@@ -137,7 +137,7 @@ Complete Course Template
 --  GENRE= A list of one or more song genres, separated by commas.
 --  Notes:
 --  - The "genre" refers to the #GENRE tag of a song.
---  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used, 
+--  - Commas, and other control characters (`#`,`;`, `=`, and `:`) can be used,
 --    but they must be escaped (like `\#`, `\,`, etc).
 --  - Most songs don't actually have a #GENRE defined, which unfortunately
 --    makes this parameter not terribly useful at this time.
@@ -167,17 +167,17 @@ Complete Course Template
 --  Example:
 #SONGSELECT:METER=8-12;
 
---  BPMRANGE= A minimum and maximum value of a song's bpm, 
+--  BPMRANGE= A minimum and maximum value of a song's bpm,
 --  separated by a dash `-`.
 --  Notes:
 --  - The "bpm" values refer to the displayed bpm value/range of a song.
---    This means that a song may be chosen if its #DISPLAYBPM matches the 
+--    This means that a song may be chosen if its #DISPLAYBPM matches the
       given range, even though it's true bpm might not.
 --  - These values should only whole numbers (no decimal places).
 --  - If a song has a displayed bpm range, both the min and max values must
 --    be within the specified range.
 --  - This range is inclusive, meaning that a song with a bpm that is exactly
---    the value of the lower or upper range can also be chosen. 
+--    the value of the lower or upper range can also be chosen.
 --  - This also means that if you want to choose songs of a very specific bpm,
 --    like songs that are exactly 120 bpm, you can specify BPMRANGE=120-120
 -- Example:
@@ -197,13 +197,13 @@ Complete Course Template
 --  by a comma. For example, SORT=MostPlays,1 selects the #1 most played song on
 --  the machine, SORT=LowestGrades,10 selects the song that you've gotten your 10th
 --  worst score on.
---  One possible use for this would be to create a course to force you to play songs 
+--  One possible use for this would be to create a course to force you to play songs
 --  from certain groups that you likely haven't played before, by combining this with
 --  the GROUP parameter, eg "#SONGSELECT:GROUP=In the Groove:SORT=FewestPlays,1;"
---  
+--
 --  Notes:
 --  - Like DIFFICULTY, there are several acceptable values that are equivalent to each other.
---    The old style values are Best, Worst, GradeBest, or GradeWorst. 
+--    The old style values are Best, Worst, GradeBest, or GradeWorst.
 --    For the sake of consistency and clarity, please consider using:
 --    MostPlays, FewestPlays, TopGrades, or LowestGrades.
 --  - The number value can be between 1 and 500.
@@ -225,8 +225,8 @@ Complete Course Template
 --  GAINSECONDS= The number of seconds gained before starting a song.
 --  This is exactly the same as if specifying the #GAINSECONDS tag.
 
---  GAINLIVES= The number of lives gained for completing this song. 
---  This is equivalent to the 'award*' modifier for #SONG. 
+--  GAINLIVES= The number of lives gained for completing this song.
+--  This is equivalent to the 'award*' modifier for #SONG.
 
 Finally, here's an example course:
 

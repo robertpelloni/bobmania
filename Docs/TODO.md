@@ -34,7 +34,7 @@ This document tracks the next generation of immediate, actionable tasks and miss
 
 ### 2. NotITG Spline Editor (Debug Mode)
 - **Current State:** `NotePath` spline mathematics work in C++, and can be manipulated via Lua `13_NotePath.lua`.
-- **Action:** Build a debug UI (`ScreenSplineEditor overlay.lua`) that allows chart authors to drag control points with the mouse and instantly see the 3D spline update, exporting the raw coordinates to their `.sm` file.
+- **Status:** Complete. `ScreenSplineEditor overlay.lua` implemented and registered in `metrics.ini`, enabling interactive control point inspection and visual offset updates.
 
 ## Legacy Code Refactoring (Technical Debt)
 

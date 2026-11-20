@@ -33,21 +33,32 @@ Unified StepMania abandons the fragmented "fork" model. By introducing global "M
 
 ## 2. The Unified Dashboard
 
-Upon launching the game (and bypassing the traditional Title Menu), you arrive at the **Unified Dashboard**. This is your central hub.
+Upon launching the game (and bypassing the traditional Title Menu), you arrive at the **Unified Dashboard**. This is your central command center, consolidating all systems into a single-page layout organized by high-value prominent placement:
 
-### Features:
-*   **Arcade:** Launches the traditional song wheel.
-*   **Gym:** Enters the fitness portal.
-*   **Tournament:** Accesses the competitive ladder.
-*   **Economy:** Opens your wallet and the marketplace.
-*   **Missions:** Accesses the quest log.
-*   **Swarm Network:** Opens the P2P content discovery interface.
-*   **NetPlay:** Connects to standard StepMania Online (SMO) lobbies.
+### 1. Core Rhythm & Fitness (Top Placement)
+*   **Arcade Mode (`ScreenSelectMusic`):** Launches the traditional song wheel and difficulty selection.
+*   **Gym & Fitness (`ScreenGymWelcome`):** Enters the fitness portal with calorie counting, workout routines, and real-time heart rate monitoring.
+*   **Tournament Ladder (`ScreenTournamentLadder`):** Accesses competitive ranked matchmaking and global ELO ladders.
+*   **Online NetRoom (`ScreenNetRoom`):** Direct multiplayer room browser, chat interface, and online server connections.
+
+### 2. Economy & Progression
+*   **Marketplace (`ScreenMarketplace`):** In-game shop to spend dance-mined Bobcoins on songs, noteskins, and visual effects.
+*   **Wallet Ledger (`ScreenWalletHistory`):** Ledger log tracking Bobcoin transactions, mining rewards, and blockchain block confirmations.
+*   **Missions & Quests (`ScreenMissionSelect`):** Dynamic daily challenges rewarding players for accuracy, song clears, and fitness targets.
+*   **Cloud Asset Sync (`ScreenAssetSync`):** One-click synchronization of scores, profiles, and unlocks to the decentralized network.
+
+### 3. Media & System Tools
+*   **Spectator TV (`ScreenSpectate`):** Live spectator hub for tournament match broadcasting and community spectating.
+*   **Replay Theater (`ScreenReplayMenu`):** Review past performances and launch ghost replays to race against previous records.
+*   **P2P Content Swarm (`ScreenContentNetwork`):** Community pack sharing network using peer-to-peer distribution.
+*   **Unified Settings (`ScreenUnifiedOptions`):** Advanced engine options (Ghost Tapping, Both At Once, FOV overrides, VR modes).
+*   **Exit / Server Shutdown (`ScreenExit`):** Graceful server daemon and engine shutdown sequence.
+*   **Spline Editor (`ScreenSplineEditor`):** Visual interactive debugger for 3D NotePath spline control points (NotITG parity).
 
 ### Controls:
-*   `Up`/`Down`: Navigate the menu.
-*   `Start`: Enter the selected mode.
-*   `Select`: Toggle the context-aware Help Overlay.
+*   `Up`/`Down`: Navigate the consolidated dashboard items.
+*   `Start` / `Center`: Enter or launch the selected mode.
+*   `Select`: Toggle the context-aware Help Overlay and inspect tooltips.
 
 ---
 
