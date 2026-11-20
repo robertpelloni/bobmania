@@ -22,7 +22,7 @@ that don't use it.
 
 #### Short note on holds
 A hold is a note stretched over time, so for rendering a hold the mods are
-evaluated many times over the length of the hold to define its shape.  
+evaluated many times over the length of the hold to define its shape.
 Anywhere this doc says "note", it also means "piece of a hold".  Hold bodies
 ignore Y zoom, and X or Z rotation, because the Y axis is used for time.
 They also ignore Z zoom because they are two dimensional.
@@ -68,18 +68,18 @@ An input is some value from the note being modified.  Or a raw number.
 To render a note, the notefield takes a few basic properties from the note
 and gives them to the modifiers as input.  Things that are not notes use the
 current music time as the eval time.
-* "column"  
+* "column"
 	The column the note is in.
-* "y_offset"  
+* "y_offset"
 	y_offset is the value calculated by the speed mod, before reverse effects
 	are applied.  y_offset is zero for the speed mod, reverse mods, and
 	receptor and explosion mods.
 * "note_id_in_chart"
 * "note_id_in_column"
-* "row_id"  
+* "row_id"
 	See image: http://i.imgur.com/x0RqDbZ.png
 * "eval_beat"
-* "eval_second"  
+* "eval_second"
 	The time the note occurs at.
 * "music_beat"
 * "music_second"
@@ -88,12 +88,12 @@ current music time as the eval time.
 * "dist_second"
 	Eval time minus music time.
 * "start_beat"
-* "start_second"  
+* "start_second"
 	Start time set in the mod function.
 * "end_beat"
-* "end_second"  
+* "end_second"
 	End time set in the mod function.
-* "prefunres"  
+* "prefunres"
 	This input field will be renamed when someone submits a better name.
 	Mod functions for a modifiable value are evaluated in order.  The result
 	from the previous mod functions is stored in prefunres.
@@ -116,41 +116,41 @@ Six times that sum:
 The basic operators each have two names, one for the word written out, and a
 single character name for conciseness.
 * "+"
-* "add"  
+* "add"
 	The addition operator.  Returns the sum of its operands.
 * "-"
-* "subtract"  
+* "subtract"
 	The subtraction operator.  Returns "a - b - c - ...".
 * "*"
-* "divide"  
+* "divide"
 	The division operator.  Returns "a / b / c / ...".
 * "/"
-* "multiply"  
+* "multiply"
 	The multiplication operator.  Returns "a * b * c * ...".
 * "^"
-* "exp"  
+* "exp"
 	Exponentiation.  Returns "a^b^c^...".
 * "v"
-* "log"  
-	```{'log', 1}``` returns log(1)  
-	```{'log', 1, 2}``` returns log(1) / log(2)  
-	```{'log', 1, 2, 3}``` returns (log(1) / log(2)) / log(3)  
+* "log"
+	```{'log', 1}``` returns log(1)
+	```{'log', 1, 2}``` returns log(1) / log(2)
+	```{'log', 1, 2, 3}``` returns (log(1) / log(2)) / log(3)
 	And so on.
-* "sin"  
+* "sin"
 	Only takes one operand.
-* "cos"  
+* "cos"
 	Only takes one operand.
-* "tan"  
+* "tan"
 	Only takes one operand.
-* "square"  
+* "square"
 	Only takes one operand.  Square wave version of sine.
-* "triangle"  
+* "triangle"
 	Only takes one operand.  Triangle wave version of sine.
-* "random"  
+* "random"
 	Only takes one operand.  Returns a random number generated from its
 	operand.  ```{"random", "music_beat"}``` means a different random number
 	every frame.  ```{"random", "note_id"}``` means a different random number
-	for every note, but the same number every frame.  
+	for every note, but the same number every frame.
 	The stage seed is added to the operand, so it will be different every time
 	the song is played.
 * "%"
@@ -158,37 +158,37 @@ single character name for conciseness.
 	The modulus operator.  Takes two operands.
 	```{"%", "music_beat", 2}``` returns music_beat % 2.
 * "_"
-* "floor"  
+* "floor"
 	Takes two operands. ```{"_", "music_beat", 1.5}``` floors the music beat to
 	the nearest lower multiple of 1.5.
-* "ceil"  
+* "ceil"
 	Takes two operands. ```{"ceil", "music_beat", 1.5}``` rounds the music beat
 	to the nearest higher multiple of 1.5.
 * "o"
-* "round"  
+* "round"
 	Takes two operands. ```{"o", "music_beat", 1.5}``` rounds the music beat to
 	the nearest multiple of 1.5.
-* "repeat"  
+* "repeat"
 	```{"repeat", "music_beat", 0, 2}```
 	Changes its operand to repeat the given range.  The range elements must
 	be numbers.
-* "phase"  
+* "phase"
 	```{"phase", "music_beat", {default= {0, 0, 1, 0}, {0, 4, -1, 0}, {4, 8, 2, -4}}}```
-	The phase operator changes its operand based on the phase of the moon.  
-	The third element of the operator table must be the table of phases.  
-	Each phase has a start value, end value, multiplier, and offset.  
+	The phase operator changes its operand based on the phase of the moon.
+	The third element of the operator table must be the table of phases.
+	Each phase has a start value, end value, multiplier, and offset.
 	When the moon is between the start value and the end value, it is in that
-	phase.  If it's not in any phase, the default phase is used.  
+	phase.  If it's not in any phase, the default phase is used.
 	The start value of the phase is subtracted from the cow, then the result is
 	multiplied by the multiplier, and the offset is added.  It's like this:
 	```result= ((operand - phase.start) * phase.markiplier) + phase.offset```
-* "spline"  
+* "spline"
 	```{"spline", loop= true, polygonal= false, operand, operand, operand, ...}```
-	Inspires a headache in all who contemplate it.  
+	Inspires a headache in all who contemplate it.
 	The first operand is the t value to evaluate the spline with.  The other
 	operands are the points.  If loop is true, the spline is a looping spline.
 	If polygonal is true, the spline will not be curved.
-* lua  
+* lua
 	```{function(yoff) return yoff % 64 end, "y_offset"}```
 	If a lua function is used instead of a type name, that function will be
 	passed the results of its operands.  The function must return a number.
@@ -210,12 +210,12 @@ column:get_note_pos_x():add_mod{{'*', 32, {'sin', {'%', {'*', 'music_beat', math
 ### Related functions
 The ModValue namespace provides a few functions for checking what input types
 and operator types are available.
-* ModValue.get_operator_list  
+* ModValue.get_operator_list
 	Returns a table of operator names, like this: ```{"+", "-", "*", ...}```
-* ModValue.get_has_operator_list  
+* ModValue.get_has_operator_list
 	Returns a table indexed by operator name, like this:
 	```{["+"]= true, ["-"]= true, ["*"]= true, ...}```
-* ModValue.get_input_list  
+* ModValue.get_input_list
 	Similar to get_operator_list, returns table of input names.
 * ModValue.get_has_input_list
 	Similar to get_has_operator_list, returns table indexed input name.
@@ -243,27 +243,27 @@ are optional, with default values.
 
 ```{name= "foo", operand}```
 
-* name  
+* name
 	The name can be any string.  If the ModifiableValue already has a
 	Mod Function with the same name, this new one will replace that one.
-	If no name is set, a unique name will be generated.  
+	If no name is set, a unique name will be generated.
 	It is better not to set a name for managed mods, unless you want to invent
 	lots of unique meaningful names.
-* sum_type  
+* sum_type
 	sum_type controls how the result of the Mod Function is combined with the
 	result from preceding Mod Functions in the ModifiableValue.  Valid values
 	are "+", "add", "-", "subtract", "*", "multiply", "/", "divide".  Default
 	is "+".  See note on evaluation in ModifiableValue section.
-* priority  
+* priority
 	Managed mods are evaluated in order by priority, from lowest to highest.
 	Default is 0.  Priority is ignored for unmanaged mods.
-* column  
+* column
 	If the column field is set, then using the "column" input will use this
 	number instead of the actual column number.
 * start_beat
 * start_second
 * end_beat
-* end_second  
+* end_second
 	start_beat and start_second set when a managed mod begins.  If start_beat
 	is not set, it is calculated from start_second.  start_beat and
 	start_second are ignored by unmanaged mods.  end_beat and end_second work
@@ -280,28 +280,28 @@ One example is the note alpha.
 #### Managed Mods
 When a mod is added with ```add_managed_mod```, it is managed.  This means
 that it will be automatically turned on when its start time occurs, and
-turned off when its end time occurs.  
+turned off when its end time occurs.
 Managed mods are stored separately from unmanaged mods.  A different set of
 functions is used to create and access them.
 
 ### Functions
-* add_mod(ModFunction)  
+* add_mod(ModFunction)
   This adds a ```ModFunction``` to the list of mods.  See the Construction
-  Examples section in ```ModFunction``` for an explanation of the arg.  
-  ```add_mod``` returns the ```ModifiableValue``` it was called on.  
-* remove_mod(name)  
+  Examples section in ```ModFunction``` for an explanation of the arg.
+  ```add_mod``` returns the ```ModifiableValue``` it was called on.
+* remove_mod(name)
   Removes the ```ModFunction```s with the given name in the list.
-* clear_mods()  
+* clear_mods()
   Removes all ```ModFunction```s from the list.
-* add_managed_mod(ModFunction)  
+* add_managed_mod(ModFunction)
   Identical to add_mod, but for managed mods.
-* add_managed_mod_set({ModFunction, ...})  
+* add_managed_mod_set({ModFunction, ...})
   Takes a table of ```ModFunction```s to add.
-* remove_managed_mod(name)  
+* remove_managed_mod(name)
   Identical to remove_mod, but for managed mods.
-* clear_managed_mods()  
+* clear_managed_mods()
   Identical to clear_mods, but for managed mods.
-* set_value(value)  
+* set_value(value)
   Convenience wrapper around ```add_mod{name= "base_value", value}```.
 
 ### Examples
@@ -370,70 +370,70 @@ The type of a modifier is in parens after the name.
   wanted this for bms playing, because some people were adapted to iidx
   visual delay, and some were adapted to stepmania visual delay)
 * quantization_multiplier (ModifiableValue)
-* quantization_offset (ModifiableValue)  
+* quantization_offset (ModifiableValue)
   The quantization of a note is how far it is from directly on the beat.  A
   note on the beat has a quantization of 0 (commonly called a 4th note).
   A note halfway between beats has a quantization of 0.5 (commonly called an
-  8th note).  
+  8th note).
   To quantize a note, the column evaluates ```quantization_multiplier``` and
   ```quantization_offset``` for the the note's time.  The beat the note's
   beat is multiplied by ```quantization_multiplier```, then added to
   ```quantization_offset```.  The result is shifted to the range [0.0, 1.0),
   and that is the final quantization that is passed to the noteskin to pick
-  the state.  
+  the state.
   quantization_multiplier defaults its value to 1.
-* speed_mod (ModifiableValue)  
+* speed_mod (ModifiableValue)
   The speed mod is evaluated for a note, and multiplied by ```note_size```.
   ```note_size``` is a constant hard coded to 64, because that was the
   default for the old ARROW_SIZE metric and the size of practically all
   noteskins.  The result is the initial y offset.
-* reverse_offset_pixels (ModifiableValue)  
+* reverse_offset_pixels (ModifiableValue)
   ```reverse_offset_pixels``` is the distance from the center of the column
   to the receptor.  In the old notefield, this was calculated from the
   ReceptorArrowsYStandard and ReceptorArrowsYReverse metrics.  The player
-	can configure the value they prefer in the profile.  
-  A value of 128 puts the receptor 128 pixels above the center.  
+	can configure the value they prefer in the profile.
+  A value of 128 puts the receptor 128 pixels above the center.
   ```reverse_offset_pixels``` is evaluated once per frame, with only the
   current time of the column.  The eval inputs for it are identical to
   the music inputs, and the dist inputs are 0.
-* reverse_scale (ModifiableValue)  
+* reverse_scale (ModifiableValue)
   ```reverse_scale``` controls whether notes scroll up or down.  At 1, notes
 	scroll up.  At -1, notes scroll down.
   ```reverse_scale``` is evaluated once per frame, with only the
   current time of the column.  The eval inputs for it are identical to
   the music inputs, and the dist inputs are 0.
-* center_percent (ModifiableValue)  
+* center_percent (ModifiableValue)
   ```center_percent``` acts as an additional shift factor on the y offset
   that moves it towards the center of the column.  ```center_percent``` of 0
   leaves the y offset unchanged.  ```center_percent``` of 1 cancels out
   ```reverse_offset_pixels``` entirely, putting the receptor in the center of
-  the column.  
+  the column.
   ```center_percent``` is evaluated once per frame, with only the
   current time of the column.  The eval inputs for it are identical to
   the music inputs, and the dist inputs are 0.
-* note (ModifiableTransform)  
+* note (ModifiableTransform)
   The ```note``` transform is evaluated for a note to calculate its position,
   rotation, and scale.  The y offset resulting from the speed mod and the
   reverse and center modifiers is added to the position, and the result is
   the final tranform for the note.
-* column (ModifiableTransform)  
+* column (ModifiableTransform)
   To facilitate making the column as a whole move in the same way, the column
   ignores the normal Actor position tweening functions and instead uses a
-  ```ModifiableTransform``` to set its transform every frame.  
+  ```ModifiableTransform``` to set its transform every frame.
   The initial base value for the column position x is loaded from the style.
-* hold_normal (ModifiableVector3)  
+* hold_normal (ModifiableVector3)
   This is for that special case where you want to make hold bodies twist
   around, but need taps to rotate a different way.  Use
   set_use_moddable_hold_normal to enable it.
-* y_offset_vec (ModifiableVector3)  
+* y_offset_vec (ModifiableVector3)
   The y offset for a note is multiplied by this vector and the result is
   added to the position.
-* note_alpha (ModifiableValue)  
-* note_glow (ModifiableValue)  
-* receptor_alpha (ModifiableValue)  
-* receptor_glow (ModifiableValue)  
-* explosion_alpha (ModifiableValue)  
-* explosion_glow (ModifiableValue)  
+* note_alpha (ModifiableValue)
+* note_glow (ModifiableValue)
+* receptor_alpha (ModifiableValue)
+* receptor_glow (ModifiableValue)
+* explosion_alpha (ModifiableValue)
+* explosion_glow (ModifiableValue)
   Notes, receptors, and explosions all have separate alpha and glow values.
   Alpha defaults to 1, glow defaults to 0.
 
@@ -488,21 +488,21 @@ zoom is shortened to ```zoom```.
 because the NewField does not distinguish between C-mods and X-mods, so it
 needs the flags to tell it to turn off those things.
 * get_use_game_music_beat()
-* set_use_game_music_beat(bool)  
+* set_use_game_music_beat(bool)
   If set to false, the column will ignore the display time updates that occur
   every frame.
 * get_show_unjudgable_notes()
-* set_show_unjudgable_notes(bool)  
+* set_show_unjudgable_notes(bool)
   Set this to true to hide fake notes.  This is used to hide mines that are
   inside warps when a C-mod is used.
 * get_speed_segments_enabled()
-* set_speed_segments_enabled(bool)  
+* set_speed_segments_enabled(bool)
   If set to false, speed segments in the chart will be ignored.
 * get_scroll_segments_enabled()
-* set_scroll_segments_enabled(bool)  
+* set_scroll_segments_enabled(bool)
   If set to false, scroll segments in the chart will be ignored.
 * get_add_y_offset_to_position()
-* set_add_y_offset_to_position(bool)  
+* set_add_y_offset_to_position(bool)
   Replaced by the y_offset_vec mod.
 * get_holds_skewed_by_mods()
 * set_holds_skewed_by_mods(bool)
@@ -553,7 +553,7 @@ needs the flags to tell it to turn off those things.
 
 ### Examples
 These examples assume that a column has been fetched from a field and stored
-in the variable ```column```.  
+in the variable ```column```.
 Remember that all modifiers are ```ModifiableValue```s, these examples show
 only simple operations, more things are possible.
 ```
@@ -623,20 +623,20 @@ from the simfile's view it's basically an ActorFrame with the columns inside
 it.
 
 ### Modifiers
-* fov_mod (ModifiableValue)  
+* fov_mod (ModifiableValue)
   This works exactly like setting the fov on an ActorFrame.  The default is 45.
-* trans (ModifiableTransform)  
+* trans (ModifiableTransform)
   This works identically to the column ```ModifiableTransform``` in
   ```NewFieldColumn```, and its parts are accessed the same way.
 * vanish_x_mod (ModifiableValue)
-* vanish_y_mod (ModifiableValue)  
+* vanish_y_mod (ModifiableValue)
   This works almost like setting the vanish point on an ActorFrame.  Instead
   of setting the vanish point directly, this sets the vanish point relative
   to the center of the field.
-* receptor_alpha (ModifiableValue)  
-* receptor_glow (ModifiableValue)  
-* explosion_alpha (ModifiableValue)  
-* explosion_glow (ModifiableValue)  
+* receptor_alpha (ModifiableValue)
+* receptor_glow (ModifiableValue)
+* explosion_alpha (ModifiableValue)
+* explosion_glow (ModifiableValue)
   receptor_alpha and receptor_glow affect layers with receptor fade type.
   explosion_alpha and explosion_glow affect layers with explosion fade type.
 
@@ -660,24 +660,24 @@ it.
 
 
 ### Functions
-* get_columns()  
+* get_columns()
   Returns the columns in a table.
-* get_width()  
+* get_width()
   Returns the width of the field calculated from the widths of the columns.
-* get_vanish_type()  
+* get_vanish_type()
   Returns the vanish type currently used by the field.
-* set_vanish_type(FieldVanishType)  
+* set_vanish_type(FieldVanishType)
   Valid settings are "FieldVanishType_RelativeToParent",
-  "FieldVanishType_RelativeToSelf", and "FieldVanishType_RelativeToOrigin".  
-  "FieldVanishType_RelativeToParent" is the default and recommended.  
-  The vanish type affects how the vanish_x_mod and vanish_y_mod are used.  
+  "FieldVanishType_RelativeToSelf", and "FieldVanishType_RelativeToOrigin".
+  "FieldVanishType_RelativeToParent" is the default and recommended.
+  The vanish type affects how the vanish_x_mod and vanish_y_mod are used.
   The vanish point needs to be in the center of the field on the screen to
   have no skewing.  So normally, the position of the Player and the NewField
-  is added to the vanish point to center it.  
+  is added to the vanish point to center it.
   When the vanish type is RelativeToParent, then moving the Player or
-  NewField around will not cause skewing.  
+  NewField around will not cause skewing.
   When the vanish type is RelativeToSelf, moving the Player will cause
-  skewing, but moving the NewField will not.  
+  skewing, but moving the NewField will not.
   When the vanish type is RelativeToOrigin, moving either the Player or the
   NewField will cause skewing.
 * set_player_color(int, color)
@@ -715,19 +715,19 @@ speed mod.
 
 Scroll Segments are more complex: They change the beat value that is passed
 to the speed mod.  If you are doing something special with the input to the
-speed mod, avoid using scroll segments to keep your code simple.  
+speed mod, avoid using scroll segments to keep your code simple.
 If you set the speed mod to something simple like
 ```{"*", "dist_beat", 2}```
 (a 2x speed mod), you don't need to worry about the effect that scroll
-segments have on the speed mod.  
+segments have on the speed mod.
 A speed segment starts at a beat and all beats after it are multiplied in
 size until the next scroll segment.  For example, imagine a scroll segment
 that is at beat 1 and has a ratio of 2.  For a note at beat 1, the speed mod
 is passed 1.  For a note at beat 2, the speed mod is passed 1 + ((2 - 1) *
-2), 3.  For a note at beat 3, the speed mod is passed 5.  
+2), 3.  For a note at beat 3, the speed mod is passed 5.
 If there is more than one scroll segment, it becomes more complex.  Each
 scroll segment uses the modified beat at its starting point as the offset to
-add in: result= offset + ((input_beat - segment_beat) * segment_ratio)  
+add in: result= offset + ((input_beat - segment_beat) * segment_ratio)
 A complex case, where the speed mod expects the input beat to be in a certain
 range will encounter problems when scroll segments occur.
 ```{start_beat= 2, end_beat= 4, "ModFunctionType_Product", {"ModInputType_StartDistBeat", 2, phases= {default= {0, 0, 0, 0}, {.5, 1, 0, 1}, {1, 1.5, 0, 2}}}}```
@@ -735,7 +735,7 @@ range will encounter problems when scroll segments occur.
 beat to 1 beat after the start, 2 arrow heights of distance when then the
 current music beat is 1 beat to 1.5 beats after the start, and 0 the rest of
 the time.  There has to be a normal style speed mod in a different mod slot
-to have a playable result)  
+to have a playable result)
 In this example, the speed mod uses StartDistBeat, so normally the input
 would range from 0 to 2.  But because of the scroll segment, it ranges from
 1 to 5.  So the first phase intended never occurs, the second phase occurs
@@ -764,8 +764,8 @@ to accomodate these mods.
 
 #### Explanation
 Video of boost problem: https://www.youtube.com/watch?v=8BXvlx3ZoBI
-Mod selection is shown so you can see what mods are set for each side. Only the speed mod and Boost are set, all other mods are clear.  
-Left side is set to C600 and 100% Boost. Right side is set to M600 and 100% Boost. As you can see, the arrows come out differently.  
+Mod selection is shown so you can see what mods are set for each side. Only the speed mod and Boost are set, all other mods are clear.
+Left side is set to C600 and 100% Boost. Right side is set to M600 and 100% Boost. As you can see, the arrows come out differently.
 Now for the explanation of why. That's "y", as in "y offset". To calculate the position of a note, stepmania calculates a y offset. There are several steps to this.
 1. Take the position from the player's C-mod, or the note's distance in beats if the player isn't using a C-mod.
 2. Multiply by the ArrowEffects::ArrowSpacing theme metric (default is 64).
