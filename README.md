@@ -1,103 +1,41 @@
-ITGmania
+# bobmania
 
+Robert Pelloni's fork of **StepMania**, the open-source rhythm game engine — part of his dance-game workbench alongside his ITGmania fork (`robertpelloni/itgmania`), the Fitness Center Dance Machine (`robertpelloni/fcdm`), and Simply Love.
 
-ITGmania is a fork of [StepMania 5.1](https://github.com/stepmania/stepmania/tree/5_1-new), an advanced cross-platform rhythm game for home and arcade use.
+## Status
 
-[![Continuous integration](https://github.com/itgmania/itgmania/actions/workflows/ci.yml/badge.svg?branch=beta)](https://github.com/itgmania/itgmania/actions/workflows/ci.yml) [![Nightly release](https://github.com/itgmania/itgmania/actions/workflows/nightly.yml/badge.svg?branch=beta&event=push)](https://github.com/itgmania/itgmania/actions/workflows/nightly.yml?query=branch%3Abeta+event%3Apush)
+**Engine restored 2026-11-19; no packaged release.** Version in tree: v5.172.0 (`VERSION` file).
 
-## Changes to StepMania 5.1
+What happened, in plain terms:
 
-- Built-in network functionality
-- Fully 64-bit, optimized for modern OSes
-- Reload new songs from within the song select screen
-- The mine fix applied (courtesy of [DinsFire64](https://gist.github.com/DinsFire64/4a3f763cd3033afd55a176980b32a3b5))
-- Held misses tracked in the engine for pad debugging
-- Fixed overlapping hold bug
-- Per-player visual delay
-- Per-player disabling of timing windows
-- New preference to control note render ordering
-- Increased the Stats.xml file size limit to 100MB
-- Changed the default binding for P2/back from hyphen to backslash
+- On 2026-10-19, commit `17f666c8` ("Protocol #261: track code, agent-memory/sessions, docs/config") replaced this branch's tree with Git's **empty tree** — 0 additions, 1,980,932 deletions. The entire StepMania engine was deleted from `master`.
+- The Oct–Nov 2026 commits that followed re-added only a 57-file overlay (docs, two Lua theme overlays, validator scripts). For a month, `master` contained no engine source at all, while its docs described a working fork.
+- On 2026-11-19, `master` was restored from `f86ecf13` (2026-07-18, the last full tree before the wipe: 9,457 entries), with the November overlay grafted on top (Unified Dashboard + Spline Editor Lua overlays, theme metrics/localization, `scripts/validate_lua.py` + `scripts/audit_dashboard.py`, current docs, `VERSION` v5.172.0).
+- The pre-restore overlay line is preserved on the branch `overlay-snapshot-2026-11-19` (head `a80903eb`).
 
-## Installation
+Build verification: **Not yet — configure fails, and the breakage predates the October wipe.** Verified by Muse on the restored tree (Ubuntu, CMake 3.28, GCC 13): `src/tests/run_tests.sh` passes its real checks (Lua syntax validation of both overlays; dashboard audit finds all 13 modules), but `cmake` configure does not complete. In the order hit: (1) `StepmaniaCore.cmake` requires the Xtst, Xinerama, and udev packages, but `CMake/Modules/` ships no `FindXtst.cmake`, `FindXinerama.cmake`, or `Findudev.cmake`, and the Ubuntu dev packages ship no CMake config files for them; (2) the NASM/YASM gate tests `NASM_FOUND`/`YASM_FOUND`, which nothing in this tree ever sets — configure fails there even with NASM installed; (3) with those bypassed, `configure_file` inputs `src/config.in.hpp` and `src/verstub.in.cpp` are missing from the tree (absent at the July restore source and at the July 10 ghost-replay commit alike), `extern/config.pcre.in.h` and `extern/pcre/pcre.h.generic` are also missing, and `src/CMakeLists.txt` produces a parse error. The July 2026 ghost-replay PR already noted the CMake build was "structurally broken"; this restore confirms it with specifics. Fixing the build is follow-up work, not part of the restoration.
 
-You can choose between using the installer or using the portable build. Using the installer is recommended, because it makes upgrading to new versions easier.
+## What's in the tree
 
-### Windows
+The full StepMania 5.1-derived engine (`src/`, `extern/`, `Themes/`, `NoteSkins/`, root `CMakeLists.txt`), plus this fork's own work, plus a nested `itgmania/` tree and a `server/` directory that are tracked workspace state from the July 2026 checkpoint — they are part of the restored tree as-is, not a curated layout.
 
-**Windows 7 is the minimum supported version.**
+## What's changed from upstream
 
- * You will likely have to manually allow the installer to start.
+Per `CHANGELOG.md` and the restored `src/` tree:
 
-### macOS
+- **Unified Dashboard** (v5.171.0) — `ScreenUnifiedDashboard` Lua overlay re-architected as a single-page command center grouping 13 modules (Arcade, Gym & Fitness, Tournament Ladder, NetRoom, Marketplace, Wallet Ledger, Missions, Cloud Asset Sync, Spectator TV, Replay Theater, P2P Content Swarm, Settings, Exit).
+- **NotITG Spline Editor** (v5.172.0) — `ScreenSplineEditor` Lua overlay for inspecting and modifying 3D NotePath spline control points, with theme metrics and localization.
+- **Gym mode** — `HeartRateManager` / `GymManager` in C++, with Mock, BlueZ, and WinRT heart-rate drivers. The Mock driver is the one exercised in practice; the hardware drivers are untested.
+- **Economy / Bobcoin** — `EconomyManager` with a `BobcoinBridge` toward a Bobcoin JSON-RPC node. Stub-level: not a live, verified chain integration.
+- **P2P content swarm** — `ContentSwarmManager` is a structural stub mimicking a libtorrent session; it is not a working swarm.
+- **Ghost replay** — `Player.cpp` support for rendering a ghost `NoteField` from recorded replay input (merged July 2026; its own PR noted the CMake build was structurally broken out of the box, so treat compilation as unverified until a build says otherwise).
 
-**macOS users need to have macOS 11 (Big Sur) or higher to run ITGmania.**
-* Move ITGmania.app to the Applications folder, and then run the following command in Terminal:
+## What's not done
 
-   * `xattr -dr com.apple.quarantine /Applications/ITGmania`
+- No bobmania-specific build documentation or release packaging. For building, follow upstream StepMania's docs ([github.com/stepmania/stepmania](https://github.com/stepmania/stepmania)) using the root `CMakeLists.txt`.
+- `src/tests/run_tests.sh` runs exactly two real checks: Lua syntax validation of the two overlays, and the dashboard routing audit. It previously printed `PASS` for the C++ managers without running anything; those lines now read NOT TESTED, because there are no automated C++ manager tests in this repo.
+- Bobcoin integration and the P2P swarm are stubs, not working features (see above).
 
-* You should then add ITGmania to the "Input Monitoring" section of System Preferences (under Security & Privacy)
+## Docs in this repo
 
-### Linux
-
-**Linux users should receive all they need from the package manager of their choice.**
-
-* **Debian-based**:
-
-  * `sudo apt install libgdk-pixbuf-2.0-0 libgl1 libglvnd0 libgtk-3-0 libusb-0.1-4 libxinerama1 libxtst6`
-
-* **Fedora-based**:
-
-  * `sudo yum install gdk-pixbuf2 gtk3 libusb-compat-0.1 libXinerama libXtst`
-
-*  **Arch Linux**:
-
-   * `sudo pacman -S mesa gtk3 libusb-compat libxinerama libxtst llvm-libs`
-
-* **OpenSUSE**:
-
-   * OpenSUSE comes with everything you need pre-installed.
-
-
-### Build From Source
-
-ITGmania can be compiled using [CMake](http://www.cmake.org/). More information about using CMake to build ITGmania can be found in both the `Build` directory and CMake's documentation.
-
-## Resources
-
-* [ITGmania Website](https://www.itgmania.com/)
-* [StepMania 5.1 to ITGmania Migration Guide](Docs/Userdocs/sm5_migration.md)
-* [Lua for ITGmania](https://quietly-turning.github.io/Lua-For-SM5/LuaAPI?engine=ITGmania)
-* Lua API Documentation can be found in the Docs folder.
-
-## Licensing Terms
-
-ITGmania, as well as the [Simply Love](https://github.com/Simply-Love/Simply-Love-SM5) theme, are both under the GPLv3 license, or at your option, any later version.
-
-If ITGmania code is used in your project, we would also appreciate it if you link back to [ITGmania](https://github.com/itgmania/itgmania) as well as [StepMania](https://github.com/stepmania/stepmania).
-
-For specific information/legalese:
-
-* All of our source code is under the [GPLv3 license](https://www.gnu.org/licenses/gpl-3.0.en.html).
-* Songs included within the 'StepMania 5' folder are under the [<abbr title="Creative Commons Non-Commercial">CC-NC</abbr> license](https://creativecommons.org/).
-* Simply Love is licensed under the GPLv3, or, at your option, any later version.
-* The copyright for songs in the 'Club Fantastic' folders rests with the original authors. The content is explicitly NOT placed under a Creative Commons license (or similar license), but has been provided free of charge, for personal or public use, including online broadcasting, tournaments, and other purposes. Go to the [Club Fantastic](https://www.clubfantastic.com/) website for more information.
-* The [MAD library](http://www.underbit.com/products/mad/) and [FFmpeg codecs](https://www.ffmpeg.org/) when built with our code use the [GPL license](http://www.gnu.org).
-* This software is based in part on the work of the Independent JPEG Group.
-* Check the [Docs/Licenses.txt](Docs/Licenses.txt) for the licenses of the used libraries.
-
-## Credits
-
-### ITGmania Team
-- Martin Natano (natano)
-- teejusb
-
-### Contributors
-- [Club Fantastic](https://wiki.clubfantastic.dance/en/Credits)
-- [DinsFire64](https://gist.github.com/DinsFire64/4a3f763cd3033afd55a176980b32a3b5) (Mine Fix)
-- [EvocaitArt](https://twitter.com/EvocaitArt) (Enchantment NoteSkin)
-- [jenx](https://www.amarion.net/) (Fast Profile Switching)
-- [LightningXCE](https://twitter.com/lightningxce) (Cyber NoteSkin)
-- [MegaSphere](https://github.com/Pete-Lawrence/Peters-Noteskins) (Note/Rainbow/Vivid NoteSkins)
-- [StepMania 5](Docs/credits_SM5.txt)
-- [Old StepMania Team](Docs/credits_old_Stepmania_Team.txt)
+`VISION.md` (aspirational design — not a statement of what is built), `HANDOFF.md` (current state, including the 2026-11-19 restore), `CHANGELOG.md`, `Docs/` (including `Docs/DASHBOARD.md` and `Docs/Manual_Unified.md`).
